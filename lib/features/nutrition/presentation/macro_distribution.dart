@@ -16,7 +16,7 @@ class MacroDistribution extends StatelessWidget {
       (
         label: 'Carb',
         amount: (t?.carbsG ?? 0) * 4,
-        color: ReferencePalette.blue,
+        color: ReferencePalette.carb,
       ),
       (
         label: 'Đạm',
@@ -29,26 +29,58 @@ class MacroDistribution extends StatelessWidget {
         color: ReferencePalette.fat,
       ),
     ];
-    Widget legend(String label, String value, Color color) => Row(
-      children: [
-        Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(label, style: Theme.of(context).textTheme.bodySmall),
-        ),
-        const SizedBox(width: 6),
-        Text(
-          value,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+    Widget legend(
+      String label,
+      String value,
+      Color color, {
+      bool stacked = false,
+    }) {
+      if (stacked) {
+        return Column(
+          children: [
+            Wrap(
+              spacing: 6,
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                Text(label, style: Theme.of(context).textTheme.bodySmall),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(value, style: Theme.of(context).textTheme.bodySmall),
+          ],
+        );
+      }
+      return Row(
+        children: [
+          Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
-        ),
-      ],
-    );
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(label, style: Theme.of(context).textTheme.bodySmall),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -105,11 +137,12 @@ class MacroDistribution extends StatelessWidget {
                   SizedBox(
                     width: (c.maxWidth - 16 * (count - 1)) / count,
                     child: legend(
-                      extra == null && p.label == 'Chất béo' ? 'Béo' : p.label,
+                      p.label,
                       known
                           ? '${NumberFormat('0', 'vi').format(p.amount / energy * 100)}%'
                           : '—',
                       p.color,
+                      stacked: count == 3,
                     ),
                   ),
                 if (extra != null)

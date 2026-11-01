@@ -150,7 +150,7 @@ void main() {
       );
       container.read(appRouterProvider).go(AppRoutes.journal);
       await tester.pumpAndSettle();
-      await _tap(tester, find.byKey(const ValueKey('add-meal')));
+      await _tap(tester, find.byKey(const ValueKey('journal-add-meal')));
       await _addRice(tester);
       await _tap(tester, find.byKey(const ValueKey('meal-entry-photo')));
       expect(cameras.single.starts, 1);
@@ -202,10 +202,11 @@ void main() {
             quantity: 30,
           );
         },
+        foodScannerService: _Scanner(),
       );
       container.read(appRouterProvider).go(AppRoutes.journal);
       await tester.pumpAndSettle();
-      await _tap(tester, find.byKey(const ValueKey('add-meal')));
+      await _tap(tester, find.byKey(const ValueKey('journal-add-meal')));
       await _addRice(tester);
       await _tap(tester, find.byKey(const ValueKey('meal-entry-photo')));
       await _tap(tester, find.byKey(const ValueKey('camera-barcode')));
@@ -232,7 +233,7 @@ void main() {
       );
       container.read(appRouterProvider).go(AppRoutes.journal);
       await tester.pumpAndSettle();
-      await _tap(tester, find.byKey(const ValueKey('add-meal')));
+      await _tap(tester, find.byKey(const ValueKey('journal-add-meal')));
       await _addRice(tester);
       await _tap(tester, find.byKey(const ValueKey('meal-entry-favorites')));
       await _tap(tester, find.byTooltip('Thêm Cơm trắng chín'));
@@ -268,10 +269,14 @@ void main() {
           textScale: scale,
           featureFlags: const AppFeatureFlags(foodScannerEnabled: true),
           foodCameraService: service,
+          foodScannerService: _Scanner(),
         );
         container.read(appRouterProvider).go(AppRoutes.journal);
         await tester.pumpAndSettle();
-        await _tap(tester, find.byKey(const ValueKey('scan-food')));
+        await tester.tap(find.byKey(const ValueKey('journal-add-meal')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('meal-entry-photo')));
+        await tester.pumpAndSettle();
         expect(find.textContaining('Chưa cấp quyền camera.'), findsOneWidget);
         expect(find.byKey(const ValueKey('camera-gallery')), findsOneWidget);
         denied = false;

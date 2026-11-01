@@ -419,12 +419,10 @@ void main() {
       );
       await pumpApp(tester, dashboardNow: DateTime.now(), profileRepository: p);
       await openProgress(tester);
-      await tester.tap(find.byKey(const ValueKey('quick-add-menu')));
+      await openProfileFromShell(tester);
+      await tester.ensureVisible(find.byKey(const ValueKey('add-metric')));
       await tester.pumpAndSettle();
-      for (final action in ['meal', 'water', 'activity', 'weight']) {
-        expect(find.byKey(ValueKey('quick-action-$action')), findsOneWidget);
-      }
-      await tester.tap(find.byKey(const ValueKey('quick-action-weight')));
+      await tester.tap(find.byKey(const ValueKey('add-metric')));
       await tester.pumpAndSettle();
       await tester.enterText(
         find.byKey(const ValueKey('metric-weight')),
@@ -451,6 +449,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(p.metrics.single.weightKg, 71.5);
       expect(find.text('Thêm cân nặng'), findsNothing);
+      await tester.tap(find.byKey(const ValueKey('nav-progress')));
+      await tester.pumpAndSettle();
       expect(
         find.textContaining('Mới có một lần cân; chưa đủ'),
         findsOneWidget,
@@ -486,9 +486,10 @@ void main() {
         profile: FakeHealthProfileRepository.testProfile,
       );
       await pumpApp(tester, repository: auth, profileRepository: p);
-      await tester.tap(find.byKey(const ValueKey('quick-add-menu')));
+      await openProfileFromShell(tester);
+      await tester.ensureVisible(find.byKey(const ValueKey('add-metric')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('quick-action-weight')));
+      await tester.tap(find.byKey(const ValueKey('add-metric')));
       await tester.pumpAndSettle();
       await tester.enterText(find.byKey(const ValueKey('metric-weight')), '77');
       final gate = Completer<void>();

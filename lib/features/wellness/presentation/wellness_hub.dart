@@ -141,16 +141,29 @@ class WellnessHub extends ConsumerWidget {
     return TrackingPage(
       key: const ValueKey('wellness-hub'),
       headerHeight: 90,
-      header: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      showProfileAvatar: !context.canPop(),
+      header: Row(
         children: [
-          Text(
-            'Thói quen của bạn',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          Text(
-            DateFormat('EEEE, dd/MM', 'vi').format(today),
-            style: Theme.of(context).textTheme.bodySmall,
+          if (context.canPop())
+            BackButton(
+              key: const ValueKey('wellness-back'),
+              onPressed: () => context.pop(),
+            ),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Thói quen của bạn',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                Text(
+                  DateFormat('EEEE, dd/MM', 'vi').format(today),
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+            ),
           ),
         ],
       ),

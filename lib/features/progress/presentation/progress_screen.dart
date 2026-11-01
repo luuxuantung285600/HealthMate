@@ -57,12 +57,11 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
       children: [
         ReferenceSegments(
           items: [
-            for (final entry in [
-              'Tổng quan',
-              'Năng lượng',
-              'Dưỡng chất',
-              'Macro',
-            ].indexed)
+            for (final entry in const [
+              (0, 'Tổng quan'),
+              (3, 'Dưỡng chất'),
+              (2, 'Thói quen'),
+            ])
               (
                 key: ValueKey('progress-tab-${entry.$1}'),
                 label: entry.$2,
@@ -237,15 +236,20 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
         ] else if (_days != 7)
           PeriodReportPanel(days: _days, today: today)
         else if (_details)
-          WeeklyReflectionCard(today: today, progressMode: true)
+          WeeklyReflectionCard(
+            key: ValueKey('weekly-details-$_offset'),
+            today: today,
+            progressMode: true,
+            initialWeekOffset: _offset,
+          )
         else ...[
+          weeklyControls,
           state!.when(
             skipLoadingOnRefresh: false,
             skipLoadingOnReload: false,
             skipError: false,
             loading: () => Column(
               children: [
-                weeklyControls,
                 const Padding(
                   padding: EdgeInsets.all(32),
                   child: Center(child: CircularProgressIndicator()),
@@ -254,7 +258,6 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
             ),
             error: (_, _) => Column(
               children: [
-                weeklyControls,
                 const Text(
                   'Chưa tải đủ dữ liệu tuần. Không tính tổng từ dữ liệu thiếu.',
                 ),
@@ -285,7 +288,6 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                           ),
                         )
                         .length,
-              controls: weeklyControls,
             ),
           ),
         ],

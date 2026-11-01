@@ -261,15 +261,12 @@ void main() {
       ],
     );
     await captureReference(tester, key, 'today-populated');
-    expect(find.text('1.160'), findsOneWidget);
-    expect(find.text('Quét món'), findsOneWidget);
+    expect(find.text('1.160 đã ăn'), findsOneWidget);
+    expect(find.byTooltip('Chụp món ăn'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('nav-journal')));
     await captureReference(tester, key, 'journal-populated');
-    expect(
-      find.byKey(const ValueKey('summary-meal-breakfast')),
-      findsOneWidget,
-    );
-    await tester.tap(find.byKey(const ValueKey('nav-wellness')));
+    expect(find.byKey(const ValueKey('add-meal-breakfast')), findsOneWidget);
+    await openWellnessFromShell(tester);
     await captureReference(tester, key, 'habits-populated');
     expect(find.text('4.872'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('nav-profile')));
@@ -279,8 +276,8 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('previous-week')));
     await captureReference(tester, key, 'reports-populated');
-    expect(find.text('1.684'), findsOneWidget);
-    expect(find.text('5 / 7'), findsOneWidget);
+    expect(find.text('1.684 kcal / ngày có dữ liệu'), findsOneWidget);
+    expect(find.text('5 / 7 ngày xác nhận đủ bữa'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
   for (final mode in [ThemeMode.light, ThemeMode.dark]) {
@@ -289,7 +286,7 @@ void main() {
         tester,
       ) async {
         final key = GlobalKey();
-        final container = await pumpApp(
+        await pumpApp(
           tester,
           size: Size(layout.$1, 844),
           textScale: layout.$2,
@@ -298,27 +295,18 @@ void main() {
           captureKey: key,
         );
         expect(find.byKey(const ValueKey('nav-profile')), findsOneWidget);
-        expect(find.byKey(const ValueKey('dashboard-empty')), findsOneWidget);
+        expect(find.text('Chưa ghi món'), findsNWidgets(4));
         if (layout.$1 == 390) {
           await captureReference(tester, key, 'today-${mode.name}');
         }
-        await tester.tap(find.byKey(const ValueKey('nav-wellness')));
+        await openWellnessFromShell(tester);
         await tester.pumpAndSettle();
-        expect(
-          container
-              .read(appRouterProvider)
-              .routeInformationProvider
-              .value
-              .uri
-              .path,
-          AppRoutes.wellness,
-        );
         expect(find.byKey(const ValueKey('wellness-hub')), findsOneWidget);
         expect(find.text('Chưa có bước đã đồng bộ hôm nay'), findsOneWidget);
         if (layout.$1 == 390) {
           await captureReference(tester, key, 'habits-${mode.name}');
         }
-        await tester.tap(find.byKey(const ValueKey('nav-profile')));
+        await tester.tap(find.byKey(const ValueKey('wellness-back')));
         await tester.pumpAndSettle();
         expect(find.text('Không gian cá nhân'), findsOneWidget);
         if (layout.$1 == 390) {
@@ -361,7 +349,7 @@ void main() {
           ),
         ],
       );
-      await tester.tap(find.byKey(const ValueKey('nav-wellness')));
+      await openWellnessFromShell(tester);
       await tester.pumpAndSettle();
       expect(find.text('4.872'), findsOneWidget);
       expect(find.text('7g 20p'), findsOneWidget);
@@ -375,7 +363,7 @@ void main() {
     },
   );
   testWidgets(
-    'journal summary preserves historic date while shell plus uses today',
+    'journal summary and shell plus preserve the same historic date',
     (tester) async {
       final container = await pumpApp(tester, dashboardNow: now);
       final historical = DateTime(2026, 10, 20);
@@ -383,7 +371,7 @@ void main() {
       container.read(appRouterProvider).go(AppRoutes.journal);
       await tester.pumpAndSettle();
       // Use the accessible summary card rather than the long log section.
-      final breakfast = find.byKey(const ValueKey('summary-meal-breakfast'));
+      final breakfast = find.byKey(const ValueKey('add-meal-breakfast'));
       await tester.ensureVisible(breakfast);
       await tester.tap(breakfast);
       await tester.pumpAndSettle();
@@ -398,18 +386,13 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('quick-add-menu')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('quick-action-meal')));
-      await tester.pumpAndSettle();
-      expect(
-        container.read(journalDateProvider),
-        DateUtils.dateOnly(DateTime.now()),
-      );
+      expect(container.read(journalDateProvider), historical);
       expect(
         tester
             .widget<MealFormDialog>(find.byType(MealFormDialog))
             .initialConsumedAt
             ?.day,
-        DateTime.now().day,
+        historical.day,
       );
     },
   );

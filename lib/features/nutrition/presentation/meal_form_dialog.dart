@@ -1,4 +1,6 @@
 import '../models/food_diet.dart';
+import 'dart:convert';
+import 'package:intl/intl.dart';
 import '../models/food_avoidance.dart';
 import 'food_diet_filter.dart';
 import 'meal_form_controller.dart';
@@ -6,6 +8,7 @@ import 'meal_search_controller.dart';
 import 'meal_entry_sources.dart';
 import 'package:flutter/material.dart';
 import '../../../core/widgets/help_details.dart';
+import '../../../core/widgets/details_disclosure.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/widgets/confirmed_save.dart';
 
@@ -116,9 +119,13 @@ class _MealFormDialogState extends ConsumerState<MealFormDialog>
   set _storedOffset(int? value) => _form.timezoneOffsetOverride = value;
   String? get _localStatus => _form.localStatus;
   bool _discarding = false;
+  bool _allowExit = false;
+  bool _closing = false;
+  late String _initialFingerprint;
   late MealEntryMode _entryMode;
   bool _photoVisited = false;
   bool _favoritesVisited = false;
+  bool _showTools = false;
   set _scannerAiUsed(bool value) => _form.scannerAiUsed = value;
   String? _scanSearch;
 
@@ -231,7 +238,58 @@ class _MealFormDialogState extends ConsumerState<MealFormDialog>
     _persistLocal();
   }
 
-  Future<void> _persistLocal() => _form.persistLocal();
+  Future<void> _persistLocal() async {
+    await _form.persistLocal();
+  }
+
+  String get _fingerprint => jsonEncode({
+    'type': _type.name,
+    'at': _consumedAt.toIso8601String(),
+    'source': _draft.source.name,
+    'offset': _draft.timezoneOffsetMinutes,
+    'items': _items.map((i) => i.toData()).toList(),
+  });
+
+  bool get _dirty => _fingerprint != _initialFingerprint;
+
+  Future<void> _close() async {
+    if (saving || _discarding || _closing) return;
+    _closing = true;
+    FocusManager.instance.primaryFocus?.unfocus();
+    try {
+      if (widget.onDraftChanged != null) {
+        final kept = await _form.persistLocal();
+        if (!mounted || !kept) return;
+      } else if (_dirty) {
+        final discard = await showDialog<bool>(
+          context: context,
+          builder: (dialogContext) => AlertDialog(
+            title: const Text('Bỏ thay đổi chưa lưu?'),
+            content: const Text(
+              'Thiết bị này chưa hỗ trợ giữ nháp khi đóng form.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: const Text('Tiếp tục nhập'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(dialogContext, true),
+                child: const Text('Bỏ nháp'),
+              ),
+            ],
+          ),
+        );
+        if (!mounted || discard != true) return;
+      }
+      setState(() => _allowExit = true);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) Navigator.pop(context);
+      });
+    } finally {
+      _closing = false;
+    }
+  }
 
   @override
   void initState() {
@@ -327,6 +385,7 @@ class _MealFormDialogState extends ConsumerState<MealFormDialog>
         if (mounted) _persistLocal();
       });
     }
+    _initialFingerprint = _fingerprint;
     // Trigger initial search if there's initial search text
     if (widget.initialSearch.isNotEmpty && widget.sourcesBuilder == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -628,76 +687,114 @@ class _MealFormDialogState extends ConsumerState<MealFormDialog>
     final scannerEnabled = ref
         .watch(appFeatureFlagsProvider)
         .foodScannerEnabled;
-    return guardSave(
-      Dialog.fullscreen(
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(widget.meal == null ? 'Thêm bữa ăn' : 'Sửa bữa ăn'),
-            leading: IconButton(
-              onPressed: _discarding ? null : () => Navigator.pop(context),
-              tooltip: _entryMode == MealEntryMode.photo ? 'Đóng' : 'Hủy',
-              icon: const Icon(Icons.close_rounded),
-            ),
-            actions: [
-              if (_entryMode == MealEntryMode.photo)
-                IconButton(
-                  tooltip: 'Thông tin quét món',
-                  icon: const Icon(Icons.info_outline),
-                  onPressed: () => showModalBottomSheet<void>(
-                    context: context,
-                    isScrollControlled: true,
-                    showDragHandle: true,
-                    builder: (_) => const SafeArea(
-                      child: SingleChildScrollView(
-                        padding: EdgeInsets.all(24),
-                        child: Text(
-                          'Chụp toàn bộ phần ăn hoặc chọn ảnh từ thư viện. Mã vạch tra cứu thông tin trên sản phẩm. Ảnh chỉ được gửi đến dịch vụ AI của Google khi bạn đồng ý và bấm Phân tích. Dịch vụ miễn phí có thể dùng ảnh/kết quả để cải thiện sản phẩm và có người đánh giá. Không chọn ảnh có thông tin cá nhân. HealthMate không tải ảnh gốc lên kho lưu trữ; camera/thư viện có thể giữ tệp tạm trên thiết bị. Dinh dưỡng từ ảnh là ước tính; hãy kiểm tra món và khẩu phần trước khi lưu.',
+    return PopScope(
+      canPop: _allowExit || saving,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && !saving) _close();
+      },
+      child: guardSave(
+        Dialog.fullscreen(
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(widget.meal == null ? 'Thêm bữa ăn' : 'Sửa bữa ăn'),
+              leading: IconButton(
+                onPressed: _discarding ? null : _close,
+                tooltip: widget.onDraftChanged == null
+                    ? 'Đóng'
+                    : 'Đóng và giữ nháp',
+                icon: const Icon(Icons.close_rounded),
+              ),
+              actions: [
+                if (_entryMode == MealEntryMode.manual)
+                  IconButton(
+                    key: const ValueKey('meal-more-tools'),
+                    tooltip: 'Tùy chọn thêm món',
+                    onPressed: saving
+                        ? null
+                        : () => setState(() => _showTools = !_showTools),
+                    icon: Icon(
+                      _showTools ? Icons.close_rounded : Icons.more_horiz,
+                    ),
+                  ),
+                if (_entryMode == MealEntryMode.photo)
+                  IconButton(
+                    tooltip: 'Thông tin quét món',
+                    icon: const Icon(Icons.info_outline),
+                    onPressed: () => showModalBottomSheet<void>(
+                      context: context,
+                      isScrollControlled: true,
+                      showDragHandle: true,
+                      builder: (_) => const SafeArea(
+                        child: SingleChildScrollView(
+                          padding: EdgeInsets.all(24),
+                          child: Text(
+                            'Chụp toàn bộ phần ăn hoặc chọn ảnh từ thư viện. Mã vạch tra cứu thông tin trên sản phẩm. Ảnh chỉ được gửi đến dịch vụ AI của Google khi bạn đồng ý và bấm Phân tích. Dịch vụ miễn phí có thể dùng ảnh/kết quả để cải thiện sản phẩm và có người đánh giá. Không chọn ảnh có thông tin cá nhân. HealthMate không tải ảnh gốc lên kho lưu trữ; camera/thư viện có thể giữ tệp tạm trên thiết bị. Dinh dưỡng từ ảnh là ước tính; hãy kiểm tra món và khẩu phần trước khi lưu.',
+                          ),
                         ),
                       ),
                     ),
                   ),
+                if (widget.onDiscardDraft != null)
+                  IconButton(
+                    key: const ValueKey('discard-local-draft'),
+                    onPressed: saving || _discarding ? null : _discardLocal,
+                    tooltip: 'Bỏ nháp',
+                    icon: const Icon(Icons.delete_outline),
+                  ),
+              ],
+            ),
+            bottomNavigationBar: SafeArea(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.sizeOf(context).height * .42,
                 ),
-              if (widget.onDiscardDraft != null)
-                IconButton(
-                  key: const ValueKey('discard-local-draft'),
-                  onPressed: saving || _discarding ? null : _discardLocal,
-                  tooltip: 'Bỏ bản nháp này',
-                  icon: const Icon(Icons.delete_outline),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (_localStatus != null)
+                        Text(
+                          _localStatus!,
+                          key: const ValueKey('local-draft-status'),
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      if (_error != null)
+                        Text(
+                          _error!,
+                          style: TextStyle(color: theme.colorScheme.error),
+                        ),
+                      if (_entryMode != MealEntryMode.photo) ...[
+                        if (saveError != null &&
+                            widget.saveErrorMessage?.call() != null)
+                          Text(widget.saveErrorMessage!.call()!),
+                        saveFeedback(),
+                        FilledButton.icon(
+                          key: const ValueKey('save-meal'),
+                          onPressed: saving || _discarding || _items.isEmpty
+                              ? null
+                              : _submit,
+                          icon: const Icon(Icons.check_rounded),
+                          label: Text(
+                            saving
+                                ? 'Đang lưu…'
+                                : _items.isEmpty
+                                ? 'Chọn món để tiếp tục'
+                                : 'Lưu ${_items.length} món · ${totals.kcal.round()} kcal',
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
-              if (_entryMode != MealEntryMode.photo)
-                TextButton(
-                  key: const ValueKey('save-meal'),
-                  onPressed: saving || _discarding ? null : _submit,
-                  child: Text(saving ? 'Đang lưu…' : 'Lưu'),
-                ),
-            ],
-          ),
-          bottomNavigationBar: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (_entryMode != MealEntryMode.photo) ...[
-                    if (widget.draftNotice != null) Text(widget.draftNotice!),
-                    if (_localStatus != null)
-                      Text(
-                        _localStatus!,
-                        key: const ValueKey('local-draft-status'),
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    if (_error != null)
-                      Text(
-                        _error!,
-                        style: TextStyle(color: theme.colorScheme.error),
-                      ),
-                    if (saveError != null &&
-                        widget.saveErrorMessage?.call() != null)
-                      Text(widget.saveErrorMessage!.call()!),
-                    saveFeedback(),
-                  ],
-                  const SizedBox(height: 8),
-                  Row(
+              ),
+            ),
+            body: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
                     children: [
                       for (final mode in MealEntryMode.values)
                         if (mode != MealEntryMode.photo || scannerEnabled)
@@ -706,301 +803,403 @@ class _MealFormDialogState extends ConsumerState<MealFormDialog>
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 3,
                               ),
-                              child: TextButton(
-                                key: ValueKey('meal-entry-${mode.name}'),
-                                style: TextButton.styleFrom(
-                                  backgroundColor: _entryMode == mode
-                                      ? theme.colorScheme.primaryContainer
-                                      : null,
-                                  foregroundColor: _entryMode == mode
-                                      ? theme.colorScheme.onPrimaryContainer
-                                      : theme.colorScheme.onSurfaceVariant,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 12,
+                              child: Semantics(
+                                selected: _entryMode == mode,
+                                child: TextButton(
+                                  key: ValueKey('meal-entry-${mode.name}'),
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: _entryMode == mode
+                                        ? theme.colorScheme.primaryContainer
+                                        : null,
+                                    foregroundColor: _entryMode == mode
+                                        ? theme.colorScheme.onPrimaryContainer
+                                        : theme.colorScheme.onSurfaceVariant,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 12,
+                                    ),
                                   ),
+                                  onPressed: saving || _discarding
+                                      ? null
+                                      : () => _switchEntryMode(mode),
+                                  child: Text(switch (mode) {
+                                    MealEntryMode.manual => 'Tìm món',
+                                    MealEntryMode.photo => 'Ảnh',
+                                    MealEntryMode.favorites => 'Yêu thích',
+                                  }, textAlign: TextAlign.center),
                                 ),
-                                onPressed: saving || _discarding
-                                    ? null
-                                    : () => _switchEntryMode(mode),
-                                child: Text(switch (mode) {
-                                  MealEntryMode.manual => 'Nhập tay',
-                                  MealEntryMode.photo => 'Ảnh',
-                                  MealEntryMode.favorites => 'Yêu thích',
-                                }, textAlign: TextAlign.center),
                               ),
                             ),
                           ),
                     ],
                   ),
-                ],
-              ),
-            ),
-          ),
-          body: IndexedStack(
-            index: _entryMode.index,
-            children: [
-              Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 760),
-                  child: ListView(
-                    key: const ValueKey('meal-manual-content'),
-                    padding: const EdgeInsets.all(24),
+                ),
+                Expanded(
+                  child: IndexedStack(
+                    index: _entryMode.index,
                     children: [
-                      DropdownButtonFormField<MealType>(
-                        key: const ValueKey('meal-type'),
-                        isExpanded: true,
-                        initialValue: _type,
-                        decoration: const InputDecoration(
-                          labelText: 'Loại bữa ăn',
-                        ),
-                        items: [
-                          for (final type in MealType.values)
-                            DropdownMenuItem(
-                              value: type,
-                              child: Text(type.label),
-                            ),
-                        ],
-                        onChanged: (value) =>
-                            _changeMeal(() => _type = value ?? _type),
-                      ),
-                      const SizedBox(height: 16),
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 8,
-                        children: [
-                          OutlinedButton.icon(
-                            onPressed: _pickDate,
-                            icon: const Icon(Icons.calendar_today_outlined),
-                            label: Text(locale.formatMediumDate(_consumedAt)),
-                          ),
-                          OutlinedButton.icon(
-                            onPressed: _pickTime,
-                            icon: const Icon(Icons.schedule_outlined),
-                            label: Text(
-                              locale.formatTimeOfDay(
-                                TimeOfDay.fromDateTime(_consumedAt),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      if (_items.isNotEmpty) ...[
-                        Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              spacing: 12,
-                              children: [
-                                Text(
-                                  'Món đã chọn (${_items.length}/5)',
-                                  style: theme.textTheme.titleMedium,
-                                ),
-                                for (final entry in _items.indexed)
-                                  Column(
-                                    key: ValueKey(
-                                      'selected-meal-item-${entry.$1}',
+                      Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 760),
+                          child: ListView(
+                            key: const ValueKey('meal-manual-content'),
+                            padding: const EdgeInsets.all(24),
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: DropdownButtonFormField<MealType>(
+                                      key: const ValueKey('meal-type'),
+                                      isExpanded: true,
+                                      initialValue: _type,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Bữa ăn',
+                                      ),
+                                      items: [
+                                        for (final type in MealType.values)
+                                          DropdownMenuItem(
+                                            value: type,
+                                            child: Text(type.label),
+                                          ),
+                                      ],
+                                      onChanged: (value) => _changeMeal(
+                                        () => _type = value ?? _type,
+                                      ),
                                     ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  PopupMenuButton<String>(
+                                    tooltip: 'Ngày và giờ ăn',
+                                    onSelected: (value) => value == 'date'
+                                        ? _pickDate()
+                                        : _pickTime(),
+                                    itemBuilder: (_) => [
+                                      PopupMenuItem(
+                                        value: 'date',
+                                        child: Text(
+                                          'Ngày: ${DateFormat('dd/MM/yyyy').format(_consumedAt)}',
+                                        ),
+                                      ),
+                                      PopupMenuItem(
+                                        value: 'time',
+                                        child: Text(
+                                          'Giờ: ${locale.formatTimeOfDay(TimeOfDay.fromDateTime(_consumedAt))}',
+                                        ),
+                                      ),
+                                    ],
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12),
+                                      child: Text(
+                                        DateFormat('dd/MM').format(_consumedAt),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              if (_items.isNotEmpty) ...[
+                                ExpansionTile(
+                                  key: const ValueKey('selected-meal-items'),
+                                  initiallyExpanded:
+                                      widget.meal != null ||
+                                      widget.initialDraft != null ||
+                                      widget.initialItems.isNotEmpty,
+                                  tilePadding: EdgeInsets.zero,
+                                  title: Text(
+                                    'Đã chọn ${_items.length} món · ${totals.kcal.round()} kcal',
+                                    style: theme.textTheme.titleSmall,
+                                  ),
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      spacing: 12,
+                                      children: [
+                                        for (final entry in _items.indexed)
+                                          Column(
+                                            key: ValueKey(
+                                              'selected-meal-item-${entry.$1}',
+                                            ),
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            children: [
+                                              Text(
+                                                entry.$2.name,
+                                                style:
+                                                    theme.textTheme.titleSmall,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      '${snapshotQuantityLabel(entry.$2)} · ${entry.$2.nutrition.kcal.toStringAsFixed(0)} kcal${entry.$2.isEstimated ? ' · Ước tính' : ''}',
+                                                    ),
+                                                  ),
+                                                  IconButton(
+                                                    onPressed: () =>
+                                                        _edit(entry.$1),
+                                                    tooltip: 'Sửa khẩu phần',
+                                                    icon: const Icon(
+                                                      Icons.edit_outlined,
+                                                    ),
+                                                  ),
+                                                  IconButton(
+                                                    onPressed: () =>
+                                                        _changeMeal(
+                                                          () => _items.removeAt(
+                                                            entry.$1,
+                                                          ),
+                                                        ),
+                                                    tooltip: 'Bỏ món',
+                                                    icon: const Icon(
+                                                      Icons
+                                                          .remove_circle_outline,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        const Divider(),
+                                        FoodNutritionSummary(value: totals),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                              ],
+                              if (_showTools)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.stretch,
                                     children: [
-                                      Text(
-                                        entry.$2.name,
-                                        style: theme.textTheme.titleSmall,
-                                      ),
-                                      Row(
+                                      Wrap(
+                                        spacing: 8,
+                                        runSpacing: 8,
                                         children: [
-                                          Expanded(
-                                            child: Text(
-                                              '${snapshotQuantityLabel(entry.$2)} · ${entry.$2.nutrition.kcal.toStringAsFixed(0)} kcal${entry.$2.isEstimated ? ' · Ước tính' : ''}',
-                                            ),
-                                          ),
-                                          IconButton(
-                                            onPressed: () => _edit(entry.$1),
-                                            tooltip: 'Sửa khẩu phần',
+                                          OutlinedButton.icon(
+                                            key: const ValueKey('scan-barcode'),
+                                            onPressed: saving || _discarding
+                                                ? null
+                                                : _openBarcodeScanner,
                                             icon: const Icon(
-                                              Icons.edit_outlined,
+                                              Icons.qr_code_scanner,
                                             ),
+                                            label: const Text('Quét mã vạch'),
                                           ),
-                                          IconButton(
-                                            onPressed: () => _changeMeal(
-                                              () => _items.removeAt(entry.$1),
+                                          OutlinedButton.icon(
+                                            key: const ValueKey(
+                                              'open-quick-add',
                                             ),
-                                            tooltip: 'Bỏ món',
+                                            onPressed: () async {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).hideCurrentSnackBar();
+                                              if (_items.length >= 5) {
+                                                setState(
+                                                  () => _error =
+                                                      'Mỗi bản ghi tối đa 5 món.',
+                                                );
+                                                return;
+                                              }
+                                              final item =
+                                                  await showDialog<
+                                                    MealItemSnapshot
+                                                  >(
+                                                    context: context,
+                                                    builder: (_) =>
+                                                        const QuickAddDialog(),
+                                                  );
+                                              if (item != null && mounted) {
+                                                _changeMeal(
+                                                  () => _items.add(item),
+                                                );
+                                              }
+                                            },
                                             icon: const Icon(
-                                              Icons.remove_circle_outline,
+                                              Icons.bolt_outlined,
+                                            ),
+                                            label: const Text(
+                                              'Nhập nhanh kcal',
                                             ),
                                           ),
                                         ],
                                       ),
+                                      const SizedBox(height: 16),
+                                      ExpansionTile(
+                                        key: const ValueKey(
+                                          'meal-diet-options',
+                                        ),
+                                        tilePadding: EdgeInsets.zero,
+                                        title: const Text('Bộ lọc món'),
+                                        children: [_dietFilter()],
+                                      ),
+                                      const SizedBox(height: 12),
+                                      if (widget.avoidance.isActive)
+                                        Text(
+                                          'Đang tránh: ${widget.avoidance.label}',
+                                        ),
+                                      const SizedBox(height: 12),
                                     ],
                                   ),
-                                const Divider(),
-                                FoodNutritionSummary(value: totals),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          OutlinedButton.icon(
-                            key: const ValueKey('scan-barcode'),
-                            onPressed: saving || _discarding
-                                ? null
-                                : _openBarcodeScanner,
-                            icon: const Icon(Icons.qr_code_scanner),
-                            label: const Text('Quét mã vạch'),
-                          ),
-                          OutlinedButton.icon(
-                            key: const ValueKey('open-quick-add'),
-                            onPressed: () async {
-                              ScaffoldMessenger.of(
-                                context,
-                              ).hideCurrentSnackBar();
-                              if (_items.length >= 5) {
-                                setState(
-                                  () => _error = 'Mỗi bản ghi tối đa 5 món.',
-                                );
-                                return;
-                              }
-                              final item = await showDialog<MealItemSnapshot>(
-                                context: context,
-                                builder: (_) => const QuickAddDialog(),
-                              );
-                              if (item != null && mounted) {
-                                _changeMeal(() => _items.add(item));
-                              }
-                            },
-                            icon: const Icon(Icons.bolt_outlined),
-                            label: const Text('Nhập nhanh kcal'),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      _dietFilter(),
-                      const SizedBox(height: 12),
-                      if (widget.avoidance.isActive)
-                        Text('Đang tránh: ${widget.avoidance.label}'),
-                      const SizedBox(height: 12),
-                      if (_scanSearch != null)
-                        TickerMode(
-                          enabled: _entryMode == MealEntryMode.manual,
-                          child: MealFoodSources(
-                            key: ValueKey('scan-search-$_scanSearch'),
-                            initialSearch: _scanSearch!,
-                            diet: _diet,
-                            avoidance: widget.avoidance,
-                            onCatalog: _add,
-                            onRecent: _addRecent,
-                            onCustom: _addCustomFood,
-                          ),
-                        )
-                      else if (widget.sourcesBuilder != null)
-                        TickerMode(
-                          enabled: _entryMode == MealEntryMode.manual,
-                          child: widget.sourcesBuilder!(
-                            _add,
-                            _addRecent,
-                            _addCustomFood,
-                            _diet,
-                            widget.avoidance,
-                          ),
-                        )
-                      else ...[
-                        if (widget.recentItems.isNotEmpty) ...[
-                          Text(
-                            'Món gần đây',
-                            style: theme.textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: [
-                              for (final item in widget.recentItems)
-                                ActionChip(
-                                  key: ValueKey('recent-food-${item.foodId}'),
-                                  avatar: const Icon(
-                                    Icons.history_rounded,
-                                    size: 18,
+                                ),
+                              if (widget.avoidance.isActive)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: Text(
+                                    'Đang tránh: ${widget.avoidance.label}',
+                                    style: theme.textTheme.bodySmall,
                                   ),
-                                  label: Text(item.name),
-                                  onPressed: () => _addRecent(item),
+                                ),
+                              if (_scanSearch != null)
+                                TickerMode(
+                                  enabled: _entryMode == MealEntryMode.manual,
+                                  child: MealFoodSources(
+                                    key: ValueKey('scan-search-$_scanSearch'),
+                                    initialSearch: _scanSearch!,
+                                    diet: _diet,
+                                    avoidance: widget.avoidance,
+                                    onCatalog: _add,
+                                    onRecent: _addRecent,
+                                    onCustom: _addCustomFood,
+                                  ),
+                                )
+                              else if (widget.sourcesBuilder != null)
+                                TickerMode(
+                                  enabled: _entryMode == MealEntryMode.manual,
+                                  child: widget.sourcesBuilder!(
+                                    _add,
+                                    _addRecent,
+                                    _addCustomFood,
+                                    _diet,
+                                    widget.avoidance,
+                                  ),
+                                )
+                              else ...[
+                                if (widget.recentItems.isNotEmpty) ...[
+                                  Text(
+                                    'Món gần đây',
+                                    style: theme.textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children: [
+                                      for (final item in widget.recentItems)
+                                        ActionChip(
+                                          key: ValueKey(
+                                            'recent-food-${item.foodId}',
+                                          ),
+                                          avatar: const Icon(
+                                            Icons.history_rounded,
+                                            size: 18,
+                                          ),
+                                          label: Text(item.name),
+                                          onPressed: () => _addRecent(item),
+                                        ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 24),
+                                ],
+                                ...MealCatalogSource(
+                                  state: _foodSearch.state,
+                                  searchController: _searchController,
+                                  onRetry: _performUnifiedSearch,
+                                  onCustom: _addCustomFood,
+                                  onSelect: _selectSearchResult,
+                                  onMore: _foodSearch.showMore,
+                                ).buildChildren(context),
+                              ],
+                              const HelpDetails(
+                                title: 'Lưu ý khi ghi bữa',
+                                children: [
+                                  Text(
+                                    'Mỗi bản ghi tối đa 5 món. Nhập lượng đã ăn theo gram; khẩu phần tô/chén chỉ là tham khảo. Bộ lọc ẩn món cần tránh và món chưa rõ thành phần; vẫn cần kiểm tra nhãn thực tế.',
+                                  ),
+                                ],
+                              ),
+                              if (widget.templatesBuilder != null)
+                                DetailsDisclosure(
+                                  title: 'Bữa ăn đã lưu',
+                                  builder: (_) => widget.templatesBuilder!(
+                                    _items,
+                                    (items) {
+                                      if (_items.length + items.length >
+                                          NutritionValidation.maxItemsPerMeal) {
+                                        setState(
+                                          () => _error =
+                                              'Tổng tối đa 5 món. Bỏ bớt món đã chọn hoặc dùng bữa mẫu trong bản ghi mới.',
+                                        );
+                                        return;
+                                      }
+                                      _changeMeal(() {
+                                        _items.addAll(items);
+                                        _error = null;
+                                      });
+                                    },
+                                  ),
                                 ),
                             ],
                           ),
-                          const SizedBox(height: 24),
-                        ],
-                        ...MealCatalogSource(
-                          state: _foodSearch.state,
-                          searchController: _searchController,
-                          onRetry: _performUnifiedSearch,
-                          onCustom: _addCustomFood,
-                          onSelect: _selectSearchResult,
-                          onMore: _foodSearch.showMore,
-                        ).buildChildren(context),
-                      ],
-                      const HelpDetails(
-                        title: 'Lưu ý khi ghi bữa',
-                        children: [
-                          Text(
-                            'Mỗi bản ghi tối đa 5 món. Nhập lượng đã ăn theo gram; khẩu phần tô/chén chỉ là tham khảo. Bộ lọc ẩn món cần tránh và món chưa rõ thành phần; vẫn cần kiểm tra nhãn thực tế.',
-                          ),
-                        ],
+                        ),
                       ),
-                      if (widget.templatesBuilder != null)
-                        widget.templatesBuilder!(_items, (items) {
-                          if (_items.length + items.length >
-                              NutritionValidation.maxItemsPerMeal) {
-                            setState(
-                              () => _error =
-                                  'Tổng tối đa 5 món. Bỏ bớt món đã chọn hoặc dùng bữa mẫu trong bản ghi mới.',
-                            );
-                            return;
-                          }
-                          _changeMeal(() {
-                            _items.addAll(items);
-                            _error = null;
-                          });
-                        }),
+                      if (_photoVisited && scannerEnabled)
+                        FoodScannerDialog(
+                          catalog: widget.catalog,
+                          embedded: true,
+                          active: _entryMode == MealEntryMode.photo,
+                          onSelected: _acceptScan,
+                          onBarcode: _openBarcodeScanner,
+                          onSearch: () =>
+                              _switchEntryMode(MealEntryMode.manual),
+                        )
+                      else if (_entryMode == MealEntryMode.photo)
+                        Center(
+                          child: SingleChildScrollView(
+                            padding: const EdgeInsets.all(24),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text('Phân tích ảnh đang tạm tắt.'),
+                                const SizedBox(height: 16),
+                                FilledButton(
+                                  onPressed: () =>
+                                      _switchEntryMode(MealEntryMode.manual),
+                                  child: const Text(
+                                    'Tìm món hoặc nhập thủ công',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      else
+                        const SizedBox.shrink(),
+                      if (_favoritesVisited)
+                        MealFavoritesSource(
+                          filter: _dietFilter(),
+                          diet: _diet,
+                          avoidance: widget.avoidance,
+                          onCatalog: (food) async {
+                            final before = _items.length;
+                            await _add(food);
+                            if (mounted && _items.length > before) {
+                              _switchEntryMode(MealEntryMode.manual);
+                            }
+                          },
+                          onRecent: _addRecent,
+                          onCustom: _addCustomFood,
+                        )
+                      else
+                        const SizedBox.shrink(),
                     ],
                   ),
                 ),
-              ),
-              if (_photoVisited && scannerEnabled)
-                FoodScannerDialog(
-                  catalog: widget.catalog,
-                  embedded: true,
-                  active: _entryMode == MealEntryMode.photo,
-                  onSelected: _acceptScan,
-                  onBarcode: _openBarcodeScanner,
-                )
-              else
-                const SizedBox.shrink(),
-              if (_favoritesVisited)
-                MealFavoritesSource(
-                  filter: _dietFilter(),
-                  diet: _diet,
-                  avoidance: widget.avoidance,
-                  onCatalog: (food) async {
-                    final before = _items.length;
-                    await _add(food);
-                    if (mounted && _items.length > before) {
-                      _switchEntryMode(MealEntryMode.manual);
-                    }
-                  },
-                  onRecent: _addRecent,
-                  onCustom: _addCustomFood,
-                )
-              else
-                const SizedBox.shrink(),
-            ],
+              ],
+            ),
           ),
         ),
       ),

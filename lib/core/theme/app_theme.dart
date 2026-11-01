@@ -16,30 +16,27 @@ abstract final class AppTheme {
           seedColor: ReferencePalette.blue,
           brightness: brightness,
         ).copyWith(
-          // Deeper button/link blue keeps small text readable on white.
-          primary: isLight ? const Color(0xFF2463D4) : const Color(0xFFA9C7FF),
-          onPrimary: isLight ? Colors.white : const Color(0xFF10264D),
-          surface: isLight ? const Color(0xFFFDFCFD) : const Color(0xFF2D3445),
+          primary: isLight ? ReferencePalette.brand : const Color(0xFF8CDBB9),
+          onPrimary: isLight ? Colors.white : const Color(0xFF073B28),
+          surface: isLight ? Colors.white : const Color(0xFF202B26),
           onSurface: isLight ? ReferencePalette.ink : const Color(0xFFF5F6FA),
           onSurfaceVariant: isLight
               ? ReferencePalette.muted
-              : const Color(0xFFB8C1D3),
-          outline: isLight ? const Color(0xFF80848F) : const Color(0xFF8792AA),
+              : const Color(0xFFBCCBC3),
+          outline: isLight ? const Color(0xFF78877F) : const Color(0xFF879B90),
           outlineVariant: isLight
               ? const Color(0xFFDEDFE3)
-              : const Color(0xFF465169),
+              : const Color(0xFF41564A),
           surfaceContainerLowest: isLight
-              ? const Color(0xD9FFFFFF)
-              : const Color(0xE62D3445),
+              ? Colors.white
+              : const Color(0xFF202B26),
           surfaceContainerLow: isLight
-              ? const Color(0xBFFFFFFF)
-              : const Color(0xFF343D50),
-          surfaceContainer: isLight
-              ? const Color(0xD9FFFFFF)
-              : const Color(0xFF343D50),
+              ? const Color(0xFFF6F8F7)
+              : const Color(0xFF29372F),
+          surfaceContainer: isLight ? Colors.white : const Color(0xFF29372F),
           surfaceContainerHighest: isLight
-              ? const Color(0xFFE2E5EC)
-              : const Color(0xFF465169),
+              ? const Color(0xFFE5EDE8)
+              : const Color(0xFF41564A),
           error: isLight ? const Color(0xFFBA2432) : const Color(0xFFFFAEB7),
         );
     final base = ThemeData(
@@ -64,7 +61,7 @@ abstract final class AppTheme {
       textTheme: text.copyWith(
         displayLarge: text.displayLarge?.copyWith(
           fontSize: 44,
-          fontWeight: FontWeight.w400,
+          fontWeight: FontWeight.w600,
         ),
         displayMedium: text.displayMedium?.copyWith(
           fontSize: 38,

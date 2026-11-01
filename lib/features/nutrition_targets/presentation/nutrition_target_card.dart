@@ -119,7 +119,7 @@ class NutritionTargetCard extends ConsumerWidget {
               if (value.hasMacros) ...[
                 if (meals == null)
                   Text(
-                    'Đạm ${number.format(value.proteinGTarget)} · Tinh bột ${number.format(value.carbsGTarget)} · Béo ${number.format(value.fatGTarget)} g/ngày',
+                    'Đạm ${number.format(value.proteinGTarget)} · Carb ${number.format(value.carbsGTarget)} · Chất béo ${number.format(value.fatGTarget)} g/ngày',
                   )
                 else ...[
                   line(
@@ -129,13 +129,13 @@ class NutritionTargetCard extends ConsumerWidget {
                     'g',
                   ),
                   line(
-                    'Tinh bột',
+                    'Carb',
                     value.carbsGTarget!,
                     totals?.carbsKnown == false ? null : totals?.carbsG,
                     'g',
                   ),
                   line(
-                    'Béo',
+                    'Chất béo',
                     value.fatGTarget!,
                     totals?.fatKnown == false ? null : totals?.fatG,
                     'g',

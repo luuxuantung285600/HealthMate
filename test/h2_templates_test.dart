@@ -66,7 +66,9 @@ void main() {
             MealTemplate(id: 'pending-a', name: 'A draft', items: [item]),
             create: true,
           );
-      auth.emitUser(const AuthUser(emailVerified: true, uid: 'b', email: 'b@example.com'));
+      auth.emitUser(
+        const AuthUser(emailVerified: true, uid: 'b', email: 'b@example.com'),
+      );
       await Future<void>.delayed(Duration.zero);
       await Future<void>.delayed(Duration.zero);
       repo.gate!.complete();

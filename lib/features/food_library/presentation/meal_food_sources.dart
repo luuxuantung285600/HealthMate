@@ -566,7 +566,7 @@ class _MealFoodSourcesState extends ConsumerState<MealFoodSources> {
             title: Text(item.name),
             subtitle: Text(
               item.hasNutritionData
-                  ? '${snapshotQuantityLabel(item)} · ${item.nutrition.kcal.toStringAsFixed(0)} kcal · ${item.sourceLabel}${item.isEstimated ? ' · Ước tính' : ''}${item.nutrition.hasCompleteMacros ? '' : ' · Chưa đủ ba chất'}'
+                  ? '${snapshotQuantityLabel(item)} · ${item.nutrition.kcal.toStringAsFixed(0)} kcal${item.isEstimated ? ' · Ước tính' : ''}${item.nutrition.hasCompleteMacros ? '' : ' · Chưa đủ ba chất'}'
                         '${frequent ? ' · ${ranked.singleWhere((r) => identical(r.item, item)).count} bản ghi' : ''}'
                   : 'Snapshot thiếu dữ liệu dinh dưỡng; hãy chọn lại từ nguồn bạn xác nhận.',
             ),
@@ -747,15 +747,16 @@ class _MealFoodSourcesState extends ConsumerState<MealFoodSources> {
               ],
             ),
           ),
-        const SizedBox(height: 12),
-        const SizedBox(height: 8),
-        OutlinedButton.icon(
-          key: const ValueKey('add-custom-food'),
-          onPressed: widget.onCustom,
-          icon: const Icon(Icons.edit_note),
-          label: const Text('Tự nhập món'),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            key: const ValueKey('add-custom-food'),
+            onPressed: widget.onCustom,
+            icon: const Icon(Icons.edit_note),
+            label: const Text('Tự nhập món'),
+          ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
         if ((widget.diet != FoodDietPreference.general ||
                 widget.avoidance.isActive) &&
             _source != _FoodSource.search)

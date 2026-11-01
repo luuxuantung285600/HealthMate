@@ -68,6 +68,64 @@ Future<void> openProfileFromShell(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
+Future<void> openWellnessFromShell(WidgetTester tester) async {
+  await openProfileFromShell(tester);
+  final link = find.byKey(const ValueKey('open-wellness'));
+  await tester.ensureVisible(link);
+  await tester.pumpAndSettle();
+  await tester.tap(link);
+  await tester.pumpAndSettle();
+}
+
+Future<void> openMealTools(WidgetTester tester) async {
+  final toggle = find.byKey(const ValueKey('meal-more-tools'));
+  if (toggle.evaluate().isEmpty) return;
+  final icon = tester.widget<IconButton>(toggle).icon as Icon;
+  if (icon.icon == Icons.more_horiz) {
+    await tester.tap(find.byKey(const ValueKey('meal-more-tools')));
+    await tester.pump(const Duration(milliseconds: 300));
+  }
+}
+
+Future<void> openSelectedMealItems(WidgetTester tester) async {
+  if (find.byTooltip('Sửa khẩu phần').evaluate().isNotEmpty) return;
+  final selected = find.byKey(const ValueKey('selected-meal-items'));
+  await tester.ensureVisible(selected);
+  await tester.pumpAndSettle();
+  await tester.tap(
+    find
+        .descendant(of: selected, matching: find.textContaining('Đã chọn'))
+        .first,
+  );
+  await tester.pumpAndSettle();
+}
+
+Future<void> selectHomeDate(
+  WidgetTester tester,
+  DateTime day, {
+  bool settle = true,
+}) async {
+  await tester.tap(find.byKey(const ValueKey('today-date-picker')));
+  await tester.pump(const Duration(milliseconds: 300));
+  Navigator.of(tester.element(find.byType(DatePickerDialog))).pop(day);
+  if (settle) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump(const Duration(milliseconds: 300));
+  }
+}
+
+Future<void> openActivityDetails(WidgetTester tester) async {
+  final section = find.byKey(const ValueKey('journal-activity-details'));
+  if (find.byKey(const ValueKey('add-activity')).evaluate().isNotEmpty) return;
+  await tester.ensureVisible(section);
+  await tester.pumpAndSettle();
+  await tester.tap(
+    find.descendant(of: section, matching: find.text('Vận động')).first,
+  );
+  await tester.pumpAndSettle();
+}
+
 Finder journalTotals(String text) => find.byWidgetPredicate(
   (w) =>
       w is Text &&

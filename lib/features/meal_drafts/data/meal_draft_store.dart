@@ -122,16 +122,53 @@ class MealDraftStore {
 
   Future<void> _write(String uid, List<SavedMealDraft> drafts) async {
     if (_blocked.contains(uid)) throw StateError('Tài khoản đang được xóa.');
+    final previous = await _envelope(uid);
     final raw = jsonEncode({
       'schema': 1,
       'uid': uid,
       'drafts': [for (final d in drafts) d.toJson()],
+      if (previous['onboarding'] != null) 'onboarding': previous['onboarding'],
     });
     if (utf8.encode(raw).length > 512 * 1024) {
       throw StateError('Nháp quá lớn; hãy bỏ các nháp không cần thiết.');
     }
     await local.write(uid, raw);
   }
+
+  Future<Map<String, dynamic>> _envelope(String uid) async {
+    final raw = await local.read(uid);
+    if (raw == null) return {'schema': 1, 'uid': uid, 'drafts': []};
+    final data = Map<String, dynamic>.from(jsonDecode(raw) as Map);
+    if (data['schema'] != 1 || data['uid'] != uid) {
+      throw const FormatException('Không đọc được nháp của tài khoản này.');
+    }
+    return data;
+  }
+
+  Future<Map<String, dynamic>?> readOnboarding(String uid) => _serial(() async {
+    final value = (await _envelope(uid))['onboarding'];
+    return value == null ? null : Map<String, dynamic>.from(value as Map);
+  });
+
+  /// Shares the encrypted UID envelope and queue with meal drafts, so neither
+  /// form can overwrite the other's data. Account deletion clears both.
+  Future<void> writeOnboarding(String uid, Map<String, Object?>? value) =>
+      _serial(() async {
+        if (_blocked.contains(uid)) {
+          throw StateError('Tài khoản đang được xóa.');
+        }
+        final envelope = await _envelope(uid);
+        if (value == null) {
+          envelope.remove('onboarding');
+        } else {
+          envelope['onboarding'] = value;
+        }
+        final raw = jsonEncode(envelope);
+        if (utf8.encode(raw).length > 512 * 1024) {
+          throw StateError('Nháp quá lớn; hãy bỏ các nháp không cần thiết.');
+        }
+        await local.write(uid, raw);
+      });
 
   Future<List<SavedMealDraft>> list(String uid) => _serial(() => _read(uid));
   Future<void> put(String uid, SavedMealDraft draft) => _serial(() async {

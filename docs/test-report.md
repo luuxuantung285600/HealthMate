@@ -1,6 +1,208 @@
 # Giai đoạn 10 — Báo cáo kiểm thử và rà soát MVP
 
-Bản kiểm chứng mới nhất: Gói 8–10 ngày 31/10/2026 ở cuối tài liệu; Flutter803/803, Rules127/127, SDK52/52. Gói10 chưa nghiệm thu signed release/native. Các mục dưới đây giữ lịch sử theo ngày.
+Bản kiểm chứng mới nhất: thu gọn giao diện dinh dưỡng ngày 01/11/2026 dưới đây. Gói10 chưa
+nghiệm thu signed release/native. Các mục trước giữ lịch sử theo ngày.
+
+## 02/11/2026 — Kiểm tra chuẩn bị push GitHub
+
+- `node tool/audit_source_secrets.cjs`:613 source text files,0 findings;
+  không quét credential store hoặc tuyên bố đã audit APK.
+- `node --test tool/prepare_vscode_android.test.cjs`: **5/5 qua**,0 skip trên
+  Windows; log `build/github-push-launcher-tests-20261102.log`.
+- CI source chạy Linux không có `powershell.exe`. Bốn ca thực thi helper
+  được đánh dấu đúng nền tảng và job `windows-launcher` mới chạy đủ5 ca
+  trên `windows-latest`; ca wiring thuần source vẫn chạy trên cả hai hệ.
+  Chưa chứng nhận hosted CI bằng kết quả local.
+- `git diff --check` và kiểm tra staged diff qua. Không thay Dart từ lượt
+  UI đã kiểm944/944 bên dưới nên không chạy lại toàn Flutter/Android trong
+  lượt push. Không deploy Firebase hoặc phát hành ứng dụng.
+
+## 01/11/2026 — Thu gọn giao diện dinh dưỡng
+
+- Full `flutter test --dart-define=UX_CAPTURE_DIR=build/nutrition-ui-20261101/after
+  --reporter json`: **944/944 qua**, 0 lỗi, 0 bỏ qua; 91,878 giây theo test
+  runner. Log `build/nutrition-ui-tests-current.jsonl`, kết thúc `success: true`.
+- `flutter analyze`: **No issues found**, 7,8 giây. Log
+  `build/nutrition-ui-analyze-current.log`.
+- Đã chạy `dart format lib test`, rồi kiểm định dạng103 file Dart thay đổi:
+  **0 thay đổi**, log `build/nutrition-ui-format-final.log`;
+  `git -c core.safecrlf=false diff --check` qua. Không giữ thay đổi format
+  khoảng trắng cuối file `lib/main.dart` vì file đó ngoài phạm vi.
+- Giữ các assertion nghiệp vụ khi đổi đường vào form: ngày cũ, loại bữa,
+  khẩu phần/tổng kcal, lưu sửa/xóa/copy, single-flight, lỗi mạng/retry,
+  nháp phục hồi, chặn UID thay đổi, camera consent và nguồn tìm kiếm.
+  Lối vào thói quen qua Cá nhân có kiểm tra Back từ chi tiết về hub rồi
+  về Cá nhân. Sửa cân từ Cá nhân được kiểm tra cập nhật lại Tiến độ.
+- Các test bố cục hiện có kiểm tra 320/390/412 × chữ1/1,5/2 × sáng/tối,
+  bàn phím mô phỏng và nút chính. Sáu capture widget với fixture cố định
+  qua trong full suite; ảnh 390×844, chữ100%, sáng. Đã xem Hôm nay/Nhật ký/
+  thêm món. [Gallery](ux/nutrition-simple-2026-11-01/index.html).
+
+Các lượt đầu phát hiện test phụ thuộc menu cũ, key `nav-profile` trùng giữa
+avatar/tab, nhịp pump khi mở tab camera và Back thói quen khi mở từ Cá nhân.
+Đã cập nhật kiểm thử theo thao tác UI mới, tách key avatar, sửa Back nội bộ
+và giữ những assertion lưu dữ liệu. Kiểm tra còn phát hiện thiếu invalidate
+báo cáo tuần sau sửa/xóa cân trong Cá nhân; đã bổ sung. Lượt full trước lần
+chốt nhãn ngày cũ/nguồn snapshot cũng qua944/944, nhưng bằng chứng cuối là
+`nutrition-ui-tests-current.jsonl` sau các sửa cuối. Log lỗi trung gian giữ
+tại `build/nutrition-ui-tests-*.jsonl`, không mô tả là các lượt qua.
+
+Chưa chạy lại Android, cài APK hoặc thao tác dữ liệu thật theo lựa chọn
+người dùng tự test thiết bị. Không build APK trong lượt UI, không deploy
+hoặc push. Không dùng widget fixtures làm bằng chứng Firebase/Android thật.
+Không thay Rules/backend, hạn mức hoặc xử lý các blocker production cũ.
+
+## 01/11/2026 — Rules startup và cấu hình F5
+
+- Đọc metadata/Rules production bằng CLI credential hiện có; không đọc dữ
+  liệu sức khỏe. Xác nhận thiếu `account_deletions` trong Rules đang chạy;
+  tái hiện owner-get bị từ chối với chính baseline trên emulator.
+- `node --test tool/prepare_vscode_android.test.cjs`: **5/5 pass**.
+- `flutter test --no-pub --dart-define-from-file=config/admin-runtime.json
+  --dart-define=HEALTHMATE_VERIFY_ADMIN_BUILD=true test/admin_runtime_test.dart`:
+  **7/7 pass**, bao gồm fail-closed/suspension/maintenance/listener retry;
+  log `build/vscode-admin-runtime-tests.log`.
+- Firestore-only emulator project **demo-healthmate-access**, port8093:
+  `node --test rules-tests/access_hotfix.emulator.cjs`: **7/7 pass**;
+  baseline-deny, owner-get absent/present, UID/verified/guest/list/write,
+  product privacy và suspension; xác nhận candidate chỉ thêm một match.
+  Log `build/firebase-access-hotfix-emulator.log`; emulator task đã dừng.
+- `flutter build apk --debug --no-pub` với private defines file đúng F5:
+  **thành công**, Gradle26,8 giây. Log `build/vscode-android-debug-build.log`.
+- Secret source audit không có finding; diff check qua. Không thay Dart nên
+  không chạy lại format/analyze/full Flutter suite trong lượt cấu hình này.
+
+Người dùng duyệt deploy qua câu trả lời **Áp dụng bản vá lên Firebase**.
+Đã đọc lại production baseline trước deploy, không thay đổi so với backup;
+deploy **chỉ firestore:rules** với config candidate riêng tới project
+`healthmate-app-20261013`: thành công. Tải lại toàn bộ source sau deploy,
+chuẩn hóa và so sánh: khớp candidate đã kiểm thử. Hash đang chạy:
+`b062a8c0620c83f40a41c33196f14b2d218fd9e134a827aeec9b4d2e697d6bfc`.
+Log deploy `build/firebase-access-hotfix-deploy.log`, metadata hậu kiểm ở
+`build/firebase-access-postdeploy-20261101/metadata.json`.
+
+Chưa chạy lại luồng native theo lựa chọn người dùng tự test. Logcat thiết bị
+chỉ trả buffer header nên không lấy đó làm bằng chứng lỗi/kết quả trên máy.
+Không deploy root candidate Rules hoặc thay dữ liệu người dùng; chỉ vá quyền
+get chính UID đã xác minh, vẫn chặn list/write/cross UID. Workflow deletion và
+rollout các gói khác chưa được bật bởi bản vá này. Chi tiết:
+[báo cáo sửa truy cập](firebase-access-fix-2026-11-01.md).
+
+## 01/11/2026 — Sửa Gradle build Android
+
+- Trước sửa: `android/gradlew.bat help --offline --console=plain` tái hiện
+  `Unresolved reference 'io'` ở dòng tạo File; log
+  `build/android-gradle-before.log`. Accessor `android {}` cũng báo deprecated.
+- Sửa `android/app/build.gradle.kts`: import/call `File` tránh extension
+  `java` che package; dùng `extensions.configure<ApplicationExtension>`.
+  Đối chiếu AGP9 release notes chính thức và public interface trong SDK đã cài.
+  Giữ flags tương thích Flutter/plugin, versions và toàn bộ release gates.
+- Sau sửa: `gradlew.bat help --offline --console=plain` **BUILD SUCCESSFUL**,
+  15 giây; log `build/android-gradle-config-fixed.log`.
+- `flutter build apk --debug --no-pub`: **thành công**, Gradle48,3 giây;
+  log `build/android-debug-build-fixed.log`; APK mới tại
+  `build/app/outputs/flutter-apk/app-debug.apk` (237.024.298 bytes).
+- `node --test tool/release_preflight.test.cjs`: **6/6 pass**.
+- `gradlew.bat :app:assembleRelease --dry-run --offline --console=plain`:
+  **từ chối đúng** với `HealthMate release signing is not configured`;
+  log `build/android-release-guard-fixed.log`. Đây là kiểm tra gate, không phải
+  release build thành công hoặc nghiệm thu khóa ký.
+- `git -c core.safecrlf=false diff --check`: qua. Không thay Dart nên không
+  chạy lại format/analyze/full Flutter suite trong lượt sửa Gradle này;
+  kết quả943 test bên dưới thuộc lượt Auth trước đó.
+
+Không cài APK/chạy lại luồng điện thoại theo lựa chọn người dùng tự test.
+Cảnh báo KGP/built-in Kotlin từ plugins vẫn còn nhưng không chặn debug build;
+không nâng cấp hàng loạt dependencies để xử lý cảnh báo ngoài phạm vi.
+Không thay signing/config riêng tư, dữ liệu production, deploy hoặc push.
+
+## 01/11/2026 — UX tài khoản: đăng nhập/đăng ký và phục hồi
+
+- Full `flutter test --no-pub --dart-define=UX_CAPTURE_DIR=build/auth-ux-20261101/after
+  --reporter=expanded`: **943/943 pass**, 1 phút34giây. Log:
+  `D:\HealthMateMaintenanceQA\ux-20261101\auth-full-final.log`.
+- `flutter analyze --no-pub`: **No issues found**, 16,3 giây; log
+  `D:\HealthMateMaintenanceQA\ux-20261101\auth-analyze-final.log`.
+- Format10 file Dart của lượt Auth: **0 thay đổi** sau định dạng;
+  `git -c core.safecrlf=false diff --check` qua.
+- Thêm26 ca `ux_auth_flow_test.dart`: chuyển chế độ/giữ email/xóa mật khẩu,
+  Back, focus/Next/Done, lỗi mạng giữ form, reset và lỗi riêng, single-flight,
+  Google cancellation/progress, guideline vùng chạm/nhãn và18 cấu hình màn
+  320/390/412 × scale1/1,5/2 × sáng/tối có viewInsets bàn phím mô phỏng.
+- Thêm5 capture mặc định, nằm trong943 ca. Baseline5/5; stress capture
+  320×844/chữ200%/nền tối5/5. Ảnh trước/sau390×844, chữ100%, nền sáng:
+  [luồng tài khoản](ux/auth-2026-11-01/index.html).15 PNG/hashes và các đường
+  dẫn ảnh trong gallery đã kiểm tra. Đây là widget/fake-repository evidence.
+
+### Lỗi trung gian và sửa thực tế
+
+- Focused run đầu63 pass/1 fail vì sau gửi reset, nút gửi lại chuyển từ
+  FilledButton sang TextButton; sửa selector, giữ assertion cooldown.
+- Test mới ban đầu đọc focusNode từ TextFormField thay vì TextField con;
+  sửa helper. SemanticsHandle phải giải phóng trước khi test kết thúc;
+  chuyển sang try/finally. Đây là lỗi harness, không nới nghiệp vụ.
+- Xem ảnh320/chữ200% phát hiện tên thương hiệu bị bẻ giữa từ và label nhập
+  lại mật khẩu có ellipsis dù không overflow. Sửa layout thương hiệu bằng
+  Wrap và label widget hỗ trợ nhiều dòng; đã chụp lại và xem trực quan.
+- Full run đầu942 pass/1 fail do test chờ hồ sơ còn kỳ vọng câu copy cũ.
+  Đổi sang câu mới, giữ timeout/AsyncError/retry/no-spinner assertions;
+  chạy lại full943/943. Log đầu giữ ở `auth-full-first.log` cùng thư mục QA.
+
+Chưa chạy lại Android/TalkBack/Google và nhận thư thật hoặc build APK, theo
+lựa chọn người dùng tự test thiết bị. Không đổi repository/Rules/config/
+dependencies; không deploy, production write hay tắt laptop. Chi tiết phạm vi:
+[báo cáo Auth UX](auth-ux-2026-11-01.md).
+
+## 01/11/2026 — UX/UI, kiểm chứng tích hợp
+
+- Baseline Git: `46dccf642f4dff8b51b31cc044f1a1b46cf9a1c2`.
+- `flutter test --no-pub`: **912/912 pass**, 2 phút20giây. Log:
+  `D:\HealthMateMaintenanceQA\ux-20261101\flutter-full-final.log`.
+- `flutter analyze --no-pub`: **No issues found**. Log cuối:
+  `D:\HealthMateMaintenanceQA\ux-20261101\analyze-final-verified.log`.
+- `dart format --output=none --set-exit-if-changed <58 file Dart thay đổi>`:
+  **0 thay đổi**; `git -c core.safecrlf=false diff --check` qua.
+- Bộ mới109 test: Home/Diary21, onboarding24, meal recovery23,
+  charts/Profile36, captures5. Có ma trận320/390/412 × scale1/1,5/2 ×
+  light/dark cho Home/Diary/onboarding/meal/chart/Profile. Keyboard ở đây
+  mô phỏng viewInsets, không phải bàn phím hệ thống Android.
+- Capture baseline riêng từ Git archive và capture source: **5/5 mỗi bên**,
+  cùng font/fixture390×844. PNG gốc, ảnh ghép và manifest:
+  [5 cặp trước/sau](ux/2026-11-01/index.html).
+- Sau full pass, điều chỉnh tối thiểu vùng chạm macro Home thành48dp;
+  kiểm lại Home/Diary, mfp UI và5 ảnh: **38/38 pass**, 15giây, ở
+  `D:\HealthMateMaintenanceQA\ux-20261101\visual-final.log`.
+
+### Lỗi trung gian và cách xử lý
+
+Lượt full đầu **888 pass/24 fail** do selector/giả định UI cũ: Hủy đổi thành
+Đóng, Save đổi từ TextButton sang FilledButton, bộ lọc được mở theo nhu cầu,
+Profile bỏ daily summaries, Ghi nhanh giữ ngày đang xem, camera production
+được chặn trước consent. Đã cập nhật thao tác kiểm thử tương ứng, giữ kiểm
+tra CRUD/ACK/chống trùng/UID/dị ứng/stale response và listener lifecycle.
+Camera lifecycle được kiểm bằng service khả dụng giả lập; có test riêng
+chứng minh service production unavailable không mở camera/consent.
+
+Widget matrix ban đầu cần cuộn trước khi tìm/chạm child lazy ListView và
+nút fallback ngoài viewport chữ200%. Helper đổi bộ lọc từng mở dropdown
+hai lần khi tile mở mà child đã bị hủy ngoài màn; sửa helper chạm đúng
+header sau khi cuộn, giữ assertion2 requests và loại response cũ.
+Một lượt compile trung gian lỗi tham số fake service lặp; đã sửa fixture.
+Không nới validation hoặc Rules để cho test qua.
+
+Đồng thời sửa lỗi sản phẩm đã phát hiện: Home320/chữ200% bị ép hàng;
+giữ nháp thất bại ở tabẢnh bị ẩn lỗi; Back thiết lập chưa đánh dấu bỏ qua
+nên quay lại gate; controller input chưa rebuild dirty Back trên nền tảng
+không có storage. Các test phục hồi và matrix cuối đều đã qua.
+
+### Giới hạn kiểm chứng
+
+Chưa chạy Rules/SDK/Node suites trong lượt UX vì không sửa Rules, backend,
+Android hay dependency/config tương ứng; không lấy số pass cũ làm test mới.
+Chưa nghiệm thu native/TalkBack/build APK, chưa deploy/production write.
+Người dùng tự test Android. Backend ảnh và blocker release trước đó vẫn
+cần xử lý riêng. Chi tiết file/luồng/giới hạn:
+[báo cáo UX/UI](ux-ui-implementation-2026-11-01.md).
 
 ## 27/10/2026 — Polish UI dinh dưỡng (Giai đoạn tùy chọn 11)
 

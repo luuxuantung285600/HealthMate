@@ -115,7 +115,8 @@ Future<void> _open(
   );
   container.read(appRouterProvider).go(AppRoutes.journal);
   await tester.pumpAndSettle();
-  await _visibleTap(tester, find.byKey(const ValueKey('scan-food')));
+  await _visibleTap(tester, find.byKey(const ValueKey('journal-add-meal')));
+  await _visibleTap(tester, find.byKey(const ValueKey('meal-entry-photo')));
 }
 
 Future<void> _chooseAndConsent(WidgetTester tester) async {
@@ -141,6 +142,7 @@ Future<void> _expectSelectedMeal(
   String grams,
   String kcal,
 ) async {
+  await openSelectedMealItems(tester);
   final row = find.byKey(const ValueKey('selected-meal-item-0'));
   await tester.scrollUntilVisible(
     row,
@@ -726,7 +728,7 @@ void main() {
       expect(scanner.calls, 0);
       await tester.tap(find.byTooltip('Đóng'));
       await tester.pumpAndSettle();
-      await _visibleTap(tester, find.byKey(const ValueKey('add-meal')));
+      await _visibleTap(tester, find.byKey(const ValueKey('journal-add-meal')));
       expect(find.byType(MealFormDialog), findsOneWidget);
     },
   );

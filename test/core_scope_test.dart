@@ -125,12 +125,8 @@ void main() {
             }
             await tester.tap(find.byKey(const ValueKey('quick-add-menu')));
             await tester.pumpAndSettle();
-            for (final action in ['meal', 'water', 'activity', 'weight']) {
-              expect(
-                find.byKey(ValueKey('quick-action-$action')),
-                findsOneWidget,
-              );
-            }
+            expect(find.byType(MealFormDialog), findsOneWidget);
+            expect(find.byKey(const ValueKey('food-search')), findsOneWidget);
             expect(
               find.byKey(const ValueKey('quick-action-scan')),
               findsNothing,
@@ -306,8 +302,6 @@ void main() {
       expect(container.exists(foodImagePickerProvider), isFalse);
       await tester.tap(find.byKey(const ValueKey('quick-add-menu')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('quick-action-meal')));
-      await tester.pumpAndSettle();
       expect(find.byType(MealFormDialog), findsOneWidget);
       expect(find.byKey(const ValueKey('save-meal')), findsOneWidget);
       expect(tester.takeException(), isNull);
@@ -337,7 +331,7 @@ void main() {
       expect(find.byKey(const ValueKey('open-chat')), findsNothing);
       await tester.tap(find.byKey(const ValueKey('quick-add-menu')));
       await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('quick-action-scan')), findsOneWidget);
+      expect(find.byKey(const ValueKey('meal-entry-photo')), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );

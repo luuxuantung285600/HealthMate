@@ -75,7 +75,7 @@ Future<void> _openMeal(
   );
   container.read(appRouterProvider).go(AppRoutes.journal);
   await tester.pumpAndSettle();
-  final add = find.byKey(const ValueKey('add-meal'));
+  final add = find.byKey(const ValueKey('journal-add-meal'));
   await tester.scrollUntilVisible(
     add,
     400,
@@ -109,6 +109,7 @@ void main() {
       );
       container.read(appRouterProvider).go(AppRoutes.journal);
       await tester.pumpAndSettle();
+      if (kind == 'activity') await openActivityDetails(tester);
       final add = find.byKey(ValueKey('add-$kind'));
       await tester.ensureVisible(add);
       await tester.pumpAndSettle();
@@ -146,7 +147,7 @@ void main() {
       expect(repo.attempts, 2);
       expect(
         tester
-            .widget<TextButton>(find.byKey(const ValueKey('save-meal')))
+            .widget<FilledButton>(find.byKey(const ValueKey('save-meal')))
             .onPressed,
         isNull,
       );
@@ -207,6 +208,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('save-meal')));
     await tester.pumpAndSettle();
     expect(find.byType(MealFormDialog), findsOneWidget);
+    await openSelectedMealItems(tester);
     expect(find.textContaining('150 g'), findsWidgets);
     expect(find.textContaining('thử lại'), findsWidgets);
     expect(repo.meals, isEmpty);

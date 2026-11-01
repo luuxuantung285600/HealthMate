@@ -107,7 +107,7 @@ Future<void> openJournal(
   container.read(appRouterProvider).go(AppRoutes.journal);
   container.read(journalDateProvider.notifier).select(DateTime(2026, 10, 16));
   await tester.pumpAndSettle();
-  await tap(tester, find.byKey(const ValueKey('add-meal')));
+  await tap(tester, find.byKey(const ValueKey('journal-add-meal')));
 }
 
 Future<void> fillPersonal(WidgetTester tester) async {
@@ -649,7 +649,13 @@ void main() {
           schemaVersion: p.schemaVersion,
         ),
       );
-      auth.emitUser(const AuthUser(emailVerified: true, uid: 'bob', email: 'bob@example.test'));
+      auth.emitUser(
+        const AuthUser(
+          emailVerified: true,
+          uid: 'bob',
+          email: 'bob@example.test',
+        ),
+      );
       await tester.pumpAndSettle();
       expect(
         container.read(libraryEntryProvider(key)).value!.name,

@@ -74,7 +74,7 @@ void main() {
             .kcalTarget,
         1850,
       );
-      expect(find.text('kcal đã ghi / 1.850 kcal'), findsOneWidget);
+      expect(find.text('Mục tiêu 1.850 kcal'), findsOneWidget);
       // Compare the same fixture day, independent of the machine's current date.
       container
           .read(journalDateProvider.notifier)

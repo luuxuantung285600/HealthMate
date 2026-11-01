@@ -19,6 +19,7 @@ class MealLogSection extends StatelessWidget {
     this.onOpenDrafts,
     required this.onScan,
     this.showScanner = false,
+    this.compact = false,
     required this.onEdit,
     this.onDuplicate,
     required this.onDelete,
@@ -37,6 +38,7 @@ class MealLogSection extends StatelessWidget {
   final VoidCallback? onOpenDrafts;
   final VoidCallback? onScan;
   final bool showScanner;
+  final bool compact;
   final ValueChanged<MealLog> onEdit;
   final ValueChanged<MealLog>? onDuplicate;
   final ValueChanged<MealLog> onDelete;
@@ -54,51 +56,53 @@ class MealLogSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text('Bữa ăn', style: theme.textTheme.titleLarge),
-                ),
-                if (onOpenDrafts != null)
-                  IconButton(
-                    key: const ValueKey('open-meal-drafts'),
-                    onPressed: action.isLoading ? null : onOpenDrafts,
-                    tooltip: 'Bản nháp trên thiết bị',
-                    icon: const Icon(Icons.drafts_outlined),
+            if (!compact)
+              Row(
+                children: [
+                  Expanded(
+                    child: Text('Bữa ăn', style: theme.textTheme.titleLarge),
                   ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                FilledButton(
-                  key: const ValueKey('add-meal'),
-                  onPressed: onAdd,
-                  child: const Row(
-                    children: [
-                      Icon(Icons.add_rounded),
-                      SizedBox(width: AppSpacing.sm),
-                      Expanded(child: Text('Thêm thủ công')),
-                    ],
-                  ),
-                ),
-                if (showScanner) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  FilledButton.tonal(
-                    key: const ValueKey('scan-food'),
-                    onPressed: onScan,
+                  if (onOpenDrafts != null)
+                    IconButton(
+                      key: const ValueKey('open-meal-drafts'),
+                      onPressed: action.isLoading ? null : onOpenDrafts,
+                      tooltip: 'Bản nháp trên thiết bị',
+                      icon: const Icon(Icons.drafts_outlined),
+                    ),
+                ],
+              ),
+            if (!compact) const SizedBox(height: AppSpacing.md),
+            if (!compact)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  FilledButton(
+                    key: const ValueKey('add-meal'),
+                    onPressed: onAdd,
                     child: const Row(
                       children: [
-                        Icon(Icons.camera_alt_outlined),
+                        Icon(Icons.add_rounded),
                         SizedBox(width: AppSpacing.sm),
-                        Expanded(child: Text('Quét món')),
+                        Expanded(child: Text('Thêm thủ công')),
                       ],
                     ),
                   ),
+                  if (showScanner) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    FilledButton.tonal(
+                      key: const ValueKey('scan-food'),
+                      onPressed: onScan,
+                      child: const Row(
+                        children: [
+                          Icon(Icons.camera_alt_outlined),
+                          SizedBox(width: AppSpacing.sm),
+                          Expanded(child: Text('Quét món')),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
-              ],
-            ),
+              ),
             if (action.isLoading) ...[
               const SizedBox(height: AppSpacing.md),
               const LinearProgressIndicator(),
@@ -125,7 +129,7 @@ class MealLogSection extends StatelessWidget {
                 ),
               ),
             ],
-            const Divider(height: AppSpacing.xl),
+            if (!compact) const Divider(height: AppSpacing.xl),
             if (mealsState.isLoading)
               const Row(
                 children: [
@@ -155,7 +159,7 @@ class MealLogSection extends StatelessWidget {
                 ],
               )
             else ...[
-              if (meals.isEmpty)
+              if (!compact && meals.isEmpty)
                 Text(
                   catalog.isEmpty &&
                           !catalogState.hasError &&
@@ -181,7 +185,7 @@ class MealLogSection extends StatelessWidget {
                             key: ValueKey('meal-group-${type.name}'),
                           ),
                           Text(
-                            '${integer.format(totalMealNutrition(meals.where((meal) => meal.type == type)).kcal.round())} kcal · ${meals.where((meal) => meal.type == type).length} bản ghi',
+                            '${integer.format(totalMealNutrition(meals.where((meal) => meal.type == type)).kcal.round())} kcal',
                           ),
                         ],
                       ),
@@ -201,7 +205,15 @@ class MealLogSection extends StatelessWidget {
                   ],
                 ),
                 if (!meals.any((meal) => meal.type == type))
-                  const Text('Chưa có ghi nhận cho bữa này.'),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Text(
+                      'Chưa ghi món',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
                 ...meals
                     .where((meal) => meal.type == type)
                     .map(
@@ -241,27 +253,14 @@ class _MealTile extends StatelessWidget {
     final integer = NumberFormat.decimalPattern('vi_VN');
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: const CircleAvatar(child: Icon(Icons.restaurant_outlined)),
       title: Text(
-        '${meal.type.label} · ${integer.format(meal.totals.kcal.round())} kcal',
+        meal.items
+            .map((item) => '${item.name} · ${snapshotQuantityLabel(item)}')
+            .join('\n'),
       ),
-      subtitle: Padding(
-        padding: const EdgeInsets.only(top: 8, bottom: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 8,
-          children: [
-            Text(
-              '${DateFormat('dd/MM/yyyy').format(meal.consumedAt)}, '
-              '${DateFormat('HH:mm').format(meal.consumedAt)}',
-            ),
-            for (final item in meal.items)
-              Text('${item.name} · ${snapshotQuantityLabel(item)}'),
-            FoodNutritionSummary(value: meal.totals, showEnergy: false),
-            if (meal.source == MealSource.aiAssisted)
-              const Text('Có hỗ trợ nhận diện'),
-          ],
-        ),
+      onTap: onEdit,
+      subtitle: Text(
+        '${DateFormat('HH:mm').format(meal.consumedAt)} · ${integer.format(meal.totals.kcal.round())} kcal${meal.items.any((i) => i.isEstimated) ? ' · Ước tính' : ''}',
       ),
       titleAlignment: ListTileTitleAlignment.top,
       trailing: PopupMenuButton<String>(

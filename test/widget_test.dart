@@ -16,8 +16,8 @@ void main() {
       dashboardNow: DateTime(2026, 10, 13, 9),
     );
     expect(find.byKey(const ValueKey('dashboard-screen')), findsOneWidget);
-    expect(find.text('Chào buổi sáng, Tester'), findsOneWidget);
-    expect(find.byKey(const ValueKey('dashboard-empty')), findsOneWidget);
+    expect(find.text('Hôm nay'), findsNWidgets(2));
+    expect(find.text('Chưa ghi món'), findsNWidgets(4));
     expect(find.textContaining('sẽ có trong các bản tiếp theo'), findsNothing);
     expect(
       container.read(appRouterProvider).routeInformationProvider.value.uri.path,

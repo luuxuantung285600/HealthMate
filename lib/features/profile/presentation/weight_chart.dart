@@ -35,7 +35,7 @@ class WeightChart extends StatelessWidget {
 
     return Semantics(
       label:
-          'Biểu đồ cân nặng từ ${number.format(ordered.first.weightKg)} đến ${number.format(ordered.last.weightKg)} kilogram',
+          'Biểu đồ cân nặng, đơn vị kg. ${ordered.length} lần cân trên ${ordered.map((m) => DateFormat('yyyy-MM-dd').format(m.measuredAt)).toSet().length} ngày. ${ordered.map((m) => '${DateFormat('dd/MM/yyyy').format(m.measuredAt)}: ${number.format(m.weightKg)} kg').join('. ')}. Ngày thiếu không có điểm cân.',
       child: LayoutBuilder(
         builder: (context, constraints) => SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -45,7 +45,7 @@ class WeightChart extends StatelessWidget {
               280 * MediaQuery.textScalerOf(context).scale(1),
             ),
             key: const ValueKey('weight-chart'),
-            height: 220,
+            height: 200 + MediaQuery.textScalerOf(context).scale(32),
             child: LineChart(
               LineChartData(
                 minX: 0,
@@ -67,7 +67,8 @@ class WeightChart extends StatelessWidget {
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
-                      reservedSize: 42,
+                      reservedSize: MediaQuery.textScalerOf(context).scale(44),
+                      interval: math.max(1, ((maxY - minY) / 3).ceilToDouble()),
                       getTitlesWidget: (value, meta) => SideTitleWidget(
                         meta: meta,
                         child: Text(
@@ -80,7 +81,8 @@ class WeightChart extends StatelessWidget {
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
-                      reservedSize: 32,
+                      reservedSize:
+                          MediaQuery.textScalerOf(context).scale(24) + 12,
                       interval: math.max(1, (span / 3).ceilToDouble()),
                       getTitlesWidget: (value, meta) {
                         if (value < 0 || value > span) {
@@ -103,6 +105,20 @@ class WeightChart extends StatelessWidget {
                         );
                       },
                     ),
+                  ),
+                ),
+                lineTouchData: LineTouchData(
+                  touchTooltipData: LineTouchTooltipData(
+                    fitInsideHorizontally: true,
+                    fitInsideVertically: true,
+                    getTooltipColor: (_) => theme.colorScheme.inverseSurface,
+                    getTooltipItems: (spots) => spots.map((spot) {
+                      final metric = ordered[spot.spotIndex];
+                      return LineTooltipItem(
+                        '${DateFormat('dd/MM/yyyy HH:mm').format(metric.measuredAt)}\n${number.format(metric.weightKg)} kg',
+                        TextStyle(color: theme.colorScheme.onInverseSurface),
+                      );
+                    }).toList(),
                   ),
                 ),
                 lineBarsData: [

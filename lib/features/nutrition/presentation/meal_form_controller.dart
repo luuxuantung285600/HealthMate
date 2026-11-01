@@ -46,8 +46,8 @@ class MealFormController {
     if (_current) onChanged?.call();
   }
 
-  Future<void> persistLocal() async {
-    if (onDraftChanged == null || !_current) return;
+  Future<bool> persistLocal() async {
+    if (onDraftChanged == null || !_current) return false;
     final revision = ++_revision;
     final snapshot = draft;
     localStatus = 'Đang giữ nháp…';
@@ -58,12 +58,13 @@ class MealFormController {
         localStatus = 'Đã giữ nháp trên thiết bị';
         _publish();
       }
+      return _current && revision == _revision;
     } catch (_) {
       if (_current && revision == _revision) {
-        localStatus =
-            'Chưa giữ được nháp trên thiết bị. Đừng đóng ứng dụng; thử thay đổi lại hoặc lưu khi có mạng.';
+        localStatus = 'Chưa giữ được nháp. Hãy thử lại trước khi đóng.';
         _publish();
       }
+      return false;
     }
   }
 

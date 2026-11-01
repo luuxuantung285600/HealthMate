@@ -1,14 +1,17 @@
+import 'dart:math' as math;
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+import '../../../core/theme/design_tokens.dart';
 import '../../../core/widgets/app_card.dart';
-import '../../../core/theme/reference_palette.dart';
 import '../../profile/presentation/weight_chart.dart';
 import '../../weekly_reflection/models/weekly_reflection.dart';
 
 typedef TrendPoint = ({DateTime date, double? value});
 
-/// Displays only recorded values; an absent observation stays distinct from zero.
+/// An absent observation stays distinct from an explicitly recorded zero.
 class ProgressOverview extends StatelessWidget {
   const ProgressOverview({
     required this.reflection,
@@ -21,71 +24,33 @@ class ProgressOverview extends StatelessWidget {
   final int tab;
   final Widget? controls;
   final int? confirmedDays;
+
   @override
   Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final blue = Theme.of(context).colorScheme.primary;
-    const carbs = ReferencePalette.carb;
-    const fat = ReferencePalette.fat;
-    const protein = ReferencePalette.protein;
+    final theme = Theme.of(context);
     Widget trend(
-      String label,
+      String title,
       String unit,
       Color color,
       double? Function(DayReflection) get,
       String id,
     ) => RecordedTrendCard(
       key: ValueKey('progress-trend-$id'),
-      title: label,
+      title: title,
       unit: unit,
       color: color,
       points: [
-        for (final d in reflection.days)
-          (date: d.date, value: d.isFuture ? null : get(d)),
+        for (final day in reflection.days)
+          (date: day.date, value: day.isFuture ? null : get(day)),
       ],
-      controls:
-          id == 'kcal' ||
-              (tab == 2 && id == 'water') ||
-              (tab == 3 && id == 'carbs')
-          ? controls
-          : null,
-      referenceHero: id == 'kcal',
     );
-    final macroWidgets = [
-      trend(
-        'Tinh bột',
-        'g',
-        carbs,
-        (d) => d.mealCount > 0 && d.nutrition.carbsKnown
-            ? d.nutrition.carbsG
-            : null,
-        'carbs',
-      ),
-      trend(
-        'Béo',
-        'g',
-        fat,
-        (d) =>
-            d.mealCount > 0 && d.nutrition.fatKnown ? d.nutrition.fatG : null,
-        'fat',
-      ),
-      trend(
-        'Đạm',
-        'g',
-        protein,
-        (d) => d.mealCount > 0 && d.nutrition.proteinKnown
-            ? d.nutrition.proteinG
-            : null,
-        'protein',
-      ),
-    ];
     final cards = <Widget>[
       if (tab == 0 || tab == 1)
         trend(
           'Năng lượng',
           'kcal',
-          blue,
-          (d) => d.mealCount > 0 ? d.nutrition.kcal : null,
+          theme.colorScheme.primary,
+          (day) => day.mealCount > 0 ? day.nutrition.kcal : null,
           'kcal',
         ),
       if (tab == 0)
@@ -94,8 +59,8 @@ class ProgressOverview extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Cân nặng', style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 16),
+              Text('Cân nặng', style: theme.textTheme.titleLarge),
+              const SizedBox(height: 12),
               if (reflection.metrics.isEmpty)
                 const Text('Chưa có lần cân trong tuần này.')
               else ...[
@@ -109,7 +74,7 @@ class ProgressOverview extends StatelessWidget {
                       _WeightLabel('Thay đổi', reflection.weightChange!),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 WeightChart(metrics: reflection.metrics.reversed.toList()),
                 if (reflection.metrics.length == 1)
                   const Text('Một lần đo chưa đủ để mô tả xu hướng.'),
@@ -117,116 +82,93 @@ class ProgressOverview extends StatelessWidget {
             ],
           ),
         ),
-      if (tab == 0 || tab == 3) ...macroWidgets,
-      if (tab == 2) ...[
+      if (tab == 3) ...[
         trend(
-          'Nước',
-          'ml',
-          blue,
-          (d) => d.waterCount > 0 ? d.waterMl.toDouble() : null,
-          'water',
+          'Carb',
+          'g',
+          DesignTokens.carbsColor,
+          (d) => d.mealCount > 0 && d.nutrition.carbsKnown
+              ? d.nutrition.carbsG
+              : null,
+          'carbs',
         ),
         trend(
-          'Vận động',
-          'phút',
-          dark ? const Color(0xFF78D5A2) : const Color(0xFF17683C),
-          (d) => d.activityCount > 0 ? d.activityMinutes.toDouble() : null,
-          'activity',
+          'Đạm',
+          'g',
+          DesignTokens.proteinColor,
+          (d) => d.mealCount > 0 && d.nutrition.proteinKnown
+              ? d.nutrition.proteinG
+              : null,
+          'protein',
+        ),
+        trend(
+          'Chất béo',
+          'g',
+          DesignTokens.fatColor,
+          (d) =>
+              d.mealCount > 0 && d.nutrition.fatKnown ? d.nutrition.fatG : null,
+          'fat',
         ),
         trend(
           'Chất xơ',
           'g',
-          carbs,
+          theme.colorScheme.tertiary,
           (d) => d.mealCount > 0 && d.nutrition.fiberKnown
               ? d.nutrition.fiberG
               : null,
           'fiber',
         ),
       ],
+      if (tab == 2) ...[
+        trend(
+          'Nước',
+          'ml',
+          theme.colorScheme.primary,
+          (d) => d.waterCount > 0 ? d.waterMl.toDouble() : null,
+          'water',
+        ),
+        trend(
+          'Vận động',
+          'phút',
+          theme.colorScheme.tertiary,
+          (d) => d.activityCount > 0 ? d.activityMinutes.toDouble() : null,
+          'activity',
+        ),
+      ],
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (!reflection.hasLogs && tab != 0 && tab != 1)
-          const Text(
-            'Chưa có nhật ký bữa ăn, nước hoặc vận động trong tuần này.',
+        ?controls,
+        if (!reflection.hasLogs)
+          const Padding(
+            padding: EdgeInsets.only(bottom: 12),
+            child: Text(
+              'Chưa có nhật ký bữa ăn, nước hoặc vận động trong tuần này.',
+            ),
           ),
-        if (tab != 0 && tab != 1)
-          Text(
-            'Chỉ tổng hợp nhật ký đã ghi. Ngày trống không được tính là 0 khi lấy trung bình.',
-            style: Theme.of(context).textTheme.bodySmall,
+        if (tab == 0) ...[
+          AppCard(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text('Mức độ ghi nhận', style: theme.textTheme.titleMedium),
+                const SizedBox(height: 8),
+                Text(
+                  '${reflection.days.where((d) => d.hasLogs).length} / ${reflection.eligibleDays} ngày đã ghi nhật ký',
+                ),
+                Text(
+                  '${confirmedDays ?? '—'} / ${reflection.eligibleDays} ngày xác nhận đủ bữa',
+                ),
+              ],
+            ),
           ),
-        for (final card in cards.indexed) ...[
-          card.$2,
           const SizedBox(height: 16),
-          if (card.$1 == 0 && tab == 0) ...[
-            Text(
-              'Tổng kết trong tuần',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 16),
-            LayoutBuilder(
-              builder: (context, c) {
-                final columns = MediaQuery.textScalerOf(context).scale(1) > 1.4
-                    ? 1
-                    : 2;
-                final entries = [
-                  (
-                    '${reflection.days.where((d) => d.hasLogs).length} / ${reflection.eligibleDays}',
-                    'Ngày đã ghi nhật ký',
-                  ),
-                  (
-                    '${confirmedDays ?? '—'} / ${reflection.eligibleDays}',
-                    'Ngày xác nhận đủ bữa',
-                  ),
-                ];
-                return Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: [
-                    for (final e in entries)
-                      SizedBox(
-                        width: (c.maxWidth - 12 * (columns - 1)) / columns,
-                        child: AppCard(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                e.$1,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 28,
-                                    ),
-                              ),
-                              const SizedBox(height: 45),
-                              Text(
-                                e.$2,
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                  ],
-                );
-              },
-            ),
-            const SizedBox(height: 16),
-            if (!reflection.hasLogs)
-              const Text(
-                'Chưa có nhật ký bữa ăn, nước hoặc vận động trong tuần này.',
-              ),
-            const Text(
-              'Chỉ tổng hợp nhật ký đã ghi. Ngày trống không được tính là 0 khi lấy trung bình.',
-              style: TextStyle(fontSize: 12),
-            ),
-            const SizedBox(height: 16),
-          ],
         ],
+        const Text('Ngày chưa ghi để trống, không tính là 0 trong trung bình.'),
+        const SizedBox(height: 12),
+        for (final card in cards) ...[card, const SizedBox(height: 16)],
       ],
     );
   }
@@ -240,8 +182,8 @@ class _WeightLabel extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(label, style: Theme.of(context).textTheme.bodySmall),
-      const SizedBox(height: 5),
+      Text(label, style: Theme.of(context).textTheme.bodyMedium),
+      const SizedBox(height: 4),
       Text(
         '${NumberFormat('0.#', 'vi').format(value)} kg',
         style: Theme.of(context).textTheme.titleLarge,
@@ -265,176 +207,174 @@ class RecordedTrendCard extends StatelessWidget {
   final List<TrendPoint> points;
   final Widget? controls;
   final bool referenceHero;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final recorded = points.where((p) => p.value != null).toList();
+    final recorded = points.where((point) => point.value != null).toList();
     final average = recorded.isEmpty
         ? null
-        : recorded.fold(0.0, (v, p) => v + p.value!) / recorded.length;
-    final maximum =
-        recorded.fold(1.0, (v, p) => p.value! > v ? p.value! : v) * 1.1;
+        : recorded.fold(0.0, (sum, point) => sum + point.value!) /
+              recorded.length;
+    final largest = recorded.fold(
+      1.0,
+      (max, point) => math.max(max, point.value!),
+    );
+    // Four readable Y intervals, rounded to a human-friendly unit.
+    final roughStep = largest / 3;
+    final magnitude = math
+        .pow(10, (math.log(roughStep) / math.ln10).floor())
+        .toDouble();
+    final step =
+        [1.0, 2.0, 5.0, 10.0].firstWhere((n) => n * magnitude >= roughStep) *
+        magnitude;
+    final maximum = (largest / step).ceil() * step;
     final number = NumberFormat('#,##0.#', 'vi');
+    final scale = MediaQuery.textScalerOf(context).scale(1);
     return AppCard(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (!referenceHero)
-            Text(
-              title,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: color,
-              ),
-            ),
-          if (!referenceHero) const SizedBox(height: 16),
-          if (referenceHero)
-            Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: 18,
-              children: [
-                Text(
-                  average == null ? '—' : number.format(average),
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    fontSize: 27,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                Text(
-                  'kcal / ngày đã ghi',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                    fontSize: 11,
-                  ),
-                ),
-              ],
-            ),
-          if (!referenceHero)
-            Text(
-              average == null
-                  ? 'Chưa có dữ liệu đã ghi'
-                  : '${number.format(average)} $unit',
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          if (!referenceHero) const SizedBox(height: 6),
-          if (!referenceHero)
-            Text(
-              'Trung bình ${recorded.length} ngày có dữ liệu',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
+          Text('$title ($unit)', style: theme.textTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text(
+            average == null
+                ? 'Chưa có dữ liệu đã ghi'
+                : '${number.format(average)} $unit / ngày có dữ liệu',
+            style: theme.textTheme.titleMedium,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '${recorded.length} / ${points.length} ngày có dữ liệu',
+            style: theme.textTheme.bodyMedium,
+          ),
           const SizedBox(height: 12),
           ?controls,
-          Semantics(
-            label:
-                '$title. ${points.map((p) => '${DateFormat('dd/MM').format(p.date)}: ${p.value == null ? 'chưa ghi' : '${number.format(p.value)} $unit'}').join('. ')}',
-            child: ExcludeSemantics(
-              child: SizedBox(
-                height:
-                    (referenceHero ? 150 : 170) +
-                    MediaQuery.textScalerOf(context).scale(24),
-                child: LineChart(
-                  key: title == 'Năng lượng'
-                      ? const ValueKey('weekly-chart')
-                      : null,
-                  LineChartData(
-                    minX: 0,
-                    maxX: points.length <= 1
-                        ? 1
-                        : (points.length - 1).toDouble(),
-                    minY: 0,
-                    maxY: maximum,
-                    gridData: FlGridData(
-                      show: true,
-                      drawVerticalLine: false,
-                      getDrawingHorizontalLine: (_) => FlLine(
-                        color: theme.colorScheme.outlineVariant,
-                        strokeWidth: 1,
-                        dashArray: [5, 5],
-                      ),
-                    ),
-                    borderData: FlBorderData(show: false),
-                    titlesData: FlTitlesData(
-                      topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      leftTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          interval: 1,
-                          reservedSize:
-                              MediaQuery.textScalerOf(context).scale(26) + 10,
-                          getTitlesWidget: (value, meta) {
-                            final i = value.toInt();
-                            if (i < 0 ||
-                                i >= points.length ||
-                                value != i.toDouble()) {
-                              return const SizedBox.shrink();
-                            }
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 8),
-                              child: Text(
-                                DateFormat('dd').format(points[i].date),
-                                style: theme.textTheme.labelSmall,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    lineTouchData: LineTouchData(
-                      touchTooltipData: LineTouchTooltipData(
-                        getTooltipColor: (_) => theme.colorScheme.surface,
-                        getTooltipItems: (spots) => spots.map((spot) {
-                          final p = points[spot.x.round()];
-                          return LineTooltipItem(
-                            '${DateFormat('dd/MM').format(p.date)}\n${number.format(p.value)} $unit',
-                            TextStyle(color: theme.colorScheme.onSurface),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                    lineBarsData: [
-                      LineChartBarData(
-                        spots: [
-                          for (final entry in points.indexed)
-                            entry.$2.value == null
-                                ? FlSpot.nullSpot
-                                : FlSpot(entry.$1.toDouble(), entry.$2.value!),
-                        ],
-                        color: color,
-                        barWidth: 2.5,
-                        isCurved: true,
-                        preventCurveOverShooting: true,
-                        dotData: const FlDotData(show: true),
-                        belowBarData: BarAreaData(
-                          show: true,
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              color.withValues(alpha: .22),
-                              color.withValues(alpha: .01),
-                            ],
+          if (recorded.isNotEmpty) ...[
+            const Text('Chạm điểm để xem ngày và giá trị.'),
+            const SizedBox(height: 12),
+            Semantics(
+              label:
+                  '$title, đơn vị $unit. ${points.map((p) => '${DateFormat('dd/MM').format(p.date)}: ${p.value == null ? 'chưa ghi' : '${number.format(p.value)} $unit'}').join('. ')}',
+              child: ExcludeSemantics(
+                child: LayoutBuilder(
+                  builder: (context, constraints) => SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: SizedBox(
+                      width: math.max(constraints.maxWidth, 280 * scale),
+                      height: 180 + MediaQuery.textScalerOf(context).scale(32),
+                      child: LineChart(
+                        key: title == 'Năng lượng'
+                            ? const ValueKey('weekly-chart')
+                            : null,
+                        LineChartData(
+                          minX: 0,
+                          maxX: math.max(1, points.length - 1).toDouble(),
+                          minY: 0,
+                          maxY: maximum,
+                          gridData: FlGridData(
+                            drawVerticalLine: false,
+                            horizontalInterval: step,
+                            getDrawingHorizontalLine: (_) => FlLine(
+                              color: theme.colorScheme.outlineVariant,
+                              strokeWidth: 1,
+                            ),
                           ),
+                          borderData: FlBorderData(show: false),
+                          titlesData: FlTitlesData(
+                            topTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            rightTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                interval: step,
+                                reservedSize: 44 * scale,
+                                getTitlesWidget: (value, meta) =>
+                                    SideTitleWidget(
+                                      meta: meta,
+                                      child: Text(
+                                        NumberFormat.compact(
+                                          locale: 'vi',
+                                        ).format(value),
+                                        style: theme.textTheme.labelSmall,
+                                      ),
+                                    ),
+                              ),
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                interval: points.length > 4 ? 2 : 1,
+                                reservedSize:
+                                    MediaQuery.textScalerOf(context).scale(24) +
+                                    12,
+                                getTitlesWidget: (value, meta) {
+                                  final index = value.toInt();
+                                  if (index < 0 ||
+                                      index >= points.length ||
+                                      value != index.toDouble()) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return SideTitleWidget(
+                                    meta: meta,
+                                    child: Text(
+                                      DateFormat(
+                                        'd/M',
+                                      ).format(points[index].date),
+                                      style: theme.textTheme.labelSmall,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          lineTouchData: LineTouchData(
+                            touchTooltipData: LineTouchTooltipData(
+                              fitInsideHorizontally: true,
+                              fitInsideVertically: true,
+                              getTooltipColor: (_) =>
+                                  theme.colorScheme.inverseSurface,
+                              getTooltipItems: (spots) => spots.map((spot) {
+                                final point = points[spot.x.round()];
+                                return LineTooltipItem(
+                                  '${DateFormat('dd/MM/yyyy').format(point.date)}\n${number.format(point.value)} $unit',
+                                  TextStyle(
+                                    color: theme.colorScheme.onInverseSurface,
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          lineBarsData: [
+                            LineChartBarData(
+                              spots: [
+                                for (final entry in points.indexed)
+                                  entry.$2.value == null
+                                      ? FlSpot.nullSpot
+                                      : FlSpot(
+                                          entry.$1.toDouble(),
+                                          entry.$2.value!,
+                                        ),
+                              ],
+                              color: color,
+                              barWidth: 2.5,
+                              isCurved: false,
+                              dotData: const FlDotData(show: true),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     );

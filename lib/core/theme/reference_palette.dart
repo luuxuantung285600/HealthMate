@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-/// Reference v2 tokens. Text colors are darker than the preview's small labels
-/// to retain readable contrast on translucent cards.
+/// Shared brand and nutrition colors. Labels always accompany metric colors.
 abstract final class ReferencePalette {
-  static const blue = Color(0xFF3D7DFA);
+  static const brand = Color(0xFF167553);
+  // Retained for existing feature widgets using the original token name.
+  static const blue = brand;
   static const ink = Color(0xFF171818);
   static const muted = Color(0xFF5F6269);
   static const carb = Color(0xFF67CAD3);
@@ -14,17 +15,17 @@ abstract final class ReferencePalette {
     end: Alignment.bottomCenter,
     stops: [0, .27, .58, 1],
     colors: [
-      Color(0xFFE4E9F6),
-      Color(0xFFE6E6E8),
-      Color(0xFFEEE1D1),
-      Color(0xFFE3EAF9),
+      Color(0xFFF5F7F6),
+      Color(0xFFF5F7F6),
+      Color(0xFFF5F7F6),
+      Color(0xFFF5F7F6),
     ],
   );
   static const darkGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     stops: [0, .55, 1],
-    colors: [Color(0xFF1D263A), Color(0xFF292B34), Color(0xFF202B41)],
+    colors: [Color(0xFF141C19), Color(0xFF141C19), Color(0xFF141C19)],
   );
 }
 

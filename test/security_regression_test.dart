@@ -69,7 +69,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(quick);
       await tester.pump();
-      expect(find.textContaining('Đang chờ máy chủ xác nhận'), findsOneWidget);
+      expect(find.textContaining('Đang lưu thay đổi'), findsOneWidget);
       expect(tester.widget<ActionChip>(quick).onPressed, isNull);
       expect(repository.addCalls, 0);
       repository.confirmation.complete();

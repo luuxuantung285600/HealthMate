@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../core/widgets/app_card.dart';
-import '../../../core/widgets/design_illustration.dart';
 import '../../nutrition/models/nutrition_models.dart';
 
 class MealSummaryGrid extends StatelessWidget {
@@ -12,6 +11,7 @@ class MealSummaryGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, c) {
+      final theme = Theme.of(context);
       final columns =
           c.maxWidth < 300 || MediaQuery.textScalerOf(context).scale(1) > 1.4
           ? 1
@@ -32,103 +32,51 @@ class MealSummaryGrid extends StatelessWidget {
                       : <MealLog>[];
                   return AppCard(
                     key: ValueKey('summary-meal-${type.name}'),
-                    padding: const EdgeInsets.all(14),
+                    padding: const EdgeInsets.all(12),
                     onTap: onOpen == null ? null : () => onOpen!(type),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(minHeight: 142),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.surface,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: DesignIllustration(switch (type) {
-                                  MealType.breakfast => 'sun',
-                                  MealType.dinner => 'moon',
-                                  _ => 'food',
-                                }, size: 26),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  type.label,
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  !ready || entries.isEmpty
-                                      ? '—'
-                                      : NumberFormat('#,##0', 'vi').format(
-                                          totalMealNutrition(entries).kcal,
-                                        ),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium
-                                      ?.copyWith(
-                                        fontSize: 31,
-                                        height: 1.2,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                ),
-                              ),
-                              if (entries.isNotEmpty)
-                                Text(
-                                  'kcal',
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurfaceVariant,
-                                      ),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 14),
-                          if (entries.isEmpty)
-                            Text(
-                              !ready
-                                  ? (meals.hasError
-                                        ? 'Chưa tải được bữa ăn'
-                                        : 'Đang tải…')
-                                  : 'Chưa ghi nhận',
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurfaceVariant,
-                                  ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(type.label, style: theme.textTheme.titleSmall),
+                        const SizedBox(height: 8),
+                        Text(
+                          !ready
+                              ? (meals.hasError
+                                    ? 'Chưa tải được bữa ăn'
+                                    : 'Đang tải…')
+                              : entries.isEmpty
+                              ? 'Chưa ghi nhận'
+                              : '${NumberFormat('#,##0', 'vi').format(totalMealNutrition(entries).kcal)} kcal',
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                        if (entries.isNotEmpty) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            entries
+                                .expand((m) => m.items)
+                                .map((i) => i.name)
+                                .join(', '),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
                             ),
-                          if (entries.isNotEmpty) ...[
-                            Text(
-                              entries
-                                  .expand((m) => m.items)
-                                  .map((i) => i.name)
-                                  .join(', '),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurfaceVariant,
-                                  ),
-                            ),
-                          ],
+                          ),
                         ],
-                      ),
+                        const SizedBox(height: 4),
+                        TextButton(
+                          key: ValueKey('journal-add-${type.name}'),
+                          onPressed: onOpen == null
+                              ? null
+                              : () => onOpen!(type),
+                          style: TextButton.styleFrom(
+                            alignment: Alignment.centerLeft,
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(48, 48),
+                          ),
+                          child: Text('+ Thêm ${type.label.toLowerCase()}'),
+                        ),
+                      ],
                     ),
                   );
                 },

@@ -70,6 +70,12 @@ Thiếu file/config thì helper báo rõ và dừng. `tool/build_android.ps1` c�
 workflow **debug**, không thay thế bản release ký thật. Các cấu hình gateway
 production cũ không chứng nhận gateway candidate đã được cấp quyền.
 
+Trong VS Code, chọn **HealthMate App (Flutter)** rồi nhấn F5. Task chuẩn bị tự
+nạp cùng cấu hình/token như helper, tạo file debug riêng tại
+`%LOCALAPPDATA%\HealthMate\vscode-android-debug.json` ngoài repository. Không
+commit/chia sẻ file này hoặc dùng nó cho release. Thiếu token/config thì task
+báo lỗi; không chọn bỏ qua lỗi để chạy bằng cấu hình cũ.
+
 Release dùng cấu hình riêng `config/release-candidate.json` và
 `tool/build_release.ps1`. Kiểm tra không build bằng:
 

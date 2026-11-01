@@ -184,7 +184,7 @@ class _CustomFoodDialogState extends State<CustomFoodDialog>
                   const SizedBox(height: 12),
                   _macroField(_protein, 'Đạm', 'protein'),
                   const SizedBox(height: 12),
-                  _macroField(_carbs, 'Tinh bột', 'carbs'),
+                  _macroField(_carbs, 'Carb', 'carbs'),
                   const SizedBox(height: 12),
                   _macroField(_fat, 'Chất béo', 'fat'),
                   const SizedBox(height: 12),

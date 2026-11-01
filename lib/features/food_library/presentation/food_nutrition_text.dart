@@ -11,7 +11,7 @@ String macroAmount(double value, bool known) => known
 String snapshotQuantityLabel(MealItemSnapshot item) =>
     '${foodNumber(item.quantity)} ${item.quantityUnitLabel}';
 String nutritionLabel(NutritionTotals value) =>
-    '${NumberFormat('0', 'vi_VN').format(value.kcal)} kcal · Đạm ${macroAmount(value.proteinG, value.proteinKnown)} · Tinh bột ${macroAmount(value.carbsG, value.carbsKnown)} · Béo ${macroAmount(value.fatG, value.fatKnown)} · Chất xơ ${macroAmount(value.fiberG, value.fiberKnown)}';
+    '${NumberFormat('0', 'vi_VN').format(value.kcal)} kcal · Đạm ${macroAmount(value.proteinG, value.proteinKnown)} · Carb ${macroAmount(value.carbsG, value.carbsKnown)} · Chất béo ${macroAmount(value.fatG, value.fatKnown)} · Chất xơ ${macroAmount(value.fiberG, value.fiberKnown)}';
 
 class FoodNutritionSummary extends StatelessWidget {
   const FoodNutritionSummary({
@@ -43,8 +43,8 @@ class FoodNutritionSummary extends StatelessWidget {
             children: [
               for (final metric in [
                 ('Đạm', value.proteinG, value.proteinKnown),
-                ('Tinh bột', value.carbsG, value.carbsKnown),
-                ('Béo', value.fatG, value.fatKnown),
+                ('Carb', value.carbsG, value.carbsKnown),
+                ('Chất béo', value.fatG, value.fatKnown),
                 ('Chất xơ', value.fiberG, value.fiberKnown),
               ])
                 Text(

@@ -201,6 +201,7 @@ void main() {
     expect(water.deleteCalls, 1);
     expect(water.logs, isEmpty);
 
+    await openActivityDetails(tester);
     final addActivity = find.byKey(const ValueKey('add-activity'));
     tester.widget<FilledButton>(addActivity).onPressed!();
     await tester.pumpAndSettle();

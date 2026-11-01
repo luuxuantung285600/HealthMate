@@ -146,6 +146,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('save-custom-food')));
     await tester.pumpAndSettle();
 
+    await openSelectedMealItems(tester);
     expect(find.text('Bánh nhà làm'), findsOneWidget);
     expect(find.textContaining('Ước tính'), findsWidgets);
   });

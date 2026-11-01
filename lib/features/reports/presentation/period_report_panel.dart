@@ -200,9 +200,15 @@ class _PeriodReportPanelState extends ConsumerState<PeriodReportPanel> {
                 ),
               if (_ready(targets) && versions.isEmpty)
                 const Text('Chưa có mục tiêu hiệu lực trong khoảng này.'),
-              const Text(
-                'Xanh: kcal đã ghi (có thể chưa đủ) · Nét đứt: mục tiêu gốc đúng ngày, chưa cộng điều chỉnh bước.',
+              const SizedBox(height: 12),
+              Text(
+                'Năng lượng (kcal)',
+                style: Theme.of(context).textTheme.titleMedium,
               ),
+              const Text(
+                'Đường liền: đã ghi · Nét đứt: mục tiêu gốc theo ngày.',
+              ),
+              const Text('Chạm điểm để xem giá trị; ngày chưa ghi để trống.'),
               _EnergyChart(coverage: coverage, targets: versions),
               if (range.days > 90)
                 ExpansionTile(
@@ -414,13 +420,39 @@ class _EnergyChart extends StatelessWidget {
         width:
             math.max(360, coverage.range.days * 12).toDouble() *
             MediaQuery.textScalerOf(context).scale(1),
-        height: 260,
+        height: 240 + MediaQuery.textScalerOf(context).scale(32),
         child: LineChart(
           LineChartData(
             minX: 0,
             maxX: math.max(1, coverage.range.days - 1).toDouble(),
             minY: 0,
             maxY: maxY * 1.1,
+            gridData: FlGridData(
+              drawVerticalLine: false,
+              horizontalInterval: maxY / 3,
+            ),
+            borderData: FlBorderData(show: false),
+            lineTouchData: LineTouchData(
+              touchTooltipData: LineTouchTooltipData(
+                fitInsideHorizontally: true,
+                fitInsideVertically: true,
+                getTooltipColor: (_) =>
+                    Theme.of(context).colorScheme.inverseSurface,
+                getTooltipItems: (spots) => spots.map((spot) {
+                  final day = DateTime(
+                    coverage.range.start.year,
+                    coverage.range.start.month,
+                    coverage.range.start.day + spot.x.round(),
+                  );
+                  return LineTooltipItem(
+                    '${DateFormat('dd/MM/yyyy').format(day)}\n${spot.barIndex == 0 ? 'Đã ghi' : 'Mục tiêu gốc'}: ${NumberFormat('0.#', 'vi').format(spot.y)} kcal',
+                    TextStyle(
+                      color: Theme.of(context).colorScheme.onInverseSurface,
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
             lineBarsData: [
               LineChartBarData(
                 spots: actual,
@@ -467,8 +499,19 @@ class _EnergyChart extends StatelessWidget {
                   ),
                 ),
               ),
-              leftTitles: const AxisTitles(
-                sideTitles: SideTitles(showTitles: true, reservedSize: 48),
+              leftTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  interval: maxY / 3,
+                  reservedSize: MediaQuery.textScalerOf(context).scale(44),
+                  getTitlesWidget: (value, meta) => SideTitleWidget(
+                    meta: meta,
+                    child: Text(
+                      NumberFormat.compact(locale: 'vi').format(value),
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),

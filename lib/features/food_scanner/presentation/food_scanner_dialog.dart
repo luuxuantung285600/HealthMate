@@ -37,6 +37,7 @@ class FoodScannerDialog extends ConsumerStatefulWidget {
     this.active = true,
     this.onSelected,
     this.onBarcode,
+    this.onSearch,
     super.key,
   });
 
@@ -44,6 +45,7 @@ class FoodScannerDialog extends ConsumerStatefulWidget {
   final bool embedded, active;
   final ValueChanged<FoodScanChoice>? onSelected;
   final Future<void> Function()? onBarcode;
+  final VoidCallback? onSearch;
 
   @override
   ConsumerState<FoodScannerDialog> createState() => _FoodScannerDialogState();
@@ -123,6 +125,9 @@ class _FoodScannerDialogState extends ConsumerState<FoodScannerDialog> {
 
   Future<void> _pick(ImageSource source) async {
     if (!ref.read(appFeatureFlagsProvider).foodScannerEnabled) return;
+    if (ref.read(foodScannerServiceProvider).photoUnavailableReason != null) {
+      return;
+    }
     if (_picking || _loading) return;
     final uid = ref.read(authSessionProvider).value?.uid;
     if (uid == null) {
@@ -421,6 +426,46 @@ class _FoodScannerDialogState extends ConsumerState<FoodScannerDialog> {
       });
     });
     final access = ref.watch(aiAccessProvider);
+    final unavailable = ref
+        .watch(foodScannerServiceProvider)
+        .photoUnavailableReason;
+    if (unavailable != null) {
+      final content = SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Icon(Icons.image_outlined, size: 40),
+            const SizedBox(height: 16),
+            Text(
+              'Phân tích ảnh chưa sẵn sàng',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Text(unavailable),
+            const SizedBox(height: 24),
+            if (widget.onBarcode != null)
+              FilledButton.icon(
+                key: const ValueKey('photo-fallback-barcode'),
+                onPressed: _picking ? null : _barcode,
+                icon: const Icon(Icons.qr_code_scanner),
+                label: const Text('Quét mã vạch'),
+              ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              key: const ValueKey('photo-fallback-search'),
+              onPressed: widget.onSearch ?? () => Navigator.pop(context),
+              icon: const Icon(Icons.search),
+              label: const Text('Tìm món hoặc nhập thủ công'),
+            ),
+            if (_error != null) Text(_error!),
+          ],
+        ),
+      );
+      return widget.embedded
+          ? content
+          : Dialog.fullscreen(child: SafeArea(child: content));
+    }
     final busy = _loading || _picking || _reviewing;
     final suggestion = _suggestion;
     final matches = suggestion == null

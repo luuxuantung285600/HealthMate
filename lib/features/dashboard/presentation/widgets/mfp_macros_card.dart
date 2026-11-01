@@ -82,13 +82,7 @@ class _MfpMacrosCardState extends State<MfpMacrosCard> {
                   dimension: 48,
                   child: CustomPaint(
                     painter: MacroRingPainter(
-                      color: widget.embedded
-                          ? [
-                              ReferencePalette.blue,
-                              ReferencePalette.fat,
-                              ReferencePalette.protein,
-                            ][i]
-                          : r.$5,
+                      color: r.$5,
                       track: theme.colorScheme.surfaceContainerHighest,
                       progress: known && target != null && target > 0
                           ? (r.$2! / target).clamp(0.0, 1.0)
@@ -100,16 +94,28 @@ class _MfpMacrosCardState extends State<MfpMacrosCard> {
             ),
           if (widget.showRings) const SizedBox(height: 6),
           Text(
-            !_percent && known && target != null
+            !widget.embedded && !_percent && known && target != null
                 ? '${NumberFormat('0.#', 'vi').format(r.$2)}/${NumberFormat('0.#', 'vi').format(target)} g'
                 : value,
             textAlign: TextAlign.center,
             style: theme.textTheme.bodySmall,
           ),
-          Text(
-            r.$1,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodySmall,
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 6,
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(color: r.$5, shape: BoxShape.circle),
+              ),
+              Text(
+                r.$1,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodySmall,
+              ),
+            ],
           ),
         ],
       );
@@ -125,22 +131,25 @@ class _MfpMacrosCardState extends State<MfpMacrosCard> {
             child: InkWell(
               key: const ValueKey('toggle-macro-unit'),
               onTap: () => setState(() => _percent = !_percent),
-              child: LayoutBuilder(
-                builder: (context, c) {
-                  final stacked =
-                      MediaQuery.textScalerOf(context).scale(1) > 1.4;
-                  return Wrap(
-                    spacing: 6,
-                    runSpacing: 12,
-                    children: [
-                      for (var i = 0; i < 3; i++)
-                        SizedBox(
-                          width: stacked ? c.maxWidth : (c.maxWidth - 12) / 3,
-                          child: column(i),
-                        ),
-                    ],
-                  );
-                },
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 48),
+                child: LayoutBuilder(
+                  builder: (context, c) {
+                    final stacked =
+                        MediaQuery.textScalerOf(context).scale(1) > 1.4;
+                    return Wrap(
+                      spacing: 6,
+                      runSpacing: 12,
+                      children: [
+                        for (var i = 0; i < 3; i++)
+                          SizedBox(
+                            width: stacked ? c.maxWidth : (c.maxWidth - 12) / 3,
+                            child: column(i),
+                          ),
+                      ],
+                    );
+                  },
+                ),
               ),
             ),
           ),

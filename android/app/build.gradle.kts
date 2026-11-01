@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.ApplicationExtension
+import java.io.File
 import java.util.Properties
 import java.util.Base64
 
@@ -25,7 +27,7 @@ gradle.taskGraph.whenReady {
         if (!signingReady) {
             throw GradleException("HealthMate release signing is not configured. Supply private android/key.properties; see docs/release-readiness.md. Debug builds remain available.")
         }
-        val keyPath = java.io.File(releaseKeys.getProperty("storeFile"))
+        val keyPath = File(releaseKeys.getProperty("storeFile"))
         if (!keyPath.isAbsolute || !keyPath.isFile ||
             keyPath.name.equals("debug.keystore", ignoreCase = true) ||
             releaseKeys.getProperty("keyAlias").equals("androiddebugkey", ignoreCase = true)) {
@@ -75,7 +77,7 @@ gradle.taskGraph.whenReady {
     }
 }
 
-android {
+extensions.configure<ApplicationExtension> {
     namespace = "com.example.healthmate"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion

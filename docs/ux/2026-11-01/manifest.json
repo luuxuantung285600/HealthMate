@@ -1,0 +1,110 @@
+{
+  "baseline": "46dccf642f4dff8b51b31cc044f1a1b46cf9a1c2",
+  "evidence": "Flutter widget fixtures; no native or production acceptance",
+  "clock": "2026-10-28 12:00 local",
+  "theme": "light",
+  "textScale": 1,
+  "captureTestSha256": "f9c99d2bed2580573ebbc756bf27fcdb0e1bc9653ec5bbc924ac932d05121cf7",
+  "images": [
+    {
+      "screen": "home",
+      "version": "before",
+      "file": "before/home.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "6f10676111ea13a242c08d3f71acea26c51b4a72f6968d97f4403a80ae6748d1"
+    },
+    {
+      "screen": "home",
+      "version": "after",
+      "file": "after/home.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "2091876269ac117f0688fe83d749f9fd4a70ce79abcd7057a7170da234984f1e"
+    },
+    {
+      "screen": "diary",
+      "version": "before",
+      "file": "before/diary.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "967f86a2fe8690ec896e6b316772a6c69c1b95247f183099a16b2267873f466b"
+    },
+    {
+      "screen": "diary",
+      "version": "after",
+      "file": "after/diary.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "0eda716943660edf0b694d8093028617ff01e4cf99b3334e79fb55ea1ea541fc"
+    },
+    {
+      "screen": "onboarding",
+      "version": "before",
+      "file": "before/onboarding.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "33173327e2a2eb75c2f8c0a6f6faa1296e240cf13c50b39dec40542a405d1cd1"
+    },
+    {
+      "screen": "onboarding",
+      "version": "after",
+      "file": "after/onboarding.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "8dae118feff635eff2fcf5f94e1633812cbeafa1e4c1263c3e229463a5783aaa"
+    },
+    {
+      "screen": "meal-form",
+      "version": "before",
+      "file": "before/meal-form.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "ef293761d1c5f24d134fcd466db3714392fddb78ccbed23503672c383c73dc95"
+    },
+    {
+      "screen": "meal-form",
+      "version": "after",
+      "file": "after/meal-form.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "f31103444a3840b1be5f0d997eb299a2b53ddb89012e4d38ff1683694d1e4522"
+    },
+    {
+      "screen": "progress",
+      "version": "before",
+      "file": "before/progress.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "cbb961c751499d157a9f292a9d2188b5c1a4abe7773d21fdce6465fc470b6c77"
+    },
+    {
+      "screen": "progress",
+      "version": "after",
+      "file": "after/progress.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "e8c96ce0ac5475707fbaf154db9e6728a14fb12fc3a4726d782a9a147bc4ae25"
+    }
+  ],
+  "checks": {
+    "flutterFull": {
+      "command": "flutter test --no-pub",
+      "passed": 912,
+      "failed": 0,
+      "seconds": 140,
+      "logSha256": "a3e298e3ce00c0545ed026c8fab33de1adb95af8096e95b563b4e4f4e69b6c9e"
+    },
+    "finalPolish": {
+      "command": "flutter test test/ux_home_diary_test.dart test/mfp_ui_test.dart test/ux_capture_test.dart --no-pub",
+      "passed": 38,
+      "failed": 0,
+      "logSha256": "37c8f53dd56ce143cbc95b9490bcbf2ac9e717e642d792dff1127888af19e706"
+    },
+    "analyze": "No issues found",
+    "format": "58 Dart files, 0 changes",
+    "nativeAcceptance": false,
+    "productionDeployment": false
+  },
+  "baselineHarnessSha256": "f9c99d2bed2580573ebbc756bf27fcdb0e1bc9653ec5bbc924ac932d05121cf7"
+}

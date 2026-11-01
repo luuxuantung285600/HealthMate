@@ -287,7 +287,7 @@ void main() {
   });
 
   testWidgets(
-    'Dashboard releases its listeners; profile shares daily summaries without duplicates',
+    'Dashboard releases daily listeners on Profile; reports load only on demand',
     (tester) async {
       final n = FakeNutritionRepository();
       final w = FakeWaterRepository();
@@ -307,10 +307,21 @@ void main() {
       expect(a.activeDayListeners, 1);
       await tester.tap(find.byKey(const ValueKey('nav-profile')));
       await tester.pumpAndSettle();
-      // Profile now shows today's nutrition and water, sharing the providers.
-      expect(n.activeDayListeners, 1);
-      expect(w.activeDayListeners, 1);
+      // Profile manages the account and goals, without duplicate daily journals.
+      expect(n.activeDayListeners, 0);
+      expect(w.activeDayListeners, 0);
       expect(a.activeDayListeners, 0);
+      expect(n.rangeCalls, 0);
+      expect(w.rangeCalls, 0);
+      expect(a.rangeCalls, 0);
+      await tester.tap(find.byKey(const ValueKey('nav-progress')));
+      await tester.pumpAndSettle();
+      expect(n.activeDayListeners, 0);
+      expect(w.activeDayListeners, 0);
+      expect(a.activeDayListeners, 0);
+      expect(n.rangeCalls, 1);
+      expect(w.rangeCalls, 1);
+      expect(a.rangeCalls, 1);
       await tester.tap(find.byKey(const ValueKey('nav-dashboard')));
       await tester.pumpAndSettle();
       expect(
@@ -319,6 +330,9 @@ void main() {
       ); // Selected day and previous-day meal reuse.
       expect(w.activeDayListeners, 1);
       expect(a.activeDayListeners, 1);
+      expect(n.rangeCalls, 1);
+      expect(w.rangeCalls, 1);
+      expect(a.rangeCalls, 1);
     },
   );
 

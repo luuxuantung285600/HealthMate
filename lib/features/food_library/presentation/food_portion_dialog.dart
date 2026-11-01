@@ -205,6 +205,14 @@ class _FoodPortionDialogState extends State<FoodPortionDialog> {
                     ),
                   ],
                 ),
+              if (widget.snapshot case final snapshot?)
+                HelpDetails(
+                  title: 'Nguồn dinh dưỡng',
+                  children: [
+                    Text(snapshot.sourceLabel),
+                    if (snapshot.isEstimated) const Text('Dữ liệu ước tính.'),
+                  ],
+                ),
             ],
           ),
         ),

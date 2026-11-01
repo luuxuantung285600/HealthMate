@@ -1,5 +1,4 @@
-/// Modern minimalist design tokens for HealthMate
-/// Replacing green-based palette with deep navy + cyan accent
+/// HealthMate typography, spacing and supporting metric tokens.
 library;
 
 import 'package:flutter/material.dart';
@@ -70,7 +69,7 @@ abstract final class DesignTokens {
   static const weightLight = Color(0xFFDDD6FE);
   static const weightDark = Color(0xFF7C3AED);
 
-  /// Macro colors (MyFitnessPal style)
+  /// Macro colors shared with ReferencePalette across nutrition screens.
   static const carbsColor = Color(0xFF67CAD3);
   static const fatColor = Color(0xFFFFCB48);
   static const proteinColor = Color(0xFF76C87A);

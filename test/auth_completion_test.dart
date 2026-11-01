@@ -253,7 +253,7 @@ void main() {
       );
       expect(
         t
-            .widget<FilledButton>(
+            .widget<TextButton>(
               find.byKey(const ValueKey('send-reset-password')),
             )
             .onPressed,

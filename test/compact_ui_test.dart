@@ -44,12 +44,12 @@ void main() {
       expect(nutrition.rangeCalls, 0);
       expect(find.text('Xem tiến độ tuần'), findsNothing);
       expect(find.text('Chưa ghi bữa này'), findsNothing);
-      expect(find.text('Chưa có ghi nhận'), findsOneWidget);
+      expect(find.text('Chưa ghi món'), findsNWidgets(4));
       await openDashboardDetails(tester);
       expect(find.byType(NutritionTargetCard), findsOneWidget);
       expect(find.byType(WeeklyReflectionCard), findsOneWidget);
       expect(container.exists(goalsProvider), isTrue);
-      await tapVisible(tester, find.text('Mục tiêu và tổng kết'));
+      await tapVisible(tester, find.text('Xem thêm'));
       expect(find.byType(NutritionTargetCard), findsNothing);
       expect(find.byType(WeeklyReflectionCard), findsNothing);
       expect(nutrition.rangeCalls, 0);
@@ -68,10 +68,8 @@ void main() {
           featureFlags: const AppFeatureFlags(foodScannerEnabled: true),
         );
         expect(find.textContaining('Thanh màu thể hiện'), findsNothing);
-        await tapVisible(tester, find.byTooltip('Cách đọc dinh dưỡng'));
-        expect(find.byType(AlertDialog), findsOneWidget);
-        expect(find.textContaining('không phải 0'), findsOneWidget);
-        await tapVisible(tester, find.text('Đóng'));
+        // Home shows compact, labelled nutrients; contextual explanations are
+        // opened from the journal control they describe.
         container.read(appRouterProvider).go(AppRoutes.journal);
         await tester.pumpAndSettle();
         expect(
@@ -84,7 +82,10 @@ void main() {
           findsOneWidget,
         );
         await tapVisible(tester, find.text('Đóng'));
-        await tapVisible(tester, find.byKey(const ValueKey('add-meal')));
+        await tapVisible(
+          tester,
+          find.byKey(const ValueKey('journal-add-meal')),
+        );
         expect(find.byType(MealFormDialog), findsOneWidget);
         expect(find.textContaining('Mỗi bản ghi tối đa 5 món.'), findsNothing);
         await tapVisible(tester, find.text('Lưu ý khi ghi bữa'));
@@ -96,6 +97,7 @@ void main() {
         await tapVisible(tester, find.text('Lưu ý khi ghi bữa'));
         expect(find.textContaining('Mỗi bản ghi tối đa 5 món.'), findsNothing);
         expect(find.byKey(const ValueKey('save-meal')), findsOneWidget);
+        await openMealTools(tester);
         await tester.scrollUntilVisible(
           find.byKey(const ValueKey('scan-barcode')),
           -180,

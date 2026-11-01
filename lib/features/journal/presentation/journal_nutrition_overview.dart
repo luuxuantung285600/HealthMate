@@ -58,12 +58,12 @@ class JournalNutritionOverview extends ConsumerWidget {
         target?.proteinGTarget,
       ),
       (
-        'Tinh bột',
+        'Carb',
         totals?.carbsKnown == false ? null : totals?.carbsG,
         target?.carbsGTarget,
       ),
       (
-        'Béo',
+        'Chất béo',
         totals?.fatKnown == false ? null : totals?.fatG,
         target?.fatGTarget,
       ),
@@ -95,7 +95,7 @@ class JournalNutritionOverview extends ConsumerWidget {
                             text:
                                 '  / ${budget == null ? '—' : NumberFormat('#,##0.#', 'vi').format(budget.kcalTarget)} kcal đã ghi',
                             style: TextStyle(
-                              fontSize: 13,
+                              fontSize: 14,
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
                           ),
@@ -113,7 +113,7 @@ class JournalNutritionOverview extends ConsumerWidget {
                     key: const ValueKey('journal-nutrition-details'),
                     tooltip: 'Chi tiết dinh dưỡng',
                     style: IconButton.styleFrom(
-                      minimumSize: const Size(36, 36),
+                      minimumSize: const Size(48, 48),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     onPressed: () => showModalBottomSheet<void>(

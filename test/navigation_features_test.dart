@@ -6,10 +6,26 @@ import 'package:healthmate/core/router/app_routes.dart';
 import 'package:healthmate/features/chatbot/providers/chat_providers.dart';
 import 'package:healthmate/features/food_scanner/presentation/food_scanner_dialog.dart';
 import 'package:healthmate/features/food_scanner/providers/food_scanner_providers.dart';
+import 'package:healthmate/features/food_scanner/data/food_scanner_service.dart';
+import 'package:healthmate/features/food_scanner/data/food_camera_service.dart';
+import 'package:healthmate/features/food_scanner/models/ai_food_suggestion.dart';
 import 'package:healthmate/features/nutrition/presentation/meal_form_dialog.dart';
 
 import 'support/fake_chat_repository.dart';
 import 'support/test_app.dart';
+import 'support/fake_food_camera.dart';
+
+class _NeverAnalyzeScanner implements FoodScannerService {
+  int calls = 0;
+  @override
+  Future<AiFoodSuggestion> analyze({
+    required List<int> bytes,
+    required String mimeType,
+  }) async {
+    calls++;
+    throw StateError('Opening the camera must not analyze an image.');
+  }
+}
 
 const enabled = AppFeatureFlags(chatbotEnabled: true, foodScannerEnabled: true);
 
@@ -39,7 +55,7 @@ void main() {
             'nav-journal',
             'quick-add-menu',
             'nav-progress',
-            'nav-wellness',
+            'nav-profile',
           ];
           final rects = [
             for (final key in keys) tester.getRect(find.byKey(ValueKey(key))),
@@ -81,44 +97,43 @@ void main() {
           expect(container.exists(foodImagePickerProvider), isFalse);
           await tester.tap(find.byKey(const ValueKey('quick-add-menu')));
           await tester.pumpAndSettle();
-          for (final action in [
-            'scan',
-            'meal',
-            'water',
-            'activity',
-            'weight',
-            'quests',
-            'chat',
-          ]) {
-            expect(
-              find.byKey(ValueKey('quick-action-$action')),
-              findsOneWidget,
-            );
-          }
+          expect(find.byType(MealFormDialog), findsOneWidget);
+          expect(find.byKey(const ValueKey('food-search')), findsOneWidget);
+          expect(find.byType(FoodScannerDialog), findsNothing);
           expect(tester.takeException(), isNull);
         });
       }
     }
   }
 
-  testWidgets('plus opens unified camera without uploading an image', (
-    tester,
-  ) async {
-    final container = await pumpApp(tester, featureFlags: enabled);
-    await tester.tap(find.byKey(const ValueKey('quick-add-menu')));
-    await tester.pumpAndSettle();
-    await tapVisible(tester, find.byKey(const ValueKey('quick-action-scan')));
-    expect(find.byType(FoodScannerDialog), findsOneWidget);
-    expect(find.byKey(const ValueKey('camera-shutter')), findsOneWidget);
-    expect(find.byKey(const ValueKey('camera-gallery')), findsOneWidget);
-    expect(container.exists(foodScannerServiceProvider), isFalse);
-    expect(container.exists(foodImagePickerProvider), isFalse);
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    'available photo service opens camera without uploading an image',
+    (tester) async {
+      final scanner = _NeverAnalyzeScanner();
+      final camera = FakeFoodCamera();
+      final container = await pumpApp(
+        tester,
+        featureFlags: enabled,
+        foodScannerService: scanner,
+        foodCameraService: FoodCameraService(createSession: () => camera),
+      );
+      await tester.tap(find.byKey(const ValueKey('quick-add-menu')));
+      await tester.pumpAndSettle();
+      await tapVisible(tester, find.byKey(const ValueKey('meal-entry-photo')));
+      expect(find.byType(FoodScannerDialog), findsOneWidget);
+      expect(find.byKey(const ValueKey('camera-shutter')), findsOneWidget);
+      expect(find.byKey(const ValueKey('camera-gallery')), findsOneWidget);
+      expect(scanner.calls, 0);
+      expect(camera.starts, 1);
+      expect(camera.captures, 0);
+      expect(container.exists(foodImagePickerProvider), isFalse);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   for (final fromMenu in [false, true]) {
     testWidgets(
-      'goals and chat are reachable from ${fromMenu ? 'plus' : 'More'}',
+      'goals and chat are reachable from ${fromMenu ? 'avatar' : 'profile tab'}',
       (tester) async {
         final ai = FakeKnowledgeService();
         final container = await pumpApp(
@@ -131,17 +146,14 @@ void main() {
           ('chat', 'open-chat', AppRoutes.chat),
         ]) {
           if (fromMenu) {
-            await tester.tap(find.byKey(const ValueKey('quick-add-menu')));
+            container.read(appRouterProvider).go(AppRoutes.dashboard);
             await tester.pumpAndSettle();
-            await tapVisible(
-              tester,
-              find.byKey(ValueKey('quick-action-${destination.$1}')),
-            );
+            await tester.tap(find.byKey(const ValueKey('profile-avatar')));
+            await tester.pumpAndSettle();
           } else {
             await openProfileFromShell(tester);
-            await tester.pumpAndSettle();
-            await tapVisible(tester, find.byKey(ValueKey(destination.$2)));
           }
+          await tapVisible(tester, find.byKey(ValueKey(destination.$2)));
           expect(
             container
                 .read(appRouterProvider)
@@ -164,11 +176,20 @@ void main() {
       await pumpApp(tester);
       await tester.tap(find.byKey(const ValueKey('quick-add-menu')));
       await tester.pumpAndSettle();
-      await tapVisible(tester, find.byKey(const ValueKey('quick-action-meal')));
+      await openMealTools(tester);
       final form = tester.widget<MealFormDialog>(find.byType(MealFormDialog));
       expect(form.sourcesBuilder, isNotNull);
       final barcode = find.byKey(const ValueKey('scan-barcode'));
-      await tester.ensureVisible(barcode);
+      await tester.scrollUntilVisible(
+        barcode,
+        300,
+        scrollable: find
+            .descendant(
+              of: find.byKey(const ValueKey('meal-manual-content')),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
       await tester.pumpAndSettle();
       expect(tester.widget<OutlinedButton>(barcode).onPressed, isNotNull);
       expect(find.text('Quét mã vạch'), findsOneWidget);

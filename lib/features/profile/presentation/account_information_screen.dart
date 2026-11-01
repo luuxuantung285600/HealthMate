@@ -7,6 +7,25 @@ import '../../../core/widgets/feature_page.dart';
 
 enum AccountInformationPage { about, privacy, disclaimer }
 
+/// Static policy is readable before authentication without changing the form's
+/// route, controllers or authentication guards for private destinations.
+Future<void> showPrivacyInformation(BuildContext context) =>
+    Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => Scaffold(
+          appBar: AppBar(
+            title: const Text('Quyền riêng tư'),
+            leading: BackButton(onPressed: () => Navigator.of(context).pop()),
+          ),
+          body: const SafeArea(
+            child: AccountInformationScreen(
+              page: AccountInformationPage.privacy,
+            ),
+          ),
+        ),
+      ),
+    );
+
 class AccountInformationScreen extends StatelessWidget {
   const AccountInformationScreen({required this.page, super.key});
 
@@ -39,9 +58,15 @@ class AccountInformationScreen extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
         ],
         OutlinedButton.icon(
-          onPressed: () => context.go(AppRoutes.profile),
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            } else {
+              context.go(AppRoutes.profile);
+            }
+          },
           icon: const Icon(Icons.arrow_back_rounded),
-          label: const Text('Quay lại Cá nhân'),
+          label: const Text('Quay lại'),
         ),
       ],
     );

@@ -1,6 +1,7 @@
 import 'journal_meal_entry.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/config/app_feature_flags.dart';
@@ -24,7 +25,7 @@ import '../providers/journal_date_provider.dart';
 import '../providers/journal_quick_action_provider.dart';
 import 'journal_date_selector.dart';
 import 'journal_nutrition_overview.dart';
-import 'meal_summary_grid.dart';
+import '../../../core/widgets/details_disclosure.dart';
 import '../../reports/presentation/day_review_controls.dart';
 
 class JournalScreen extends ConsumerWidget {
@@ -295,7 +296,18 @@ class JournalScreen extends ConsumerWidget {
       headerGap: 19,
       showProfileAvatar: true,
       key: const ValueKey('journal-screen'),
-      title: 'Nhật ký hôm nay',
+      title: 'Nhật ký',
+      headerAction: IconButton(
+        key: const ValueKey('open-meal-drafts'),
+        tooltip: 'Bản nháp bữa ăn',
+        onPressed: () => openJournalMealForm(
+          context,
+          ref,
+          catalog,
+          initialConsumedAt: _timeOnSelectedDate(selectedDate),
+        ),
+        icon: const Icon(Icons.drafts_outlined),
+      ),
       subtitle: '',
       compactHeader: true,
       children: [
@@ -313,39 +325,38 @@ class JournalScreen extends ConsumerWidget {
             activityAction.isLoading)
           const Padding(
             padding: EdgeInsets.only(bottom: AppSpacing.md),
-            child: Text(
-              'Đang chờ máy chủ xác nhận thay đổi. Nếu mất mạng, thao tác có thể được đồng bộ khi kết nối lại; đừng gửi lặp.',
-            ),
+            child: Text('Đang lưu thay đổi…'),
           ),
         JournalNutritionOverview(
           day: selectedDate,
           meals: mealsState,
           compact: true,
         ),
-        const SizedBox(height: AppSpacing.md),
-        MealSummaryGrid(
-          meals: mealsState,
-          onOpen:
-              action.isLoading ||
-                  catalogState.isLoading ||
-                  catalogState.hasError
+        const SizedBox(height: AppSpacing.sm),
+        FilledButton.icon(
+          key: const ValueKey('journal-add-meal'),
+          onPressed: action.isLoading
               ? null
-              : (type) => openJournalMealForm(
+              : () => openJournalMealForm(
                   context,
                   ref,
                   catalog,
-                  initialType: type,
                   initialConsumedAt: _timeOnSelectedDate(selectedDate),
                 ),
+          style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+          icon: const Icon(Icons.add_rounded),
+          label: const Text('Thêm bữa ăn'),
         ),
-        const SizedBox(height: AppSpacing.md),
-        FilledButton(
-          key: const ValueKey('open-day-review'),
-          onPressed: () => openDayReview(context, selectedDate),
-          child: const Text('Xác nhận đã ghi đủ các bữa đã ăn'),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          'Ghi cho ngày ${DateFormat('dd/MM/yyyy').format(selectedDate)}',
+          key: const ValueKey('journal-entry-date'),
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: AppSpacing.md),
         MealLogSection(
+          compact: true,
           onOpenDrafts: () => openJournalMealForm(
             context,
             ref,
@@ -397,6 +408,15 @@ class JournalScreen extends ConsumerWidget {
               .read(nutritionControllerProvider.notifier)
               .clearError,
         ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            key: const ValueKey('open-day-review'),
+            onPressed: () => openDayReview(context, selectedDate),
+            icon: const Icon(Icons.fact_check_outlined),
+            label: const Text('Hoàn tất nhật ký'),
+          ),
+        ),
         const SizedBox(height: AppSpacing.md),
         WaterLogSection(
           state: waterState,
@@ -414,21 +434,26 @@ class JournalScreen extends ConsumerWidget {
           onDismissError: ref.read(waterControllerProvider.notifier).clearError,
         ),
         const SizedBox(height: AppSpacing.md),
-        ActivityLogSection(
-          state: activityState,
-          action: activityAction,
-          onAdd: () => _openActivityForm(context, ref, selectedDate),
-          onEdit: (log) =>
-              _openActivityForm(context, ref, selectedDate, log: log),
-          onDelete: (log) => _confirmDelete(
-            context,
-            'Xóa hoạt động?',
-            () => ref.read(activityControllerProvider.notifier).delete(log.id),
+        DetailsDisclosure(
+          key: const ValueKey('journal-activity-details'),
+          title: 'Vận động',
+          builder: (_) => ActivityLogSection(
+            state: activityState,
+            action: activityAction,
+            onAdd: () => _openActivityForm(context, ref, selectedDate),
+            onEdit: (log) =>
+                _openActivityForm(context, ref, selectedDate, log: log),
+            onDelete: (log) => _confirmDelete(
+              context,
+              'Xóa hoạt động?',
+              () =>
+                  ref.read(activityControllerProvider.notifier).delete(log.id),
+            ),
+            onRetry: () => ref.invalidate(activityLogsProvider(dateKey)),
+            onDismissError: ref
+                .read(activityControllerProvider.notifier)
+                .clearError,
           ),
-          onRetry: () => ref.invalidate(activityLogsProvider(dateKey)),
-          onDismissError: ref
-              .read(activityControllerProvider.notifier)
-              .clearError,
         ),
       ],
     );

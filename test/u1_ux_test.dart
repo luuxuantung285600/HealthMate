@@ -173,7 +173,7 @@ void main() {
         expect(scroll.position.pixels, 0);
         final isJournal = page == AppRoutes.journal;
         final target = find.byKey(
-          ValueKey(isJournal ? 'summary-meal-breakfast' : 'weekly-chart'),
+          ValueKey(isJournal ? 'add-meal-breakfast' : 'weekly-chart'),
         );
         final rect = tester.getRect(target);
         final visible = isJournal

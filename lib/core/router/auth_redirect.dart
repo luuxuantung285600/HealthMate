@@ -31,6 +31,7 @@ String? authRedirect(
   Uri uri, [
   AsyncValue<UserProfile?>? profile,
   AsyncValue<void>? accountAction,
+  bool onboardingDeferred = false,
 ]) {
   final isAuth = uri.path == AppRoutes.auth;
   final isSession = uri.path == AppRoutes.session;
@@ -89,12 +90,13 @@ String? authRedirect(
             ).toString();
     }
     if (!currentProfile.isOnboardingComplete) {
-      return isOnboarding
-          ? null
-          : Uri(
-              path: AppRoutes.onboarding,
-              queryParameters: {'from': destination},
-            ).toString();
+      if (isOnboarding) return null;
+      if (!onboardingDeferred) {
+        return Uri(
+          path: AppRoutes.onboarding,
+          queryParameters: {'from': destination},
+        ).toString();
+      }
     }
   }
   return isAuth || isSession || isOnboarding || isVerification

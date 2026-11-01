@@ -189,6 +189,7 @@ void main() {
     ).pop();
     await tester.pumpAndSettle();
     expect(find.text('250 ml'), findsWidgets);
+    await openActivityDetails(tester);
     expect(find.text('30 phút'), findsWidgets);
     expect(find.textContaining('Món yesterday'), findsNothing);
 
@@ -226,10 +227,7 @@ void main() {
       tester.element(find.byType(JournalNutritionOverview).last),
     ).pop();
     await tester.pumpAndSettle();
-    expect(
-      find.textContaining('Chưa có bữa ăn. Chọn Thêm để bắt đầu.'),
-      findsOneWidget,
-    );
+    expect(find.text('Chưa ghi món'), findsNWidgets(4));
   });
 
   testWidgets('switching date while meals load cannot show the old day', (
@@ -269,7 +267,7 @@ void main() {
     expect(repository.watchedDateKeys, contains(localDateKey(today)));
     expect(repository.watchedDateKeys, contains(localDateKey(yesterday)));
     // The summary card and the editable journal row show the same meal.
-    expect(find.textContaining('Món yesterday-only'), findsNWidgets(2));
+    expect(find.textContaining('Món yesterday-only'), findsOneWidget);
     expect(find.textContaining('Món today-only'), findsNothing);
   });
 
@@ -280,10 +278,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull, reason: 'journal');
 
-    expect(find.textContaining('Chọn Thêm để bắt đầu'), findsOneWidget);
-    await tester.ensureVisible(find.byKey(const ValueKey('add-meal')));
+    expect(find.text('Chưa ghi món'), findsNWidgets(4));
+    await tester.ensureVisible(find.byKey(const ValueKey('journal-add-meal')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('add-meal')));
+    await tester.tap(find.byKey(const ValueKey('journal-add-meal')));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull, reason: 'meal form');
     await tester.ensureVisible(find.byKey(const ValueKey('food-search')));
@@ -300,6 +298,7 @@ void main() {
     await tester.tap(find.text('Xác nhận'));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull, reason: 'portion added');
+    await openSelectedMealItems(tester);
     await tester.scrollUntilVisible(
       find.byKey(const ValueKey('selected-meal-item-0')),
       200,
@@ -330,9 +329,11 @@ void main() {
     container.read(appRouterProvider).go(AppRoutes.journal);
     await tester.pumpAndSettle();
 
-    await tester.ensureVisible(find.byKey(const ValueKey('scan-food')));
+    await tester.ensureVisible(find.byKey(const ValueKey('journal-add-meal')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('scan-food')));
+    await tester.tap(find.byKey(const ValueKey('journal-add-meal')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('meal-entry-photo')));
     await tester.pumpAndSettle();
     expect(find.byType(FoodScannerDialog), findsOneWidget);
 

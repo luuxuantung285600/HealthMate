@@ -1,6 +1,5 @@
 import '../../nutrition_targets/presentation/nutrition_target_card.dart';
 import '../../../core/widgets/tracking_page.dart';
-import '../../../core/widgets/reference_shortcuts.dart';
 import '../../../core/config/app_feature_flags.dart';
 import '../../journal/providers/journal_quick_action_provider.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,6 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/local_date_key.dart';
 import '../../../core/widgets/app_card.dart';
-import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/details_disclosure.dart';
 import '../../../core/widgets/feature_page.dart';
 import '../../../core/widgets/metric_tile.dart';
@@ -154,7 +152,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final day = _selected ?? today;
     final previous = DateTime(day.year, day.month, day.day - 1);
     final key = localDateKey(day);
-    final profile = ref.watch(userProfileProvider);
+    if (localDateKey(ref.read(journalDateProvider)) != key) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && TickerMode.valuesOf(context).enabled) {
+          ref.read(journalDateProvider.notifier).select(day);
+        }
+      });
+    }
     final previousMeals = ref.watch(mealLogsProvider(previous));
     final mealsState = ref.watch(mealLogsProvider(day));
     final waterState = ref.watch(waterLogsProvider(key));
@@ -183,32 +187,24 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
     final states = [mealsState, waterState, activityState, metricsState];
     final hasError = states.any((s) => s.hasError);
-    final hasData =
-        meals.isNotEmpty ||
-        water.isNotEmpty ||
-        activities.isNotEmpty ||
-        metrics.isNotEmpty;
-    final resolved = states.every((s) => !s.isLoading && !s.hasError);
-    final name = profile.value?.displayName.trim();
     final theme = Theme.of(context);
     final targetReady = !targetState.isLoading && !targetState.hasError;
-    final monday = DateTime(day.year, day.month, day.day - day.weekday + 1);
     final oldMeals = !previousMeals.isLoading && !previousMeals.hasError
         ? previousMeals.value ?? const <MealLog>[]
         : const <MealLog>[];
     return TrackingPage(
       key: const ValueKey('dashboard-screen'),
-      headerHeight: 92,
+      headerHeight: 76,
       header: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            '${_greeting(now.hour)}, ${name == null || name.isEmpty ? 'bạn' : name.split(' ').last}',
+            'Hôm nay',
             maxLines: 2,
             style: theme.textTheme.titleLarge?.copyWith(
-              fontSize: 24,
-              fontWeight: FontWeight.w400,
+              fontSize: 22,
+              fontWeight: FontWeight.w600,
             ),
           ),
           InkWell(
@@ -223,16 +219,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               );
               if (selected != null && mounted) {
                 setState(() => _selected = localDateOnly(selected));
+                ref.read(journalDateProvider.notifier).select(selected);
               }
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               child: Row(
                 children: [
                   Flexible(
                     child: Text(
                       _formatToday(day),
-                      style: theme.textTheme.bodySmall,
+                      style: theme.textTheme.bodyMedium,
                     ),
                   ),
                   const Icon(Icons.expand_more, size: 18),
@@ -264,6 +261,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             totals: totals,
             target: targetReady ? targetState.value : null,
             embedded: true,
+            showRings: false,
           ),
           target: budget?.kcalTarget,
           budgetNote: budget != null && budget.adjustmentKcal > 0
@@ -279,6 +277,39 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 )
               : null,
         ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: FilledButton.icon(
+                key: const ValueKey('today-add-meal'),
+                onPressed: _opening
+                    ? null
+                    : () => _quickEntry(day, JournalQuickAction.addMeal),
+                icon: const Icon(Icons.add_rounded),
+                label: const Text('Thêm bữa ăn'),
+              ),
+            ),
+            if (ref.watch(appFeatureFlagsProvider).foodScannerEnabled) ...[
+              const SizedBox(width: 8),
+              IconButton.filledTonal(
+                key: const ValueKey('today-shortcut-scan'),
+                tooltip: 'Chụp món ăn',
+                onPressed: () => _quickEntry(day, JournalQuickAction.scanFood),
+                icon: const Icon(Icons.camera_alt_outlined),
+              ),
+            ],
+          ],
+        ),
+        if (day != today)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              'Ghi cho ngày ${DateFormat('dd/MM/yyyy').format(day)}',
+              key: const ValueKey('today-entry-date'),
+              style: theme.textTheme.bodySmall,
+            ),
+          ),
         if (targetState.hasError)
           TextButton(
             onPressed: () => ref.invalidate(nutritionTargetProvider(key)),
@@ -294,156 +325,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           children: [
             Expanded(
               child: Text(
-                'Ghi nhận mỗi ngày',
-                style: theme.textTheme.titleLarge,
-              ),
-            ),
-            TextButton(
-              onPressed: () => _viewJournal(day),
-              child: const Text('Xem thêm', style: TextStyle(fontSize: 11)),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        ReferenceShortcuts(
-          entries: [
-            (
-              label: 'Bữa ăn',
-              art: 'food',
-              key: const ValueKey('today-shortcut-food'),
-              onTap: () => _quickEntry(day, JournalQuickAction.addMeal),
-            ),
-            if (ref.watch(appFeatureFlagsProvider).foodScannerEnabled)
-              (
-                label: 'Quét món',
-                art: 'scan',
-                key: const ValueKey('today-shortcut-scan'),
-                onTap: () => _quickEntry(day, JournalQuickAction.scanFood),
-              ),
-            (
-              label: 'Nước',
-              art: 'water',
-              key: const ValueKey('today-shortcut-water'),
-              onTap: () => _quickEntry(day, JournalQuickAction.addWater),
-            ),
-            (
-              label: 'Bước chân',
-              art: 'steps',
-              key: const ValueKey('today-shortcut-steps'),
-              onTap: () => context.push('${AppRoutes.wellness}?tab=2'),
-            ),
-            (
-              label: 'Giấc ngủ',
-              art: 'moon',
-              key: const ValueKey('today-shortcut-moon'),
-              onTap: () => context.push('${AppRoutes.wellness}?tab=3'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 28),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              day == today ? 'Hôm nay' : DateFormat('dd/MM').format(day),
-              style: theme.textTheme.bodySmall,
-            ),
-            IconButton(
-              key: const ValueKey('open-today-journal'),
-              tooltip: 'Mở nhật ký',
-              onPressed: () => _viewJournal(day),
-              icon: const Icon(Icons.menu_book_outlined),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-        Row(
-          children: [
-            for (var i = 0; i < 7; i++)
-              Expanded(
-                child: Builder(
-                  builder: (context) {
-                    final date = DateTime(
-                      monday.year,
-                      monday.month,
-                      monday.day + i,
-                    );
-                    final selected = date == day;
-                    final disabled = date.isAfter(today);
-                    return Semantics(
-                      selected: selected,
-                      label: DateFormat('EEEE dd/MM', 'vi').format(date),
-                      child: InkWell(
-                        key: ValueKey('today-day-${localDateKey(date)}'),
-                        onTap: disabled
-                            ? null
-                            : () => setState(() => _selected = date),
-                        borderRadius: BorderRadius.circular(24),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Column(
-                            children: [
-                              Text(
-                                i == 6 ? 'CN' : 'T${i + 2}',
-                                style: theme.textTheme.labelSmall?.copyWith(
-                                  color: disabled
-                                      ? theme.disabledColor
-                                      : theme.colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              CircleAvatar(
-                                radius: 17,
-                                backgroundColor: selected
-                                    ? theme.colorScheme.primary
-                                    : Colors.transparent,
-                                child: Text(
-                                  '${date.day}',
-                                  style: theme.textTheme.labelMedium?.copyWith(
-                                    color: selected
-                                        ? theme.colorScheme.onPrimary
-                                        : disabled
-                                        ? theme.disabledColor
-                                        : theme.colorScheme.onSurface,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
+                'Bữa ăn',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-          ],
-        ),
-        const SizedBox(height: 18),
-        if (resolved && !hasData) ...[
-          const SizedBox(height: 16),
-          EmptyState(
-            key: const ValueKey('dashboard-empty'),
-            icon: Icons.restaurant_menu_outlined,
-            title: 'Chưa có ghi nhận',
-            description: 'Bấm + để thêm bữa ăn, nước hoặc vận động.',
-            actionLabel: 'Mở nhật ký',
-            onAction: () => _viewJournal(day),
-          ),
-        ],
-        const SizedBox(height: 28),
-        Wrap(
-          alignment: WrapAlignment.spaceBetween,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Text(
-              'Bữa ăn',
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
             ),
             TextButton(
               onPressed: () => _viewJournal(day),
-              child: const Text('Xem nhật ký'),
+              child: const Text('Nhật ký'),
             ),
           ],
         ),
@@ -464,10 +354,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 mealName: type.label,
                 onLogTap: _opening ? null : () => _enterMeal(day, type),
                 summary: !mealReady
-                    ? 'Đang tải hoặc chưa tải được bữa ăn…'
+                    ? (mealsState.hasError
+                          ? 'Chưa tải được bữa ăn'
+                          : 'Đang tải…')
                     : entries.isEmpty
                     ? null
-                    : '${entries.length} lần ghi · ${NumberFormat('#,##0', 'vi').format(kcal)} kcal\n${entries.expand((m) => m.items).map((item) => item.name).take(3).join(', ')}',
+                    : '${NumberFormat('#,##0', 'vi').format(kcal)} kcal · ${entries.expand((m) => m.items).map((item) => item.name).take(3).join(', ')}',
                 onView: entries.isEmpty ? null : () => _viewJournal(day),
                 recentMealHint: last?.items.map((item) => item.name).join(', '),
                 onQuickAddTap: last == null || _opening
@@ -479,27 +371,47 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           const SizedBox(height: 12),
         ],
         const SizedBox(height: 12),
-        Text('Ghi nhận khác', style: theme.textTheme.titleLarge),
-        const SizedBox(height: 16),
-        _MetricGrid(
-          waterMl: totalWaterMl(water),
-          waterLoading: waterState.isLoading || waterState.hasError,
-          waterActionLoading: action.isLoading,
-          onQuickAddWater: () => _quickAddWater(day),
-          activityMinutes: totalActivityMinutes(activities),
-          activityLoading: activityState.isLoading || activityState.hasError,
-          mealCount: meals.length,
-          mealLoading: !mealReady,
-          latestWeight: latestWeight,
-          weightLoading: metricsState.isLoading || metricsState.hasError,
+        Card(
+          key: const ValueKey('today-water-card'),
+          child: ListTile(
+            leading: const Icon(Icons.water_drop_outlined),
+            title: const Text('Nước uống'),
+            subtitle: Text(
+              waterState.isLoading
+                  ? 'Đang tải…'
+                  : waterState.hasError
+                  ? 'Chưa tải được'
+                  : '${NumberFormat.decimalPattern('vi').format(totalWaterMl(water))} ml',
+            ),
+            onTap: () => _quickEntry(day, JournalQuickAction.addWater),
+            trailing: TextButton(
+              key: const ValueKey('dashboard-quick-water'),
+              onPressed: action.isLoading ? null : () => _quickAddWater(day),
+              child: const Text('+250 ml'),
+            ),
+          ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         DetailsDisclosure(
           key: const ValueKey('dashboard-details'),
-          title: 'Mục tiêu và tổng kết',
+          title: 'Xem thêm',
           builder: (_) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              _MetricGrid(
+                waterMl: totalWaterMl(water),
+                waterLoading: waterState.isLoading || waterState.hasError,
+                waterActionLoading: action.isLoading,
+                onQuickAddWater: () => _quickAddWater(day),
+                activityMinutes: totalActivityMinutes(activities),
+                activityLoading:
+                    activityState.isLoading || activityState.hasError,
+                mealCount: meals.length,
+                mealLoading: !mealReady,
+                latestWeight: latestWeight,
+                weightLoading: metricsState.isLoading || metricsState.hasError,
+              ),
+              const SizedBox(height: 16),
               NutritionTargetCard(day: day, meals: mealsState),
               const SizedBox(height: 16),
               DashboardGoalsCard(
@@ -519,13 +431,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ],
     );
   }
-}
-
-String _greeting(int hour) {
-  if (hour < 11) return 'Chào buổi sáng';
-  if (hour < 14) return 'Chào buổi trưa';
-  if (hour < 18) return 'Chào buổi chiều';
-  return 'Chào buổi tối';
 }
 
 String _formatToday(DateTime date) {
@@ -588,7 +493,7 @@ class _MetricGrid extends StatelessWidget {
             accentBackground: colors.waterContainer,
             accentForeground: colors.onWaterContainer,
             action: FilledButton.tonal(
-              key: const ValueKey('dashboard-quick-water'),
+              key: const ValueKey('dashboard-details-water-add'),
               onPressed: waterActionLoading ? null : onQuickAddWater,
               style: FilledButton.styleFrom(
                 minimumSize: const Size(0, 40),

@@ -160,10 +160,7 @@ void main() {
       settle: false,
     );
     await tester.pump();
-    expect(
-      find.text('HealthMate đang tải hồ sơ sức khỏe của bạn.'),
-      findsOneWidget,
-    );
+    expect(find.text('Đang tải hồ sơ của bạn.'), findsOneWidget);
 
     await tester.pump(profileBootstrapTimeout + const Duration(seconds: 1));
     await tester.pump();

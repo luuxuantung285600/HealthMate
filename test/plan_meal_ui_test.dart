@@ -118,7 +118,7 @@ void main() {
     expect(find.byType(MealFormDialog), findsOneWidget);
     expect(repo.loads, 1);
     expect(repo.saves, 0);
-    await tester.tap(find.byTooltip('Hủy'));
+    await tester.tap(find.byTooltip('Đóng'));
     await tester.pumpAndSettle();
     expect(repo.saves, 0);
     expect(tester.takeException(), isNull);

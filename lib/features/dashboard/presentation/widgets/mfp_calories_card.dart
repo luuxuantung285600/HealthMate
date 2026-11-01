@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/information_button.dart';
-import '../../../../core/widgets/design_illustration.dart';
-import '../../../../core/theme/reference_palette.dart';
 
+/// A short reading of the selected day's recorded energy, not a health score.
 class MfpCaloriesCard extends StatelessWidget {
   const MfpCaloriesCard({
     required this.consumed,
@@ -31,112 +30,98 @@ class MfpCaloriesCard extends StatelessWidget {
     final remaining = validTarget && consumed != null
         ? target! - consumed!
         : null;
-    final muted = theme.colorScheme.onSurfaceVariant;
     return AppCard(
-      padding: EdgeInsets.zero,
-      child: Stack(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          Row(
             children: [
-              const SizedBox(height: 28),
-              const Center(child: DesignIllustration('flame', size: 96)),
-              const SizedBox(height: 30),
-              Text(
-                consumed == null ? '—' : number.format(consumed),
-                textAlign: TextAlign.center,
-                style: theme.textTheme.displaySmall?.copyWith(
-                  fontSize: 35,
-                  height: 1.2,
-                  fontWeight: FontWeight.w400,
-                  color: theme.brightness == Brightness.light
-                      ? ReferencePalette.blue
-                      : theme.colorScheme.primary,
-                ),
+              Expanded(
+                child: Text('Năng lượng', style: theme.textTheme.titleSmall),
               ),
-              Text(
-                validTarget
-                    ? 'kcal đã ghi / ${number.format(target)} kcal'
-                    : 'kcal đã ghi',
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodySmall?.copyWith(fontSize: 13),
-              ),
-              const SizedBox(height: 22),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 18),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: LinearProgressIndicator(
-                    value: validTarget && consumed != null
-                        ? (consumed! / target!).clamp(0, 1)
-                        : 0,
-                    minHeight: 12,
-                    backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              if (onPersonalize != null)
-                TextButton(
-                  key: const ValueKey('open-personal-nutrition'),
-                  onPressed: onPersonalize,
-                  child: const Text('Chưa đặt mục tiêu'),
-                )
-              else
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: Text(
-                    remaining != null
-                        ? '${remaining >= 0 ? 'Còn lại' : 'Đã vượt'} ${number.format(remaining.abs())} kcal'
-                        : targetStatus ??
-                              (consumed == null
-                                  ? 'Chưa có tổng nhật ký'
-                                  : 'Chưa đặt mục tiêu'),
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: muted,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
               if (budgetNote != null)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(18, 0, 18, 8),
-                  child: Text(budgetNote!, style: theme.textTheme.bodySmall),
+                InformationButton(
+                  title: 'Điều chỉnh năng lượng',
+                  message: budgetNote!,
                 ),
-              if (macros != null) ...[
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 12, 10, 8),
-                  child: macros!,
+              if (onEditTarget != null)
+                IconButton(
+                  key: editKey,
+                  tooltip: 'Mục tiêu dinh dưỡng',
+                  onPressed: onEditTarget,
+                  icon: const Icon(Icons.tune_rounded, size: 20),
                 ),
-              ],
             ],
           ),
-          if (macros != null)
-            const Positioned(
-              left: 4,
-              top: 4,
-              child: InformationButton(
-                title: 'Cách đọc dinh dưỡng',
-                message:
-                    'Vòng màu thể hiện tiến độ theo mục tiêu gram của bạn. Chạm vào các vòng để đổi gram/phần trăm năng lượng. Dấu — là chưa đủ dữ liệu, không phải 0.',
+          Text(
+            remaining != null
+                ? number.format(remaining.abs())
+                : consumed == null
+                ? '—'
+                : number.format(consumed),
+            key: validTarget
+                ? const ValueKey('today-remaining-energy')
+                : const ValueKey('today-recorded-energy'),
+            style: theme.textTheme.displayMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          Text(
+            remaining != null
+                ? (remaining >= 0 ? 'kcal còn lại' : 'kcal vượt mục tiêu')
+                : 'kcal đã ăn',
+            style: theme.textTheme.bodyMedium,
+          ),
+          if (validTarget) ...[
+            const SizedBox(height: 8),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: LinearProgressIndicator(
+                value: consumed == null ? 0 : (consumed! / target!).clamp(0, 1),
+                minHeight: 8,
+                backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                semanticsLabel: 'Tiến độ năng lượng đã ghi',
               ),
             ),
-          if (onEditTarget != null)
-            Positioned(
-              right: 4,
-              top: 4,
-              child: IconButton(
-                key: editKey,
-                tooltip: 'Mục tiêu dinh dưỡng',
-                onPressed: onEditTarget,
-                icon: const Icon(Icons.tune_rounded, size: 19),
+          ],
+          const SizedBox(height: 8),
+          if (validTarget)
+            Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              spacing: 16,
+              runSpacing: 8,
+              children: [
+                Text(
+                  '${consumed == null ? '—' : number.format(consumed)} đã ăn',
+                  key: const ValueKey('today-recorded-energy'),
+                  style: theme.textTheme.bodySmall,
+                ),
+                Text(
+                  'Mục tiêu ${number.format(target)} kcal',
+                  style: theme.textTheme.bodySmall,
+                ),
+              ],
+            )
+          else
+            Text(
+              targetStatus ??
+                  (consumed == null
+                      ? 'Đang tải nhật ký…'
+                      : 'Chưa đặt mục tiêu'),
+              style: theme.textTheme.bodySmall,
+            ),
+          if (onPersonalize != null)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: const ValueKey('open-personal-nutrition'),
+                onPressed: onPersonalize,
+                child: const Text('Thiết lập mục tiêu'),
               ),
             ),
+          if (macros != null) ...[const Divider(height: 24), macros!],
         ],
       ),
     );

@@ -147,11 +147,32 @@ Future<void> selectDiet(
     }
   }
 
+  // Leave the text field's focus/selection overlay before changing the filter;
+  // keep the pending request alive to exercise the stale-response guard.
+  FocusManager.instance.primaryFocus?.unfocus();
+  await pumpTransition();
   final filter = find.byKey(const ValueKey('food-diet-filter'));
   final form = find.byType(MealFormDialog);
-  final scrollable = form.evaluate().isNotEmpty
+  final manual = find.byKey(const ValueKey('meal-manual-content'));
+  final scrollable = form.evaluate().isNotEmpty && manual.evaluate().isNotEmpty
+      ? find.descendant(of: manual, matching: find.byType(Scrollable)).first
+      : form.evaluate().isNotEmpty
       ? find.descendant(of: form, matching: find.byType(Scrollable)).first
       : find.byType(Scrollable).first;
+  if (form.evaluate().isNotEmpty) await openMealTools(tester);
+  final options = find.byKey(const ValueKey('meal-diet-options'));
+  if (form.evaluate().isNotEmpty && filter.evaluate().isEmpty) {
+    await tester.scrollUntilVisible(options, -150, scrollable: scrollable);
+    await Scrollable.ensureVisible(tester.element(options), alignment: .2);
+    await pumpTransition();
+    // A lazy ListView can dispose an offscreen filter while its tile remains
+    // expanded. Recheck once visible; tapping the whole expanded tile can hit
+    // its DropdownButton instead of the expansion header.
+    if (filter.evaluate().isEmpty) {
+      await tester.tap(find.text('Bộ lọc món'));
+      await pumpTransition();
+    }
+  }
   await tester.scrollUntilVisible(filter, -150, scrollable: scrollable);
   await Scrollable.ensureVisible(tester.element(filter), alignment: .5);
   await pumpTransition();
@@ -239,7 +260,7 @@ void main() {
     await selectDiet(tester, 'Tất cả chế độ');
     expect(find.byKey(const ValueKey('catalog-food-thịt')), findsOneWidget);
     expect(find.byKey(const ValueKey('catalog-food-chưa rõ')), findsOneWidget);
-    await tester.tap(find.byTooltip('Hủy'));
+    await tester.tap(find.byTooltip('Đóng'));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
   });
@@ -258,7 +279,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('catalog-food-đậu')), findsNothing);
       expect(find.byKey(const ValueKey('catalog-food-thịt')), findsOneWidget);
-      await tester.tap(find.byTooltip('Hủy'));
+      await tester.tap(find.byTooltip('Đóng'));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
     },
@@ -298,7 +319,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('catalog-food-đậu')), findsOneWidget);
       expect(find.byKey(const ValueKey('catalog-food-thịt')), findsNothing);
-      await tester.tap(find.byTooltip('Hủy'));
+      await tester.tap(find.byTooltip('Đóng'));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
     },
@@ -322,7 +343,7 @@ void main() {
       expect(find.textContaining('Chưa tìm thêm được món'), findsOneWidget);
       expect(find.textContaining('PRIVATE_PROVIDER_DETAIL'), findsNothing);
       expect(find.text('Thử lại'), findsOneWidget);
-      await tester.tap(find.byTooltip('Hủy'));
+      await tester.tap(find.byTooltip('Đóng'));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
     },
@@ -347,7 +368,7 @@ void main() {
     await selectDiet(tester, 'Tất cả chế độ');
     button = tester.widget<IconButton>(addMeat);
     expect(button.onPressed, isNotNull);
-    await tester.tap(find.byTooltip('Hủy'));
+    await tester.tap(find.byTooltip('Đóng'));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
   });

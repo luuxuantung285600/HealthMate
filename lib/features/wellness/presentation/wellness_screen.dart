@@ -3,7 +3,6 @@ import '../../../core/widgets/help_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../core/utils/local_date_key.dart';
 import '../../../core/widgets/confirmed_save.dart';
@@ -66,7 +65,7 @@ class _WellnessScreenState extends State<WellnessScreen> {
 
   @override
   Widget build(BuildContext context) => PopScope(
-    canPop: _tab == -1 || context.canPop(),
+    canPop: _tab == -1,
     onPopInvokedWithResult: (didPop, _) {
       if (!didPop && _tab >= 0) setState(() => _tab = -1);
     },
@@ -88,13 +87,7 @@ class _WellnessScreenState extends State<WellnessScreen> {
                       ][_tab],
                     ),
                     leading: BackButton(
-                      onPressed: () {
-                        if (context.canPop()) {
-                          context.pop();
-                        } else {
-                          setState(() => _tab = -1);
-                        }
-                      },
+                      onPressed: () => setState(() => _tab = -1),
                     ),
                     actions: [
                       IconButton(

@@ -21,9 +21,9 @@ void main() {
   ) async {
     await pumpApp(tester, dashboardNow: now);
 
-    expect(find.text('Chào buổi sáng, Tester'), findsOneWidget);
+    expect(find.text('Hôm nay'), findsNWidgets(2));
     expect(find.text('Thứ Ba, 13 tháng 10'), findsOneWidget);
-    expect(find.byKey(const ValueKey('dashboard-empty')), findsOneWidget);
+    expect(find.text('Chưa ghi món'), findsNWidgets(4));
     expect(find.byKey(const ValueKey('dashboard-today-card')), findsOneWidget);
     expect(find.textContaining('kcal còn lại'), findsNothing);
     expect(find.textContaining('Gemini'), findsNothing);
@@ -87,6 +87,7 @@ void main() {
       ),
       findsOneWidget,
     );
+    await openDashboardDetails(tester);
     expect(_tile(tester, 'dashboard-water').value, '750');
     expect(_tile(tester, 'dashboard-activity').value, '35');
     expect(_tile(tester, 'dashboard-meals').value, '1');
@@ -127,27 +128,9 @@ void main() {
 
         await tester.tap(find.byKey(const ValueKey('quick-add-menu')));
         await tester.pumpAndSettle();
-        expect(find.byKey(const ValueKey('quick-action-meal')), findsOneWidget);
-        expect(find.byKey(const ValueKey('quick-action-scan')), findsOneWidget);
-        expect(
-          find.byKey(const ValueKey('quick-action-water')),
-          findsOneWidget,
-        );
-        expect(
-          find.byKey(const ValueKey('quick-action-activity')),
-          findsOneWidget,
-        );
-        expect(
-          find.byKey(const ValueKey('quick-action-weight')),
-          findsOneWidget,
-        );
-        expect(
-          find.descendant(
-            of: find.byKey(const ValueKey('quick-action-scan')),
-            matching: find.text('Quét món'),
-          ),
-          findsOneWidget,
-        );
+        expect(find.byKey(const ValueKey('meal-entry-manual')), findsOneWidget);
+        expect(find.byKey(const ValueKey('meal-entry-photo')), findsOneWidget);
+        expect(find.byKey(const ValueKey('food-search')), findsOneWidget);
         expect(find.textContaining('Gemini'), findsNothing);
         expect(tester.takeException(), isNull);
       },
@@ -160,11 +143,9 @@ void main() {
     await pumpApp(tester, dashboardNow: now);
     await tester.tap(find.byKey(const ValueKey('quick-add-menu')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('quick-action-water')));
-    await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('journal-screen')), findsOneWidget);
-    expect(find.text('Thêm nước uống'), findsOneWidget);
+    expect(find.byKey(const ValueKey('save-meal')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

@@ -183,11 +183,8 @@ void main() {
         await capture(tester, key, 'macros-${mode.name}-$scale');
         await tester.tap(find.byKey(const ValueKey('quick-add-menu')));
         await tester.pumpAndSettle();
-        expect(find.byKey(const ValueKey('quick-action-meal')), findsOneWidget);
-        expect(
-          find.byKey(const ValueKey('quick-action-water')),
-          findsOneWidget,
-        );
+        expect(find.byType(MealFormDialog), findsOneWidget);
+        expect(find.byKey(const ValueKey('save-meal')), findsOneWidget);
         await capture(tester, key, 'actions-${mode.name}-$scale');
         expect(tester.takeException(), isNull);
       });
@@ -200,7 +197,7 @@ void main() {
     final card = tester.widget<MfpCaloriesCard>(find.byType(MfpCaloriesCard));
     expect(card.consumed, 0);
     expect(card.target, isNull);
-    expect(find.byKey(const ValueKey('dashboard-empty')), findsOneWidget);
+    expect(find.text('Chưa ghi món'), findsNWidgets(4));
     expect(find.textContaining('Chưa đặt mục tiêu'), findsWidgets);
     expect(tester.takeException(), isNull);
   });
@@ -213,24 +210,14 @@ void main() {
       tester.widget<MfpCaloriesCard>(find.byType(MfpCaloriesCard)).consumed,
       260,
     );
-    await Scrollable.ensureVisible(
-      tester.element(find.byKey(const ValueKey('today-day-2026-10-19'))),
-      alignment: .5,
-    );
-    await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('today-day-2026-10-19')));
+    await selectHomeDate(tester, DateTime(2026, 10, 19), settle: false);
     await tester.pump();
     await tester.pump();
     expect(
       tester.widget<MfpCaloriesCard>(find.byType(MfpCaloriesCard)).consumed,
       isNull,
     );
-    await Scrollable.ensureVisible(
-      tester.element(find.byKey(const ValueKey('today-day-2026-10-20'))),
-      alignment: .5,
-    );
-    await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('today-day-2026-10-20')));
+    await selectHomeDate(tester, DateTime(2026, 10, 20), settle: false);
     await tester.pumpAndSettle();
     repo.pending.complete([meal('late', 19, 300)]);
     await tester.pumpAndSettle();
@@ -279,7 +266,8 @@ void main() {
           meals: [meal('today', 20, 100)],
         ),
       );
-      expect(find.text('Còn lại 1.870 kcal'), findsOneWidget);
+      expect(find.text('1.870'), findsOneWidget);
+      expect(find.text('kcal còn lại'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );
@@ -288,7 +276,8 @@ void main() {
   ) async {
     final repo = FakeNutritionRepository(meals: [meal('yesterday', 19, 100)]);
     await pumpApp(tester, dashboardNow: now, nutritionRepository: repo);
-    await visibleTap(tester, find.text('Ghi lại bữa hôm trước'));
+    await visibleTap(tester, find.byTooltip('Tùy chọn Bữa sáng'));
+    await visibleTap(tester, find.textContaining('Ghi lại bữa hôm trước:'));
     expect(find.byType(MealFormDialog), findsOneWidget);
     expect(repo.addCalls, 0);
     final form = tester.widget<MealFormDialog>(find.byType(MealFormDialog));
@@ -310,7 +299,7 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('nav-progress')));
       await tester.pumpAndSettle();
       expect(repo.rangeCalls, 1);
-      for (final index in [3, 2, 1, 0]) {
+      for (final index in [3, 2, 0]) {
         await visibleTap(tester, find.byKey(ValueKey('progress-tab-$index')));
       }
       expect(repo.rangeCalls, 1);

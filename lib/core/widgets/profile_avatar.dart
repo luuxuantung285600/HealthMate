@@ -18,7 +18,7 @@ class ProfileAvatar extends ConsumerWidget {
         label: 'Mở không gian cá nhân',
         button: true,
         child: InkResponse(
-          key: const ValueKey('nav-profile'),
+          key: const ValueKey('profile-avatar'),
           onTap: onTap ?? () => context.go(AppRoutes.profile),
           radius: 28,
           child: SizedBox.square(

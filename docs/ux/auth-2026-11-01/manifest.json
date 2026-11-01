@@ -1,0 +1,95 @@
+{
+  "date": "2026-11-01",
+  "gitBase": "46dccf642f4dff8b51b31cc044f1a1b46cf9a1c2",
+  "before": "Working tree before Auth redesign; shared UX theme already applied",
+  "kind": "Flutter widget capture with fake repositories; no native or production acceptance",
+  "viewport": {
+    "height": 844,
+    "width": 390,
+    "textScale": 1,
+    "theme": "light"
+  },
+  "stressViewport": {
+    "height": 844,
+    "width": 320,
+    "textScale": 2,
+    "theme": "dark"
+  },
+  "files": [
+    {
+      "path": "after/auth-login.png",
+      "sha256": "195b9ef0ac9e8332b10fe28b8846db73146236560406b00e3ed25800132679d8",
+      "bytes": 31940
+    },
+    {
+      "path": "after/auth-register.png",
+      "sha256": "2d151db1b3d620f15a8615e5a699175db4a4bcaf9c22cc3d43a7a3d1aaee3091",
+      "bytes": 34200
+    },
+    {
+      "path": "after/auth-reset-sent.png",
+      "sha256": "53efae830e40852f77820041e37caceca3621f609c3e1c076db7c6751cd1977a",
+      "bytes": 29415
+    },
+    {
+      "path": "after/auth-reset.png",
+      "sha256": "068c189080dfb8a48c26fc6391e2937939fa99bf7425d57a7427885dc80c15af",
+      "bytes": 19377
+    },
+    {
+      "path": "after/auth-verify.png",
+      "sha256": "ff4e09ecab3c8b7282a90b20394b2daca5a3466b4cd827776952b0c41ea7a5b5",
+      "bytes": 31387
+    },
+    {
+      "path": "before/auth-login.png",
+      "sha256": "a3a52a7b86c2a207b005c347bf9fd87aa720c2d0f4e361edae300560a03675ae",
+      "bytes": 33793
+    },
+    {
+      "path": "before/auth-register.png",
+      "sha256": "146d5c8759774890f5e2de5b9b762d670ca4e7f4097c82669f0abf1402c551f3",
+      "bytes": 40953
+    },
+    {
+      "path": "before/auth-reset-sent.png",
+      "sha256": "d1c24665c4d0662bd86844ad1d04312c5baaeef6e6c9f82fcf26293fa6ffa83b",
+      "bytes": 49880
+    },
+    {
+      "path": "before/auth-reset.png",
+      "sha256": "48d12f16ace76de306684a66d17f50d5751ae932b7c3338e661a019a0d21585d",
+      "bytes": 42938
+    },
+    {
+      "path": "before/auth-verify.png",
+      "sha256": "007c5609b0c4c2b9e6630bf3b4f571b0b55511083db0daee2f91b7619e11b6ad",
+      "bytes": 43385
+    },
+    {
+      "path": "stress/auth-login.png",
+      "sha256": "4a0f1336130f6139fd4534936d506108f5dfbac1cb9fea98ad04aebe04971db2",
+      "bytes": 35653
+    },
+    {
+      "path": "stress/auth-register.png",
+      "sha256": "8ba6d64ca3a8b158a6a86b450d2c626904e8dc3f208fe822d965c466d07735b6",
+      "bytes": 37271
+    },
+    {
+      "path": "stress/auth-reset-sent.png",
+      "sha256": "106a0b92fc5548172be93b2515834a26c90ba385f0f79d96882055eed3d28b32",
+      "bytes": 41551
+    },
+    {
+      "path": "stress/auth-reset.png",
+      "sha256": "77430a7673306d6678b348e97b01ea470d3e1dafaac7b956c8e535c1ea0942ae",
+      "bytes": 31387
+    },
+    {
+      "path": "stress/auth-verify.png",
+      "sha256": "ee94c8872231ea3b2c99e82d8493bcc5d1c3655c3bf77f05029b75650c0660b9",
+      "bytes": 39220
+    }
+  ]
+}

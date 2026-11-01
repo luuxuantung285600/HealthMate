@@ -26,6 +26,7 @@ import 'weight_chart.dart';
 import 'personal_overview.dart';
 import '../../data_export/presentation/journal_export_dialog.dart';
 import '../../premium/providers/premium_providers.dart';
+import '../../weekly_reflection/providers/weekly_reflection_providers.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -99,6 +100,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ? null
               : () => _editProfile(context, ref, profile),
         ),
+        _ProfileCard(
+          state: profileState,
+          profile: profile,
+          onEdit: profile == null
+              ? null
+              : () => _editProfile(context, ref, profile),
+          onRetry: () => _retryProfile(ref),
+        ),
+        const SizedBox(height: AppSpacing.md),
         Card(
           child: ListTile(
             key: const ValueKey('open-support'),
@@ -151,6 +161,35 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
           const SizedBox(height: AppSpacing.md),
         ],
+        Card(
+          child: Column(
+            children: [
+              ListTile(
+                key: const ValueKey('open-about'),
+                leading: const Icon(Icons.info_outline_rounded),
+                title: const Text('Giới thiệu'),
+                trailing: const Icon(Icons.chevron_right_rounded),
+                onTap: () => context.go(AppRoutes.about),
+              ),
+              const Divider(height: 1),
+              ListTile(
+                key: const ValueKey('open-privacy'),
+                leading: const Icon(Icons.privacy_tip_outlined),
+                title: const Text('Quyền riêng tư'),
+                trailing: const Icon(Icons.chevron_right_rounded),
+                onTap: () => context.go(AppRoutes.privacy),
+              ),
+              const Divider(height: 1),
+              ListTile(
+                key: const ValueKey('open-disclaimer'),
+                leading: const Icon(Icons.health_and_safety_outlined),
+                title: const Text('Lưu ý sức khỏe'),
+                trailing: const Icon(Icons.chevron_right_rounded),
+                onTap: () => context.go(AppRoutes.disclaimer),
+              ),
+            ],
+          ),
+        ),
         _AccountCard(
           key: accountAnchor,
           email: user?.email,
@@ -166,7 +205,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           child: ListTile(
             key: const ValueKey('open-personalization'),
             leading: const Icon(Icons.tune_rounded),
-            title: const Text('Cá nhân hóa · 20 câu hỏi'),
+            title: const Text('Cá nhân hóa thêm'),
             subtitle: Text(
               profile?.personalization == null
                   ? 'Bổ sung mục tiêu và thói quen khi bạn sẵn sàng'
@@ -177,15 +216,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             trailing: const Icon(Icons.chevron_right_rounded),
             onTap: () => context.push(AppRoutes.personalization),
           ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-        _ProfileCard(
-          state: profileState,
-          profile: profile,
-          onEdit: profile == null
-              ? null
-              : () => _editProfile(context, ref, profile),
-          onRetry: () => _retryProfile(ref),
         ),
         const SizedBox(height: AppSpacing.md),
         if (profile != null &&
@@ -304,35 +334,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        Card(
-          child: Column(
-            children: [
-              ListTile(
-                key: const ValueKey('open-about'),
-                leading: const Icon(Icons.info_outline_rounded),
-                title: const Text('Giới thiệu'),
-                trailing: const Icon(Icons.chevron_right_rounded),
-                onTap: () => context.go(AppRoutes.about),
-              ),
-              const Divider(height: 1),
-              ListTile(
-                key: const ValueKey('open-privacy'),
-                leading: const Icon(Icons.privacy_tip_outlined),
-                title: const Text('Quyền riêng tư'),
-                trailing: const Icon(Icons.chevron_right_rounded),
-                onTap: () => context.go(AppRoutes.privacy),
-              ),
-              const Divider(height: 1),
-              ListTile(
-                key: const ValueKey('open-disclaimer'),
-                leading: const Icon(Icons.health_and_safety_outlined),
-                title: const Text('Lưu ý sức khỏe'),
-                trailing: const Icon(Icons.chevron_right_rounded),
-                onTap: () => context.go(AppRoutes.disclaimer),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
@@ -423,6 +424,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (saved != null &&
         context.mounted &&
         ref.read(authSessionProvider).value?.uid == uid) {
+      ref.invalidate(weeklyLogsProvider);
       _showSaved(
         context,
         metric == null ? 'Đã thêm lần đo.' : 'Đã cập nhật lần đo.',
@@ -466,7 +468,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final deleted = await ref
         .read(profileControllerProvider.notifier)
         .deleteBodyMetric(metric.id);
-    if (deleted && context.mounted) _showSaved(context, 'Đã xóa lần đo.');
+    if (deleted && context.mounted) {
+      ref.invalidate(weeklyLogsProvider);
+      _showSaved(context, 'Đã xóa lần đo.');
+    }
   }
 
   void _retryProfile(WidgetRef ref) {
@@ -740,7 +745,7 @@ class _MetricsCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'Trang $pageNumber · tối đa 25 lần cân. Biểu đồ dùng tối đa 12 lần trên trang này.',
+              'Trang $pageNumber · tối đa 25 lần cân. Biểu đồ: 12 lần gần nhất trên trang, đơn vị kg.',
             ),
             state.when(
               loading: () => const _LoadingLine(),

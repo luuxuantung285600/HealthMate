@@ -242,7 +242,20 @@ void main() {
       container.read(appRouterProvider).go(page.$1);
       await tester.pumpAndSettle();
       expect(find.text(page.$2), findsWidgets);
-      expect(find.text('Quay lại Cá nhân'), findsOneWidget);
+      final back = find.widgetWithText(OutlinedButton, 'Quay lại');
+      await tester.ensureVisible(back);
+      await tester.pumpAndSettle();
+      await tester.tap(back);
+      await tester.pumpAndSettle();
+      expect(
+        container
+            .read(appRouterProvider)
+            .routeInformationProvider
+            .value
+            .uri
+            .path,
+        AppRoutes.profile,
+      );
     }
   });
 

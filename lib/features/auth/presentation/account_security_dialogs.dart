@@ -5,6 +5,7 @@ import '../providers/auth_providers.dart';
 import '../models/auth_failure.dart';
 
 import '../models/auth_validation.dart';
+import 'auth_flow_page.dart';
 
 class ChangePasswordRequest {
   const ChangePasswordRequest({
@@ -22,7 +23,9 @@ Future<void> showResetPasswordDialog(
 }) => showDialog<void>(
   context: context,
   barrierDismissible: false,
-  builder: (context) => _ResetPasswordDialog(initialEmail: initialEmail),
+  builder: (context) => Dialog.fullscreen(
+    child: _ResetPasswordDialog(initialEmail: initialEmail),
+  ),
 );
 
 Future<ChangePasswordRequest?> showChangePasswordDialog(BuildContext context) =>
@@ -80,7 +83,9 @@ class _ResetPasswordDialogState extends ConsumerState<_ResetPasswordDialog> {
   }
 
   Future<void> _submit() async {
+    if (ref.read(accountSecurityControllerProvider).isLoading) return;
     if (!_formKey.currentState!.validate()) return;
+    FocusScope.of(context).unfocus();
     final sent = await ref
         .read(accountSecurityControllerProvider.notifier)
         .sendPasswordResetEmail(_email.text.trim());
@@ -96,79 +101,97 @@ class _ResetPasswordDialogState extends ConsumerState<_ResetPasswordDialog> {
     _displayedCooldown = cooldown;
     return PopScope(
       canPop: !state.isLoading,
-      child: AlertDialog(
-        title: Text(_sent ? 'Kiểm tra hộp thư' : 'Đặt lại mật khẩu'),
-        content: SingleChildScrollView(
-          child: Form(
+      child: AuthFlowPage(
+        title: _sent ? 'Kiểm tra hộp thư' : 'Đặt lại mật khẩu',
+        subtitle: _sent
+            ? 'Nếu email thuộc một tài khoản HealthMate, bạn sẽ nhận được liên kết đặt lại mật khẩu.'
+            : 'Nhận liên kết đặt lại mật khẩu qua email đã đăng ký.',
+        showBack: true,
+        onBack: state.isLoading ? null : () => Navigator.of(context).pop(),
+        children: [
+          Form(
             key: _formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextFormField(
-                  key: const ValueKey('reset-password-email'),
-                  controller: _email,
-                  enabled: !state.isLoading && !_sent,
-                  autofocus: true,
-                  keyboardType: TextInputType.emailAddress,
-                  textCapitalization: TextCapitalization.none,
-                  autocorrect: false,
-                  decoration: const InputDecoration(
-                    labelText: 'Email tài khoản',
-                    prefixIcon: Icon(Icons.alternate_email),
-                  ),
-                  validator: AuthValidation.email,
-                  onFieldSubmitted: (_) {
-                    if (!state.isLoading && cooldown == 0) _submit();
-                  },
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  _sent
-                      ? 'Nếu email thuộc một tài khoản HealthMate, bạn sẽ nhận được liên kết đặt lại mật khẩu. Mở liên kết trong thư để chọn mật khẩu mới, rồi quay lại đăng nhập.'
-                      : 'Nhập email đã đăng ký để nhận liên kết đặt lại mật khẩu.',
-                ),
-                if (_sent)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 12),
-                    child: Text(
-                      'Chưa nhận được thư? Kiểm tra mục thư rác, địa chỉ email và chờ một lúc trước khi gửi lại.',
+                if (!_sent)
+                  TextFormField(
+                    key: const ValueKey('reset-password-email'),
+                    controller: _email,
+                    enabled: !state.isLoading && !_sent,
+                    autofocus: widget.initialEmail.trim().isEmpty,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.done,
+                    autofillHints: const [AutofillHints.email],
+                    textCapitalization: TextCapitalization.none,
+                    autocorrect: false,
+                    decoration: const InputDecoration(
+                      label: Text('Email tài khoản'),
+                      prefixIcon: Icon(Icons.alternate_email),
                     ),
+                    validator: AuthValidation.email,
+                    onFieldSubmitted: (_) {
+                      if (!state.isLoading && cooldown == 0) _submit();
+                    },
                   ),
+                if (_sent) ...[
+                  AuthEmailAddress(email: _email.text.trim()),
+                  const SizedBox(height: 24),
+                  const AuthNotice(
+                    message:
+                        'Mở liên kết trong thư để chọn mật khẩu mới. Kiểm tra thư rác nếu chưa thấy email.',
+                  ),
+                ],
                 if (state.hasError)
                   Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: Text(
-                      state.error is AuthFailure
+                    padding: const EdgeInsets.only(top: 16),
+                    child: AuthNotice(
+                      isError: true,
+                      message: state.error is AuthFailure
                           ? (state.error as AuthFailure).message
                           : 'Chưa thể gửi email. Hãy thử lại.',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
+                    ),
+                  ),
+                const SizedBox(height: 24),
+                if (_sent) ...[
+                  FilledButton(
+                    key: const ValueKey('reset-back-to-login'),
+                    onPressed: state.isLoading
+                        ? null
+                        : () => Navigator.of(context).pop(),
+                    child: const Text('Quay lại đăng nhập'),
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    key: const ValueKey('send-reset-password'),
+                    onPressed: state.isLoading || cooldown > 0 ? null : _submit,
+                    child: AuthActionLabel(
+                      busy: state.isLoading,
+                      label: state.isLoading
+                          ? 'Đang gửi…'
+                          : cooldown > 0
+                          ? 'Gửi lại sau ${cooldown}s'
+                          : 'Gửi lại email',
+                    ),
+                  ),
+                ] else
+                  FilledButton(
+                    key: const ValueKey('send-reset-password'),
+                    onPressed: state.isLoading || cooldown > 0 ? null : _submit,
+                    child: AuthActionLabel(
+                      busy: state.isLoading,
+                      foregroundColor: Theme.of(
+                        context,
+                      ).colorScheme.onSurfaceVariant,
+                      label: state.isLoading
+                          ? 'Đang gửi…'
+                          : cooldown > 0
+                          ? 'Gửi lại sau ${cooldown}s'
+                          : 'Gửi liên kết',
                     ),
                   ),
               ],
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: state.isLoading
-                ? null
-                : () => Navigator.of(context).pop(),
-            child: Text(_sent ? 'Quay lại đăng nhập' : 'Hủy'),
-          ),
-          FilledButton(
-            key: const ValueKey('send-reset-password'),
-            onPressed: state.isLoading || cooldown > 0 ? null : _submit,
-            child: Text(
-              state.isLoading
-                  ? 'Đang gửi…'
-                  : cooldown > 0
-                  ? 'Gửi lại sau ${cooldown}s'
-                  : _sent
-                  ? 'Gửi lại email'
-                  : 'Gửi email',
             ),
           ),
         ],

@@ -16,11 +16,12 @@ Future<String?> chooseMealDraft(
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
           child: Text(
-            'Nháp mã hóa theo tài khoản, hết hạn sau 7 ngày. Nếu lần gửi trước bị gián đoạn, thử lại cùng nháp để kiểm tra và tránh trùng; đừng tạo bản mới. Không tự gửi khi đăng nhập.',
+            'Mở lại nháp để tiếp tục. Nếu lần lưu trước bị gián đoạn, dùng cùng nháp để tránh ghi trùng.',
           ),
         ),
         for (final saved in drafts)
           SimpleDialogOption(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             key: ValueKey('restore-draft-${saved.operationId}'),
             onPressed: () => Navigator.pop(dialogContext, saved.operationId),
             child: Text(
@@ -30,10 +31,12 @@ Future<String?> chooseMealDraft(
             ),
           ),
         SimpleDialogOption(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           onPressed: () => Navigator.pop(dialogContext, ''),
           child: const Text('Tạo bản mới'),
         ),
         SimpleDialogOption(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           onPressed: () => Navigator.pop(dialogContext),
           child: const Text('Để sau'),
         ),

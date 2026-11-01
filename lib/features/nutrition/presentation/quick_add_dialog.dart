@@ -219,14 +219,14 @@ class _QuickAddDialogState extends State<QuickAddDialog> {
               ),
               _field(
                 'quick-carbs',
-                'Tinh bột (g) · ${_basis.label}',
+                'Carb (g) · ${_basis.label}',
                 _carbs,
                 optional: true,
                 max: 1000,
               ),
               _field(
                 'quick-fat',
-                'Béo (g) · ${_basis.label}',
+                'Chất béo (g) · ${_basis.label}',
                 _fat,
                 optional: true,
                 max: 1000,

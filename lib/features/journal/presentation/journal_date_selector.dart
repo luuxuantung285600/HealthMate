@@ -34,7 +34,7 @@ class JournalDateSelector extends StatelessWidget {
               key: const ValueKey('journal-previous-day'),
               onPressed: onPrevious,
               style: TextButton.styleFrom(
-                minimumSize: const Size(0, 40),
+                minimumSize: const Size(48, 48),
                 padding: EdgeInsets.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
@@ -56,7 +56,7 @@ class JournalDateSelector extends StatelessWidget {
                 key: const ValueKey('journal-pick-date'),
                 onPressed: onPick,
                 style: TextButton.styleFrom(
-                  minimumSize: const Size(0, 32),
+                  minimumSize: const Size(48, 48),
                   padding: EdgeInsets.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
@@ -75,7 +75,7 @@ class JournalDateSelector extends StatelessWidget {
               key: const ValueKey('journal-next-day'),
               onPressed: onNext,
               style: TextButton.styleFrom(
-                minimumSize: const Size(0, 40),
+                minimumSize: const Size(48, 48),
                 padding: EdgeInsets.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),

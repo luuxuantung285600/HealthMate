@@ -40,9 +40,11 @@ class WeeklyReflectionCard extends ConsumerStatefulWidget {
   const WeeklyReflectionCard({
     required this.today,
     this.progressMode = false,
+    this.initialWeekOffset = 0,
     super.key,
   });
   final bool progressMode;
+  final int initialWeekOffset;
   final DateTime today;
   @override
   ConsumerState<WeeklyReflectionCard> createState() =>
@@ -57,6 +59,7 @@ class _WeeklyReflectionCardState extends ConsumerState<WeeklyReflectionCard> {
   void initState() {
     super.initState();
     _expanded = widget.progressMode;
+    _offset = widget.initialWeekOffset;
   }
 
   void _refresh(DateTime start) {
@@ -407,7 +410,20 @@ class _WeekChart extends StatelessWidget {
   BarChartData dataForChart(ThemeData theme, double maxY) => BarChartData(
     minY: 0,
     maxY: maxY,
-    barTouchData: BarTouchData(enabled: false),
+    barTouchData: BarTouchData(
+      touchTooltipData: BarTouchTooltipData(
+        fitInsideHorizontally: true,
+        fitInsideVertically: true,
+        getTooltipColor: (_) => theme.colorScheme.inverseSurface,
+        getTooltipItem: (group, groupIndex, rod, rodIndex) {
+          final day = reflection.days[group.x];
+          return BarTooltipItem(
+            '${DateFormat('dd/MM/yyyy').format(day.date)}\n${NumberFormat('0.#', 'vi').format(rod.toY)} ${metric.unit}',
+            TextStyle(color: theme.colorScheme.onInverseSurface),
+          );
+        },
+      ),
+    ),
     borderData: FlBorderData(show: false),
     gridData: const FlGridData(show: false),
     titlesData: FlTitlesData(

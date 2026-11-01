@@ -245,7 +245,7 @@ void main() {
           ),
         ),
       );
-      expect(find.text('325 kcal · 2 bản ghi'), findsOneWidget);
+      expect(find.text('325 kcal'), findsOneWidget);
       for (final type in MealType.values) {
         expect(find.byKey(ValueKey('meal-group-${type.name}')), findsOneWidget);
       }
@@ -264,7 +264,7 @@ void main() {
     final form = tester.widget<MealFormDialog>(find.byType(MealFormDialog));
     expect(form.initialType, MealType.dinner);
     expect(form.initialConsumedAt!.day, 15);
-    await tester.tap(find.byTooltip('Hủy'));
+    await tester.tap(find.byTooltip('Đóng'));
     await tester.pumpAndSettle();
     expect(repository.addCalls, 0);
   });
@@ -476,7 +476,7 @@ void main() {
           .onSelected!('duplicate');
       duplicate();
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('Hủy'));
+      await tester.tap(find.byTooltip('Đóng'));
       await tester.pumpAndSettle();
       expect(repository.addCalls, 0);
       duplicate();
@@ -485,7 +485,7 @@ void main() {
       await tester.pump();
       expect(
         tester
-            .widget<TextButton>(find.byKey(const ValueKey('save-meal')))
+            .widget<FilledButton>(find.byKey(const ValueKey('save-meal')))
             .onPressed,
         isNull,
       );
@@ -606,17 +606,17 @@ void main() {
           },
         ),
       );
-      await tester.tap(
-        find.widgetWithIcon(OutlinedButton, Icons.calendar_today_outlined),
-      );
+      await tester.tap(find.byTooltip('Ngày và giờ ăn'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.textContaining('Ngày:').last);
       await tester.pumpAndSettle();
       Navigator.of(
         tester.element(find.byType(DatePickerDialog)),
       ).pop(DateTime(2026, 10, 15));
       await tester.pumpAndSettle();
-      await tester.tap(
-        find.widgetWithIcon(OutlinedButton, Icons.schedule_outlined),
-      );
+      await tester.tap(find.byTooltip('Ngày và giờ ăn'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.textContaining('Giờ:').last);
       await tester.pumpAndSettle();
       Navigator.of(
         tester.element(find.byType(TimePickerDialog)),
@@ -669,15 +669,15 @@ void main() {
           .read(journalDateProvider.notifier)
           .select(DateTime(2026, 10, 16));
       await tester.pumpAndSettle();
-      expect(find.text('325 kcal · 2 bản ghi'), findsOneWidget);
+      expect(find.text('325 kcal'), findsOneWidget);
       await repository.updateMeal(
         uid: 'test-uid',
         mealId: 'one',
         draft: meal('edited', type: MealType.dinner, grams: 50).toDraft(),
       );
       await tester.pumpAndSettle();
-      expect(find.text('130 kcal · 1 bản ghi'), findsOneWidget);
-      expect(find.text('65 kcal · 1 bản ghi'), findsOneWidget);
+      expect(find.text('130 kcal'), findsOneWidget);
+      expect(find.text('65 kcal'), findsOneWidget);
       expect(
         tester
             .widget<Text>(find.byKey(const ValueKey('nutrition-daily-totals')))

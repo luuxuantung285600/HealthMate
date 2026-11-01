@@ -9,7 +9,11 @@
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
-            "flutterMode": "debug"
+            "flutterMode": "debug",
+            "preLaunchTask": "HealthMate: prepare Android debug",
+            "toolArgs": [
+                "--dart-define-from-file=${env:LOCALAPPDATA}/HealthMate/vscode-android-debug.json"
+            ]
         },
         {
             "type": "chrome",

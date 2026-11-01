@@ -1,6 +1,126 @@
 # Tiến độ HealthMate
 
-Trạng thái mới nhất (31/10/2026): Gói cải thiện8/9 đã xác minh local; Gói10 chuẩn bị xong phần local, chưa nghiệm thu signed release/native. Xem mục Gói8–10 ở cuối và docs/improvement-progress.md. Các giai đoạn/mốc cũ giữ làm lịch sử.
+Trạng thái mới nhất (01/11/2026): đã thu gọn giao diện theo dõi dinh dưỡng;
+944/944 kiểm thử Flutter qua, analyzer sạch. Gói10 chưa nghiệm thu signed release/native.
+Các giai đoạn/mốc cũ giữ làm lịch sử.
+
+## 02/11/2026 — Kiểm tra trước commit/push GitHub
+
+- Người dùng yêu cầu đưa code hiện tại lên repository GitHub HealthMate.
+  Đã fetch và xác nhận `main` cùng baseline với `origin/main` trước commit.
+- Kiểm tra source không phát hiện secret. Giữ token debug và tệp build ngoài
+  commit theo cấu hình ignore. Kết quả Flutter gần nhất944/944, analyzer sạch.
+- Sửa đúng điểm chặn CI: bốn kiểm thử gọi `powershell.exe` chỉ chạy Windows;
+  thêm job `windows-launcher` trên GitHub Actions để vẫn chạy đủ các ca này.
+  Kiểm tra wiring bằng đọc source vẫn chạy Linux. Windows local5/5 qua,
+  không skip; chưa coi workflow hosted là đã qua trước khi GitHub chạy.
+- Không thay Dart/backend/Rules hoặc triển khai tính năng/giai đoạn mới.
+
+## 01/11/2026 — Giai đoạn tùy chọn 11: thu gọn giao diện dinh dưỡng
+
+1. **Trạng thái:** hoàn tất phạm vi UI theo phản hồi quá nhiều thông tin,
+   thao tác rối; giữ các sửa đổi đã có trong workspace.
+2. **Đã làm:** Hôm nay ưu tiên kcal và bữa ăn; bỏ cụm lối tắt, bảng lặp;
+   nút + mở thẳng thêm món. Nhật ký còn một danh sách chỉnh sửa; form đưa
+   tìm món lên đầu, lưu cố định, công cụ phụ/hướng dẫn mở theo yêu cầu.
+   Quay lại chi tiết thói quen đúng cấp; sửa cân từ Cá nhân làm mới Tiến độ.
+3. **File chính:** app_shell/profile_avatar; dashboard và ba widget năng lượng/
+   macro/bữa; journal_screen; meal_form_dialog/meal_entry_sources/meal_log_section;
+   meal_food_sources/food_portion_dialog; profile_screen và wellness screen/hub.
+   [Chi tiết và ảnh trước/sau](nutrition-ui-simplification-2026-11-01.md).
+4. **Kiểm thử:** toàn Flutter **944/944 qua**, không bỏ qua ca nào; analyzer
+   **No issues found**. Kiểm tra ngày cũ, món/khẩu phần, nháp, retry/UID,
+   camera giả lập và bố cục 320/390/412, chữ1/1,5/2, sáng/tối. Sáu capture
+   widget qua; đã xem ảnh Hôm nay/Nhật ký/thêm món, lưu gallery so sánh.
+5. **Cần người dùng làm:** hot restart hoặc chạy F5 để xem bản mới; tự test
+   Android theo lựa chọn trước đó. Không cần cấu hình Firebase cho phần UI.
+6. **Còn lại:** chưa nghiệm thu thiết bị hoặc build APK trong lượt này.
+   Các blocker backend ảnh/signed release trước đó còn nguyên. Không đổi
+   Rules/dữ liệu production, thêm package, deploy, push hoặc tắt laptop.
+7. **Tiếp theo đề xuất:** người dùng tự nghiệm thu giao diện Android và chỉ
+   rõ màn cần chỉnh tiếp; chưa thực hiện thêm giai đoạn.
+
+## 01/11/2026 — Sửa lỗi quyền truy cập sau đăng nhập
+
+1. **Trạng thái:** hoàn tất sửa cấu hình và deploy bản vá nhỏ theo phê duyệt
+   trực tiếp **Áp dụng bản vá lên Firebase**. Chưa nghiệm thu điện thoại.
+2. **Nguyên nhân:** Rules production chưa cho đọc `account_deletions/{uid}`
+   mà app dùng ở startup. Đã tái hiện với đúng Rules đang chạy trên emulator.
+3. **Đã sửa:** bổ sung riêng owner-get đã xác minh email; không mở list/write
+   hoặc cross UID. Giữ toàn bộ Rules production khác, không deploy root Rules.
+   F5 nạp cấu hình chung và token App Check từ file riêng ngoài repository.
+4. **File chính:** `.vscode/launch.json`, `.vscode/tasks.json`,
+   `tool/prepare_vscode_android.ps1`, README và các test. Candidate/backup/
+   postdeploy hashes: [báo cáo sửa truy cập](firebase-access-fix-2026-11-01.md).
+5. **Kiểm tra:** launcher5/5, admin runtime7/7, SDK emulator7/7; build debug
+   với đúng cấu hình F5 thành công (26,8 giây). Postdeploy source khớp chính
+   xác candidate đã duyệt. Secret audit không có finding; diff check qua.
+6. **Cần người dùng làm/còn lại:** bấm Kiểm tra lại; dùng F5 ở lần chạy sau,
+   tự test Android. Chưa rollout toàn bộ deletion/migration/support candidate,
+   chưa signed release. Không thay dữ liệu người dùng/push/hẹn tắt laptop.
+7. **Tiếp theo đề xuất:** người dùng xác nhận mở được app trên điện thoại.
+
+## 01/11/2026 — Sửa lỗi build Android từ VS Code
+
+1. **Phạm vi/trạng thái:** hoàn tất sửa lỗi build được người dùng gửi ảnh;
+   không mở rộng sang tính năng hoặc nâng cấp thư viện.
+2. **Đã sửa:** import `java.io.File` và dùng `File(...)` để tránh tên extension
+   `java` của Gradle che package Java; cấu hình Android qua public
+   `ApplicationExtension` thay accessor `android {}` đã deprecated.
+3. **File chính:** `android/app/build.gradle.kts`; không thay signing guard,
+   AGP/Gradle/Kotlin version, dependencies, Rules hoặc Firebase configuration.
+4. **Kiểm tra:** tái hiện lỗi trước sửa; `gradlew help --offline` qua sau sửa;
+   `flutter build apk --debug --no-pub` thành công (48,3 giây); release
+   preflight unit tests6/6; release dry-run vẫn chặn đúng khi thiếu khóa ký.
+5. **Cần người dùng làm:** bấm F5 trong VS Code để chạy lại và tự test Android.
+6. **Còn lại:** cảnh báo tương thích Kotlin từ plugins hiện có chưa chặn build;
+   chưa cài/chạy app trên điện thoại, chưa nghiệm thu signed release. Không
+   deploy, push hoặc hẹn tắt máy. Log chi tiết ở `test-report.md`.
+7. **Tiếp theo đề xuất:** người dùng nghiệm thu giao diện trên thiết bị.
+
+## 01/11/2026 — Giai đoạn tùy chọn 11: làm lại giao diện tài khoản
+
+1. **Trạng thái:** hoàn tất phạm vi đăng nhập/đăng ký theo yêu cầu trực tiếp.
+2. **Đã hoàn thành:** giao diện chung cho đăng nhập, đăng ký, quên mật khẩu,
+   gửi liên kết, xác minh email và chờ/lỗi phiên. Giữ email khi chuyển chế độ;
+   Back/Next/Done rõ; lỗi đưa focus đúng ô; giữ form sau lỗi và khi trở lại từ
+   quên mật khẩu; tiến trình Google/email riêng; nhãn đầy đủ ở chữ lớn.
+3. **File chính:** `auth_flow_page.dart` mới cùng bốn màn Auth hiện có và phần
+   reset trong `account_security_dialogs.dart`; 26 ca UX và 5 capture mới.
+   [Chi tiết và ảnh](auth-ux-2026-11-01.md).
+4. **Kiểm thử:** full Flutter **943/943**, analyzer không có vấn đề, format10
+   file không lệch, diff check qua. Ma trận320/390/412 × scale1/1,5/2 × sáng/tối
+   có bàn phím mô phỏng; guideline vùng chạm/nhãn trên đăng nhập/đăng ký qua.
+5. **Cần người dùng làm:** tự nghiệm thu Android, TalkBack, bàn phím, Google
+   và email thật. Không cần cấu hình Firebase mới cho việc đổi UI.
+6. **Còn lại:** chưa nghiệm thu native/build APK; blocker production trước đó
+   còn nguyên. Không đổi Rules/backend/dependencies, deploy, push hay tắt máy.
+7. **Tiếp theo đề xuất:** nghiệm thu luồng tài khoản trên Android.
+
+## 01/11/2026 — Toàn bộ cải thiện UX/UI theo tài liệu
+
+1. **Phạm vi/trạng thái:** triển khai cả tài liệu UX/UI trong một lượt theo
+   yêu cầu trực tiếp; không tự chuyển sang tính năng/giai đoạn khác.
+2. **Đã hoàn thành:** giao diện xanh/trung tính, CTA thêm bữa rõ và giữ đúng
+   ngày; bỏ qua cá nhân hóa để ghi nhật ký; nháp thiết lập theo UID/đúng bước;
+   privacy trước Auth; calculator dẫn đúng trường; gate ảnh trước camera;
+   Back/close giữ hoặc xác nhận bỏ nháp; biểu đồ có đơn vị và ngày thiếu;
+   Profile gọn, báo cáo đầy đủ và tải khi cần.
+3. **File chính:** core theme/router/shell; dashboard/journal; onboarding,
+   encrypted MealDraftStore; form/controller/scanner; progress/profile/
+   reports; 5 bộ UX tests mới. Danh sách và ảnh trong
+   [báo cáo UX/UI](ux-ui-implementation-2026-11-01.md).
+4. **Kiểm thử:** full Flutter **912/912**; analyzer không có vấn đề;
+   format các file Dart thay đổi đạt. Ma trận 320/390/412 × chữ1/1,5/2 ×
+   sáng/tối, kiểm tra bàn phím/Back/nguồn nhập bằng widget. Có 5 cặp ảnh
+   trước/sau cùng fixture390×844; bước polish cuối được kiểm lại riêng.
+5. **Cần người dùng làm:** nghiệm thu Android/TalkBack/bàn phím thật theo
+   lựa chọn tự test thiết bị. Không cần thêm Firebase config cho phần UX.
+6. **Còn lại:** backend ảnh chưa sẵn sàng, private drafts ngoài Android chưa
+   hỗ trợ; signed release và blocker production cũ vẫn giữ. Chưa deploy,
+   commit/push, đổi Rules/dữ liệu production hoặc hẹn tắt laptop.
+7. **Tiếp theo đề xuất:** nghiệm thu Android và chốt bản giao diện; chưa tự
+   triển khai thêm tính năng.
 
 ## 27/10/2026 — Giai đoạn tùy chọn 11: giao diện gọn và dễ đọc
 

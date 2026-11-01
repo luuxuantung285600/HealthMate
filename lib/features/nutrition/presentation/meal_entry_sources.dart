@@ -28,8 +28,6 @@ class MealCatalogSource {
   List<Widget> buildChildren(BuildContext context) {
     final theme = Theme.of(context);
     return [
-      Text('Tìm món trong danh mục', style: theme.textTheme.titleMedium),
-      const SizedBox(height: 8),
       TextField(
         key: const ValueKey('food-search'),
         controller: searchController,
@@ -39,11 +37,11 @@ class MealCatalogSource {
         ),
       ),
       const SizedBox(height: 8),
-      OutlinedButton.icon(
+      TextButton.icon(
         key: const ValueKey('add-custom-food'),
         onPressed: onCustom,
         icon: const Icon(Icons.edit_note_rounded),
-        label: const Text('Nhập món ngoài danh mục'),
+        label: const Text('Tự nhập món'),
       ),
       const SizedBox(height: 8),
       if (state.isSearching && state.results.isNotEmpty) ...[
@@ -87,21 +85,10 @@ class MealCatalogSource {
         for (final result in state.results.take(state.visibleCount))
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(result.food.name),
-                Text(switch (result.source) {
-                  FoodResultSource.firestore => 'Danh mục',
-                  FoodResultSource.cache => 'Đã lưu trên máy',
-                  FoodResultSource.usdaApi => 'USDA',
-                  FoodResultSource.user => 'Món riêng',
-                }, style: theme.textTheme.bodySmall),
-              ],
-            ),
+            title: Text(result.food.name),
             subtitle: Text(
               result.food.hasNutritionData
-                  ? '${result.food.nutritionPer100g.kcal.toStringAsFixed(0)} kcal / 100 g${result.food.isEstimated ? ' · Ước tính' : ''} · ${result.food.sourceLabel}'
+                  ? '${result.food.nutritionPer100g.kcal.toStringAsFixed(0)} kcal / 100 g${result.food.isEstimated ? ' · Ước tính' : ''}'
                   : result.requiresDetail
                   ? 'USDA · Chọn để tải dinh dưỡng'
                   : 'Món thiếu dữ liệu dinh dưỡng; chưa thể thêm vào bữa.',

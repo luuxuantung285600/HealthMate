@@ -30,11 +30,16 @@ final foodScannerServiceProvider = Provider<FoodScannerService>(
   ),
 );
 
-class _CheckedFoodScannerService implements FoodScannerService {
+class _CheckedFoodScannerService
+    implements FoodScannerService, UnavailablePhotoScanner {
   _CheckedFoodScannerService({required this.check, required this.reserve});
   final AiAccess Function() check;
   final Future<void> Function() reserve;
   FoodScannerService? _delegate;
+
+  @override
+  String get photoUnavailableReason =>
+      'Phân tích ảnh chưa sẵn sàng. Bạn có thể quét mã vạch hoặc tìm món.';
 
   @override
   Future<AiFoodSuggestion> analyze({

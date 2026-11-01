@@ -251,8 +251,8 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
                           labelText: [
                             'Năng lượng (kcal/ngày)',
                             'Đạm (g/ngày)',
-                            'Tinh bột (g/ngày)',
-                            'Béo (g/ngày)',
+                            'Carb (g/ngày)',
+                            'Chất béo (g/ngày)',
                           ][i],
                         ),
                       ),

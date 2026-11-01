@@ -129,7 +129,7 @@ Future<void> openJournalMealForm(
             : null,
         draftNotice: localSupported
             ? null
-            : 'Nháp chỉ giữ trong form trên nền tảng này. Khôi phục sau đóng ứng dụng hiện hỗ trợ Android.',
+            : 'Thiết bị này chưa hỗ trợ giữ nháp khi đóng form.',
         libraryErrorMessage: () =>
             switch (ref.read(foodLibraryControllerProvider).error) {
               FoodLibraryFailure e => e.message,

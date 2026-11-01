@@ -1,21 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../router/app_routes.dart';
-import '../theme/reference_palette.dart';
-import 'design_illustration.dart';
 import '../../features/journal/providers/journal_date_provider.dart';
 import '../../features/journal/providers/journal_quick_action_provider.dart';
 import '../theme/app_spacing.dart';
-import 'confirmed_save.dart';
-import '../../features/auth/providers/auth_providers.dart';
-import '../../features/profile/presentation/body_metric_form_dialog.dart';
-import '../../features/profile/providers/profile_providers.dart';
-import '../../features/weekly_reflection/providers/weekly_reflection_providers.dart';
-
-import '../config/app_feature_flags.dart';
-
-enum _ExtraAction { weight, quests, chat, steps, sleep }
 
 class AppShell extends ConsumerWidget {
   const AppShell({required this.navigationShell, super.key});
@@ -45,11 +33,11 @@ class AppShell extends ConsumerWidget {
       key: ValueKey('nav-progress'),
     ),
     (
-      branch: 6,
-      label: 'Thói quen',
-      icon: Icons.grid_view_outlined,
-      selected: Icons.grid_view_outlined,
-      key: ValueKey('nav-wellness'),
+      branch: 4,
+      label: 'Cá nhân',
+      icon: Icons.person_outline_rounded,
+      selected: Icons.person_rounded,
+      key: ValueKey('nav-profile'),
     ),
   ];
 
@@ -60,61 +48,16 @@ class AppShell extends ConsumerWidget {
     );
   }
 
-  Future<void> _showQuickActions(BuildContext context, WidgetRef ref) async {
-    final action = await showModalBottomSheet<Object>(
-      context: context,
-      useSafeArea: true,
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (_) => const _QuickActionSheet(),
-    );
-    if (action == null || !context.mounted) return;
-    if (action == _ExtraAction.steps || action == _ExtraAction.sleep) {
-      context.push(
-        '${AppRoutes.wellness}?tab=${action == _ExtraAction.steps ? 2 : 3}',
-      );
-      return;
-    }
-    if (action == _ExtraAction.quests || action == _ExtraAction.chat) {
-      _selectBranch(action == _ExtraAction.quests ? 2 : 3);
-      return;
-    }
-    if (action == _ExtraAction.weight) {
-      final uid = ref.read(authSessionProvider).value?.uid;
-      if (uid == null) return;
-      final repository = ref.read(healthProfileRepositoryProvider);
-      final saved = await showDialog<Object>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => AccountBoundDialog(
-          child: BodyMetricFormDialog(
-            onSave: (draft) async {
-              if (ref.read(authSessionProvider).value?.uid != uid) return false;
-              await repository.addBodyMetric(uid: uid, draft: draft);
-              if (!context.mounted ||
-                  ref.read(authSessionProvider).value?.uid != uid) {
-                return false;
-              }
-              ref.invalidate(weeklyLogsProvider);
-              return true;
-            },
-          ),
-        ),
-      );
-      if (saved != null &&
-          context.mounted &&
-          ref.read(authSessionProvider).value?.uid == uid) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Đã thêm lần đo.')));
-      }
-      return;
-    }
-    if (action is! JournalQuickAction) return;
-    ref.read(journalDateProvider.notifier).select(DateTime.now());
+  void _addMeal(WidgetRef ref) {
+    final day = navigationShell.currentIndex <= 1
+        ? ref.read(journalDateProvider)
+        : DateTime.now();
+    ref.read(journalDateProvider.notifier).select(day);
     navigationShell.goBranch(1);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(journalQuickActionProvider.notifier).request(action);
+      ref
+          .read(journalQuickActionProvider.notifier)
+          .request(JournalQuickAction.addMeal);
     });
   }
 
@@ -149,8 +92,8 @@ class AppShell extends ConsumerWidget {
                           FloatingActionButton.small(
                             key: const ValueKey('quick-add-menu'),
                             heroTag: 'quick-add-rail',
-                            tooltip: 'Thêm ghi nhận',
-                            onPressed: () => _showQuickActions(context, ref),
+                            tooltip: 'Thêm bữa ăn',
+                            onPressed: () => _addMeal(ref),
                             child: const Icon(Icons.add_rounded),
                           ),
                         ],
@@ -177,7 +120,7 @@ class AppShell extends ConsumerWidget {
                   currentBranch: currentBranch,
                   destinations: _visibleDestinations,
                   onSelect: _selectBranch,
-                  onQuickAdd: () => _showQuickActions(context, ref),
+                  onQuickAdd: () => _addMeal(ref),
                 ),
         );
       },
@@ -226,7 +169,7 @@ class _FloatingNavigationBar extends StatelessWidget {
             var height = 68.0;
             for (final label in [
               ...destinations.map((d) => d.label),
-              'Ghi nhanh',
+              'Thêm món',
             ]) {
               final painter =
                   TextPainter(
@@ -262,7 +205,7 @@ class _FloatingNavigationBar extends StatelessWidget {
                   Expanded(
                     child: _NavigationButton(
                       key: const ValueKey('quick-add-menu'),
-                      label: 'Ghi nhanh',
+                      label: 'Thêm món',
                       icon: Icons.add_rounded,
                       selected: false,
                       actionColor: scheme.primary,
@@ -323,25 +266,20 @@ class _NavigationButton extends StatelessWidget {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            gradient: selected
-                ? LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      ReferencePalette.blue.withValues(alpha: .12),
-                      Colors.transparent,
-                    ],
-                  )
-                : null,
-            border: selected
-                ? Border(top: BorderSide(color: color, width: 2))
-                : null,
+            color: actionColor == null
+                ? null
+                : theme.colorScheme.primaryContainer.withValues(alpha: .35),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 8),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: color, size: 24, applyTextScaling: false),
+              Icon(
+                icon,
+                color: selected ? theme.colorScheme.primary : color,
+                size: 24,
+                applyTextScaling: false,
+              ),
               const SizedBox(height: 3),
               Text(
                 label,
@@ -358,130 +296,4 @@ class _NavigationButton extends StatelessWidget {
       ),
     );
   }
-}
-
-class _QuickActionSheet extends ConsumerWidget {
-  const _QuickActionSheet();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.sm,
-        AppSpacing.lg,
-        AppSpacing.xl,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('Thêm ghi nhận', style: theme.textTheme.headlineSmall),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            'Chọn nội dung bạn muốn thêm cho hôm nay.',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          if (ref.watch(appFeatureFlagsProvider).foodScannerEnabled) ...[
-            FilledButton.icon(
-              key: const ValueKey('quick-action-scan'),
-              onPressed: () =>
-                  Navigator.pop(context, JournalQuickAction.scanFood),
-              icon: const Icon(Icons.document_scanner_outlined),
-              label: const Text('Quét món'),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-          ],
-          _SheetAction(
-            key: const ValueKey('quick-action-meal'),
-            icon: Icons.restaurant_menu_rounded,
-            label: 'Thêm bữa ăn',
-            onTap: () => Navigator.pop(context, JournalQuickAction.addMeal),
-          ),
-          _SheetAction(
-            key: const ValueKey('quick-action-water'),
-            icon: Icons.water_drop_outlined,
-            label: 'Thêm nước',
-            onTap: () => Navigator.pop(context, JournalQuickAction.addWater),
-          ),
-          _SheetAction(
-            key: const ValueKey('quick-action-activity'),
-            icon: Icons.directions_run_rounded,
-            label: 'Thêm vận động',
-            onTap: () => Navigator.pop(context, JournalQuickAction.addActivity),
-          ),
-          _SheetAction(
-            key: const ValueKey('quick-action-weight'),
-            icon: Icons.monitor_weight_outlined,
-            label: 'Thêm cân nặng',
-            onTap: () => Navigator.pop(context, _ExtraAction.weight),
-          ),
-          _SheetAction(
-            key: const ValueKey('quick-action-steps'),
-            icon: Icons.directions_walk,
-            label: 'Bước chân',
-            onTap: () => Navigator.pop(context, _ExtraAction.steps),
-          ),
-          _SheetAction(
-            key: const ValueKey('quick-action-sleep'),
-            icon: Icons.bedtime_outlined,
-            label: 'Giấc ngủ',
-            onTap: () => Navigator.pop(context, _ExtraAction.sleep),
-          ),
-          const Divider(),
-          _SheetAction(
-            key: const ValueKey('quick-action-quests'),
-            icon: Icons.flag_outlined,
-            label: 'Mục tiêu và nhiệm vụ',
-            onTap: () => Navigator.pop(context, _ExtraAction.quests),
-          ),
-          if (ref.watch(appFeatureFlagsProvider).chatbotEnabled)
-            _SheetAction(
-              key: const ValueKey('quick-action-chat'),
-              icon: Icons.forum_outlined,
-              label: 'Trò chuyện cùng HealthMate',
-              onTap: () => Navigator.pop(context, _ExtraAction.chat),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SheetAction extends StatelessWidget {
-  const _SheetAction({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-    super.key,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => ListTile(
-    onTap: onTap,
-    contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-    leading: DesignIllustration(switch (label) {
-      'Thêm bữa ăn' => 'food',
-      'Thêm nước' => 'water',
-      'Thêm vận động' => 'activity',
-      'Thêm cân nặng' => 'weight',
-      'Bước chân' => 'steps',
-      'Giấc ngủ' => 'moon',
-      'Mục tiêu và nhiệm vụ' => 'flag',
-      _ => 'chat',
-    }),
-    title: Text(label),
-    trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(AppSpacing.controlRadius),
-    ),
-  );
 }

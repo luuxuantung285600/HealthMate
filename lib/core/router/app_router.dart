@@ -19,6 +19,7 @@ import '../../features/wellness/presentation/wellness_screen.dart';
 import '../../features/profile/presentation/account_information_screen.dart';
 import '../../features/profile/presentation/onboarding_screen.dart';
 import '../../features/profile/providers/profile_providers.dart';
+import '../../features/profile/providers/onboarding_deferred_provider.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/route_error_screen.dart';
 import '../config/app_feature_flags.dart';
@@ -29,6 +30,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   final refresh = _AuthRouterRefresh();
   ref.listen(authSessionProvider, (previous, next) => refresh.refresh());
   ref.listen(userProfileProvider, (previous, next) => refresh.refresh());
+  ref.listen(onboardingDeferredProvider, (previous, next) => refresh.refresh());
   ref.listen(appFeatureFlagsProvider, (previous, next) => refresh.refresh());
   ref.listen(
     accountSecurityControllerProvider,
@@ -43,6 +45,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         state.uri,
         ref.read(userProfileProvider),
         ref.read(accountSecurityControllerProvider),
+        ref.read(onboardingDeferredProvider),
       );
       if (authDestination != null) return authDestination;
       if (!ref.read(appFeatureFlagsProvider).chatbotEnabled &&

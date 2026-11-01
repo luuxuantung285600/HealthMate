@@ -9,6 +9,19 @@ abstract interface class FoodScannerService {
   });
 }
 
+/// A service can disclose a known deployment blocker before camera permission,
+/// image selection or processing consent. Independent from barcode lookup.
+abstract interface class UnavailablePhotoScanner {
+  String get photoUnavailableReason;
+}
+
+extension PhotoScannerAvailability on FoodScannerService {
+  String? get photoUnavailableReason => switch (this) {
+    UnavailablePhotoScanner service => service.photoUnavailableReason,
+    _ => null,
+  };
+}
+
 class FoodScannerFailure implements Exception {
   const FoodScannerFailure(this.message, {this.code = 'unknown'});
 
