@@ -3,6 +3,16 @@ import { filterRows, canControlAccount, exportRows } from './list-model.mjs';
 import { buildXlsx } from './xlsx-export.mjs';
 import { revenuePage } from './revenue-page.mjs';
 import { supportPage } from './support-page.mjs';
+import { dashboardPage } from './dashboard-page.mjs';
+import {liveScope,observe} from './live-scope.mjs';
+import {pageScope} from './server-paging.mjs';
+import {vietnamDateKey} from './revenue-model.mjs';
+import {createDraftGuard,routePage} from './draft-guard.mjs';
+import {workoutsPage} from './workouts-page.mjs';
+const pageCleanups = new Set();
+function registerCleanup(stop){pageCleanups.add(stop);}
+function disposePage(){for(const stop of pageCleanups)stop();pageCleanups.clear();}
+import {adminPages as pages, adminBrand, adminIcon, renderAdminShell} from './admin-shell.mjs';
 
 const root = document.querySelector('#app'), dialog = document.querySelector('#editor');
 const editorForm = document.querySelector('#editor-form'), fieldsHost = document.querySelector('#editor-fields');
@@ -10,16 +20,8 @@ let api, user, allowed = false, stopRole, generation = 0, pageGeneration = 0;
 let currentPage = 'overview', rows = [], pageNumber = 1, filter = '', rowsReady = false;
 let pageCursors=[null],nextCursor=null,hasMore=false;
 let categoryFilter = '', statusFilter = '', roleFilter = '';
+let serverRange={};
 let editorAction, editorCancel, editorBusy = false, currentConfig = null;
-const pages = {
-  revenue: ['Doanh thu demo', 'Premium và giao dịch mô phỏng', 'Báo cáo Premium demo 20.000đ / 30 ngày. Không có khoản tiền thật nào được thu.'],
-  overview: ['Tổng quan', 'Theo dõi và vận hành HealthMate', 'Một nơi để chăm sóc dữ liệu, tài khoản và trải nghiệm trong ứng dụng.'],
-  food_catalog: ['Danh mục món ăn', 'Dữ liệu tốt, lựa chọn tốt hơn', 'Quản lý nguồn dinh dưỡng dùng chung. Chỉnh danh mục không làm thay đổi nhật ký đã lưu.'],
-  user_directory: ['Tài khoản', 'Quản lý quyền truy cập', 'Chỉ hiển thị thông tin tài khoản tối thiểu. Hồ sơ và nhật ký sức khỏe vẫn riêng tư.'],
-  support: ['Hỗ trợ khách hàng', 'Báo lỗi và góp ý', 'Tiếp nhận, phản hồi và theo dõi yêu cầu từ khách hàng.'],
-  app_config: ['Cấu hình ứng dụng', 'Điều chỉnh trải nghiệm HealthMate', 'Cấu hình áp dụng cho bản ứng dụng đã bật chức năng quản trị từ xa.'],
-  admin_audit: ['Nhật ký quản trị', 'Mọi thay đổi đều có dấu vết', 'Lịch sử thao tác được ghi cùng thay đổi dữ liệu và không thể sửa hoặc xóa trên web.']
-};
 function h(tag, props = {}, ...children) {
   const el = document.createElement(tag);
   for (const [key,value] of Object.entries(props)) {
@@ -31,7 +33,7 @@ function h(tag, props = {}, ...children) {
   el.append(...children.filter(c => c !== null && c !== undefined).map(c => typeof c === 'string' ? document.createTextNode(c) : c));
   return el;
 }
-function brand() { return h('div',{class:'brand'},h('span',{class:'brand-mark'},'H',h('span',{},'+')),h('div',{},'HealthMate',h('small',{},'KHÔNG GIAN QUẢN TRỊ'))); }
+function brand() { return adminBrand(h); }
 function errorMessage(error) {
   const code = error?.code ?? '';
   if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return 'Bạn đã hủy đăng nhập Google. Có thể thử lại khi sẵn sàng.';
@@ -50,14 +52,18 @@ function date(value) { const d = value?.toDate?.(); return d ? new Intl.DateTime
 function version(data) { return entityVersion(data); }
 function pill(label, style = '') { return h('span',{class:`pill ${style}`},label); }
 function button(label, click, style = 'secondary') { return h('button',{type:'button',class:`button ${style}`,onClick:click},label); }
+const drafts=createDraftGuard({window,document,h,button});
 function safeCurrent(g) { return allowed && user && generation === g; }
+function clearEditor(){dialog.close();fieldsHost.replaceChildren();editorAction=null;drafts.clear('editor');document.querySelector('#editor-error').textContent='';}
 
 function showAuth(message = '') {
+  document.title='HealthMate · Quản trị';
+  disposePage();
   root.replaceChildren(h('main',{class:'auth-shell'},
     h('aside',{class:'auth-story'},brand(),h('div',{},h('p',{class:'eyebrow'},'HEALTHMATE CONTROL CENTER'),h('h1',{},'Một nơi quản lý.\nNhiều thói quen tốt.'),h('p',{},'Chăm sóc dữ liệu thực phẩm, vận hành tài khoản và giữ trải nghiệm HealthMate nhất quán.'),h('div',{class:'auth-lines'},h('span'),h('span'),h('span'))),h('p',{},'Quyền quản trị được kiểm tra bằng Firebase Security Rules.')),
     h('div',{class:'auth-form'},h('section',{},h('p',{class:'page-kicker'},'CHÀO MỪNG TRỞ LẠI'),h('h2',{},user ? 'Quyền quản trị chưa sẵn sàng' : 'Đăng nhập quản trị'),h('p',{class:'muted'},message || 'Sử dụng tài khoản đã được cấp quyền HealthMate Admin.'),
       api?.emulator ? h('p',{class:'notice local'},'Môi trường kiểm thử local · Firebase Emulator. Dữ liệu tại đây không phải dữ liệu production.') : null,
-      user ? button('Đăng xuất',() => api.logout()) : loginForm(),
+      user ? button('Đăng xuất',logout) : loginForm(),
       h('p',{class:'auth-note'},'Không tự đăng ký hoặc cấp quyền admin tại đây. Chủ dự án cấp quyền qua bước thiết lập Firebase riêng.')))));
 }
 function loginForm() {
@@ -87,32 +93,41 @@ function loginForm() {
   return form;
 }
 function shell() {
-  const nav = h('nav',{class:'nav-group','aria-label':'Quản trị'},h('p',{},'KHÔNG GIAN LÀM VIỆC'));
-  const icons = { overview:'▦',food_catalog:'♧',user_directory:'♙',app_config:'☷',admin_audit:'◷',revenue:'₫',support:'✉' };
-  for (const [key,info] of Object.entries(pages)) nav.append(h('button',{class:`nav-button${currentPage===key?' active':''}`,'data-page':key,onClick:() => openPage(key)},h('span',{class:'nav-icon','aria-hidden':'true'},icons[key]),info[0]));
-  const main = h('main',{class:'main',id:'main-content'});
-  root.replaceChildren(h('div',{class:'layout'},h('aside',{class:'sidebar'},brand(),nav,h('div',{class:'sidebar-bottom'},h('strong',{},'Quản trị có trách nhiệm'),h('p',{},'Chỉ truy cập dữ liệu cần thiết. Mỗi thay đổi được ghi vào nhật ký.'))),h('div',{class:'workspace'},h('header',{class:'topbar'},h('span',{class:'breadcrumb'},'HealthMate / Quản trị'),h('div',{class:'identity'},h('span',{class:`environment${api.emulator?'':' cloud'}`},api.emulator?'LOCAL · EMULATOR':'FIREBASE · PRODUCTION'),h('span',{class:'avatar','aria-hidden':'true'},'A'),h('span',{class:'identity-name'},user.email || user.uid),button('Đăng xuất',() => api.logout()))),main)));
-  return main;
+  return renderAdminShell({root,h,currentPage,user,onNavigate:openPage,onLogout:logout,emulator:api.emulator});
 }
-async function openPage(key) {
+async function logout(){if(editorBusy){notify('Hãy chờ máy chủ xác nhận thao tác đang lưu.',true);return;}try{if(await drafts.allow())await api.logout();}catch(error){notify(errorMessage(error),true);}}
+async function openPage(key,{force=false,history='push'}={}) {
   if (!allowed) return;
+  if(!Object.hasOwn(pages,key))key='overview';
+  const g=generation;
+  if(!force&&(editorBusy||!await drafts.allow()))return false;
+  if(!safeCurrent(g))return false;
+  drafts.reset();clearEditor();
+  disposePage();
   pageGeneration++;
   currentPage = key; rows = []; rowsReady = false; pageNumber = 1; filter = '';
   pageCursors=[null];nextCursor=null;hasMore=false;
   categoryFilter = '';statusFilter = '';roleFilter = '';
+  serverRange={};
   const main = shell(), info = pages[key];
+  document.title=`${info[0]} · HealthMate Admin`;
+  if(history!=='none'&&window.history&&window.location?.hash!==`#/${key}`)window.history[history==='replace'?'replaceState':'pushState'](null,'',`#/${key}`);
   main.append(h('div',{class:'page-head'},h('div',{},h('p',{class:'page-kicker'},`QUẢN TRỊ / ${info[0].toUpperCase()}`),h('h1',{},info[1]),h('p',{class:'muted'},info[2])),key === 'food_catalog' ? button('+ Thêm món ăn',() => editFood(), '') : null));
   if (api.emulator) main.append(h('p',{class:'notice local'},'Bạn đang thao tác trên dữ liệu kiểm thử local. Các thay đổi không tác động ứng dụng production.'));
   const content = h('div',{id:'page-content'}); main.append(content);
   if (key === 'overview') return overview(content);
+  if (key === 'workouts') {
+    return workoutsPage({host:content,h,button});
+  }
+  if (key === 'chatbot') return chatbotPage(content);
   if (key === 'app_config') return configPage(content);
   if (key === 'support') {
     const g = generation, p = pageGeneration;
-    return supportPage({host:content,api,h,button,isCurrent:() => safeCurrent(g) && pageGeneration === p});
+    return supportPage({host:content,api,h,button,drafts,onDispose:registerCleanup,isCurrent:() => safeCurrent(g) && pageGeneration === p});
   }
   if (key === 'revenue') {
     const g = generation, p = pageGeneration;
-    return revenuePage({host:content,api,h,button,isCurrent:() => safeCurrent(g) && pageGeneration === p});
+    return revenuePage({host:content,api,h,button,onDispose:registerCleanup,isCurrent:() => safeCurrent(g) && pageGeneration === p});
   }
   const toolbar = h('div',{class:'toolbar'},h('input',{class:'search',type:'search',id:'list-search',placeholder:'Tìm trong trang đang xem…','aria-label':'Tìm trong trang đang xem',maxLength:200,onInput:event => { filter=event.target.value;renderRows(); }}));
   function select(id,label,values,change) {
@@ -125,22 +140,40 @@ async function openPage(key) {
     toolbar.append(select('status-filter','Trạng thái',[['','Tất cả trạng thái'],['active','Hoạt động'],['suspended','Tạm khóa']],v=>statusFilter=v),
       select('role-filter','Vai trò',[['','Tất cả vai trò'],['admin','Admin'],['user','Người dùng']],v=>roleFilter=v));
   } else toolbar.append(select('category-filter','Đối tượng',[['','Tất cả đối tượng'],['food_catalog','Danh mục món ăn'],['account_controls','Tài khoản'],['app_config','Cấu hình']],v=>categoryFilter=v));
-  toolbar.append(button('Tải lại',() => loadPage({reset:true})),h('button',{type:'button',class:'button secondary',id:'export-list',disabled:true,onClick:exportList},'Xuất Excel theo khoảng mã'));
-  content.append(h('section',{class:'panel'},toolbar,h('p',{class:'muted',id:'list-status','aria-live':'polite'},'Chưa tải dữ liệu.')),h('div',{id:'data-content'}));
+  toolbar.append(button('Tải lại',() => loadPage({reset:true})),h('button',{type:'button',class:'button secondary',id:'export-list',disabled:true,onClick:exportList},key==='admin_audit'?'Xuất Excel theo ngày':'Xuất Excel theo khoảng mã'));
+  const lookupMode=h('select',{id:'lookup-field','aria-label':'Tra cứu trên toàn danh sách'},h('option',{value:'id'},'Mã chính xác'),...(key==='user_directory'?[h('option',{value:'email'},'Email chính xác')]:key==='food_catalog'?[h('option',{value:'name'},'Đầu tên món')]:[]));
+  const lookupValue=h('input',{id:'lookup-value',class:'search',maxLength:1500,'aria-label':'Giá trị tra cứu',placeholder:key==='user_directory'?'Nhập UID hoặc email đầy đủ…':'Nhập mã hoặc đầu tên món…'});
+  const rangeStatus=h('p',{class:'muted',id:'range-status','aria-live':'polite'},key==='admin_audit'?'Mới nhất lên đầu. Thời gian hiển thị theo Việt Nam.':'Tra cứu máy chủ trên toàn danh sách. Đầu tên món phân biệt chữ hoa và dấu.');
+  const apply=range=>{try{pageScope(key,range);serverRange=range;filter='';categoryFilter='';statusFilter='';roleFilter='';document.querySelector('#list-search').value='';for(const id of ['category-filter','status-filter','role-filter']){const select=document.querySelector('#'+id);if(select)select.value='';}loadPage({reset:true});}catch(e){notify(errorMessage(e),true);}};
+  const lookup=h('form',{class:'toolbar server-lookup',onSubmit:e=>{e.preventDefault();apply({lookupField:lookupMode.value,lookupValue:lookupValue.value});}},h('label',{class:'filter-field'},'Tra cứu máy chủ',lookupMode),lookupValue,h('button',{type:'submit',class:'button secondary'},'Tra cứu'),button('Xóa tra cứu',()=>{lookupValue.value='';apply({});}));
+  if(key==='admin_audit'){
+    const today=vietnamDateKey(new Date()),start=h('input',{id:'audit-start',type:'date',value:today,'aria-label':'Từ ngày (VN)'}),end=h('input',{id:'audit-end',type:'date',value:today,'aria-label':'Đến ngày (VN)'});
+    lookup.append(h('label',{class:'filter-field'},'Từ ngày (VN)',start),h('label',{class:'filter-field'},'Đến ngày (VN)',end),button('Lọc theo ngày',()=>apply({start:start.value,end:end.value})));
+  }
+  content.append(h('section',{class:'panel'},lookup,rangeStatus,toolbar,h('p',{class:'muted',id:'list-status','aria-live':'polite'},'Chưa tải dữ liệu.')),h('div',{id:'data-content'}));
   await loadPage();
 }
 async function overview(content) {
   const g = generation, p = ++pageGeneration;
-  content.replaceChildren(h('p',{class:'loading'},'Đang tải số liệu từ Firestore…'));
+  return dashboardPage({host:content,api,h,button,openPage,errorMessage,
+    onDispose:registerCleanup,isCurrent:() => safeCurrent(g) && p === pageGeneration});
+}
+async function chatbotPage(content) {
+  const g=generation,p=pageGeneration,current=()=>safeCurrent(g)&&p===pageGeneration;
+  const scope=liveScope(content,current,registerCleanup);
+  content.replaceChildren(h('p',{class:'loading'},'Đang tải cấu hình AI…'));
   try {
-    const [counts,config] = await Promise.all([api.counts(),api.config()]);
-    if (!safeCurrent(g) || p !== pageGeneration) return;
-    const stats = h('div',{class:'stats'});
-    for (const [i,label,foot,icon] of [[0,'Mục trong danh mục','Gồm món đang dùng và đã ẩn','♧'],[1,'Tài khoản đã đồng bộ','Danh sách tối thiểu, không chứa hồ sơ sức khỏe','♙'],[2,'Tài khoản đang tạm khóa','Khóa truy cập HealthMate qua Firestore','▣'],[3,'Thao tác quản trị','Thay đổi có nhật ký xác nhận','◷']]) stats.append(h('section',{class:'stat'},h('div',{class:'stat-label'},label,h('span',{class:'stat-icon'},icon)),h('div',{class:'stat-number'},String(counts[i])),h('div',{class:'stat-foot'},foot)));
-    const configPanel = h('section',{class:'panel'},h('div',{class:'panel-title'},h('h2',{},'Trạng thái tính năng'),button('Điều chỉnh',() => openPage('app_config'))));
-    for (const [label,sub,enabled] of [['Quét món bằng AI','Nhận diện ảnh và ước tính dinh dưỡng',config?.foodScannerEnabled ?? true],['AI Chatbot','Hỗ trợ theo dõi thói quen',config?.chatbotEnabled ?? true],['Chế độ bảo trì','Thông báo khi cần tạm dừng ứng dụng',config?.maintenanceMode ?? false]]) configPanel.append(h('div',{class:'feature-card'},h('div',{},h('strong',{},label),h('p',{},sub)),pill(enabled?'Đang bật':'Đang tắt',enabled?'':'off')));
-    content.replaceChildren(stats,h('div',{class:'overview-grid'},configPanel,h('section',{class:'panel'},h('p',{class:'eyebrow'},'DỮ LIỆU & QUYỀN RIÊNG TƯ'),h('h2',{},'Đúng quyền. Đúng dữ liệu.'),h('p',{class:'muted'},'Admin quản lý dữ liệu thực phẩm dùng chung và quyền truy cập. Nhật ký bữa ăn, cân nặng và hội thoại cá nhân vẫn thuộc tài khoản người dùng.'),h('p',{class:'notice'},'Cấu hình từ xa có hiệu lực với bản app đã bật quản trị từ xa. Khóa Firestore không vô hiệu hóa tài khoản Firebase Authentication.'),button('Xem nhật ký thao tác',() => openPage('admin_audit')))));
-  } catch(error) { if(safeCurrent(g) && p === pageGeneration) content.replaceChildren(h('p',{class:'error'},errorMessage(error)),button('Thử tải lại',() => overview(content))); }
+    return await observe(scope,api,'watchConfig',[],config=>{if(!current())return;
+    const cards=h('div',{class:'ai-settings-grid'});
+    for(const [key,label,description] of [['chatbotEnabled','AI Chatbot','Hỗ trợ người dùng tra cứu và theo dõi thói quen.'],['foodScannerEnabled','AI Food Scanner','Hỗ trợ gợi ý món ăn từ ảnh trước khi người dùng xác nhận.']]){
+      const known=typeof config?.[key]==='boolean',enabled=config?.[key]===true;
+      cards.append(h('section',{class:'panel ai-setting-card'},h('div',{class:'panel-title'},h('span',{class:'feature-illustration small'},adminIcon(key==='chatbotEnabled'?'chatbot':'food_catalog')),
+        pill(known?(enabled?'Đang bật':'Đang tắt'):'Chưa có cấu hình',known&&enabled?'':'off')),h('h2',{},label),h('p',{class:'muted'},description),
+        button('Điều chỉnh cấu hình',()=>openPage('app_config'))));
+    }
+    content.replaceChildren(cards,h('p',{class:'notice'},'Đây là trạng thái cấu hình, không xác nhận API AI đang hoạt động. Hội thoại và dữ liệu sức khỏe của khách hàng vẫn riêng tư.'));
+    },error=>content.replaceChildren(h('p',{class:'error'},errorMessage(error))),()=>api.config());
+  } catch(error){if(current())content.replaceChildren(h('p',{class:'error',role:'alert'},errorMessage(error)),button('Thử tải lại',()=>chatbotPage(content)));}
 }
 async function loadPage({reset=false,page=pageNumber}={}) {
   const host = document.querySelector('#data-content'); if (!host) return;
@@ -150,10 +183,11 @@ async function loadPage({reset=false,page=pageNumber}={}) {
   const g = generation, p = ++pageGeneration;
   rowsReady=false;rows=[];
   const isCurrent=()=>safeCurrent(g)&&p===pageGeneration;
+  const scope=liveScope(host,isCurrent,registerCleanup);
   document.querySelector('#export-list').disabled=true;
   host.replaceChildren(h('p',{class:'loading'},'Đang tải dữ liệu…'));
   try {
-    const loaded = await api.listPage(currentPage,{cursor,isCurrent});
+    return await observe(scope,api,'watchPage',[currentPage,{...serverRange,cursor,isCurrent}],loaded=>{
     if (!isCurrent()) return;
     rows=loaded.rows;rowsReady=true;pageNumber=page;nextCursor=loaded.cursor;hasMore=loaded.hasMore;
     if(hasMore)pageCursors[pageNumber]=nextCursor;
@@ -163,9 +197,12 @@ async function loadPage({reset=false,page=pageNumber}={}) {
       categories.value=categoryFilter;
       if(categories.value!==categoryFilter)categoryFilter='';
     }
-    document.querySelector('#list-status').textContent=`Đã tải ${rows.length} mục của trang ${pageNumber}, sắp theo mã. Tìm kiếm và bộ lọc chỉ áp dụng trang này. Xuất Excel chọn khoảng mã riêng.`;
+    const ordering=currentPage==='admin_audit'&&!serverRange.lookupField?'mới nhất lên đầu':serverRange.lookupField==='name'?'sắp theo tên và mã':'sắp theo mã';
+    document.querySelector('#range-status').textContent=serverRange.lookupField?`Tra cứu máy chủ: ${serverRange.lookupField==='email'?'email chính xác':serverRange.lookupField==='name'?'đầu tên món (phân biệt hoa và dấu)':'mã chính xác'}. Kết quả được phân trang và đồng bộ trực tiếp.`:serverRange.start?`Nhật ký từ ${serverRange.start} đến ${serverRange.end}, theo ngày Việt Nam.`:currentPage==='admin_audit'?'Mới nhất lên đầu. Thời gian theo Việt Nam.':'Đang xem toàn danh sách, phân trang từ máy chủ.';
+    document.querySelector('#list-status').textContent=`Đã tải ${rows.length} mục của trang ${pageNumber}, ${ordering}. Tìm kiếm và bộ lọc chỉ áp dụng trang này. Tra cứu máy chủ ở phía trên tìm trên toàn danh sách. Đồng bộ trực tiếp.`;
     document.querySelector('#export-list').disabled=false;
     renderRows();
+    },error=>{rows=[];rowsReady=false;document.querySelector('#export-list').disabled=true;document.querySelector('#list-status').textContent=errorMessage(error);host.replaceChildren(h('p',{class:'error'},errorMessage(error)),button('Thử tải lại',()=>loadPage({page})));},()=>api.listPage(currentPage,{...serverRange,cursor,isCurrent}));
   } catch(error) { if(isCurrent()) {
     document.querySelector('#list-status').textContent='Chưa tải được trang; chưa thể tìm kiếm hoặc xuất.';
     host.replaceChildren(h('section',{class:'panel'},h('p',{class:'error'},errorMessage(error)),button('Thử tải lại',() => loadPage({page}))));
@@ -195,15 +232,17 @@ function exportList(){
   if(!rowsReady||editorBusy)return;
   const kind=currentPage,g=generation,p=pageGeneration;
   let cancelled=false,cancel;
-  openEditor('Xuất Excel theo khoảng mã',[
-    h('p',{},'Xuất tối đa 5.000 mục trong khoảng mã, gồm mọi trang. Nếu vượt giới hạn, chọn khoảng nhỏ hơn. Bộ lọc trang không áp dụng cho tệp này.'),
-    field('idFrom','Từ mã (bao gồm)',rows[0]?.id??'',{max:1500,optional:true}),
-    field('idTo','Đến mã (bao gồm)',rows.at(-1)?.id??'',{max:1500,optional:true}),
+  const audit=kind==='admin_audit',today=vietnamDateKey(new Date());
+  openEditor(audit?'Xuất nhật ký theo ngày Việt Nam':'Xuất Excel theo khoảng mã',[
+    h('p',{},`Xuất tối đa 5.000 mục trong khoảng ${audit?'ngày Việt Nam':'mã'}, gồm mọi trang. Nếu vượt giới hạn, chọn khoảng nhỏ hơn. Bộ lọc trang và tra cứu không áp dụng cho tệp này.`),
+    ...(audit?[field('start','Từ ngày (VN)',serverRange.start??today,{type:'date'}),field('end','Đến ngày (VN)',serverRange.end??today,{type:'date'})]:[
+      field('idFrom','Từ mã (bao gồm)',rows[0]?.id??'',{max:1500,optional:true}),
+      field('idTo','Đến mã (bao gồm)',rows.at(-1)?.id??'',{max:1500,optional:true})]),
     h('p',{class:'notice'},kind==='user_directory'?'Tệp có email và UID. Chỉ lưu vào nơi bạn quản lý; tệp tải về không tự bị xóa khi đăng xuất.':'Tệp Excel có số liệu nguồn và trạng thái hiện tại. Không gồm nhật ký sức khỏe cá nhân.'),
   ],async form=>{
     const current=()=>!cancelled&&safeCurrent(g)&&pageGeneration===p;
-    const {idFrom,idTo}=values(form);
-    const selected=await Promise.race([api.exportRange(kind,{idFrom:idFrom.trim(),idTo:idTo.trim(),isCurrent:current}),new Promise((_,reject)=>{cancel=()=>reject(Error('Đã hủy xuất.'));})]);
+    const input=values(form),range=audit?{start:input.start,end:input.end}:{idFrom:input.idFrom.trim(),idTo:input.idTo.trim()};
+    const selected=await Promise.race([api.exportRange(kind,{...range,isCurrent:current}),new Promise((_,reject)=>{cancel=()=>reject(Error('Đã hủy xuất.'));})]);
     if(!current())throw Error('Phiên xuất đã thay đổi.');
     const bytes=buildXlsx(exportRows(kind,selected));
     if(!current())throw Error('Phiên xuất đã thay đổi.');
@@ -224,6 +263,8 @@ function openEditor(title,children,action=null,{reason=true,success='Đã lưu t
   fieldsHost.replaceChildren(...children,...(reason&&action?[field('reason','Lý do thay đổi','',{type:'textarea',max:200,hint:'Lưu trong nhật ký quản trị. Với khóa/mở tài khoản, lý do sẽ hiển thị cho người dùng.'})]:[]));
   editorSuccess=success;editorCancel=cancel;document.querySelector('#submit-editor').hidden=!action;
   document.querySelector('#editor-title').textContent=title; document.querySelector('#editor-error').textContent=''; editorAction=action; dialog.showModal();
+  const initial=JSON.stringify(values(editorForm));
+  drafts.set('editor',()=>editorBusy||Boolean(editorAction)&&dialog.hasAttribute('open')&&initial!==JSON.stringify(values(editorForm)));
 }
 function viewFood(row){openEditor('Chi tiết món ăn',[
   h('h3',{},row.name),h('p',{},`${row.id} · ${row.category}`),
@@ -263,9 +304,15 @@ function editAccount(row) {
   ],async form => { const reason=text(values(form).reason,'Lý do',200); await api.save('account_controls',row.id,{status:suspended?'suspended':'active',reason},reason,version(row.control)); });
 }
 async function configPage(content) {
-  const g=generation,p=++pageGeneration; content.replaceChildren(h('p',{class:'loading'},'Đang tải cấu hình…'));
+  const g=generation,p=++pageGeneration,current=()=>safeCurrent(g)&&p===pageGeneration;
+  const scope=liveScope(content,current,registerCleanup);let dirty=false;
+  drafts.set('page',()=>dirty);
+  const syncStatus=h('p',{class:'muted','aria-live':'polite'});
+  content.replaceChildren(h('p',{class:'loading'},'Đang tải cấu hình…'));
   try {
-    currentConfig=await api.config(); if(!safeCurrent(g)||p!==pageGeneration)return;
+    return await observe(scope,api,'watchConfig',[],config=>{
+    if(dirty){const conflict=version(config)!==version(currentConfig)||['chatbotEnabled','foodScannerEnabled','maintenanceMode','maintenanceMessage'].some(key=>config?.[key]!==currentConfig?.[key]),submit=content.querySelector('[type=submit]');if(submit)submit.disabled=conflict;syncStatus.textContent=conflict?'Cấu hình máy chủ vừa cập nhật. Bản nháp được giữ; tải cấu hình máy chủ trước khi lưu để tránh ghi đè.':'Đã kết nối lại. Bản nháp được giữ và chưa lưu.';return;}
+    currentConfig=config; if(!current())return;
     const c=currentConfig??{};
     const form=h('form',{class:'config-form',onSubmit:event => {
       event.preventDefault();
@@ -277,19 +324,23 @@ async function configPage(content) {
     h('div',{class:'divider'}),checkbox('maintenanceMode','Chế độ bảo trì',c.maintenanceMode===true,'Hiển thị thông báo thay cho nội dung app với người dùng đang đăng nhập.'),
     field('maintenanceMessage','Thông báo bảo trì',c.maintenanceMessage,{type:'textarea',max:300,optional:true,hint:'Bắt buộc khi bật bảo trì. Tối đa 300 ký tự.'}),
     h('p',{class:'muted'},`Cập nhật gần nhất: ${date(c.updatedAt)}`),h('button',{type:'submit',class:'button'},'Kiểm tra và lưu cấu hình'));
-    content.replaceChildren(h('section',{class:'panel config-wrap'},h('p',{class:'notice'},'Không cấu hình API key, secret hoặc tên model AI tại đây. Các giới hạn gói dịch vụ không thay đổi khi bật/tắt tính năng.'),form));
+    form.addEventListener('input',()=>{dirty=true;});
+    syncStatus.textContent='Đang đồng bộ trực tiếp với máy chủ.';
+    const reload=button('Tải cấu hình máy chủ',async()=>{if(await drafts.allow(['page'])){drafts.clear('page');configPage(content);}});
+    content.replaceChildren(syncStatus,reload,h('section',{class:'panel config-wrap'},h('p',{class:'notice'},'Không cấu hình API key, secret hoặc tên model AI tại đây. Các giới hạn gói dịch vụ không thay đổi khi bật/tắt tính năng.'),form));
+    },error=>{syncStatus.textContent=errorMessage(error);const submit=content.querySelector('[type=submit]');if(submit)submit.disabled=true;else content.replaceChildren(syncStatus,button('Thử tải lại',()=>configPage(content)));},()=>api.config());
   } catch(error){if(safeCurrent(g)&&p===pageGeneration)content.replaceChildren(h('p',{class:'error'},errorMessage(error)),button('Thử tải lại',()=>configPage(content)));}
 }
-function closeEditor() { if(editorBusy&&editorCancel){editorCancel();dialog.close();}else if(!editorBusy)dialog.close(); }
+async function closeEditor() { if(editorBusy&&editorCancel){editorCancel();clearEditor();}else if(!editorBusy&&await drafts.allow(['editor']))clearEditor(); }
 document.querySelector('#close-editor').addEventListener('click',closeEditor);
 document.querySelector('#cancel-editor').addEventListener('click',closeEditor);
-dialog.addEventListener('cancel',event=>{if(editorBusy){if(editorCancel)editorCancel();else event.preventDefault();}});
+dialog.addEventListener('cancel',event=>{event.preventDefault();closeEditor();});
 editorForm.addEventListener('submit',async event=>{
   event.preventDefault(); if(editorBusy||!allowed||!editorAction)return;
   const g=generation,submit=document.querySelector('#submit-editor'),error=document.querySelector('#editor-error');
   editorBusy=true; submit.disabled=true; submit.textContent='Đang chờ máy chủ…'; error.textContent='';
   const controls=Array.from(editorForm.elements).map(el=>({el,disabled:el.disabled}));
-  try { const operation=editorAction(editorForm); for(const {el} of controls)el.disabled=Boolean(!editorCancel||!['close-editor','cancel-editor'].includes(el.id)); await operation; if(!safeCurrent(g))return; dialog.close();notify(editorSuccess);if(editorSuccess==='Đã lưu thay đổi và nhật ký quản trị.')await openPage(currentPage); }
+  try { const operation=editorAction(editorForm); for(const {el} of controls)el.disabled=Boolean(!editorCancel||!['close-editor','cancel-editor'].includes(el.id)); await operation; if(!safeCurrent(g))return; dialog.close();drafts.clear('editor');notify(editorSuccess);if(editorSuccess==='Đã lưu thay đổi và nhật ký quản trị.')await openPage(currentPage,{force:true,history:'replace'}); }
   catch(e){if(safeCurrent(g))error.textContent=errorMessage(e);}
   finally{editorBusy=false;for(const {el,disabled} of controls)el.disabled=disabled;submit.disabled=false;submit.textContent='Xác nhận và lưu';}
 });
@@ -297,13 +348,19 @@ editorForm.addEventListener('submit',async event=>{
 try {
   const {connect}=await import('./firebase.mjs'); api=await connect(window.HEALTHMATE_ADMIN_CONFIG);
   api.authChanges(next=>{
-    generation++;pageGeneration++;allowed=false;user=next;stopRole?.();stopRole=null;rows=[];rowsReady=false;filter='';dialog.close();
+    drafts.reset();disposePage();generation++;pageGeneration++;allowed=false;user=next;stopRole?.();stopRole=null;rows=[];rowsReady=false;filter='';clearEditor();
     if(!next){showAuth();return;}
     const g=generation;showAuth('Đang kiểm tra quyền quản trị với máy chủ…');
     stopRole=api.role(next.uid,enabled=>{
       if(g!==generation)return;
-      if(!enabled){allowed=false;pageGeneration++;rows=[];dialog.close();showAuth('Tài khoản chưa được cấp quyền admin hoặc chưa xác nhận được quyền từ máy chủ.');return;}
-      if(!allowed){allowed=true;openPage('overview');}
-    },()=>{if(g===generation){allowed=false;pageGeneration++;rows=[];dialog.close();showAuth('Chưa xác nhận được quyền quản trị. Kiểm tra kết nối hoặc đăng nhập lại.');}});
+      if(!enabled){drafts.reset();allowed=false;pageGeneration++;rows=[];clearEditor();showAuth('Tài khoản chưa được cấp quyền admin hoặc chưa xác nhận được quyền từ máy chủ.');return;}
+      if(!allowed){allowed=true;openPage(routePage(window.location?.hash,pages),{force:true,history:'replace'});}
+    },()=>{if(g===generation){drafts.reset();allowed=false;pageGeneration++;rows=[];clearEditor();showAuth('Chưa xác nhận được quyền quản trị. Kiểm tra kết nối hoặc đăng nhập lại.');}});
   });
 } catch(error) { root.replaceChildren(h('main',{class:'connecting'},brand(),h('h1',{},'Chưa mở được web quản trị'),h('p',{class:'error'},errorMessage(error)),h('p',{class:'muted'},'Kiểm tra kết nối, cấu hình Firebase và App Check trước khi thử lại.'),button('Tải lại',()=>location.reload()))); }
+
+window.addEventListener('hashchange',async()=>{
+  if(!allowed)return;const page=routePage(window.location?.hash,pages);
+  if(page===currentPage)return;
+  if(await openPage(page,{history:'none'})===false&&allowed)window.history?.replaceState(null,'',`#/${currentPage}`);
+});

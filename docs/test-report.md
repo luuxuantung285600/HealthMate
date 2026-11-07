@@ -1,7 +1,161 @@
 # Giai đoạn 10 — Báo cáo kiểm thử và rà soát MVP
 
-Bản kiểm chứng mới nhất: thu gọn giao diện dinh dưỡng ngày 01/11/2026 dưới đây. Gói10 chưa
-nghiệm thu signed release/native. Các mục trước giữ lịch sử theo ngày.
+## 07/11/2026 — Bổ sung chức năng vận hành web admin
+
+Web **83/83**, syntax qua; Web SDK thật **9/9 + 11/11** trên emulator.
+Chrome 9 trang × 1440/390/320 px: theme/bố cục, drawer bàn phím, dialog giữ/
+bỏ bản nháp và reload deep link qua. Script Dart xuất bài tập analyze sạch,
+đối chiếu khớp 33 bài tập. Ba query production chỉ đọc HTTP200, không cần
+index mới. Không chạy lại Flutter suite/build APK/Rules vì không sửa app/Rules.
+Đã deploy Hosting, đọc lại 30/30 tệp khớp byte, CSP/no-store qua; Rules giữ
+nguyên ruleset/hash. Source audit 656 file/0 findings; git diff --check qua.
+Xem [file, bằng chứng và giới hạn](admin-completion-2026-11-07.md).
+
+## 07/11/2026 — Sửa contract Rules và vận hành app/admin
+
+Đã qua 129/129 Rules, 12/12 Flutter repository SDK, 17/17 SDK web và 6/6
+Flutter SDK liên thông Spark. Web DOM/unit 71/71. Flutter unit/widget
+952/952 trước sửa listener cuối; sau sửa chạy 29/29 hồi quy liên quan và
+6/6 SDK trên, không bỏ assertions. Analyze cuối sạch. Đã publish Rules +
+Hosting khoảng 14:20 UTC+7; đọc lại đúng Rules và 27 tệp Hosting.
+APK debug build cuối thành công lúc 14:21:18 (Gradle 18,2 giây); cấu hình
+admin qua 7/7. Chưa có thiết bị adb để cài/kiểm thử native.
+[Báo cáo, file và giới hạn](operations-hardening-2026-11-07.md).
+
+Bản kiểm chứng mới nhất là đợt vận hành 07/11 ở trên. Giai đoạn 10 chưa
+nghiệm thu signed release/native; các mục dưới giữ lịch sử theo ngày.
+
+## 06/11/2026 — Inter cho app Flutter và web admin
+
+- `dart format lib/core/theme/design_tokens.dart test`: 104 file, 20 file
+  định dạng sau đổi đường dẫn. Cập nhật 20 loader test dùng Inter thật;
+  không thay assertions hoặc bỏ ca kiểm thử.
+- `flutter analyze --no-pub`: **No issues found**, 91,1 giây.
+- `flutter test --no-pub --reporter json`: **944/944**, 0 lỗi, 0 bỏ qua;
+  kết thúc `success:true`, runner 111,865 giây.
+- Web syntax qua, Node/DOM **61/61**, 0 skip. Server local HEAD đủ bốn
+  WOFF2 HTTP 200, MIME `font/woff2`; tiến trình probe đã dừng.
+- Format kiểm tra cuối 104 file/0 thay đổi; `git diff --check` qua.
+  Secret audit 626 source text files/0 findings, không quét APK/credential store.
+- Kiểm metadata TTF weights 400/500/600/700 và **187 codepoint/font** gồm
+  chữ Việt/dấu ghép/số/₫, không thiếu glyph trong bộ kiểm tra. Bốn WOFF2
+  tải từ local; Chrome CDP xác nhận custom font Inter SemiBold thực render.
+- Browser ảnh 1440/1024/390/320 px và module app thật với adapter local
+  9 trang × 1440/390/320 px: không tràn ngang/lỗi JS; drawer/dialog/login qua.
+- Đã xem ảnh web và widget app đăng nhập/form 320px chữ200%. Không dùng
+  widget screenshot làm bằng chứng Firebase hoặc Android thật. Ảnh web
+  giữ snapshot đọc thật lúc01:50:46 ngày06/11 từ lượt theme, không đọc mới.
+
+Log: `build/inter-font-20261106/`; [nguồn, files và giới hạn](inter-font-2026-11-06.md).
+Không chạy Rules/SDK Emulator, build/cài APK hoặc deploy trong lượt font.
+
+## 06/11/2026 — Admin phong cách tối theo ảnh mới
+
+Phạm vi theme/shell/dashboard presentation và hồi quy đăng xuất. Không
+đổi dữ liệu/Rules/backend hoặc deploy. Bảo toàn các thay đổi trước đó.
+
+| Kiểm tra | Kết quả |
+| --- | --- |
+| `npm --prefix admin-web run check` | Qua |
+| `npm --prefix admin-web test` | **61/61**, 0 lỗi, 0 bỏ qua |
+| Chrome CSP, ảnh dữ liệu thật 1440/1024/390/320 px | Không tràn ngang hoặc JS exception; 3/0 ₫/0/0 khớp nguồn |
+| Chrome app thật + adapter QA loopback, 9 trang × 1440/390/320 px | Dark surfaces, bố cục, dialog/login qua |
+| Mobile drawer 390/320 px | Tab/Shift+Tab có logout, Escape trả focus qua |
+| `git -c core.safecrlf=false diff --check` | Qua |
+| `node tool/audit_source_secrets.cjs` | 622 source text files, 0 findings; không quét credential store/APK |
+
+Snapshot Firebase chỉ đọc lúc **01:50:46 ngày 06/11/2026 UTC+7**: Auth 3,
+counts[158,1,0,7]; kỳ 01–06/11 có 0 giao dịch Premium demo, 0 VND mô phỏng,
+0 khách mua. Bản xem trước có nhãn/thời điểm, không tự ghi summary trên
+server; không dùng fixture làm ảnh dữ liệu thật. Premium chưa thu tiền.
+
+Browser QA dùng module app thật với adapter local riêng chặn ghi, danh
+sách rỗng, danh tính kiểm thử rõ ràng; không SDK/mạng production. Không
+chụp các màn này làm bằng chứng dữ liệu dự án. Phát hiện focus drawer lúc
+vừa bỏ hidden chưa vào menu; sửa chờ frame hiển thị và guard shell cũ,
+chạy lại đầy đủ qua, giữ assertions. Log trước sửa được lưu riêng.
+
+Log/ảnh: `build/admin-dark-20261106/`. Không đổi Dart/Android/Rules nên
+không chạy lại Flutter, SDK Emulator/Rules. Kết quả các lượt trước giữ
+riêng dưới đây. Chi tiết: [UI tối](admin-dark-ui-2026-11-06.md).
+
+## 03/11/2026 — UI admin theo ảnh tham khảo
+
+Phạm vi shell/theme/dashboard presentation và hai trang menu bài tập/AI;
+không đổi backend/Rules, không deploy hoặc ghi dữ liệu production.
+
+| Lệnh/kiểm tra | Kết quả thực tế |
+| --- | --- |
+| `npm --prefix admin-web run check` | Qua, gồm module shell mới |
+| `npm --prefix admin-web test` | **60/60 qua**, 0 lỗi, 0 bỏ qua |
+| Chrome headless ở 1440/1024/390/320 px | Không tràn ngang trang hoặc JS exception; ô số liệu khớp nguồn đọc |
+| Bản xem trước từ snapshot Firebase thật | **3 / 0 ₫ / 0 / 0** lúc 02:01:25 ngày 03/11 UTC+7 |
+| `git -c core.safecrlf=false diff --check` | Qua |
+| `node tool/audit_source_secrets.cjs` | 621 source text files, 0 findings; không quét APK/credential store |
+
+Năm ca DOM mới kiểm tra thứ tự/active menu, toggle sidebar/drawer, trang
+bài tập chờ triển khai, lối sửa cấu hình AI có audit, cấu hình chưa xác
+định và response AI cũ sau đổi trang/logout. Giữ những assertions dữ liệu
+và hành động của các ca trước.
+
+Log syntax/test: `build/admin-ui-reference-20261103/{check,test}.log`.
+`read-production.cjs` chỉ đọc; `preview.cjs` chạy shell/dashboard sản phẩm
+với snapshot qua server loopback và Chrome rồi đóng tiến trình sau khi
+chụp. Không dùng fixture để thay số trong bản bàn giao. Đã xem ảnh desktop
+và mobile sau chỉnh nhãn biểu đồ responsive cuối. Premium vẫn là demo;
+không coi 0 VND mô phỏng là doanh thu thanh toán thật đã được tích hợp.
+
+Không chạy lại Flutter/Dart/Android, SDK Emulator hoặc Rules suites trong
+lượt chỉ đổi UI này. Các kết quả 9/9 SDK và 128/128 Rules bên dưới là từ
+lượt dashboard trước, không phải kiểm thử lại của theme mới.
+Chi tiết: [UI admin](admin-ui-reference-2026-11-03.md).
+
+## 03/11/2026 — Đính chính ảnh bàn giao dashboard
+
+Ảnh trước dùng fixture42/240.000đ/12/4, không phải dữ liệu dự án; đã thay
+bằng ảnh render từ dữ liệu máy chủ đọc thật. Không thay code sản phẩm/Rules,
+không seed hoặc ghi server để có số, không deploy.
+
+- `node build/admin-dashboard-real-20261103/read-production.cjs`: exit0,
+  chỉ đọc; lúc00:58:12 UTC+7, Auth3, count[158,1,0,7]. Receipt tháng11
+  đến03/11:0, tiền mô phỏng0 VND, UID mua0. Không in/lưu token credential.
+- `node build/admin-dashboard-real-20261103/preview.cjs`: Chrome1440/390,
+  các ô tổng3/0/0/0 khớp nguồn đọc, không tràn ngang hoặc JS exception.
+- Không chạy lại tests Flutter/Rules vì không sửa mã sản phẩm/Rules.
+- Chi tiết và đường dẫn ảnh đã đính chính:
+  [Dashboard admin](admin-dashboard-2026-11-02.md).
+
+## 02/11/2026 — Dashboard admin: tài khoản và Premium
+
+Phạm vi web/Rules, chưa deploy hoặc ghi dữ liệu production.
+
+| Lệnh/kiểm tra | Kết quả thực tế |
+| --- | --- |
+| `npm --prefix admin-web run check` + helper `node --check` | Qua |
+| `npm --prefix admin-web test` | 55/55 qua |
+| `node --test admin-web/test/sdk.integration.mjs` trên Emulator | 9/9 qua |
+| `node --test *.rules.test.cjs` từ rules-tests, Emulator8092 | 128/128 qua |
+| Chrome headless, CSP, widths1440/390/320 | Ready, không tràn ngang hoặc JS exception |
+| `node admin-web/tool/sync-account-statistics.cjs` | Chỉ đọc production; total3, pages1, applied:false |
+| `node tool/audit_source_secrets.cjs` | 0 finding |
+| `git diff --check` | Qua |
+
+Chạy Firebase CLI `emulators:exec --config firebase.admin-emulators.json
+--only auth,firestore --project demo-healthmate-admin` với runner local
+`build/admin-dashboard-20261102/verify.cjs`: seed fixture → SDK → toàn bộ
+Rules. Auth9098/Firestore8092; đã dừng các emulator do task tạo.
+
+Lượt Rules đầu runner dùng cwd root, suite có đường dẫn tương đối không
+tìm thấy Rules; sửa cwd rules-tests và chạy lại đầy đủ128/128. Lượt DOM
+đầu assertion giá quá rộng bắt giá gói trong chú thích, sửa kiểm đúng ô số
+liệu và giữ UID/race checks; lượt cuối55/55. Không đổi nghiệp vụ hoặc nới
+Rules để các bài test qua. Log/ảnh fixture và giới hạn:
+[Dashboard admin](admin-dashboard-2026-11-02.md).
+
+Không sửa Dart/Android nên không chạy lại Flutter/native; không kiểm thanh
+toán/AI thật hoặc nghiệm thu admin production. Tổng Auth là bản cập nhật
+thủ công, không được coi là số người online hay realtime. Chưa deploy
+Hosting/Rules và chưa chạy helper với `--apply`.
 
 ## 02/11/2026 — Kiểm tra chuẩn bị push GitHub
 
@@ -2781,3 +2935,55 @@ listener trên 8080/9099/8092/9098. Không hẹn tắt laptop ở lượt này v
 “hoàn thành xong” còn chưa đạt ở nghiệm thu signed release/native Gói 10;
 trạng thái được lưu tại `build/improvement-packages8-10/shutdown-status.json`.
 Không ép đóng ứng dụng hoặc tạo khóa ký để vượt blocker.
+
+
+## Đồng bộ thời gian thực — 06/11/2026
+
+Bản kiểm thử hoàn tất, chưa triển khai production theo lựa chọn bật Blaze sau.
+
+| Lệnh/nhóm | Kết quả cuối |
+| --- | --- |
+| dart format các file đợt này | Hoàn tất |
+| flutter analyze --no-pub | Không issue |
+| flutter test --no-pub --reporter json | 951/951, success=true |
+| flutter build apk --debug --no-pub --dart-define-from-file=config/release-candidate.json | Thành công, chưa cài thiết bị |
+| npm test / npm run check --prefix admin-web | 66/66 / qua |
+| SDK cũ / SDK realtime với emulator | 9/9 / 6/6 |
+| Functions unit / Auth+Firestore+Functions emulator | 2/2 / 3/3 |
+| npm test --prefix rules-tests | 129/129 |
+| Rules bundle dựa trên baseline production | 3/3 |
+| Kiểm tra SDK bổ sung ticket đang xóa | Qua |
+| git diff --check | Qua |
+
+Test bao gồm tự cập nhật khi tạo/sửa/ẩn/khôi phục/xóa món, control/role thay đổi
+mà directory không đổi, giao dịch xuất hiện/xóa trong kỳ, cấu hình, hỗ trợ,
+đăng ký chưa xác minh, xóa Auth, retry cũ, bootstrap lặp, báo cáo được invalidation
+đúng nguồn, tổng kết tuần, chi tiết món riêng/công thức đang mở sau sửa/xóa từ
+thiết bị khác, chặn dữ liệu đến trễ và giữ bản nháp. Hai UID không đọc/ghi chéo
+revision; admin không tự ghi bộ đếm và admin bị khóa không dùng token cũ đọc tổng.
+
+Có lần discovery Functions vượt mặc định 10s; đã dùng lazy Firestore và kiểm lại
+với FUNCTIONS_DISCOVERY_TIMEOUT=60. Không đổi test để che lỗi; giữ log các lần
+lỗi. Emulator Node 24, deploy runtime Node 22; chưa kiểm thử production/Android
+hai thiết bị. Cảnh báo KGP tương lai và 6 advisory moderate của dependency gián
+tiếp Functions được ghi rõ trong [báo cáo realtime](realtime-sync-2026-11-06.md).
+
+Bằng chứng chính: `build/realtime-flutter-summary.json`,
+`build/realtime-analyze-final.log`, `build/realtime-apk-build.log`,
+`build/admin-realtime-final4.log`, `build/realtime-legacy-and-rules.log`,
+`build/realtime-integration-final3.log`, `build/realtime-release-final3.log`.
+
+## 06/11/2026 — Đã triển khai realtime trên Spark
+
+- Tiếp tục yêu cầu đồng bộ hiện có: đã publish Hosting và Rules tối thiểu lên
+  healthmate-admin-vn.web.app, đọc lại file/Rules khớp. Không bật billing/Functions.
+- Web nghe dữ liệu trực tiếp; app thêm listeners đúng khoảng báo cáo/tuần,
+  mục tiêu, giấc ngủ và chi tiết thư viện, không chờ revision server.
+- File chính: live-data.mjs, firebase.mjs, prepare-realtime-release.cjs;
+  private_data_changes.dart, user_data_revision.dart và các providers liên quan.
+- Đạt: Flutter952/952, analyze sạch, admin66/66, Spark SDK1/1, Flutter SDK3/3,
+  Rules bundle3/3, APK debug build qua. Snapshot Auth thật3 có nhãn thủ công.
+- Cần cài APK mới; chưa có thiết bị Android kết nối, chưa nghiệm thu hai thiết
+  bị production. Tổng Auth tự động còn chờ Functions/Blaze; Premium vẫn demo.
+- Tiếp theo đề xuất: nghiệm thu app/web thật, không tự thêm nghiệp vụ khác.
+- Chi tiết và bằng chứng: [realtime-spark-2026-11-06.md](realtime-spark-2026-11-06.md).

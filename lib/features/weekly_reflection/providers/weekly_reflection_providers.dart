@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/data/user_data_revision.dart';
+import '../../../core/data/private_data_changes.dart';
 import '../../auth/providers/auth_providers.dart';
 import '../../nutrition/providers/nutrition_providers.dart';
 import '../../water/providers/water_providers.dart';
@@ -10,6 +12,25 @@ import '../models/weekly_reflection.dart';
 // One future per UID/week, shared by all consumers. No per-day listeners.
 final weeklyLogsProvider = FutureProvider.autoDispose
     .family<WeekLogs, DateTime>((ref, start) async {
+      final end = DateTime(start.year, start.month, start.day + 7);
+      for (final source in [
+        'meal_logs',
+        'water_logs',
+        'activity_logs',
+        'body_metrics',
+      ]) {
+        watchPrivateRange(ref, source, start, end);
+      }
+      ref.watch(
+        userDataRevisionProvider.select(
+          (state) => (
+            state.value?['meal_logs'],
+            state.value?['water_logs'],
+            state.value?['activity_logs'],
+            state.value?['body_metrics'],
+          ),
+        ),
+      );
       final uid = ref.watch(
         authSessionProvider.select((session) => session.value?.uid),
       );
@@ -18,7 +39,6 @@ final weeklyLogsProvider = FutureProvider.autoDispose
       final water = ref.watch(waterRepositoryProvider);
       final activity = ref.watch(activityRepositoryProvider);
       final profile = ref.watch(healthProfileRepositoryProvider);
-      final end = DateTime(start.year, start.month, start.day + 7);
       final data = await (
         nutrition.loadRange(uid, start, end),
         water.loadRange(uid, start, end),

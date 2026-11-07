@@ -6,7 +6,7 @@
     "dev": "node server.mjs",
     "test": "node --test test/*.test.mjs",
     "test:sdk": "node --test test/sdk.integration.mjs",
-    "check": "node --check dist/app.mjs && node --check dist/support-page.mjs && node --check dist/support-model.mjs && node --check dist/revenue-page.mjs && node --check dist/revenue-model.mjs && node --check dist/firebase.mjs && node --check dist/validation.mjs && node --check dist/list-model.mjs && node --check dist/server-paging.mjs && node --check dist/xlsx-export.mjs && node --check dist/config.js && node --check server.mjs && node --check seed-emulators.mjs && node --check tool/inspect-production.cjs && node --check tool/prepare-release.cjs"
+    "check": "node --check dist/app.mjs && node --check dist/admin-shell.mjs && node --check dist/dashboard-page.mjs && node --check dist/dashboard-model.mjs && node --check dist/support-page.mjs && node --check dist/support-model.mjs && node --check dist/revenue-page.mjs && node --check dist/revenue-model.mjs && node --check dist/firebase.mjs && node --check dist/validation.mjs && node --check dist/list-model.mjs && node --check dist/server-paging.mjs && node --check dist/xlsx-export.mjs && node --check dist/config.js && node --check server.mjs && node --check seed-emulators.mjs && node --check tool/inspect-production.cjs && node --check tool/prepare-release.cjs && node --check dist/live-data.mjs && node --check dist/live-scope.mjs && node --check dist/draft-guard.mjs && node --check dist/workouts-page.mjs && node --check dist/exercise-catalog.mjs"
   },
   "devDependencies": {
     "linkedom": "0.18.14"

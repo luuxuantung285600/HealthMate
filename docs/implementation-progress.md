@@ -1,5 +1,149 @@
 # Tiến độ HealthMate
 
+## 07/11/2026 — Giai đoạn 10: hoàn thiện web admin
+
+Đã bổ sung tra cứu máy chủ UID/email/đầu tên món, audit mới nhất và lọc/xuất
+ngày Việt Nam, bảo vệ bản nháp editor/cấu hình/hỗ trợ, retry lỗi, URL theo
+trang và danh mục chỉ đọc 33 bài tập lấy từ app. Qua 83/83 web, 20/20 SDK,
+9 trang × 3 kích thước Chrome, script Dart analyze sạch và kiểm catalog khớp.
+Ba query production HTTP200 chỉ đọc. Đã publish Hosting và đọc lại khớp đủ
+30 tệp; Rules giữ nguyên. Không sửa app hoặc bật billing. Rollout/giới hạn trong
+[báo cáo web admin](admin-completion-2026-11-07.md).
+
+Cần người dùng: tải lại web và nghiệm thu các thao tác bằng admin thật. Auth
+total vẫn snapshot; Premium demo; bài tập chỉ đọc. Tiếp theo chỉ đề xuất
+nghiệm thu, không tự làm luồng backend trả phí hoặc nghiệp vụ mới.
+
+## 07/11/2026 — Giai đoạn 10: sửa vận hành và đồng bộ app/admin
+
+Đã sửa và publish Rules + web lúc khoảng 14:20 UTC+7. Đọc lại Rules và 27
+tệp Hosting khớp bản đã kiểm. Ba luồng xóa tài khoản, hỗ trợ hai chiều và
+danh mục đã qua SDK thực trên emulator. Release tool dùng nguyên Rules
+chuẩn; không bỏ sót deletion job/support quota. Qua 129 Rules, 35 SDK,
+71 web; 952 Flutter trước sửa listener cuối và 29 hồi quy sau sửa cuối;
+analyze sạch. Giữ Spark, billing false, không deploy Functions. Chưa nghiệm
+thu thiết bị Android thật; tổng Auth vẫn snapshot thủ công, Premium demo.
+APK debug mới build thành công lúc 14:21:18; cấu hình admin qua 7/7.
+File: `build/releases/healthmate-operations-20261107-debug.apk`, chưa cài
+vì không có thiết bị adb. Cần cài APK mới và tải lại web để nghiệm thu.
+File/bằng chứng và giới hạn: [báo cáo đợt sửa](operations-hardening-2026-11-07.md).
+
+## 06/11/2026 — Giai đoạn tùy chọn 11: đổi font sang Inter
+
+1. **Phạm vi/trạng thái:** hoàn tất typography app + web admin theo yêu
+   cầu; source local, chưa publish web hoặc build/cài APK.
+2. **Đã hoàn thành:** Inter chính thức v4.1, đủ 400/500/600/700 và tiếng
+   Việt, đóng gói offline; cả theme sáng/tối và web dùng font mới. Giữ
+   giấy phép OFL, server local hỗ trợ WOFF2; không thêm dependency.
+3. **File chính:** `pubspec.yaml`, `design_tokens.dart`, `style.css`,
+   `server.mjs`, hai thư mục font Inter, 20 test loader, README và báo cáo.
+4. **Kiểm thử:** format qua, analyzer sạch; Flutter **944/944**, web
+   **61/61**, 0 skip. Kiểm 187 codepoint/weight, font Chrome thực render,
+   bốn kích thước web và 9 trang × 3 kích thước qua. Đã xem ảnh app/web.
+5. **Cần người dùng làm:** dừng và chạy lại app bằng F5; web local tải
+   lại/khởi động lại server cũ. Không cần cấu hình Firebase mới.
+6. **Còn lại:** chưa nghiệm thu Android thật hoặc cập nhật web online.
+   Ảnh web dùng snapshot đọc thật trước đó, giữ nhãn thời điểm; không
+   tạo số mới. Không đổi nghiệp vụ, Rules/backend hoặc ghi production.
+7. **Tiếp theo đề xuất:** nghiệm thu Inter và rollout theo yêu cầu;
+   chưa tự triển khai bước khác.
+
+Chi tiết: [Inter cho app và admin](inter-font-2026-11-06.md).
+
+## 06/11/2026 — Giai đoạn tùy chọn 11: đổi admin sang phong cách tối
+
+1. **Phạm vi/trạng thái:** hoàn tất polish web admin theo ảnh mới người
+   dùng gửi; source local đã kiểm thử, online chưa cập nhật. Giữ các thay
+   đổi trước đó, không triển khai nghiệp vụ/giai đoạn khác.
+2. **Đã hoàn thành:** nền đen, sidebar đen, panel xám đậm, điểm nhấn xanh;
+   bốn card ở đầu, biểu đồ trái/thông tin vận hành phải. Bảng/form/dialog/
+   đăng nhập cùng theme; danh tính thật và logout ở footer sidebar. Giữ
+   menu/chức năng, sửa focus drawer, hỗ trợ desktop/mobile.
+3. **File chính:** `admin-theme.css`, `admin-shell.mjs`,
+   `dashboard-page.mjs`, `index.html`, DOM tests, README và báo cáo UI/test.
+4. **Kiểm thử:** syntax/diff qua, secret audit 0 findings;
+   Node/DOM **61/61**, 0 skip. Ảnh dữ liệu thật
+   ở **1440/1024/390/320 px** không tràn ngang/lỗi JS. Browser QA 9 trang
+   ở **1440/390/320 px**, dialog/login/Tab/Escape qua sau sửa focus drawer.
+   Không chạy lại Flutter/SDK/Rules vì không sửa các phần đó.
+5. **Cần người dùng làm:** xem bản mới và nghiệm thu; theme không cần cấu
+   hình Firebase mới. Rollout web và summary Auth là bước còn chờ riêng.
+6. **Còn lại:** Premium vẫn demo; bài tập chờ triển khai. Ảnh dùng snapshot
+   Firebase thật lúc **01:50:46 ngày 06/11 UTC+7**: Auth 3, kỳ 01–06/11 có
+   0 giao dịch/0 VND mô phỏng/0 khách mua. Không thêm số/tăng trưởng minh
+   họa, thêm package, đổi Rules/backend hoặc ghi production/commit/deploy.
+7. **Tiếp theo đề xuất:** nghiệm thu và rollout UI admin, chưa thực hiện.
+
+Chi tiết: [Admin phong cách tối](admin-dark-ui-2026-11-06.md).
+
+## 03/11/2026 — Polish UI admin theo ảnh tham khảo
+
+1. **Phạm vi/trạng thái:** hoàn tất UI admin theo yêu cầu riêng, tương ứng
+   phần polish; đã kiểm thử local, chưa publish. Không mở thêm giai đoạn
+   nghiệp vụ hoặc sửa backend/Rules trong lượt này.
+2. **Đã hoàn thành:** sidebar trắng với Tổng quan, Doanh thu, Khách hàng,
+   Thực phẩm, Bài tập luyện, AI Chatbot và các trang vận hành đang có;
+   header, panel, bảng/form và bốn card gradient theo ảnh. Thu gọn desktop,
+   drawer mobile; biểu đồ lấy giao dịch đã lưu, dữ liệu trống hiện đường 0.
+   Trang bài tập ghi rõ chờ triển khai; AI dùng cấu hình/audit hiện có.
+3. **File chính:** mới `admin-web/dist/admin-shell.mjs`, `admin-theme.css`;
+   sửa `index.html`, `app.mjs`, `dashboard-page.mjs`, DOM tests, package
+   check, README và báo cáo UI/test. Giữ thay đổi chưa commit từ lượt trước.
+4. **Kiểm thử:** syntax/diff check qua, source secret audit 0 findings;
+   Node/DOM **60/60**, 0 skip. Chrome ở
+   **1440/1024/390/320 px** không tràn ngang hoặc lỗi JS. Ảnh dùng dữ liệu
+   Firebase đọc thật lúc **02:01:25 ngày 03/11 UTC+7**: Auth 3; kỳ 01–03/11
+   có 0 giao dịch demo, 0 VND mô phỏng, 0 khách mua. Không chạy lại Flutter,
+   SDK/Rules vì không thay code thuộc các phần đó.
+5. **Cần chủ dự án làm:** nghiệm thu bản xem trước; rollout web là bước
+   riêng còn chờ. Tổng Auth trên sản phẩm vẫn cần summary/Rules patch
+   tối thiểu theo báo cáo dashboard trước; chưa chạy `--apply`.
+6. **Còn lại:** Premium vẫn demo, chưa thu tiền; bài tập chưa có catalog
+   hoặc CRUD. Không dùng ảnh fixture để bàn giao, không tự điền số, không
+   thêm package hoặc ghi production. Web online chưa thay đổi.
+7. **Tiếp theo đề xuất:** nghiệm thu và rollout UI admin; chưa thực hiện.
+
+Chi tiết: [Giao diện theo ảnh mẫu](admin-ui-reference-2026-11-03.md).
+
+## 03/11/2026 — Đính chính ảnh dashboard dùng dữ liệu test
+
+- Người dùng yêu cầu số thực, phản đối ảnh có42 tài khoản/240.000đ.
+  Agent nhận lỗi dùng ảnh fixture làm bàn giao, thay bằng bản đối chiếu
+  chỉ đọc từ Firebase thật, không tự điền số hoặc ghi dữ liệu production.
+- Lần đọc00:58:12 UTC+7: Auth3, directory1, suspended0, catalog158,
+  audit7; kỳ01–03/11 có0 receipt demo,0 VND mô phỏng,0 khách mua.
+- Ảnh mới nằm trong `build/admin-dashboard-real-20261103/`; Chrome1440/
+  390px xác minh ô hiển thị khớp dữ liệu đọc, không tràn ngang/lỗi JS.
+  Không sửa mã sản phẩm/Rules nên không chạy lại toàn suite Flutter/Rules.
+- File cập nhật: tài liệu dashboard, implementation-progress, test-report;
+  script đọc/ảnh đối chiếu chỉ ở build ignored. Online chưa thay đổi;
+  rollout và đồng bộ summary vẫn là bước còn chờ, không tự thực hiện.
+
+## 02/11/2026 — Sửa dashboard admin theo yêu cầu
+
+1. **Phạm vi/trạng thái:** dashboard admin, candidate đã sửa và kiểm thử
+   local; chưa publish/Rules rollout/ghi summary production. Không thực hiện
+   giai đoạn MVP hoặc phần tập luyện kế tiếp.
+2. **Đã hoàn thành:** tổng tài khoản lấy aggregate Auth có thời điểm, doanh
+   thu Premium demo, giao dịch/khách mua theo kỳ UTC+7, biểu đồ có bảng,
+   5 giao dịch gần nhất, lối báo cáo/Excel; count/config lỗi độc lập, race
+   sau refresh/đổi kỳ/logout được bỏ. Đồng bộ tổng bằng helper chủ dự án.
+3. **File chính:** admin-web/dist/{app,firebase,dashboard-page,dashboard-model}.mjs,
+   style.css; helper sync-account-statistics.cjs và tests; firestore.rules,
+   admin.rules.test.cjs; database-design/README/tài liệu dashboard.
+4. **Kiểm thử:** Node/DOM/helper55/55; SDK Emulator9/9; Rules128/128;
+   syntax qua, Chrome1440/390/320px không tràn ngang; secret audit0 finding.
+   Không sửa Dart/Android nên không chạy format/analyze/test Flutter.
+5. **Cần chủ dự án làm:** yêu cầu rollout web + Rules patch tối thiểu dựa
+   trên production hiện hành, đồng bộ tổng có `--apply`, nghiệm thu web.
+6. **Còn lại:** tổng Auth cập nhật thủ công, có thể cũ sau đăng ký/xóa;
+   revenue vẫn mô phỏng, 5.000 giao dịch/kỳ. Truy vấn chỉ đọc thấy3 tài khoản,
+   chưa ghi lên server. Không deploy toàn root candidate Rules.
+7. **Tiếp theo đề xuất:** rollout dashboard admin có kiểm soát và nghiệm
+   thu; không tự mở giai đoạn hoặc tính năng khác.
+
+Chi tiết và lỗi kiểm thử trung gian: [admin-dashboard-2026-11-02.md](admin-dashboard-2026-11-02.md).
+
 Trạng thái mới nhất (01/11/2026): đã thu gọn giao diện theo dõi dinh dưỡng;
 944/944 kiểm thử Flutter qua, analyzer sạch. Gói10 chưa nghiệm thu signed release/native.
 Các giai đoạn/mốc cũ giữ làm lịch sử.
@@ -3379,3 +3523,43 @@ Chi tiết hành vi trước/sau, schema, giới hạn local/production và roll
 Kết quả thật, lỗi trung gian và đường dẫn log:
 [test-report.md](test-report.md), [candidate-verification.md](candidate-verification.md),
 [improvement-progress.md](improvement-progress.md), [release-readiness.md](release-readiness.md).
+
+
+## 06/11/2026 — Đồng bộ thời gian thực app/admin (bản kiểm thử)
+
+- Phạm vi theo yêu cầu: mọi luồng dữ liệu chung đã triển khai; bổ sung invalidation
+  cho báo cáo theo kỳ/tuần/giấc ngủ và chi tiết thư viện trong app, không tự làm
+  tính năng web còn thiếu.
+- Web: snapshot listeners cho dashboard, doanh thu, khách hàng/role/control,
+  thực phẩm, audit, cấu hình và hỗ trợ; hủy theo màn hình/phiên, giữ bản nháp.
+- App: lọc món ẩn ở cache/USDA/chi tiết đang tải; báo cáo nhận revision theo UID.
+- Cloud Functions: Auth/Firestore events, bộ đếm server, bootstrap có kiểm tra
+  trùng/lệch thứ tự; không dùng số directory thay tổng Auth, không dùng số giả.
+- File chính: `admin-web/dist/live-data.mjs`, `live-scope.mjs`, các page module;
+  `firebase-functions/`; `lib/core/data/user_data_revision.dart`; nutrition
+  visibility/repository/service và report/target/sleep/weekly/library providers;
+  `firestore.rules`.
+- Đạt: Flutter 951/951; analyze sạch; admin 66/66; Rules 129/129; SDK cũ 9/9,
+  SDK realtime 6/6; Functions unit 2/2, integration 3/3; Rules bundle 3/3;
+  APK debug build thành công. Log và lần lỗi đã sửa ghi trong báo cáo chi tiết.
+- Người dùng đã đồng ý Functions/có thể tính phí, nhưng chọn bật Blaze sau.
+  Preflight thật: billing chưa bật. Chưa deploy/ghi production/cài Android thật.
+- Bundle review dựa trên Rules production, chỉ thêm các quyền cần thiết cho
+  realtime. Không deploy toàn bộ Rules candidate đang có từ các lượt trước.
+- Cần làm thủ công: bật Blaze. Đề xuất tiếp theo: triển khai và xác nhận app/web
+  thật sau bước đó; chưa thực hiện. [Báo cáo](realtime-sync-2026-11-06.md).
+
+## 06/11/2026 — Đã triển khai realtime trên Spark
+
+- Tiếp tục yêu cầu đồng bộ hiện có: đã publish Hosting và Rules tối thiểu lên
+  healthmate-admin-vn.web.app, đọc lại file/Rules khớp. Không bật billing/Functions.
+- Web nghe dữ liệu trực tiếp; app thêm listeners đúng khoảng báo cáo/tuần,
+  mục tiêu, giấc ngủ và chi tiết thư viện, không chờ revision server.
+- File chính: live-data.mjs, firebase.mjs, prepare-realtime-release.cjs;
+  private_data_changes.dart, user_data_revision.dart và các providers liên quan.
+- Đạt: Flutter952/952, analyze sạch, admin66/66, Spark SDK1/1, Flutter SDK3/3,
+  Rules bundle3/3, APK debug build qua. Snapshot Auth thật3 có nhãn thủ công.
+- Cần cài APK mới; chưa có thiết bị Android kết nối, chưa nghiệm thu hai thiết
+  bị production. Tổng Auth tự động còn chờ Functions/Blaze; Premium vẫn demo.
+- Tiếp theo đề xuất: nghiệm thu app/web thật, không tự thêm nghiệp vụ khác.
+- Chi tiết và bằng chứng: [realtime-spark-2026-11-06.md](realtime-spark-2026-11-06.md).

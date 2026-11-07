@@ -6,6 +6,10 @@ Dữ liệu riêng theo UID trong Cloud Firestore; Firebase Authentication quả
 Worker chatbot nằm cùng repository. Thông tin chỉ hỗ trợ theo dõi thói quen,
 không thay thế tư vấn y tế.
 
+App và web admin dùng **Inter** đóng gói trong dự án, đủ bốn độ đậm
+400/500/600/700 và ký tự tiếng Việt; không tải font từ dịch vụ bên ngoài.
+Nguồn và giấy phép: [assets/fonts/inter](assets/fonts/inter/README.md).
+
 ## Trạng thái source — 31/10/2026
 
 Đây là candidate cải thiện trên `main`, chưa phát hành. Package demo

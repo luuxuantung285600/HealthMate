@@ -86,8 +86,8 @@ abstract final class DesignTokens {
 
   /// Bundled font with Vietnamese glyphs; no network font loading.
   /// Assets and font license are declared in pubspec.yaml and assets/fonts.
-  static const fontFamily = 'BeVietnamPro';
-  static const fontFamilyFallback = 'BeVietnamPro';
+  static const fontFamily = 'Inter';
+  static const fontFamilyFallback = 'Inter';
 
   /// Font weights
   static const FontWeight regular = FontWeight.w400;

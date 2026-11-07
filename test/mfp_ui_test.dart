@@ -64,11 +64,9 @@ class PendingDay extends FakeNutritionRepository {
 
 void main() {
   setUpAll(() async {
-    final font = FontLoader('BeVietnamPro');
+    final font = FontLoader('Inter');
     for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      font.addFont(
-        rootBundle.load('assets/fonts/be_vietnam_pro/BeVietnamPro-$weight.ttf'),
-      );
+      font.addFont(rootBundle.load('assets/fonts/inter/Inter-$weight.ttf'));
     }
     await font.load();
     await (FontLoader(

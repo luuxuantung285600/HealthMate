@@ -9,6 +9,7 @@ import '../models/nutrition_models.dart';
 import '../models/catalog_food_reader.dart';
 import '../models/food_catalog_search.dart';
 import 'nutrition_repository.dart';
+import '../models/food_visibility.dart';
 import 'meal_document.dart';
 import 'meal_query_mode.dart';
 import 'bundled_vietnamese_foods.dart';
@@ -62,6 +63,21 @@ class FirebaseNutritionRepository implements NutritionRepository {
       _firestore.collection('users').doc(uid).collection('meal_logs');
 
   @override
+  Stream<FoodVisibility> watchFoodVisibility() => _firestore
+      .collection('food_catalog')
+      .where('isActive', isEqualTo: false)
+      .snapshots()
+      .map(
+        (snapshot) => FoodVisibility(
+          hiddenIds: snapshot.docs.map((doc) => doc.id).toSet(),
+          hiddenFdcIds: snapshot.docs
+              .map((doc) => doc.data()['fdcId'])
+              .whereType<int>()
+              .toSet(),
+        ),
+      );
+
+  @override
   Stream<List<FoodCatalogItem>> watchFoodCatalog() async* {
     List<FoodCatalogItem> bundled = const [];
     try {
@@ -74,25 +90,27 @@ class FirebaseNutritionRepository implements NutritionRepository {
     if (bundled.isNotEmpty) yield bundled;
     final bundledById = {for (final food in bundled) food.id: food};
     try {
-      await for (final snapshot
-          in _firestore
-              .collection('food_catalog')
-              .orderBy('name')
-              .snapshots()) {
-        final serverIds = snapshot.docs.map((d) => d.id).toSet();
-        yield [
-          for (final doc in snapshot.docs)
-            if (doc.data()['isActive'] != false)
-              readCatalogFood(
-                doc.id,
-                doc.data(),
-                updatedAt: _date(doc.data()['updatedAt']),
-                referenceFood: bundledById[doc.id],
-              ),
-          for (final food in bundled)
-            if (!serverIds.contains(food.id)) food,
-        ]..sort(compareCatalogFoods);
-      }
+      // Delegate cancellation to Firestore even while no new snapshot arrives.
+      // An await-for generator can otherwise wait for the next event on exit.
+      yield* _firestore
+          .collection('food_catalog')
+          .orderBy('name')
+          .snapshots()
+          .map((snapshot) {
+            final serverIds = snapshot.docs.map((d) => d.id).toSet();
+            return [
+              for (final doc in snapshot.docs)
+                if (doc.data()['isActive'] != false)
+                  readCatalogFood(
+                    doc.id,
+                    doc.data(),
+                    updatedAt: _date(doc.data()['updatedAt']),
+                    referenceFood: bundledById[doc.id],
+                  ),
+              for (final food in bundled)
+                if (!serverIds.contains(food.id)) food,
+            ]..sort(compareCatalogFoods);
+          });
     } on FirebaseException catch (error) {
       if (bundled.isEmpty) throw NutritionFailure.fromCode(error.code);
     }

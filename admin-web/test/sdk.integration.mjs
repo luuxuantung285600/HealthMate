@@ -64,6 +64,42 @@ test('real SDK revenue timestamp cursor retains31 same-millisecond receipts acro
   }finally{await Promise.all(ids.map(id=>request(id,'DELETE')));}
 });
 
+test('real SDK reads only aggregate account statistics from server and preserves zero/missing values',async()=>{
+  const url='http://127.0.0.1:8092/v1/projects/demo-healthmate-admin/databases/(default)/documents/admin_statistics/accounts';
+  const request=async(method,fields)=>{
+    const result=await fetch(url,{method,headers:{Authorization:'Bearer owner','Content-Type':'application/json'},
+      ...(fields?{body:JSON.stringify({fields})}:{})});
+    assert.ok(result.ok,`aggregate fixture ${method} failed ${result.status}`);
+  };
+  await request('PATCH',{schemaVersion:{integerValue:'1'},source:{stringValue:'firebase_auth'},method:{stringValue:'manual_snapshot'},
+    totalRegisteredAccounts:{integerValue:'0'},updatedAt:{timestampValue:new Date().toISOString()}});
+  try {
+    const result=await api.registeredAccounts();assert.equal(result.totalRegisteredAccounts,0);assert.ok(result.updatedAt.toMillis());
+  } finally {await request('DELETE');}
+  assert.equal(await api.registeredAccounts(),null);
+});
+
+test('manual Auth summary writer commits server time and concurrency precondition against real Firestore emulator',async()=>{
+  const {syncStatistics}=require('../admin-web/tool/sync-account-statistics.cjs');
+  const prefix='http://127.0.0.1:8092/v1/projects/demo-healthmate-admin/databases/(default)/documents';
+  const request=async(url,{body,allowMissing=false}={})=>{
+    if(url.startsWith('https://identitytoolkit.googleapis.com/'))return{users:[{localId:'synthetic-one'},{localId:'synthetic-two'}]};
+    assert.ok(url.startsWith('https://firestore.googleapis.com/v1/projects/healthmate-app-20261013/'));
+    const local=url.replace('https://firestore.googleapis.com/v1/projects/healthmate-app-20261013/databases/(default)/documents',prefix);
+    const payload=body?JSON.parse(JSON.stringify(body).replaceAll('projects/healthmate-app-20261013/','projects/demo-healthmate-admin/')):null;
+    const response=await fetch(local,{method:payload?'POST':'GET',headers:{Authorization:'Bearer owner','Content-Type':'application/json'},...(payload?{body:JSON.stringify(payload)}:{})});
+    if(allowMissing&&response.status===404)return null;
+    assert.ok(response.ok,`aggregate writer emulator failed ${response.status}`);return response.json();
+  };
+  try {
+    for(let i=0;i<2;i++){
+      assert.equal((await syncStatistics({request,apply:true})).totalRegisteredAccounts,2);
+      const actual=await api.registeredAccounts();assert.equal(actual.totalRegisteredAccounts,2);assert.equal(actual.source,'firebase_auth');
+      assert.ok(actual.updatedAt.toMillis());assert.ok(actual.scanStartedAt.toMillis());
+    }
+  } finally {await fetch(prefix+'/admin_statistics/accounts',{method:'DELETE',headers:{Authorization:'Bearer owner'}});}
+});
+
 test('real SDK opens and advances a25-row directory page with10,037 server records',async()=>{
   const prefix=`zzqa-paging-${Date.now()}-`,count=10037;
   const base='projects/demo-healthmate-admin/databases/(default)/documents';

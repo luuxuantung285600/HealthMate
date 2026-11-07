@@ -4,6 +4,66 @@ Web quản trị nằm ngay trong repository HealthMate, mở/sửa được b�
 HTML, CSS và JavaScript thuần; Firebase Web SDK 13.0.0 tải từ CDN chính thức.
 Không cần React, bundler, Admin SDK, service-account hoặc backend riêng.
 
+## Hoàn thiện admin — 07/11/2026
+
+Tra cứu máy chủ theo UID/email đầy đủ/mã món/đầu tên; audit mới nhất, lọc và
+xuất theo ngày Việt Nam; cảnh báo bỏ bản nháp, retry lỗi và URL theo trang.
+Đầu tên món phân biệt chữ hoa/dấu; tìm nhanh/bộ lọc phía dưới chỉ ở trang
+đang xem. Chỉ đọc 33 bài tập lấy từ mã nguồn app, tìm/lọc/xuất được.
+Để cập nhật danh mục này, chạy `dart run tool/export_admin_exercises.dart`
+và `dart run tool/export_admin_exercises.dart --check` từ root trước release.
+Web 83/83, SDK 20/20, browser desktop/mobile qua. Đã publish Hosting, đọc lại
+30 tệp khớp release; tải lại trang để dùng. Rules và gói Spark giữ nguyên.
+[Chi tiết rollout và giới hạn](../docs/admin-completion-2026-11-07.md).
+
+Font hiện tại: **Inter v4.1**, WOFF2 đóng gói trong `dist/fonts/inter/`,
+đủ 400/500/600/700 và tiếng Việt. Không phụ thuộc dịch vụ font bên ngoài;
+giấy phép SIL OFL 1.1 nằm cùng thư mục font. App Flutter dùng cùng Inter.
+
+## Giao diện hiện tại — thiết kế 06/11, publish 07/11/2026
+
+Theo ảnh mới: nền đen, sidebar đen, panel xám đậm, viền mảnh, điểm nhấn
+xanh dương. Bốn card số liệu ở đầu, biểu đồ trái và thông tin vận hành
+phải; tài khoản/đăng xuất ở footer. Bảng/form/dialog/đăng nhập đồng bộ tối.
+Menu và hành động dữ liệu hiện có được giữ, không thêm số/tăng trưởng giả.
+
+Đã kiểm Node/DOM 61/61 và browser desktop/mobile. Ảnh dùng Firebase đọc
+thật ngày 06/11, Premium vẫn demo. **Đã publish cùng đợt sửa vận hành
+07/11**; riêng lượt đổi theme trước đó không thay Rules/ghi production.
+[Chi tiết và kiểm thử](../docs/admin-dark-ui-2026-11-06.md).
+
+## Lịch sử giao diện theo ảnh trước — candidate 03/11/2026
+
+Sidebar trắng, nền xám nhạt, panel trắng và card gradient hồng/tím/xanh/cam.
+Menu gồm **Tổng quan, Doanh thu, Khách hàng, Thực phẩm, Bài tập luyện,
+AI Chatbot**, giữ Hỗ trợ khách hàng, Nhật ký quản trị và Cài đặt. Có thu
+gọn sidebar desktop và drawer mobile. Trang bài tập ghi rõ chờ triển khai;
+trang AI đọc cấu hình hiện có và dẫn tới form chỉnh sửa có audit.
+
+Biểu đồ lấy giao dịch đã lưu; dữ liệu trống hiện đường 0, không tạo số
+hoặc xu hướng minh họa. Premium vẫn demo. Bản xem trước dùng dữ liệu thật
+đọc lúc 02:01:25 ngày 03/11/2026 UTC+7, không phải bản web đã publish.
+**UI candidate chưa lên online**, không đổi backend/Rules trong lượt này.
+[Thay đổi, kiểm thử và ảnh](../docs/admin-ui-reference-2026-11-03.md).
+
+## Dashboard mới — candidate 02/11/2026
+
+Dashboard ưu tiên tổng tài khoản đăng ký, doanh thu Premium **demo**, số
+giao dịch và khách mua; chọn kỳ UTC+7, biểu đồ từng ngày, 5 giao dịch mới
+nhất và lối tới báo cáo/Excel. Count/config/revenue lỗi độc lập; không hiện
+doanh thu 0 khi tải lỗi hoặc dùng tổng một trang thay tổng kỳ.
+
+Tổng đăng ký đọc `admin_statistics/accounts` do chủ dự án đồng bộ từ
+Firebase Authentication, hiển thị thời điểm và nhãn cập nhật thủ công.
+Không dùng số `user_directory` làm tổng Auth. Chưa có summary/Rules thì
+hiện “Chưa có số liệu”, danh sách đã đồng bộ vẫn được đếm riêng.
+
+`node admin-web/tool/sync-account-statistics.cjs` mặc định chỉ đọc, không
+ghi. Chỉ khi được yêu cầu cập nhật production mới chạy thêm `--apply`.
+Không cần thêm backend/service-account/billing. **Candidate chưa publish,
+chưa ghi summary**; không deploy toàn bộ root candidate Rules để bật nó.
+Xem [cách dùng, kiểm thử và rollout](../docs/admin-dashboard-2026-11-02.md).
+
 ## Chức năng hiện tại — 27/10/2026
 
 Cập nhật 30/10: thêm **Hỗ trợ khách hàng**. Khách tạo báo lỗi/góp ý trong app;
@@ -120,7 +180,10 @@ Dừng từng server bằng Ctrl+C sau khi thử.
 | File | Vai trò |
 | --- | --- |
 | `dist/index.html` | Trang gốc và dialog |
-| `dist/style.css` | Giao diện, responsive, font Be Vietnam Pro |
+| `dist/style.css` | Giao diện, responsive, khai báo font Inter |
+| `dist/admin-theme.css` | Theme theo ảnh tham khảo, nạp sau style.css |
+| `dist/admin-shell.mjs` | Sidebar, menu, header và drawer mobile |
+| `dist/dashboard-page.mjs` | Bố cục tổng quan, biểu đồ và trạng thái dữ liệu |
 | `dist/app.mjs` | Đăng nhập, danh sách, form và trạng thái UI |
 | `dist/firebase.mjs` | Auth, truy vấn và transaction có audit |
 | `dist/validation.mjs` | Kiểm tra dữ liệu, đơn vị, phiên bản document |
@@ -265,3 +328,40 @@ Tài liệu chính thức đã kiểm tra ngày 27/10/2026:
 [Firestore transactions](https://firebase.google.com/docs/firestore/manage-data/transactions),
 [App Check Web Enterprise và hạn mức](https://firebase.google.com/docs/app-check/web/recaptcha-enterprise-provider),
 [Auth Admin user management](https://firebase.google.com/docs/auth/admin/manage-users).
+
+
+## Đồng bộ thời gian thực — candidate 06/11/2026
+
+Đã có listeners cho dashboard, kỳ doanh thu, khách hàng (kèm control/role),
+thực phẩm, audit, hỗ trợ và cấu hình. Không cần tải lại để nhận các thay đổi
+trong phạm vi đang xem. Hủy listeners khi chuyển trang/đăng xuất/thu hồi quyền;
+không dùng dữ liệu cache làm xác nhận mới của server. Bản nháp không bị ghi đè.
+
+Thống kê Auth/vận hành được Cloud Functions cập nhật, bootstrap đầy đủ trước khi
+ready. Client không tự ghi bộ đếm. Premium vẫn demo, các chức năng web còn chờ
+triển khai không được tính là đã hoàn thành. Người dùng chọn bật Blaze sau:
+**candidate chưa publish**, web công khai vẫn chạy bản trước.
+
+Source Functions và lockfile tại `firebase-functions/`; config deployment chỉ
+Functions là `firebase.realtime.json`, config local là
+`firebase.realtime-emulators.json`. Không deploy toàn bộ root candidate Rules.
+Tool `prepare-realtime-release.cjs` hiện sao chép Rules chuẩn repository;
+baseline production dùng đối chiếu/rollback. Bundle Functions lịch sử tại
+`build/realtime-review-20261106-v2`, chưa triển khai.
+
+Kết quả: admin 66/66, SDK realtime 6/6, Functions emulator 3/3; toàn bộ app và
+Rules cũng đã kiểm. Xem [báo cáo, lệnh chạy và giới hạn](../docs/realtime-sync-2026-11-06.md).
+
+## Realtime Spark đã publish — 06/11/2026
+
+Web online đã dùng listeners và statisticsMode=firestore; không cần Functions cho các tập dữ liệu nhỏ. Auth vẫn là snapshot thật có nhãn thủ công. Đã kiểm HTTP/Rules đọc lại khớp release. App cần cài APK mới. Xem [báo cáo triển khai và kiểm thử](../docs/realtime-spark-2026-11-06.md).
+
+## Sửa vận hành — 07/11/2026
+
+Tool prepare-realtime-release.cjs nay đóng gói **nguyên Rules chuẩn** đang được
+kiểm thử với Flutter. Backup production là bằng chứng/rollback, không dùng làm
+template để bỏ sót quyền của client mới. Chạy test_operations_local.cjs trong
+Auth/Firestore emulators và kiểm hash release trước publish. Không cần Blaze
+để sửa quyền deletion job/support quota. Giữ nhãn snapshot thủ công cho tổng
+Auth. Hỗ trợ đọc trang mới nhất theo updatedAt/ID giảm dần, cursor nanosecond,
+giữ draft và ID gửi lại khi chưa rõ kết quả. [Trạng thái rollout và kiểm thử](../docs/operations-hardening-2026-11-07.md).

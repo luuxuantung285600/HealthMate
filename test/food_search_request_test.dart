@@ -7,6 +7,7 @@ import 'package:healthmate/features/nutrition/data/food_search_cache.dart';
 import 'package:healthmate/features/nutrition/data/unified_food_search_service.dart';
 import 'package:healthmate/features/nutrition/data/usda_api_service.dart';
 import 'package:healthmate/features/nutrition/models/nutrition_models.dart';
+import 'package:healthmate/features/nutrition/models/food_visibility.dart';
 
 class MemoryCache implements FoodSearchCache {
   final foods = <String, FoodCatalogItem>{};
@@ -125,6 +126,67 @@ Matcher failure(FoodSearchFailureKind kind) =>
     isA<FoodSearchFailure>().having((e) => e.kind, 'kind', kind);
 
 void main() {
+  test(
+    'admin archive is applied to cache and USDA search, and restoration uses the same live policy',
+    () async {
+      final cache = MemoryCache()..searchHook = (() async => [localFood]);
+      var visibility = const FoodVisibility(
+        hiddenIds: {'local'},
+        hiddenFdcIds: {1},
+      );
+      final api = UsdaApiService(
+        client: MockClient((request) async => searchRows(2)),
+      );
+      addTearDown(api.dispose);
+      final service = UnifiedFoodSearchService(
+        localDatabase: cache,
+        usdaService: api,
+        isAllowed: (food) => visibility.allows(food),
+      );
+      final hidden = await service.search(
+        query: 'fixture',
+        firestoreCatalog: [],
+      );
+      expect(hidden.results.map((row) => row.food.id), ['usda_2']);
+      visibility = const FoodVisibility();
+      final restored = await service.search(
+        query: 'fixture',
+        firestoreCatalog: [],
+      );
+      expect(
+        restored.results.map((row) => row.food.id),
+        containsAll(['local', 'usda_1', 'usda_2']),
+      );
+    },
+  );
+
+  test(
+    'archive received while USDA detail is pending prevents selecting and caching the late result',
+    () async {
+      final cache = MemoryCache(), pending = Completer<http.Response>();
+      var allowed = true;
+      final api = UsdaApiService(
+        client: MockClient((request) => pending.future),
+      );
+      addTearDown(api.dispose);
+      final service = UnifiedFoodSearchService(
+        localDatabase: cache,
+        usdaService: api,
+        isAllowed: (_) => allowed,
+      );
+      final result = service.resolveResult(selectedMetadata);
+      final assertion = expectLater(
+        result,
+        throwsA(failure(FoodSearchFailureKind.invalidData)),
+      );
+      await Future<void>.delayed(Duration.zero);
+      allowed = false;
+      pending.complete(detailRow(1));
+      await assertion;
+      expect(cache.writes, 0);
+    },
+  );
+
   test(
     '50 USDA rows issue one search and zero unselected details; selecting one fetches only it',
     () async {

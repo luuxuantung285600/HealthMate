@@ -1,5 +1,44 @@
 # Thiết kế dữ liệu HealthMate
 
+## 07/11/2026 — Tra cứu và nhật ký admin
+
+Không thêm collection/field hoặc đổi Rules. Tra cứu UID/mã dùng document
+get/watch; email chính xác dùng where email == giá trị + ID; đầu tên món dùng
+range trên name, order name ASC + ID ASC. Không dùng name làm tìm không dấu.
+Audit mặc định at DESC + ID DESC; khoảng ngày Việt Nam [đầu ngày đầu,
+đầu ngày sau ngày cuối). Cursor giữ time/name và ID cùng scope. Các query
+đã qua SDK emulator và index production chỉ đọc. Danh mục bài tập web được
+xuất từ ExerciseCatalog, chỉ đọc; chưa tạo exercise_catalog trên Firestore.
+
+## 07/11/2026 — Đồng nhất contract app/admin với Rules triển khai
+
+Không thêm schema nghiệp vụ mới. Triển khai quyền đã thiết kế cho
+account_deletions, support_usage, cleanup các scope theo UID và bảo vệ ghi sau
+khi có tombstone. Support admin dùng updatedAt giảm dần + document ID giảm
+dần; cursor giữ seconds/nanoseconds/ID, không dùng mã ngẫu nhiên để xếp mới nhất.
+Quota và ticket tạo nguyên tử; dữ liệu sức khỏe không được mở cho admin.
+Chi tiết: [operations-hardening-2026-11-07.md](operations-hardening-2026-11-07.md).
+
+## 02/11/2026 — Tổng tài khoản cho dashboard admin (candidate)
+
+Thêm `admin_statistics/accounts`, một document metadata tổng do công cụ
+trusted của chủ dự án cập nhật; không chứa UID/email/hồ sơ sức khỏe.
+
+- `schemaVersion: 1`, `source: firebase_auth`, `method: manual_snapshot`.
+- `totalRegisteredAccounts`: số nguyên không âm, tổng tài khoản Auth còn
+  tồn tại khi liệt kê, gồm admin/chưa xác minh/disabled; không phải online.
+- `scanStartedAt`: timestamp bắt đầu đọc; `updatedAt`: server timestamp
+  commit sau khi phân trang hoàn tất. Đây không là snapshot realtime.
+- Rules: chỉ verified admin được get đúng document `accounts`; không
+  list hoặc client write/delete, không đổi quyền `users/{uid}`.
+- Helper mặc định read-only, `--apply` mới ghi bằng phiên CLI/IAM đã có;
+  optimistic precondition chống ghi đè bản tổng mới. Không tạo backend hay
+  counter do client tự tăng. Chưa ghi/deploy production trong lượt này.
+
+Thiếu summary không suy ra 0 hoặc dùng `user_directory` thay tổng Auth.
+Chi tiết, kiểm thử, giới hạn concurrent listing và rollout:
+[Dashboard admin](admin-dashboard-2026-11-02.md).
+
 ## 27/10 — Câu trả lời cá nhân hóa 20 câu
 
 Thêm map tùy chọn `users/{uid}.personalization`, version1, 15 trường: formulaSex,
@@ -1228,3 +1267,42 @@ rollout; không thêm query tải toàn bộ làm đường lui.
 Rules mới từ chối client cũ tạo ticket thiếu counter. Cần rollout đồng bộ;
 không deploy hoặc thay dữ liệu production trong gói local này. Chính sách,
 bootstrap, retry, pagination và rollback: [package8-support-policy.md](package8-support-policy.md).
+
+
+## Bổ sung realtime — candidate 06/11/2026, chưa deploy
+
+Người dùng đồng ý Cloud Functions; production hiện chưa bật Blaze và chọn triển
+khai sau. Các collection sau được Functions ghi bằng quyền máy chủ:
+
+- `admin_statistics/accounts`: schemaVersion 1, source firebase_auth, method
+  realtime_auth_events, totalRegisteredAccounts, ready, updatedAt, bootstrappedAt.
+  Chỉ dùng tổng khi bootstrap đã ready; client chỉ admin get, không list/write.
+- `admin_statistics/operations`: schemaVersion 1, ready, foods, accounts
+  (directory), suspended (chỉ UID còn directory), audits, updatedAt,
+  bootstrappedAt. Chỉ admin đọc, server ghi.
+- `admin_sync_state/{sha256(kind,id)}`: kind, sourceId, value cho bộ đếm
+  Firestore; hoặc active/eventAt cho Auth. Phục vụ idempotence và xử lý thứ tự;
+  không chứa hồ sơ sức khỏe. Mặc định từ chối mọi client.
+- `admin_sync_runs/{id}`: startedAt theo server cho bootstrap; xóa khi hoàn tất,
+  không cho client truy cập.
+- `user_sync/{uid}`: timestamp theo các nguồn meal_logs, water_logs,
+  activity_logs, body_metrics, nutrition_targets, day_reviews, sleep_logs,
+  custom_foods, recipes. Chỉ
+  chủ tài khoản được get; cấm client list/write. App dùng một listener chung để
+  tải lại báo cáo đúng nguồn, tổng kết tuần và chi tiết thư viện đang mở.
+  Không sao chép dữ liệu sức khỏe sang admin.
+
+Tạo/xóa Auth cập nhật directory và tổng; xóa Auth ghi account_controls suspended
+để chặn phiên có token cũ, xóa user_sync và chặn revision tạo lại sau khi xóa.
+Các state/tombstone tối thiểu được giữ riêng phía server phục vụ tính đúng bộ
+đếm và kiểm soát phiên cũ; không cấp quyền đọc cho web/mobile.
+
+food_catalog tiếp tục dùng isActive=false, không hard delete từ web. Policy ẩn
+đối chiếu ID và fdcId để lọc cả SQLite/USDA, giữ lịch sử snapshot và món riêng.
+Script thống kê thủ công cũ không được thay thế aggregate đã chuyển sang live.
+
+[Thiết kế, test, giới hạn bulk Auth và rollout](realtime-sync-2026-11-06.md).
+
+## Realtime Spark 06/11/2026
+
+Không thêm collection ghi từ client. App mặc định nghe trực tiếp đúng query/khoảng đang xem qua privateDataChangesProvider; user_sync vẫn server-only và chưa dùng ở build Spark. Web nghe các tập nhỏ với giới hạn 5.000 để tính vận hành; tổng Auth dùng manual_snapshot có nhãn, chưa dùng directory làm tổng. Chi tiết: [realtime-spark-2026-11-06.md](realtime-spark-2026-11-06.md).

@@ -14,7 +14,13 @@ export function filterSupport(rows,{search='',type='',status=''}={}) {
   const words=normalize(search).trim().split(/\s+/).filter(Boolean);
   return rows.filter(r=>!r.deleting && (!type||r.type===type)&&(!status||r.status===status)
     && words.every(word=>normalize(`${r.id} ${r.uid} ${r.title} ${r.description}`).includes(word)))
-    .sort((a,b)=>(b.updatedAt?.toMillis?.()??0)-(a.updatedAt?.toMillis?.()??0)||a.id.localeCompare(b.id));
+    .sort((a,b)=>{
+      const left=a.updatedAt,right=b.updatedAt;
+      const byTime=typeof left?.seconds==='number'&&typeof right?.seconds==='number'
+        ? right.seconds-left.seconds||(right.nanoseconds??0)-(left.nanoseconds??0)
+        : (right?.toMillis?.()??0)-(left?.toMillis?.()??0);
+      return byTime||(a.id<b.id?1:a.id>b.id?-1:0);
+    });
 }
 export function validateSupportThread(ticket,messages) {
   if(!ticket || ticket.deleting)throw Error('Yêu cầu không còn khả dụng.');

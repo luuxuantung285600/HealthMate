@@ -1,3 +1,5 @@
+import '../../../core/data/user_data_revision.dart';
+import '../../../core/data/private_data_changes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/providers/auth_providers.dart';
@@ -27,6 +29,12 @@ String _uid(Ref ref) {
 
 final periodMealsProvider = FutureProvider.autoDispose
     .family<List<MealLog>, ReportRange>((ref, r) {
+      for (final chunk in r.chunks) {
+        watchPrivateRange(ref, 'meal_logs', chunk.start, chunk.end);
+      }
+      ref.watch(
+        userDataRevisionProvider.select((state) => state.value?['meal_logs']),
+      );
       final uid = _uid(ref);
       final repo = ref.watch(nutritionRepositoryProvider);
       return loadReportRange(
@@ -39,6 +47,12 @@ final periodMealsProvider = FutureProvider.autoDispose
 
 final periodWaterProvider = FutureProvider.autoDispose
     .family<List<WaterLog>, ReportRange>((ref, r) {
+      for (final chunk in r.chunks) {
+        watchPrivateRange(ref, 'water_logs', chunk.start, chunk.end);
+      }
+      ref.watch(
+        userDataRevisionProvider.select((state) => state.value?['water_logs']),
+      );
       final uid = _uid(ref);
       final repo = ref.watch(waterRepositoryProvider);
       return loadReportRange(
@@ -51,6 +65,14 @@ final periodWaterProvider = FutureProvider.autoDispose
 
 final periodActivityProvider = FutureProvider.autoDispose
     .family<List<ActivityLog>, ReportRange>((ref, r) {
+      for (final chunk in r.chunks) {
+        watchPrivateRange(ref, 'activity_logs', chunk.start, chunk.end);
+      }
+      ref.watch(
+        userDataRevisionProvider.select(
+          (state) => state.value?['activity_logs'],
+        ),
+      );
       final uid = _uid(ref);
       final repo = ref.watch(activityRepositoryProvider);
       return loadReportRange(
@@ -63,6 +85,14 @@ final periodActivityProvider = FutureProvider.autoDispose
 
 final periodMetricsProvider = FutureProvider.autoDispose
     .family<List<BodyMetric>, ReportRange>((ref, r) {
+      for (final chunk in r.chunks) {
+        watchPrivateRange(ref, 'body_metrics', chunk.start, chunk.end);
+      }
+      ref.watch(
+        userDataRevisionProvider.select(
+          (state) => state.value?['body_metrics'],
+        ),
+      );
       final uid = _uid(ref);
       final repo = ref.watch(healthProfileRepositoryProvider);
       return loadReportRange(
@@ -75,6 +105,14 @@ final periodMetricsProvider = FutureProvider.autoDispose
 
 final periodTargetsProvider = FutureProvider.autoDispose
     .family<List<NutritionTarget>, ReportRange>((ref, r) {
+      for (final chunk in r.chunks) {
+        watchPrivateRange(ref, 'nutrition_targets', chunk.start, chunk.end);
+      }
+      ref.watch(
+        userDataRevisionProvider.select(
+          (state) => state.value?['nutrition_targets'],
+        ),
+      );
       final uid = _uid(ref);
       final repo = ref.watch(nutritionTargetRepositoryProvider);
       return loadReportRange(
@@ -88,6 +126,12 @@ final periodTargetsProvider = FutureProvider.autoDispose
 
 final dayReviewsProvider = FutureProvider.autoDispose
     .family<List<DayReview>, ReportRange>((ref, r) {
+      for (final chunk in r.chunks) {
+        watchPrivateRange(ref, 'day_reviews', chunk.start, chunk.end);
+      }
+      ref.watch(
+        userDataRevisionProvider.select((state) => state.value?['day_reviews']),
+      );
       final uid = _uid(ref);
       final repo = ref.watch(dayReviewRepositoryProvider);
       return loadReportRange(

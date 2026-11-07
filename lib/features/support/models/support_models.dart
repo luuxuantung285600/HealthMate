@@ -56,6 +56,17 @@ enum SupportStatus {
 
 class SupportFailure implements Exception {
   const SupportFailure(this.message);
+  factory SupportFailure.firebase(String code, {required bool replying}) {
+    final action = replying ? 'tin nhắn' : 'yêu cầu';
+    return SupportFailure(switch (code) {
+      'permission-denied' =>
+        'Máy chủ chưa cho phép gửi $action. Tài khoản có thể đã bị khóa, đang xóa hoặc cấu hình hỗ trợ chưa sẵn sàng. Nội dung vẫn được giữ.',
+      'unauthenticated' =>
+        'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại trước khi gửi $action.',
+      _ =>
+        'Chưa xác nhận gửi $action. Kiểm tra kết nối rồi thử lại; nội dung vẫn được giữ.',
+    });
+  }
   final String message;
 }
 

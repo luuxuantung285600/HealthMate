@@ -12,6 +12,7 @@ import '../data/usda_api_service.dart';
 import '../data/bundled_vietnamese_foods.dart';
 import '../models/nutrition_failure.dart';
 import '../models/nutrition_models.dart';
+import '../models/food_visibility.dart';
 
 final nutritionRepositoryProvider = Provider<NutritionRepository>(
   (ref) => FirebaseNutritionRepository(FirebaseFirestore.instance),
@@ -34,8 +35,17 @@ final unifiedFoodSearchProvider = Provider<UnifiedFoodSearchService>(
   (ref) => UnifiedFoodSearchService(
     localDatabase: ref.watch(foodLocalDatabaseProvider),
     usdaService: ref.watch(usdaApiServiceProvider),
+    isAllowed: (food) =>
+        (ref.read(foodVisibilityProvider).value ?? const FoodVisibility())
+            .allows(food),
   ),
 );
+
+final foodVisibilityProvider = StreamProvider<FoodVisibility>((ref) {
+  final user = ref.watch(authSessionProvider).value;
+  if (user?.emailVerified != true) return Stream.value(const FoodVisibility());
+  return ref.watch(nutritionRepositoryProvider).watchFoodVisibility();
+}, retry: (_, _) => null);
 
 // Preload Vietnamese foods on app start
 final vietnameseFoodsPreloadProvider = FutureProvider.autoDispose<void>((

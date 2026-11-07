@@ -11,11 +11,9 @@ import 'package:healthmate/features/journal/presentation/daily_summary_card.dart
 
 void main() {
   setUpAll(() async {
-    final loader = FontLoader('BeVietnamPro');
+    final loader = FontLoader('Inter');
     for (final name in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      loader.addFont(
-        rootBundle.load('assets/fonts/be_vietnam_pro/BeVietnamPro-$name.ttf'),
-      );
+      loader.addFont(rootBundle.load('assets/fonts/inter/Inter-$name.ttf'));
     }
     await loader.load();
     await (FontLoader(

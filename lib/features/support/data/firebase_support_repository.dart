@@ -189,11 +189,20 @@ class FirebaseSupportRepository implements SupportRepository {
         return null;
       });
       if (failure != null) throw SupportFailure(failure);
-      await ticket.get(const GetOptions(source: Source.server));
-    } on FirebaseException {
-      throw const SupportFailure(
-        'Chưa xác nhận gửi yêu cầu. Kiểm tra mạng rồi thử lại; nội dung vẫn được giữ.',
+      final confirmed = await ticket.get(
+        const GetOptions(source: Source.server),
       );
+      final data = confirmed.data();
+      if (!confirmed.exists ||
+          data?['deleting'] == true ||
+          data?['uid'] != uid ||
+          data?['title'] != cleanTitle ||
+          data?['description'] != cleanBody ||
+          data?['type'] != type.name) {
+        throw const SupportFailure('Yêu cầu không còn khả dụng. Hãy tải lại.');
+      }
+    } on FirebaseException catch (error) {
+      throw SupportFailure.firebase(error.code, replying: false);
     }
   }
 
@@ -211,7 +220,9 @@ class FirebaseSupportRepository implements SupportRepository {
       final failure = await db.runTransaction<String?>((t) async {
         final old = await t.get(message);
         final parent = await t.get(ticket);
-        if (!parent.exists || parent.data()?['uid'] != uid) {
+        if (!parent.exists ||
+            parent.data()?['uid'] != uid ||
+            parent.data()?['deleting'] == true) {
           return 'Yêu cầu không còn khả dụng.';
         }
         if (old.exists) {
@@ -241,11 +252,18 @@ class FirebaseSupportRepository implements SupportRepository {
         return null;
       });
       if (failure != null) throw SupportFailure(failure);
-      await message.get(const GetOptions(source: Source.server));
-    } on FirebaseException {
-      throw const SupportFailure(
-        'Chưa xác nhận gửi tin nhắn. Kiểm tra mạng rồi thử lại.',
+      final confirmed = await message.get(
+        const GetOptions(source: Source.server),
       );
+      final data = confirmed.data();
+      if (!confirmed.exists ||
+          data?['authorUid'] != uid ||
+          data?['role'] != 'customer' ||
+          data?['text'] != clean) {
+        throw const SupportFailure('Chưa xác nhận được tin nhắn. Hãy tải lại.');
+      }
+    } on FirebaseException catch (error) {
+      throw SupportFailure.firebase(error.code, replying: true);
     }
   }
 }

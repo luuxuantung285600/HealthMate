@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:healthmate/core/utils/local_date_key.dart';
 import 'package:healthmate/features/nutrition/data/nutrition_repository.dart';
 import 'package:healthmate/features/nutrition/models/nutrition_models.dart';
+import 'package:healthmate/features/nutrition/models/food_visibility.dart';
 
 class FakeNutritionRepository implements NutritionRepository {
   FakeNutritionRepository({List<MealLog>? meals, this.emitImmediately = true})
@@ -63,6 +64,10 @@ class FakeNutritionRepository implements NutritionRepository {
   @override
   Stream<List<FoodCatalogItem>> watchFoodCatalog() =>
       Stream.value(const [rice, egg]);
+
+  @override
+  Stream<FoodVisibility> watchFoodVisibility() =>
+      Stream.value(const FoodVisibility());
 
   @override
   Stream<List<MealLog>> watchMealLogs(String uid, DateTime localDate) {

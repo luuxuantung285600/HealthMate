@@ -291,12 +291,9 @@ void main() {
     },
   );
   setUpAll(() async {
-    await (FontLoader('BeVietnamPro')..addFont(
-          rootBundle.load(
-            'assets/fonts/be_vietnam_pro/BeVietnamPro-Regular.ttf',
-          ),
-        ))
-        .load();
+    await (FontLoader(
+      'Inter',
+    )..addFont(rootBundle.load('assets/fonts/inter/Inter-Regular.ttf'))).load();
   });
 
   test(

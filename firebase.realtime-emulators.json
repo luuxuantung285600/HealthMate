@@ -1,0 +1,5 @@
+{
+  "functions": [{"source":"firebase-functions","codebase":"healthmate-realtime","runtime":"nodejs22"}],
+  "firestore": {"rules":"firestore.rules","indexes":"firestore.indexes.json"},
+  "emulators": {"auth":{"host":"127.0.0.1","port":9098},"firestore":{"host":"127.0.0.1","port":8092},"functions":{"host":"127.0.0.1","port":5002},"ui":{"enabled":false},"singleProjectMode":true}
+}

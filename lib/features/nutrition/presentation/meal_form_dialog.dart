@@ -1,3 +1,4 @@
+import '../models/food_visibility.dart';
 import '../models/food_diet.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
@@ -108,9 +109,12 @@ class _MealFormDialogState extends ConsumerState<MealFormDialog>
   MealType get _type => _form.type;
   set _type(MealType value) => _form.type = value;
   late FoodDietPreference _diet;
-  List<FoodCatalogItem> get _eligibleCatalog => widget.catalog
-      .where((food) => _diet.allows(food) && widget.avoidance.allows(food))
-      .toList();
+  List<FoodCatalogItem> get _eligibleCatalog =>
+      widget.catalog.where(_allowsFood).toList();
+  bool _allowsFood(FoodCatalogItem food) =>
+      _diet.allows(food) &&
+      widget.avoidance.allows(food) &&
+      (ref.read(foodVisibilityProvider).value?.allows(food) ?? true);
   DateTime get _consumedAt => _form.consumedAt;
   set _consumedAt(DateTime value) => _form.consumedAt = value;
   List<MealItemSnapshot> get _items => _form.items;
@@ -352,7 +356,7 @@ class _MealFormDialogState extends ConsumerState<MealFormDialog>
           _scanSearch == null &&
           _searchVisible &&
           _entryMode == MealEntryMode.manual,
-      allows: (food) => _diet.allows(food) && widget.avoidance.allows(food),
+      allows: _allowsFood,
       onChanged: () {
         if (mounted) setState(() {});
       },
@@ -669,6 +673,14 @@ class _MealFormDialogState extends ConsumerState<MealFormDialog>
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(foodVisibilityProvider);
+    ref.listen(foodVisibilityProvider, (previous, next) {
+      final before = previous?.value ?? const FoodVisibility();
+      if (next.value == null || next.value!.sameAs(before)) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _foodSearch.changed();
+      });
+    });
     ref.listen(authSessionProvider, (previous, next) {
       if (!_ownerResolved && !next.isLoading && !next.hasError) {
         // Initial stream resolution establishes ownership, not an account switch.

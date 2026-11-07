@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createAdminPageReader,collectRange,pageScope} from '../dist/server-paging.mjs';
+import {createAdminPageReader,collectRange,pageScope,pageConstraints} from '../dist/server-paging.mjs';
 import {filterRows} from '../dist/list-model.mjs';
 
 function fixture(count=10037){
@@ -12,6 +12,32 @@ function fixture(count=10037){
   });
   return{read,calls,enriched,records};
 }
+
+test('server lookup is scoped and validates explicit email, ID and food prefix modes',()=>{
+  assert.equal(pageScope('user_directory',{lookupField:'email',lookupValue:'  Member@example.com  '}).lookupValue,'Member@example.com');
+  for(const input of [{lookupField:'name',lookupValue:'x'},{lookupField:'email',lookupValue:'x'},{lookupField:'id',lookupValue:'a/b'},{lookupField:'id',lookupValue:'x',start:'2026-11-01',end:'2026-11-02'}])assert.throws(()=>pageScope('user_directory',input));
+  assert.throws(()=>pageScope('food_catalog',{lookupField:'name',lookupValue:'x',idFrom:'a'}));
+  assert.throws(()=>pageScope('food_catalog',{lookupField:'email',lookupValue:'a@b.com'}));
+});
+
+test('shared SDK constraints order audits by nanosecond time and food prefixes by name then ID',()=>{
+  const sdk={where:(...x)=>['where',...x],orderBy:(...x)=>['order',...x],documentId:()=>'$id',startAfter:(...x)=>['after',...x],Timestamp:class{constructor(seconds,nanoseconds){Object.assign(this,{seconds,nanoseconds});}}};
+  const audit=pageScope('admin_audit',{start:'2026-11-01',end:'2026-11-02'});
+  const clauses=pageConstraints(audit,{seconds:5,nanoseconds:123,id:'z'},sdk);
+  assert.equal(clauses[0][1],'at');assert.deepEqual(clauses.slice(2,4),[['order','at','desc'],['order','$id','desc']]);assert.equal(clauses.at(-1)[1].nanoseconds,123);
+  const name=pageScope('food_catalog',{lookupField:'name',lookupValue:'Cơm'});
+  assert.deepEqual(pageConstraints(name,{value:'Cơm tấm',id:'boundary'},sdk),[['where','name','>=','Cơm'],['where','name','<','Cơn'],['order','name'],['order','$id'],['after','Cơm tấm','boundary']]);
+  const email=pageScope('user_directory',{lookupField:'email',lookupValue:'x@example.com'});
+  assert.deepEqual(pageConstraints(email,null,sdk),[['where','email','==','x@example.com'],['order','$id']]);
+});
+
+test('name cursors keep the boundary value and cannot be reused for another search',async()=>{
+  const read=createAdminPageReader({fetchDocuments:async()=>[{id:'z',name:'Cơm tấm'}],enrichAccount:async()=>({})});
+  const options={lookupField:'name',lookupValue:'Cơm'},first=await read('food_catalog',options);
+  assert.equal(first.cursor.value,'Cơm tấm');
+  await assert.rejects(read('food_catalog',{...options,cursor:first.cursor,lookupValue:'Bún'}),/phạm vi/);
+  await assert.rejects(read('food_catalog',{...options,cursor:{...first.cursor,value:undefined}}),/phạm vi/);
+});
 
 test('10,037 accounts: first page reads only25 directory+25 controls+25 roles; next page is bounded',async()=>{
   const f=fixture(),first=await f.read('user_directory');
@@ -82,4 +108,21 @@ test('revenue cursor preserves nanoseconds instead of rounding equal-millisecond
   const first=await read('demo_premium_transactions',range);
   await read('demo_premium_transactions',{...range,cursor:first.cursor});
   assert.equal(received.seconds,1790816400);assert.equal(received.nanoseconds,987654321);
+});
+
+test('support uses latest activity and exact timestamp/id cursors, including a deleted boundary',async()=>{
+  const at={seconds:1790816400,nanoseconds:987654321};
+  const rows=Array.from({length:51},(_,i)=>({id:String(100-i).padStart(20,'0'),updatedAt:at}));
+  const read=createAdminPageReader({fetchDocuments:async spec=>{
+    assert.equal(spec.timeField,'updatedAt');
+    return rows.filter(row=>!spec.cursor||row.id<spec.cursor.id).slice(0,spec.pageSize);
+  }});
+  const first=await read('support_tickets');
+  assert.equal(first.cursor.nanoseconds,987654321);
+  rows.splice(24,1);
+  const second=await read('support_tickets',{cursor:first.cursor});
+  assert.equal(second.rows[0].id,rows[24].id);
+  assert.equal(new Set([...first.rows,...second.rows].map(row=>row.id)).size,50);
+  await assert.rejects(read('support_tickets',{cursor:{...first.cursor,seconds:undefined}}),/Con trỏ/);
+  assert.throws(()=>pageScope('support_tickets',{idFrom:'a'}),/thời điểm/);
 });

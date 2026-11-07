@@ -1,4 +1,6 @@
 import '../../../core/utils/subscription_stream.dart';
+import '../../../core/data/user_data_revision.dart';
+import '../../../core/data/private_data_changes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/providers/auth_providers.dart';
@@ -25,6 +27,17 @@ final foodLibraryProvider = StreamProvider.autoDispose
     }, retry: (_, _) => null);
 final libraryEntryProvider = FutureProvider.autoDispose
     .family<LibraryEntry?, ({FoodSourceKind kind, String id})>((ref, key) {
+      final source = switch (key.kind) {
+        FoodSourceKind.custom => 'custom_foods',
+        FoodSourceKind.recipe => 'recipes',
+        FoodSourceKind.catalog => null,
+      };
+      if (source != null) {
+        watchPrivateScope(ref, privateLibraryScope(source, key.id));
+        ref.watch(
+          userDataRevisionProvider.select((state) => state.value?[source]),
+        );
+      }
       final uid = ref.watch(authSessionProvider.select((s) => s.value?.uid));
       if (uid == null) {
         throw const FoodLibraryFailure('Hãy đăng nhập để xem nguồn món.');

@@ -4,7 +4,8 @@ import { getFirestore, connectFirestoreEmulator, doc, collection, getDocFromServ
 import { initializeAppCheck, ReCaptchaEnterpriseProvider, getToken } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-app-check.js';
 import { changedFields, entityVersion } from './validation.mjs';
 import {supportId,supportText,supportStatuses,validateSupportThread} from './support-model.mjs';
-import {createAdminPageReader,collectRange} from './server-paging.mjs';
+import {createAdminPageReader,collectRange,pageConstraints} from './server-paging.mjs';
+import {createLiveData} from './live-data.mjs';
 
 export async function connect(config) {
   if (!config?.firebase?.projectId) throw Error('Chưa cấu hình Firebase cho web admin.');
@@ -39,10 +40,13 @@ export async function connect(config) {
     return () => { if(auth.currentUser?.uid !== uid || sessionEpoch !== epoch || accessEpoch !== access)throw Error('Phiên đăng nhập hoặc quyền quản trị đã thay đổi.'); };
   }
   const readPage=createAdminPageReader({
-    async fetchDocuments({kind,cursor,pageSize,idFrom,idTo,start,lower,upper}) {
-      const clauses=start ? [where('occurredAt','>=',new Date(lower)),where('occurredAt','<',new Date(upper)),orderBy('occurredAt','desc'),orderBy(documentId(),'desc'),
-        ...(cursor?[startAfter(new Timestamp(cursor.seconds,cursor.nanoseconds),cursor.id)]:[])] :
-        [...(idFrom?[where(documentId(),'>=',idFrom)]:[]),...(idTo?[where(documentId(),'<=',idTo)]:[]),orderBy(documentId()),...(cursor?[startAfter(cursor.id)]:[])];
+    async fetchDocuments({kind,cursor,pageSize,...scope}) {
+      if(scope.lookupField==='id'){
+        if(cursor)return[];
+        const result=await getDocFromServer(doc(db,kind,scope.lookupValue));
+        return result.exists()?[{...result.data(),id:result.id}]:[];
+      }
+      const clauses=pageConstraints(scope,cursor,{where,orderBy,documentId,startAfter,Timestamp});
       const result=await getDocsFromServer(query(collection(db,kind),...clauses,limit(pageSize)));
       return result.docs.map(s=>({...s.data(),id:s.id}));
     },
@@ -55,9 +59,11 @@ export async function connect(config) {
     const verify=session();
     return {...options,isCurrent:()=>{verify();return options.isCurrent?.()??true;}};
   }
+  const live = createLiveData(db,session,{statisticsMode:config.statisticsMode});
   return {
+    ...live,
     emulator: Boolean(config.emulators), projectId: config.firebase.projectId,
-    authChanges: callback => onAuthStateChanged(auth, next => {sessionEpoch++;pending.clear();callback(next);}),
+    authChanges: callback => onAuthStateChanged(auth, next => {live.stopAll();sessionEpoch++;pending.clear();callback(next);}),
     login: (email, password) => signInWithEmailAndPassword(auth, email, password), logout: () => signOut(auth),
     loginGoogle: () => {
       const provider = new GoogleAuthProvider();
@@ -66,12 +72,20 @@ export async function connect(config) {
     },
     resetPassword: email => sendPasswordResetEmail(auth,email.trim()),
     role: (uid, onData, onError) => {
-      let last;
-      return onSnapshot(doc(db,'admin_roles',uid), { includeMetadataChanges: true }, s => {
-        const enabled = auth.currentUser?.emailVerified === true && s.exists() && s.data().enabled === true && !s.metadata.isFromCache;
+      let last,roleEnabled=false,roleVerified=false,controlVerified=false,suspended=false;
+      const publish=()=>{
+        const enabled=auth.currentUser?.emailVerified===true&&roleEnabled&&roleVerified&&controlVerified&&!suspended;
         if(last !== enabled){accessEpoch++;last=enabled;}
         onData(enabled);
-      }, error => {accessEpoch++;onError(error);});
+      };
+      const failure=error=>{accessEpoch++;onError(error);};
+      const stopRole=onSnapshot(doc(db,'admin_roles',uid),{includeMetadataChanges:true},s=>{
+        roleEnabled=s.exists()&&s.data().enabled===true;roleVerified=!s.metadata.isFromCache&&!s.metadata.hasPendingWrites;publish();
+      },failure);
+      const stopControl=onSnapshot(doc(db,'account_controls',uid),{includeMetadataChanges:true},s=>{
+        suspended=s.data()?.status==='suspended';controlVerified=!s.metadata.isFromCache&&!s.metadata.hasPendingWrites;publish();
+      },failure);
+      return ()=>{stopRole();stopControl();};
     },
     listPage: (kind,options={})=>readPage(kind,guarded({...options,pageSize:25})),
     exportRange: (kind,options={})=>collectRange(readPage,kind,guarded(options)),
@@ -115,6 +129,11 @@ export async function connect(config) {
       if(!confirmed.exists()||confirmed.data().status!==status)throw Error('Trạng thái vừa thay đổi. Hãy tải lại.');
     },
     async config() { const check=session();const s = await getDocFromServer(doc(db,'app_config','runtime'));check();return s.exists() ? s.data() : null; },
+    async registeredAccounts() {
+      const check=session();
+      const snapshot=await getDocFromServer(doc(db,'admin_statistics','accounts'));
+      check();return snapshot.exists()?snapshot.data():null;
+    },
     async counts() {
       const check=session();
       const requests = [collection(db,'food_catalog'),collection(db,'user_directory'),query(collection(db,'account_controls'),where('status','==','suspended')),collection(db,'admin_audit')];

@@ -43,11 +43,9 @@ Future<void> saveCapture(
 
 void main() {
   setUpAll(() async {
-    final fonts = FontLoader('BeVietnamPro');
+    final fonts = FontLoader('Inter');
     for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      fonts.addFont(
-        rootBundle.load('assets/fonts/be_vietnam_pro/BeVietnamPro-$weight.ttf'),
-      );
+      fonts.addFont(rootBundle.load('assets/fonts/inter/Inter-$weight.ttf'));
     }
     await fonts.load();
     await (FontLoader(

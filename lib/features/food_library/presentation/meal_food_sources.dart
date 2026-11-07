@@ -1,3 +1,4 @@
+import '../../nutrition/models/food_visibility.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/widgets/help_details.dart';
@@ -104,11 +105,14 @@ class _MealFoodSourcesState extends ConsumerState<MealFoodSources> {
       _query.text.trim() == query &&
       ref.read(authSessionProvider).value?.uid == uid;
 
+  bool _allows(FoodCatalogItem food) =>
+      widget.diet.allows(food) &&
+      widget.avoidance.allows(food) &&
+      (ref.read(foodVisibilityProvider).value?.allows(food) ?? true);
+
   List<FoodCatalogItem> get _eligibleCatalog =>
       (ref.read(foodCatalogProvider).value ?? const <FoodCatalogItem>[])
-          .where(
-            (food) => widget.diet.allows(food) && widget.avoidance.allows(food),
-          )
+          .where((food) => _allows(food))
           .toList();
 
   @override
@@ -190,11 +194,7 @@ class _MealFoodSourcesState extends ConsumerState<MealFoodSources> {
       if (!_current(generation, query, uid)) return;
       setState(() {
         _searchResults = outcome.results
-            .where(
-              (result) =>
-                  widget.diet.allows(result.food) &&
-                  widget.avoidance.allows(result.food),
-            )
+            .where((result) => _allows(result.food))
             .toList();
         _isSearching = outcome.isLoading;
         _searchError = outcome.message;
@@ -242,9 +242,7 @@ class _MealFoodSourcesState extends ConsumerState<MealFoodSources> {
   Future<void> _selectResult(FoodSearchResult result) async {
     if (_pendingDetailId != null) return;
     if (!result.requiresDetail) {
-      if (result.food.hasNutritionData &&
-          widget.diet.allows(result.food) &&
-          widget.avoidance.allows(result.food)) {
+      if (result.food.hasNutritionData && _allows(result.food)) {
         widget.onCatalog(result.food);
       }
       return;
@@ -264,9 +262,7 @@ class _MealFoodSourcesState extends ConsumerState<MealFoodSources> {
           .resolveResult(result, request: request);
       if (!_current(generation, query, uid)) return;
       final food = outcome.food;
-      if (!food.hasNutritionData ||
-          !widget.diet.allows(food) ||
-          !widget.avoidance.allows(food)) {
+      if (!food.hasNutritionData || !_allows(food)) {
         setState(
           () => _searchError =
               'Món chưa phù hợp bộ lọc hoặc chưa đủ dữ liệu. Hãy chọn món khác.',
@@ -347,7 +343,7 @@ class _MealFoodSourcesState extends ConsumerState<MealFoodSources> {
     FoodSearchResult? result,
   }) {
     final busy = ref.watch(favoriteFoodControllerProvider).isLoading;
-    final allowed = widget.diet.allows(food) && widget.avoidance.allows(food);
+    final allowed = _allows(food);
     final needsDetail = result?.requiresDetail == true;
     final selecting = _pendingDetailId == food.id;
     final canChoose =
@@ -453,12 +449,7 @@ class _MealFoodSourcesState extends ConsumerState<MealFoodSources> {
           () => ref.invalidate(foodCatalogProvider),
         ),
         data: (foods) {
-          final eligible = foods
-              .where(
-                (food) =>
-                    widget.diet.allows(food) && widget.avoidance.allows(food),
-              )
-              .toList();
+          final eligible = foods.where((food) => _allows(food)).toList();
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -675,6 +666,14 @@ class _MealFoodSourcesState extends ConsumerState<MealFoodSources> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(foodVisibilityProvider);
+    ref.listen(foodVisibilityProvider, (previous, next) {
+      final before = previous?.value ?? const FoodVisibility();
+      if (next.value == null || next.value!.sameAs(before)) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _onSearchChanged();
+      });
+    });
     ref.listen(authSessionProvider.select((session) => session.value?.uid), (
       previous,
       next,

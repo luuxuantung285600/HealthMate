@@ -44,12 +44,9 @@ Future<void> capture(
 
 void main() {
   setUpAll(() async {
-    await (FontLoader('BeVietnamPro')..addFont(
-          rootBundle.load(
-            'assets/fonts/be_vietnam_pro/BeVietnamPro-Regular.ttf',
-          ),
-        ))
-        .load();
+    await (FontLoader(
+      'Inter',
+    )..addFont(rootBundle.load('assets/fonts/inter/Inter-Regular.ttf'))).load();
   });
 
   for (final width in [320.0, 360.0, 412.0]) {

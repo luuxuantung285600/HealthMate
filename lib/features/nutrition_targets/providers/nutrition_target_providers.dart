@@ -1,3 +1,5 @@
+import '../../../core/data/user_data_revision.dart';
+import '../../../core/data/private_data_changes.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +19,12 @@ final nutritionTargetRepositoryProvider = Provider<NutritionTargetRepository>(
 
 final nutritionTargetProvider = FutureProvider.autoDispose
     .family<NutritionTarget?, String>((ref, key) async {
+      watchPrivateScope(ref, privateTargetScope(key));
+      ref.watch(
+        userDataRevisionProvider.select(
+          (state) => state.value?['nutrition_targets'],
+        ),
+      );
       final uid = ref.watch(authSessionProvider.select((s) => s.value?.uid));
       if (uid == null) {
         throw const NutritionTargetFailure('Hãy đăng nhập để tải mục tiêu.');
@@ -35,6 +43,17 @@ final nutritionTargetProvider = FutureProvider.autoDispose
 // Separate from logs: unavailable targets must not hide verified diary totals.
 final weeklyNutritionTargetsProvider = FutureProvider.autoDispose
     .family<List<NutritionTarget>, DateTime>((ref, start) async {
+      watchPrivateRange(
+        ref,
+        'nutrition_targets',
+        start,
+        DateTime(start.year, start.month, start.day + 7),
+      );
+      ref.watch(
+        userDataRevisionProvider.select(
+          (state) => state.value?['nutrition_targets'],
+        ),
+      );
       final uid = ref.watch(authSessionProvider.select((s) => s.value?.uid));
       if (uid == null) throw const NutritionTargetFailure('Hãy đăng nhập.');
       return ref

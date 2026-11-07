@@ -1,7 +1,9 @@
 import '../models/nutrition_models.dart';
+import '../models/food_visibility.dart';
 
 abstract interface class NutritionRepository {
   Stream<List<FoodCatalogItem>> watchFoodCatalog();
+  Stream<FoodVisibility> watchFoodVisibility();
 
   Stream<List<MealLog>> watchMealLogs(String uid, DateTime localDate);
 

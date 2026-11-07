@@ -64,9 +64,17 @@ class UnifiedFoodSearchService {
   UnifiedFoodSearchService({
     required this.localDatabase,
     required this.usdaService,
+    this.isAllowed,
   });
   final FoodSearchCache localDatabase;
   final UsdaApiService usdaService;
+  final bool Function(FoodCatalogItem)? isAllowed;
+  bool _allows(FoodCatalogItem food) => isAllowed?.call(food) ?? true;
+  void _checkVisible(FoodCatalogItem food) {
+    if (!_allows(food)) {
+      throw const FoodSearchFailure(FoodSearchFailureKind.invalidData);
+    }
+  }
 
   Future<FoodSearchOutcome> search({
     required String query,
@@ -85,7 +93,7 @@ class UnifiedFoodSearchService {
       FoodResultSource source, {
       bool detail = false,
     }) {
-      if (seen.add(food.id) && results.length < count) {
+      if (_allows(food) && seen.add(food.id) && results.length < count) {
         results.add(
           FoodSearchResult(food: food, source: source, requiresDetail: detail),
         );
@@ -96,7 +104,7 @@ class UnifiedFoodSearchService {
       FoodSearchStage stage, {
       FoodSearchFailure? failure,
     }) => FoodSearchOutcome(
-      List.unmodifiable(results),
+      List.unmodifiable(results.where((row) => _allows(row.food))),
       stage: stage,
       failure: failure,
       cacheWarning: cacheWarning,
@@ -180,6 +188,7 @@ class UnifiedFoodSearchService {
     final work = request ?? FoodSearchRequest();
     try {
       work.check();
+      _checkVisible(result.food);
       if (!result.requiresDetail) return FoodDetailOutcome(result.food);
       var cacheWarning = false;
       FoodCatalogItem? cached;
@@ -193,6 +202,7 @@ class UnifiedFoodSearchService {
         cacheWarning = true;
       }
       if (cached != null && cached.hasNutritionData) {
+        _checkVisible(cached);
         return FoodDetailOutcome(cached, cacheWarning: cacheWarning);
       }
       work.check();
@@ -204,6 +214,7 @@ class UnifiedFoodSearchService {
       if (food == null || !food.hasNutritionData) {
         throw const FoodSearchFailure(FoodSearchFailureKind.invalidData);
       }
+      _checkVisible(food);
       try {
         await work.run(() => localDatabase.cacheFood(food));
       } on FoodSearchFailure catch (failure) {
@@ -213,6 +224,7 @@ class UnifiedFoodSearchService {
       } catch (_) {
         cacheWarning = true;
       }
+      _checkVisible(food);
       return FoodDetailOutcome(food, cacheWarning: cacheWarning);
     } finally {
       if (request == null) work.finish();
@@ -224,7 +236,7 @@ class UnifiedFoodSearchService {
     required List<FoodCatalogItem> firestoreCatalog,
   }) async {
     final local = firestoreCatalog.where((f) => f.id == id).firstOrNull;
-    if (local != null) return local;
+    if (local != null) return _allows(local) ? local : null;
     final fdcId = id.startsWith('usda_') ? int.tryParse(id.substring(5)) : null;
     if (fdcId != null) {
       return (await resolveResult(
@@ -244,7 +256,8 @@ class UnifiedFoodSearchService {
         ),
       )).food;
     }
-    return localDatabase.getFoodById(id);
+    final cached = await localDatabase.getFoodById(id);
+    return cached != null && _allows(cached) ? cached : null;
   }
 
   /// Mark food as recently used
@@ -259,7 +272,9 @@ class UnifiedFoodSearchService {
   /// Get recently used foods for quick access
   Future<List<FoodCatalogItem>> getRecentFoods({int limit = 20}) async {
     try {
-      return await localDatabase.getRecentFoods(limit: limit);
+      return (await localDatabase.getRecentFoods(
+        limit: limit,
+      )).where(_allows).toList();
     } catch (_) {
       if (kDebugMode) debugPrint('HM_FOOD_SEARCH recent-read failed');
       return [];

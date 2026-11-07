@@ -1,5 +1,7 @@
 rules_version = '2';
 
+// Canonical client contract. Release packaging copies and tests this file;
+// a production backup must never replace it with legacy permission schemas.
 service cloud.firestore {
   match /databases/{database}/documents {
     function owns(uid) {
@@ -748,6 +750,18 @@ service cloud.firestore {
 
     match /admin_roles/{uid} {
       allow get: if request.auth != null && (request.auth.uid == uid || admin());
+      allow list, write: if false;
+    }
+
+    // Aggregate only. Trusted Auth/Firestore triggers maintain these counters;
+    // no web/mobile client may fabricate them or read the Auth user list.
+    match /admin_statistics/{id} {
+      allow get: if id in ['accounts','operations'] && admin();
+      allow list, write: if false;
+    }
+
+    match /user_sync/{uid} {
+      allow get: if owns(uid) || cleanup(uid);
       allow list, write: if false;
     }
 

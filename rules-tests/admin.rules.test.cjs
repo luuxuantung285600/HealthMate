@@ -140,3 +140,39 @@ test('directory sync accepts only owner minimal metadata matching profile/token 
   await assertSucceeds(deleteDoc(ref));
   await assertSucceeds(setDoc(ref,{displayName:'Alice',email:'alice@example.com',createdAt:serverTimestamp(),updatedAt:serverTimestamp()}));
 });
+
+test('Auth aggregate is get-only for verified admin; other accounts, guests and every client write are denied',async()=>{
+  const payload={schemaVersion:1,source:'firebase_auth',method:'manual_snapshot',totalRegisteredAccounts:42,updatedAt:Timestamp.now()};
+  await env.withSecurityRulesDisabled(c=>setDoc(doc(c.firestore(),'admin_statistics/accounts'),payload));
+  const a=db('admin');
+  assert.equal((await assertSucceeds(getDoc(doc(a,'admin_statistics/accounts')))).data().totalRegisteredAccounts,42);
+  for(const context of [db('alice'),db('bob'),env.unauthenticatedContext().firestore(),
+    env.authenticatedContext('admin',{email_verified:false}).firestore()]) {
+    await assertFails(getDoc(doc(context,'admin_statistics/accounts')));
+    await assertFails(setDoc(doc(context,'admin_statistics/accounts'),payload));
+  }
+  await assertFails(getDocs(collection(a,'admin_statistics')));
+  await assertFails(getDoc(doc(a,'admin_statistics/other')));
+  await assertFails(setDoc(doc(a,'admin_statistics/accounts'),payload));
+  await assertFails(updateDoc(doc(a,'admin_statistics/accounts'),{totalRegisteredAccounts:999}));
+  await assertFails(deleteDoc(doc(a,'admin_statistics/accounts')));
+  await assertFails(getDoc(doc(a,'users/alice')));
+  await env.withSecurityRulesDisabled(c=>updateDoc(doc(c.firestore(),'admin_roles/admin'),{enabled:false}));
+  await assertFails(getDoc(doc(a,'admin_statistics/accounts')));
+});
+
+
+test('realtime aggregates remain admin-only and revisions cannot be forged or read across UIDs',async()=>{
+  await env.withSecurityRulesDisabled(async context=>{
+    await setDoc(doc(context.firestore(),'user_sync/alice'),{meal_logs:serverTimestamp()});
+    await setDoc(doc(context.firestore(),'admin_statistics/operations'),{schemaVersion:1,ready:true,foods:0,accounts:0,suspended:0,audits:0});
+  });
+  await assertSucceeds(getDoc(doc(db('alice'),'user_sync/alice')));
+  await assertFails(getDoc(doc(db('bob'),'user_sync/alice')));
+  await assertFails(getDoc(doc(db('admin'),'user_sync/alice')));
+  await assertFails(setDoc(doc(db('alice'),'user_sync/alice'),{meal_logs:serverTimestamp()}));
+  await assertFails(setDoc(doc(db('admin'),'user_sync/alice'),{meal_logs:serverTimestamp()}));
+  await assertSucceeds(getDoc(doc(db('admin'),'admin_statistics/operations')));
+  await assertFails(getDoc(doc(db('alice'),'admin_statistics/operations')));
+  await assertFails(setDoc(doc(db('admin'),'admin_statistics/operations'),{foods:999}));
+});

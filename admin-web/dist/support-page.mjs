@@ -1,22 +1,30 @@
 import {supportStatuses,supportTypes,supportText,filterSupport} from './support-model.mjs';
 import {entityVersion} from './validation.mjs';
+import {liveScope,observe} from './live-scope.mjs';
 const loads=new WeakMap();
 
-export async function supportPage({host,api,h,button,isCurrent}) {
+export async function supportPage({host,api,h,button,isCurrent,onDispose,drafts}) {
   const revision=(loads.get(host)??0)+1;loads.set(host,revision);
-  const current=()=>isCurrent()&&loads.get(host)===revision;
+  const scope=liveScope(host,()=>isCurrent()&&loads.get(host)===revision,onDispose),current=scope.current;
+  const listHost={},detailHost={};let stopList,stopDetail;
   let search='',type='',status='',pageNumber=1,detailRevision=0,listRevision=0;
-  let rows=[],hasMore=false;const cursors=[null];
+  let rows=[],hasMore=false,refreshList;const cursors=[null],replyDrafts=new Map();
+  let statusDraftDirty=false;
+  drafts?.set('page',()=>statusDraftDirty||[...replyDrafts.values()].some(draft=>draft.text.trim()||draft.messageId));
+  async function discardAnd(action){if(!drafts||await drafts.allow(['page'])){statusDraftDirty=false;replyDrafts.clear();await action();}}
   const time=t=>t?.toDate?.()?new Intl.DateTimeFormat('vi-VN',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Ho_Chi_Minh'}).format(t.toDate()):'—';
   host.replaceChildren(h('p',{class:'loading'},'Đang tải yêu cầu hỗ trợ…'));
   try {
     async function load(cursor=null,page=1){
-      const turn=++listRevision;detailRevision++;
+      stopList?.();stopDetail?.();const listScope=liveScope(listHost,current,scope.add);stopList=listScope.stop;
+      const turn=++listRevision;detailRevision++;refreshList=null;
       const active=()=>current()&&turn===listRevision;
       host.replaceChildren(h('p',{class:'loading'},'Đang tải trang hỗ trợ…'));
       try{
-        const result=await api.listPage('support_tickets',{cursor,isCurrent:active});if(!active())return;
-        rows=result.rows;hasMore=result.hasMore;pageNumber=page;if(hasMore)cursors[page]=result.cursor;list();
+        return await observe(listScope,api,'watchPage',['support_tickets',{cursor,isCurrent:active}],result=>{if(!active())return;
+        rows=result.rows;hasMore=result.hasMore;pageNumber=page;if(hasMore)cursors[page]=result.cursor;
+        if(refreshList)refreshList();else list();
+        },e=>{refreshList=null;host.replaceChildren(h('p',{class:'error'},e.message),button('Thử lại',()=>load(cursor,page)));},()=>api.listPage('support_tickets',{cursor,isCurrent:active}));
       }catch(e){if(active())host.replaceChildren(h('p',{class:'error'},e.message),button('Thử lại',()=>load(cursor,page)));}
     }
     function list(){
@@ -35,42 +43,61 @@ export async function supportPage({host,api,h,button,isCurrent}) {
         tableHost.replaceChildren(h('div',{class:'table-wrap'},h('table',{},h('thead',{},h('tr',{},...['STT','YÊU CẦU / KHÁCH HÀNG','LOẠI','TRẠNG THÁI','CẬP NHẬT (VN)','THAO TÁC'].map(t=>h('th',{},t)))),body)),
           !filtered.length?h('p',{class:'empty'},rows.length?'Không có yêu cầu phù hợp trong trang này.':'Không có yêu cầu ở trang này.'):null,
           h('div',{class:'table-foot'},h('span',{},`Trang ${pageNumber} · ${filtered.length}/${rows.length} yêu cầu trên trang`),h('div',{class:'pagination'},
+            h('button',{type:'button',class:'button secondary',disabled:pageNumber===1,onClick:()=>load()},'Mới nhất'),
             h('button',{type:'button',class:'button secondary',disabled:pageNumber===1,onClick:()=>load(cursors[pageNumber-2],pageNumber-1)},'Trước'),
             h('button',{type:'button',class:'button secondary',disabled:!hasMore,onClick:()=>load(cursors[pageNumber],pageNumber+1)},'Sau'))));
       }
       host.replaceChildren(h('section',{class:'panel'},h('div',{class:'toolbar'},searchInput,
         select('Loại yêu cầu',supportTypes,type,v=>type=v),select('Trạng thái',supportStatuses,status,v=>status=v),
-        button('Tải lại',()=>supportPage({host,api,h,button,isCurrent}))),h('p',{class:'muted'},'Sắp theo mã. Tìm kiếm, loại và trạng thái chỉ lọc trang đang xem.'),tableHost));render();
+        button('Tải lại',()=>discardAnd(()=>supportPage({host,api,h,button,isCurrent,onDispose,drafts})))),h('p',{class:'muted'},'Cập nhật mới nhất lên đầu, tự đồng bộ khi có kết nối. Tìm kiếm, loại và trạng thái chỉ lọc trang đang xem.'),tableHost));refreshList=render;render();
     }
     async function detail(id){
-      if(!current())return;listRevision++;const turn=++detailRevision;const active=()=>current()&&turn===detailRevision;
+      if(!current())return;stopList?.();stopDetail?.();const detailScope=liveScope(detailHost,current,scope.add);stopDetail=detailScope.stop;
+      listRevision++;const turn=++detailRevision;const active=()=>current()&&turn===detailRevision;
       host.replaceChildren(h('p',{class:'loading'},'Đang tải cuộc trao đổi…'));
       try{
-        const {ticket,messages}=await api.supportThread(id);if(!active())return;
-        let busy=false,messageId;
+        let {ticket,messages}=await api.supportThread(id);if(!active())return;
+        let draft=replyDrafts.get(id)??{text:'',messageId:null};
+        if(draft.messageId&&messages.some(message=>message.id===draft.messageId&&message.text===draft.text))draft={text:'',messageId:null};
+        replyDrafts.set(id,draft);
+        let busy=false,statusDirty=false;statusDraftDirty=false;
+        let confirmedTicket=ticket;
         const error=h('p',{class:'error',role:'alert'});
         const controls=h('div',{class:'toolbar'}),thread=h('div',{class:'support-thread'});
         function message(label,text,at,admin=false){return h('article',{class:`support-message${admin?' from-admin':''}`},h('small',{},`${label} · ${time(at)} (VN)`),h('p',{},text));}
         thread.append(message('Khách hàng',ticket.description,ticket.createdAt),...messages.map(m=>message(m.role==='admin'?'HealthMate hỗ trợ':'Khách hàng',m.text,m.createdAt,m.role==='admin')));
-        const statusSelect=h('select',{'aria-label':'Trạng thái xử lý'},...Object.entries(supportStatuses).map(([value,label])=>h('option',{value,selected:value===ticket.status},label)));
-        async function run(action){
+        const statusSelect=h('select',{'aria-label':'Trạng thái xử lý',onChange:()=>{statusDirty=true;statusDraftDirty=true;}},...Object.entries(supportStatuses).map(([value,label])=>h('option',{value,selected:value===ticket.status},label)));
+        async function run(action,{clearReply=false}={}){
           if(busy||!active())return;busy=true;error.textContent='';
           for(const element of host.querySelectorAll('button,textarea,select'))element.disabled=true;
-          try{await action();if(active())await detail(id);}
+          try{await action();if(active()){if(clearReply)replyDrafts.delete(id);await detail(id);}}
           catch(e){if(active()){error.textContent=e.message;busy=false;for(const el of host.querySelectorAll('button,textarea,select'))el.disabled=false;}}
         }
-        controls.append(button('← Danh sách',()=>supportPage({host,api,h,button,isCurrent})),h('label',{class:'filter-field'},'Trạng thái xử lý',statusSelect),
-          button('Lưu trạng thái',()=>run(()=>api.supportStatus(id,statusSelect.value,entityVersion(ticket)))),button('Tải lại trao đổi',()=>detail(id)));
-        const input=h('textarea',{'aria-label':'Trả lời khách hàng',maxLength:2000,rows:5,placeholder:'Nhập phản hồi cho khách hàng…'});
+        controls.append(button('← Danh sách',()=>discardAnd(()=>load())),h('label',{class:'filter-field'},'Trạng thái xử lý',statusSelect),
+          button('Lưu trạng thái',()=>run(()=>api.supportStatus(id,statusSelect.value,entityVersion(confirmedTicket)))),button('Tải lại trao đổi',async()=>{if(!statusDraftDirty||!drafts||await drafts.allow(['page']))await detail(id);}));
+        const summary=h('p',{class:'muted'},`${supportTypes[ticket.type]} · ${supportStatuses[ticket.status]} · UID: ${ticket.uid}`);
+        const input=h('textarea',{'aria-label':'Trả lời khách hàng',maxLength:2000,rows:5,placeholder:'Nhập phản hồi cho khách hàng…',onInput:()=>{draft.text=input.value;}});
+        input.value=draft.text;input.readOnly=Boolean(draft.messageId);
         const send=button('Gửi phản hồi',()=>{
-          try{const text=supportText(input.value);messageId??=api.newSupportMessageId();input.readOnly=true;
-            run(()=>api.supportReply(id,messageId,text));}catch(e){error.textContent=e.message;}
+          try{const text=supportText(input.value);draft.text=text;draft.messageId??=api.newSupportMessageId();input.readOnly=true;
+            run(()=>api.supportReply(id,draft.messageId,text),{clearReply:true});}catch(e){error.textContent=e.message;}
         },'');
-        host.replaceChildren(h('section',{class:'panel'},controls,h('h2',{},ticket.title),h('p',{class:'muted'},`${supportTypes[ticket.type]} · ${supportStatuses[ticket.status]} · UID: ${ticket.uid}`),thread,error,
+        host.replaceChildren(h('section',{class:'panel'},controls,h('h2',{},ticket.title),summary,thread,error,
           ticket.messageCount>=100?h('p',{class:'notice'},'Đã đủ 100 tin nhắn. Khách hàng cần tạo yêu cầu mới để trao đổi thêm.'):
           h('div',{},h('label',{class:'field'},'Trả lời khách hàng',input),h('p',{class:'muted'},'Phản hồi được gửi tới cuộc trao đổi trong app HealthMate.'),send)));
-      }catch(e){if(active())host.replaceChildren(h('p',{class:'error'},e.message),button('Tải lại',()=>detail(id)),button('Danh sách',()=>supportPage({host,api,h,button,isCurrent})));}
+        if(api.watchSupportThread) detailScope.add(api.watchSupportThread(id,next=>{
+          if(!active())return;
+          ticket=next.ticket;
+          summary.textContent=`${supportTypes[ticket.type]} · ${supportStatuses[ticket.status]} · UID: ${ticket.uid}`;
+          thread.replaceChildren(message('Khách hàng',ticket.description,ticket.createdAt),...next.messages.map(m=>message(m.role==='admin'?'HealthMate hỗ trợ':'Khách hàng',m.text,m.createdAt,m.role==='admin')));
+          if(!statusDirty){statusSelect.value=ticket.status;confirmedTicket=ticket;}
+          if(!busy)error.textContent=statusDirty&&entityVersion(confirmedTicket)!==entityVersion(ticket)?'Cuộc trao đổi đã cập nhật. Kiểm tra trạng thái mới trước khi lưu.':'';
+          if(!busy)for(const el of host.querySelectorAll('button,select,textarea'))el.disabled=false;
+          if(ticket.messageCount>=100)send.disabled=true;
+        },e=>{if(active()){error.textContent=e.message;send.disabled=true;for(const el of controls.querySelectorAll('button,select'))el.disabled=el.tagName==='SELECT'||!['Tải lại trao đổi','← Danh sách'].includes(el.textContent);}},{isCurrent:active}));
+
+      }catch(e){if(active())host.replaceChildren(h('p',{class:'error'},e.message),button('Tải lại',()=>detail(id)),button('Danh sách',()=>discardAnd(()=>supportPage({host,api,h,button,isCurrent,onDispose,drafts}))));}
     }
     await load();
-  }catch(e){if(current())host.replaceChildren(h('p',{class:'error'},e.message),button('Tải lại',()=>supportPage({host,api,h,button,isCurrent})));}
+  }catch(e){if(current())host.replaceChildren(h('p',{class:'error'},e.message),button('Tải lại',()=>discardAnd(()=>supportPage({host,api,h,button,isCurrent,onDispose,drafts}))));}
 }

@@ -19,3 +19,9 @@ test('support validation rejects blank/oversized text, invalid paths, incomplete
  assert.throws(()=>validateSupportThread(ticket,[{...msg,sequence:2}]));
  assert.throws(()=>validateSupportThread({...ticket,deleting:true},[msg]));
 });
+
+test('support timestamp ties use nanoseconds and the same descending ID order as Firestore',()=>{
+ const stamp=(nanoseconds)=>({seconds:1,nanoseconds,toMillis:()=>1000});
+ const rows=[{id:'A',updatedAt:stamp(1)},{id:'a',updatedAt:stamp(1)},{id:'B',updatedAt:stamp(2)}];
+ assert.deepEqual(filterSupport(rows).map(row=>row.id),['B','a','A']);
+});
