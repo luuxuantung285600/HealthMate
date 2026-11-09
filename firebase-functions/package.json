@@ -2,7 +2,16 @@
   "name": "healthmate-realtime",
   "private": true,
   "main": "src/index.cjs",
-  "engines": {"node":"22"},
-  "scripts": {"test":"node --test test/*.test.cjs", "check":"node --check src/index.cjs && node --check src/sync.cjs && node --check tool/bootstrap.cjs"},
-  "dependencies": {"firebase-admin":"14.5.0","firebase-functions":"7.4.0"}
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.cjs",
+    "check": "node --check src/index.cjs && node --check src/sync.cjs && node --check src/billing-model.cjs && node --check src/billing-service.cjs && node --check src/billing-functions.cjs && node --check src/billing-notifications.cjs && node --check src/play-publisher.cjs && node --check tool/bootstrap.cjs"
+  },
+  "dependencies": {
+    "firebase-admin": "14.5.0",
+    "firebase-functions": "7.4.0",
+    "google-auth-library": "11.3.3"
+  }
 }

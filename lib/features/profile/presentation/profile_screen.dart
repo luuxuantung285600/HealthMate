@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/router/app_routes.dart';
 import '../../../core/config/app_feature_flags.dart';
@@ -24,6 +25,7 @@ import 'body_metric_form_dialog.dart';
 import 'profile_form_dialog.dart';
 import 'weight_chart.dart';
 import 'personal_overview.dart';
+import 'delete_body_metric_dialog.dart';
 import '../../data_export/presentation/journal_export_dialog.dart';
 import '../../premium/providers/premium_providers.dart';
 import '../../weekly_reflection/providers/weekly_reflection_providers.dart';
@@ -39,6 +41,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   String? _pageUid;
   final _cursors = <BodyMetricCursor?>[null];
   int _page = 0;
+  final _profileAnchor = GlobalKey();
+  final _metricsAnchor = GlobalKey();
+  final _accountAnchor = GlobalKey();
+
+  void _jumpTo(GlobalKey key) {
+    final target = key.currentContext;
+    if (target == null) return;
+    Scrollable.ensureVisible(
+      target,
+      duration: const Duration(milliseconds: 250),
+      alignment: .05,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,9 +76,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final metricState = pageState.whenData((page) => page.metrics);
     final today = localDateOnly(ref.watch(localClockProvider));
     final latest = ref.watch(latestBodyMetricProvider(today));
-    final profile = profileState.value;
-    final metrics = metricState.value ?? const <BodyMetric>[];
-    final accountAnchor = GlobalKey();
+    final profile = !profileState.isLoading && !profileState.hasError
+        ? profileState.value
+        : null;
+    final metrics = !metricState.isLoading && !metricState.hasError
+        ? metricState.value ?? const <BodyMetric>[]
+        : const <BodyMetric>[];
+    final canEdit = profile != null && !profileAction.isLoading;
 
     return FeaturePage(
       contentPadding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
@@ -71,42 +90,61 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       headerAction: IconButton(
         tooltip: 'Tài khoản và cài đặt',
         icon: const Icon(Icons.settings_outlined),
-        onPressed: () {
-          final anchor = accountAnchor.currentContext;
-          if (anchor != null) {
-            Scrollable.ensureVisible(
-              anchor,
-              duration: const Duration(milliseconds: 250),
-            );
-          }
-        },
+        onPressed: () => _jumpTo(_accountAnchor),
       ),
       title: 'Không gian cá nhân',
       subtitle: '',
       children: [
-        if (ref.watch(premiumDemoEnabledProvider))
-          Card(
-            child: ListTile(
-              key: const ValueKey('open-premium'),
-              leading: const Icon(Icons.workspace_premium_outlined),
-              title: const Text('HealthMate Premium'),
-              subtitle: const Text('20.000đ / 30 ngày · Demo không thu tiền'),
-              trailing: const Icon(Icons.chevron_right_rounded),
-              onTap: () => context.push(AppRoutes.premium),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ActionChip(
+              key: const ValueKey('jump-profile'),
+              avatar: const Icon(Icons.person_outline),
+              label: const Text('Hồ sơ'),
+              onPressed: () => _jumpTo(_profileAnchor),
             ),
-          ),
+            ActionChip(
+              key: const ValueKey('jump-weight'),
+              avatar: const Icon(Icons.monitor_weight_outlined),
+              label: const Text('Cân nặng'),
+              onPressed: () => _jumpTo(_metricsAnchor),
+            ),
+            ActionChip(
+              key: const ValueKey('jump-account'),
+              avatar: const Icon(Icons.manage_accounts_outlined),
+              label: const Text('Tài khoản'),
+              onPressed: () => _jumpTo(_accountAnchor),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
         PersonalOverview(
-          onEdit: profile == null
-              ? null
-              : () => _editProfile(context, ref, profile),
+          onEdit: !canEdit ? null : () => _editProfile(context, ref, profile),
         ),
         _ProfileCard(
+          key: _profileAnchor,
           state: profileState,
           profile: profile,
-          onEdit: profile == null
-              ? null
-              : () => _editProfile(context, ref, profile),
+          onEdit: !canEdit ? null : () => _editProfile(context, ref, profile),
           onRetry: () => _retryProfile(ref),
+        ),
+        Card(
+          child: ListTile(
+            key: const ValueKey('open-premium'),
+            leading: MediaQuery.textScalerOf(context).scale(1) > 1.5
+                ? null
+                : const Icon(Icons.workspace_premium_outlined),
+            title: const Text('HealthMate Premium'),
+            subtitle: Text(
+              ref.watch(premiumDemoEnabledProvider)
+                  ? 'Demo không thu tiền'
+                  : 'Gói đăng ký qua Google Play',
+            ),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => context.push(AppRoutes.premium),
+          ),
         ),
         const SizedBox(height: AppSpacing.md),
         Card(
@@ -191,8 +229,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ),
         _AccountCard(
-          key: accountAnchor,
+          key: _accountAnchor,
           email: user?.email,
+          emailVerified: user?.emailVerified == true,
+          providerIds: user?.providerIds ?? const [],
           canChangePassword: user?.hasPassword == true,
           authAction: authAction,
           accountAction: accountAction,
@@ -223,19 +263,37 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             !latest.hasError &&
             latest.value?.isNotEmpty == true)
           _BmiCard(profile: profile, latestMetric: latest.value!.first),
-        if (profile != null && latest.value?.isNotEmpty == true)
+        if (profile != null && latest.hasError)
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: _LoadError(
+                message: 'Chưa tải được lần cân mới nhất để tính BMI.',
+                onRetry: () => ref.invalidate(latestBodyMetricProvider(today)),
+              ),
+            ),
+          ),
+        if (profile != null &&
+            !latest.isLoading &&
+            !latest.hasError &&
+            latest.value?.isNotEmpty == true)
           const SizedBox(height: AppSpacing.md),
         _MetricsCard(
+          key: _metricsAnchor,
           state: metricState,
           metrics: metrics,
-          onAdd: profile == null ? null : () => _editMetric(context, ref),
+          onAdd: !canEdit ? null : () => _editMetric(context, ref),
+          busy: profileAction.isLoading,
           onEdit: (metric) => _editMetric(context, ref, metric: metric),
           onDelete: (metric) => _deleteMetric(context, ref, metric),
           onRetry: () => ref.invalidate(bodyMetricPageProvider(pageCursor)),
           pageNumber: _page + 1,
-          onNewer: _page == 0 ? null : () => setState(() => _page--),
+          onNewer: _page == 0 || profileAction.isLoading
+              ? null
+              : () => setState(() => _page--),
           onOlder:
-              pageState.isLoading ||
+              profileAction.isLoading ||
+                  pageState.isLoading ||
                   pageState.hasError ||
                   pageState.value?.hasMore != true
               ? null
@@ -424,6 +482,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (saved != null &&
         context.mounted &&
         ref.read(authSessionProvider).value?.uid == uid) {
+      setState(() {
+        _page = 0;
+        _cursors.removeRange(1, _cursors.length);
+      });
       ref.invalidate(weeklyLogsProvider);
       _showSaved(
         context,
@@ -438,25 +500,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     BodyMetric metric,
   ) async {
     final uid = ref.read(authSessionProvider).value?.uid;
+    if (uid == null || ref.read(profileControllerProvider).isLoading) return;
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) => AccountBoundDialog(
-        child: AlertDialog(
-          title: const Text('Xóa lần đo?'),
-          content: Text(
-            'Lần đo ${metric.weightKg.toStringAsFixed(1)} kg sẽ bị xóa khỏi lịch sử.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Giữ lại'),
-            ),
-            FilledButton(
-              key: const ValueKey('confirm-delete-metric'),
-              onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: const Text('Xóa'),
-            ),
-          ],
+      barrierDismissible: false,
+      builder: (_) => AccountBoundDialog(
+        child: DeleteBodyMetricDialog(
+          metric: metric,
+          onDelete: () async {
+            if (ref.read(authSessionProvider).value?.uid != uid) return false;
+            return ref
+                .read(profileControllerProvider.notifier)
+                .deleteBodyMetric(metric.id);
+          },
         ),
       ),
     );
@@ -465,13 +521,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ref.read(authSessionProvider).value?.uid != uid) {
       return;
     }
-    final deleted = await ref
-        .read(profileControllerProvider.notifier)
-        .deleteBodyMetric(metric.id);
-    if (deleted && context.mounted) {
-      ref.invalidate(weeklyLogsProvider);
-      _showSaved(context, 'Đã xóa lần đo.');
-    }
+    ref.invalidate(weeklyLogsProvider);
+    _showSaved(context, 'Đã xóa lần đo.');
   }
 
   void _retryProfile(WidgetRef ref) {
@@ -490,6 +541,8 @@ class _AccountCard extends StatelessWidget {
   const _AccountCard({
     super.key,
     required this.email,
+    required this.emailVerified,
+    required this.providerIds,
     required this.canChangePassword,
     required this.authAction,
     required this.accountAction,
@@ -499,6 +552,8 @@ class _AccountCard extends StatelessWidget {
   });
 
   final String? email;
+  final bool emailVerified;
+  final List<String> providerIds;
   final bool canChangePassword;
   final AsyncValue<void> authAction;
   final AsyncValue<void> accountAction;
@@ -520,6 +575,16 @@ class _AccountCard extends StatelessWidget {
             Text('Tài khoản của bạn', style: theme.textTheme.titleLarge),
             const SizedBox(height: AppSpacing.sm),
             Text(email ?? 'Tài khoản đã đăng nhập'),
+            Text(emailVerified ? 'Email đã xác minh' : 'Email chưa xác minh'),
+            if (providerIds.contains('password') ||
+                providerIds.contains('google.com'))
+              Text(
+                'Cách đăng nhập: ${[if (providerIds.contains('password')) 'Email và mật khẩu', if (providerIds.contains('google.com')) 'Google'].join(' · ')}',
+              ),
+            if (!canChangePassword && providerIds.contains('google.com'))
+              const Text(
+                'Bạn đăng nhập bằng Google. Quản lý mật khẩu trong tài khoản Google của bạn.',
+              ),
             const SizedBox(height: AppSpacing.md),
             if (canChangePassword)
               OutlinedButton.icon(
@@ -571,6 +636,7 @@ class _AccountCard extends StatelessWidget {
 
 class _ProfileCard extends StatelessWidget {
   const _ProfileCard({
+    super.key,
     required this.state,
     required this.profile,
     required this.onEdit,
@@ -585,7 +651,6 @@ class _ProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final locale = MaterialLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
@@ -605,6 +670,7 @@ class _ProfileCard extends StatelessWidget {
               ],
             ),
             state.when(
+              skipLoadingOnRefresh: false,
               loading: () => const _LoadingLine(),
               error: (error, _) =>
                   _LoadError(message: _messageFor(error), onRetry: onRetry),
@@ -626,13 +692,13 @@ class _ProfileCard extends StatelessWidget {
                         Text(
                           profile!.heightCm == null
                               ? 'Chưa nhập chiều cao'
-                              : 'Chiều cao: ${profile!.heightCm!.toStringAsFixed(1)} cm',
+                              : 'Chiều cao: ${profile!.heightCm} cm',
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         Text(
                           profile!.birthDate == null
                               ? 'Chưa nhập ngày sinh'
-                              : 'Ngày sinh: ${locale.formatMediumDate(profile!.birthDate!)}',
+                              : 'Ngày sinh: ${DateFormat('dd/MM/yyyy').format(profile!.birthDate!)}',
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         Text(
@@ -643,7 +709,7 @@ class _ProfileCard extends StatelessWidget {
                         if (profile!.targetWeightKg != null) ...[
                           const SizedBox(height: AppSpacing.sm),
                           Text(
-                            'Cân nặng mục tiêu: ${profile!.targetWeightKg!.toStringAsFixed(1)} kg',
+                            'Cân nặng mục tiêu: ${profile!.targetWeightKg} kg',
                           ),
                         ],
                       ],
@@ -664,6 +730,8 @@ class _BmiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = MaterialLocalizations.of(context);
+    final measuredAt = latestMetric.measuredAt.toLocal();
     final bmi = ProfileValidation.bmi(
       heightCm: profile.heightCm,
       weightKg: latestMetric.weightKg,
@@ -685,6 +753,15 @@ class _BmiCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
+              'Lần cân mới nhất: ${latestMetric.weightKg} kg · ${DateFormat('dd/MM/yyyy').format(measuredAt)} · ${locale.formatTimeOfDay(TimeOfDay.fromDateTime(measuredAt), alwaysUse24HourFormat: true)}',
+              style: TextStyle(color: theme.colorScheme.onSecondaryContainer),
+            ),
+            Text(
+              'Chiều cao dùng tính: ${profile.heightCm} cm',
+              style: TextStyle(color: theme.colorScheme.onSecondaryContainer),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
               'Tính từ chiều cao và lần đo cân nặng mới nhất. Chỉ số này chỉ để tham khảo, không phải chẩn đoán y khoa.',
               style: TextStyle(color: theme.colorScheme.onSecondaryContainer),
             ),
@@ -697,6 +774,7 @@ class _BmiCard extends StatelessWidget {
 
 class _MetricsCard extends StatelessWidget {
   const _MetricsCard({
+    super.key,
     required this.state,
     required this.metrics,
     required this.onAdd,
@@ -706,6 +784,7 @@ class _MetricsCard extends StatelessWidget {
     required this.pageNumber,
     required this.onNewer,
     required this.onOlder,
+    required this.busy,
   });
 
   final AsyncValue<List<BodyMetric>> state;
@@ -716,6 +795,7 @@ class _MetricsCard extends StatelessWidget {
   final VoidCallback onRetry;
   final int pageNumber;
   final VoidCallback? onNewer, onOlder;
+  final bool busy;
 
   @override
   Widget build(BuildContext context) {
@@ -727,68 +807,99 @@ class _MetricsCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'Lịch sử cân nặng',
-                    style: theme.textTheme.titleLarge,
-                  ),
-                ),
-                FilledButton.icon(
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final title = Text(
+                  'Lịch sử cân nặng',
+                  style: theme.textTheme.titleLarge,
+                );
+                final add = FilledButton.icon(
                   key: const ValueKey('add-metric'),
                   onPressed: onAdd,
                   icon: const Icon(Icons.add_rounded),
                   label: const Text('Thêm'),
-                ),
-              ],
+                );
+                if (constraints.maxWidth < 360 &&
+                    MediaQuery.textScalerOf(context).scale(1) > 1.3) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      title,
+                      const SizedBox(height: AppSpacing.sm),
+                      Align(alignment: Alignment.centerLeft, child: add),
+                    ],
+                  );
+                }
+                return Row(
+                  children: [
+                    Expanded(child: title),
+                    add,
+                  ],
+                );
+              },
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
               'Trang $pageNumber · tối đa 25 lần cân. Biểu đồ: 12 lần gần nhất trên trang, đơn vị kg.',
             ),
             state.when(
+              skipLoadingOnRefresh: false,
               loading: () => const _LoadingLine(),
               error: (error, _) =>
                   _LoadError(message: _messageFor(error), onRetry: onRetry),
               data: (_) => metrics.isEmpty
-                  ? const Text(
-                      'Chưa có lần đo nào. Thêm cân nặng để bắt đầu theo dõi lịch sử.',
+                  ? Text(
+                      pageNumber == 1
+                          ? 'Chưa có lần đo nào. Thêm cân nặng để bắt đầu theo dõi lịch sử.'
+                          : 'Trang này không còn lần đo nào. Chọn Mới hơn để quay lại lịch sử gần đây.',
                     )
                   : Column(
                       children: [
+                        SizedBox(
+                          height: MediaQuery.textScalerOf(context).scale(12),
+                        ),
                         WeightChart(metrics: metrics),
                         const SizedBox(height: AppSpacing.md),
                         for (final metric in metrics)
-                          ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: const CircleAvatar(
-                              child: Icon(Icons.monitor_weight_outlined),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AppSpacing.sm,
                             ),
-                            title: Text(
-                              '${metric.weightKg.toStringAsFixed(1)} kg',
-                            ),
-                            subtitle: Text(
-                              [
-                                locale.formatMediumDate(metric.measuredAt),
-                                if (metric.note.isNotEmpty) metric.note,
-                              ].join(' · '),
-                            ),
-                            trailing: Wrap(
-                              spacing: AppSpacing.xs,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                IconButton(
-                                  key: ValueKey('edit-metric-${metric.id}'),
-                                  onPressed: () => onEdit(metric),
-                                  tooltip: 'Sửa lần đo',
-                                  icon: const Icon(Icons.edit_outlined),
+                                Text(
+                                  '${metric.weightKg} kg',
+                                  style: theme.textTheme.titleMedium,
                                 ),
-                                IconButton(
-                                  key: ValueKey('delete-metric-${metric.id}'),
-                                  onPressed: () => onDelete(metric),
-                                  tooltip: 'Xóa lần đo',
-                                  icon: const Icon(Icons.delete_outline),
+                                Text(
+                                  '${DateFormat('dd/MM/yyyy').format(metric.measuredAt.toLocal())} · ${locale.formatTimeOfDay(TimeOfDay.fromDateTime(metric.measuredAt.toLocal()), alwaysUse24HourFormat: true)}',
                                 ),
+                                if (metric.note.isNotEmpty) Text(metric.note),
+                                Wrap(
+                                  spacing: AppSpacing.sm,
+                                  children: [
+                                    TextButton.icon(
+                                      key: ValueKey('edit-metric-${metric.id}'),
+                                      onPressed: busy
+                                          ? null
+                                          : () => onEdit(metric),
+                                      icon: const Icon(Icons.edit_outlined),
+                                      label: const Text('Sửa lần đo'),
+                                    ),
+                                    TextButton.icon(
+                                      key: ValueKey(
+                                        'delete-metric-${metric.id}',
+                                      ),
+                                      onPressed: busy
+                                          ? null
+                                          : () => onDelete(metric),
+                                      icon: const Icon(Icons.delete_outline),
+                                      label: const Text('Xóa lần đo'),
+                                    ),
+                                  ],
+                                ),
+                                const Divider(height: 1),
                               ],
                             ),
                           ),

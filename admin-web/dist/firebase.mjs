@@ -80,10 +80,10 @@ export async function connect(config) {
       };
       const failure=error=>{accessEpoch++;onError(error);};
       const stopRole=onSnapshot(doc(db,'admin_roles',uid),{includeMetadataChanges:true},s=>{
-        roleEnabled=s.exists()&&s.data().enabled===true;roleVerified=!s.metadata.isFromCache&&!s.metadata.hasPendingWrites;publish();
+        roleEnabled=s.exists()&&s.data().enabled===true;roleVerified=!s.metadata.fromCache&&!s.metadata.hasPendingWrites;publish();
       },failure);
       const stopControl=onSnapshot(doc(db,'account_controls',uid),{includeMetadataChanges:true},s=>{
-        suspended=s.data()?.status==='suspended';controlVerified=!s.metadata.isFromCache&&!s.metadata.hasPendingWrites;publish();
+        suspended=s.data()?.status==='suspended';controlVerified=!s.metadata.fromCache&&!s.metadata.hasPendingWrites;publish();
       },failure);
       return ()=>{stopRole();stopControl();};
     },
@@ -165,7 +165,7 @@ export async function connect(config) {
       check();
       const confirmed = await getDocFromServer(target);
       check();
-      if (confirmed.metadata.isFromCache || confirmed.metadata.hasPendingWrites || confirmed.data()?.lastAdminOperationId !== audit.id) throw Error('Chưa xác nhận được thay đổi trên máy chủ. Bản nháp được giữ để thử lại.');
+      if (confirmed.metadata.fromCache || confirmed.metadata.hasPendingWrites || confirmed.data()?.lastAdminOperationId !== audit.id) throw Error('Chưa xác nhận được thay đổi trên máy chủ. Bản nháp được giữ để thử lại.');
       pending.delete(key);
     }
   };

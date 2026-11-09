@@ -6,6 +6,7 @@ import '../../../shared/providers/local_clock_provider.dart';
 import '../../auth/providers/auth_providers.dart';
 import '../models/premium_models.dart';
 import '../providers/premium_providers.dart';
+import 'play_premium_screen.dart';
 
 class PremiumScreen extends ConsumerStatefulWidget {
   const PremiumScreen({super.key});
@@ -81,12 +82,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
   @override
   Widget build(BuildContext context) {
     if (!ref.watch(premiumDemoEnabledProvider)) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Premium')),
-        body: const Center(
-          child: Text('Premium demo chưa bật trong bản ứng dụng này.'),
-        ),
-      );
+      return const PlayPremiumScreen();
     }
     final membership = ref.watch(premiumMembershipProvider);
     final usage = ref.watch(premiumUsageProvider);

@@ -1,11 +1,12 @@
 import {adminLists, adminPageSize, collectAdminRows} from './list-model.mjs';
 import {dateBoundary} from './revenue-model.mjs';
 
-export function pageScope(kind, {idFrom = '', idTo = '', start = '', end = '', lookupField = '', lookupValue = ''} = {}) {
+export function pageScope(kind, {idFrom = '', idTo = '', start = '', end = '', lookupField = '', lookupValue = '',environment = ''} = {}) {
   if (!adminLists.includes(kind)) throw Error('Danh sách không được hỗ trợ.');
   for (const id of [idFrom,idTo]) if (typeof id !== 'string' || id.length > 1500 || id.includes('/')) throw Error('Khoảng mã không hợp lệ.');
   if (idFrom && idTo && idFrom > idTo) throw Error('Mã bắt đầu phải đứng trước mã kết thúc.');
-  if (Boolean(start) !== Boolean(end) || ((start || end) && !['demo_premium_transactions','admin_audit'].includes(kind))) throw Error('Phạm vi ngày không hợp lệ.');
+  if(environment&& (kind!=='premium_transactions'||!['production','test'].includes(environment)))throw Error('Môi trường thanh toán không hợp lệ.');
+  if (Boolean(start) !== Boolean(end) || ((start || end) && !['demo_premium_transactions','premium_transactions','admin_audit'].includes(kind))) throw Error('Phạm vi ngày không hợp lệ.');
   if(start&&(idFrom||idTo))throw Error('Chọn phạm vi ngày hoặc mã, không kết hợp hai loại.');
   if(kind==='support_tickets'&&(idFrom||idTo))throw Error('Hỗ trợ được phân trang theo thời điểm cập nhật.');
   if(typeof lookupValue!=='string'||typeof lookupField!=='string'||lookupValue.length>1500)throw Error('Tra cứu không hợp lệ.');
@@ -22,13 +23,13 @@ export function pageScope(kind, {idFrom = '', idTo = '', start = '', end = '', l
     lower=dateBoundary(start);upper=dateBoundary(end)+86400000;
     if(upper<=lower||upper-lower>366*86400000)throw Error('Chọn khoảng báo cáo từ 1 đến 366 ngày.');
   }
-  return {kind,idFrom,idTo,start,end,lower,upper,timeField,valueField,lookupField,lookupValue,key:JSON.stringify([kind,idFrom,idTo,start,end,timeField,lookupField,lookupValue])};
+  return {kind,idFrom,idTo,start,end,lower,upper,timeField,valueField,lookupField,lookupValue,environment,key:JSON.stringify([kind,idFrom,idTo,start,end,timeField,lookupField,lookupValue,environment])};
 }
 
 // Use the same query for live display, one-shot pages and exports.
 export function pageConstraints(scope,cursor,{where,orderBy,documentId,startAfter,Timestamp}) {
   const {lookupField,lookupValue,timeField,valueField}=scope;
-  if(timeField)return [...(scope.start?[where(timeField,'>=',new Date(scope.lower)),where(timeField,'<',new Date(scope.upper))]:[]),orderBy(timeField,'desc'),orderBy(documentId(),'desc'),...(cursor?[startAfter(new Timestamp(cursor.seconds,cursor.nanoseconds),cursor.id)]:[])];
+  if(timeField)return [...(scope.environment?[where('environment','==',scope.environment)]:[]),...(scope.start?[where(timeField,'>=',new Date(scope.lower)),where(timeField,'<',new Date(scope.upper))]:[]),orderBy(timeField,'desc'),orderBy(documentId(),'desc'),...(cursor?[startAfter(new Timestamp(cursor.seconds,cursor.nanoseconds),cursor.id)]:[])];
   if(valueField){
     const chars=Array.from(lookupValue);let upper='';
     while(chars.length){const last=chars.pop().codePointAt(0);if(last<0x10ffff){upper=chars.join('')+String.fromCodePoint(last===0xd7ff?0xe000:last+1);break;}}

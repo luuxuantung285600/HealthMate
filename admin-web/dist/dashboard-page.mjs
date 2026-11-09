@@ -2,12 +2,13 @@ import {demoRevenue} from './revenue-model.mjs';
 import {dashboardPeriod, formatCount, formatMoney, registeredAccountSummary} from './dashboard-model.mjs';
 import {adminIcon} from './admin-shell.mjs';
 import {liveScope,observe} from './live-scope.mjs';
+import {verifiedRevenue,formatNanos} from './verified-revenue.mjs';
 
 const loads = new WeakMap();
 const periods = [['month','Tháng này'], ['today','Hôm nay'], ['week','7 ngày qua'], ['days30','30 ngày qua']];
 const dateLabel = key => key.split('-').reverse().join('/');
 
-export async function dashboardPage({host, api, h, button, openPage, errorMessage, isCurrent, initialPreset = 'month',onDispose}) {
+export async function dashboardPage({host, api, h, button, openPage, errorMessage, isCurrent, initialPreset = 'month',initialRevenueMode='production',onDispose}) {
   const revision = (loads.get(host) ?? 0) + 1;
   loads.set(host, revision);
   const scope = liveScope(host,() => isCurrent() && loads.get(host) === revision,onDispose), current = scope.current;
@@ -27,6 +28,9 @@ export async function dashboardPage({host, api, h, button, openPage, errorMessag
     ...periods.map(([value,label]) => h('option',{value},label)));
   selector.value = preset;
   const periodLabel = h('span',{class:'dashboard-period-label'});
+  let revenueMode=initialRevenueMode;
+  const source=h('select',{id:'dashboard-revenue-source','aria-label':'Nguồn doanh thu',onChange:()=>{revenueMode=source.value;loadRevenue();}},...['production','test','demo'].map(value=>h('option',{value},value==='production'?'Google Play · tiền thật':value==='test'?'Google Play · thử nghiệm':'Demo mô phỏng')));
+  source.value=revenueMode;
   const message = error => errorMessage?.(error) ?? error.message;
   function stat(node, label, value, foot, {compact = false, accent = false} = {}) {
     const icon = {'dashboard-accounts':'user_directory','dashboard-revenue':'revenue','dashboard-transactions':'transactions','dashboard-buyers':'buyers'}[node.id];
@@ -36,7 +40,7 @@ export async function dashboardPage({host, api, h, button, openPage, errorMessag
       h('span',{class:'stat-symbol','aria-hidden':'true'},adminIcon(icon)));
   }
   function revenueState(text) {
-    const labels = ['Doanh thu Premium · demo','Giao dịch Premium · demo','Khách mua Premium · demo'];
+    const labels = ['Doanh thu Premium','Giao dịch Premium','Khách mua Premium'].map(label=>`${label} · ${revenueMode==='demo'?'demo':revenueMode==='test'?'thử nghiệm':'Google Play'}`);
     revenueCards.forEach((node,i) => stat(node,labels[i],'—',text,{accent:i === 0}));
   }
   function renderAccounts() {
@@ -104,15 +108,26 @@ export async function dashboardPage({host, api, h, button, openPage, errorMessag
     stopRevenue?.();
     const revenueScope=liveScope(revenueScopeHost,current,scope.add);stopRevenue=revenueScope.stop;
     const turn = ++revenueTurn, active = () => current() && turn === revenueTurn;
-    const range = dashboardPeriod(preset);
+    const range = {...dashboardPeriod(preset),...(revenueMode!=='demo'?{environment:revenueMode}:{})},kind=revenueMode==='demo'?'demo_premium_transactions':'premium_transactions';
+    host.querySelector('.dashboard-demo').textContent=revenueMode==='demo'?'PREMIUM DEMO · KHÔNG THU TIỀN. Chỉ hiển thị số tiền mô phỏng.':revenueMode==='test'?'GOOGLE PLAY THỬ NGHIỆM · KHÔNG CỘNG VÀO TIỀN THẬT.':'GOOGLE PLAY · Số tiền đã xác minh, còn sau hoàn và chưa trừ phí/thuế. Tách riêng từng tiền tệ; không phải tiền ngân hàng nhận.';
     periodLabel.textContent = `${dateLabel(range.start)} – ${dateLabel(range.end)} · giờ Việt Nam (UTC+7)`;
     revenueState('Đang tải giao dịch trong kỳ…');
     revenueStatus.textContent = 'Đang tổng hợp đầy đủ giao dịch trong kỳ…';
     chart.replaceChildren(h('p',{class:'loading'},'Đang tải biểu đồ doanh thu…'));
     latest.replaceChildren(h('p',{class:'loading'},'Đang tải giao dịch gần đây…'));
     try {
-      return await observe(revenueScope,api,'watchRange',['demo_premium_transactions',range],rows=>{
+      return await observe(revenueScope,api,'watchRange',[kind,range],rows=>{
       if (!active()) return;
+      if(revenueMode!=='demo'){
+        const report=verifiedRevenue(rows,range),amounts=report.currencies.map(g=>formatNanos(g.net,g.currency));
+        stat(revenueCards[0],'Premium · còn sau hoàn',amounts.join(' · ')||'Chưa có giao dịch',`${report.unresolved} đơn chờ đối soát; chưa trừ phí/thuế`,{accent:true});
+        stat(revenueCards[1],'Đơn đã thanh toán',formatCount(report.count),'Không gồm giao dịch đang chờ');
+        stat(revenueCards[2],'Khách mua Premium',formatCount(report.buyers),'Số tài khoản khác nhau trong kỳ');
+        revenueStatus.textContent='Tự động cập nhật từ giao dịch máy chủ đã đối chiếu Google. Chỉ gồm đơn đã đồng bộ; đối chiếu Play Console trước khi chốt sổ.';
+        chart.replaceChildren(h('h2',{},'Doanh thu theo tiền tệ'),...report.currencies.map(g=>h('p',{},`${g.currency}: Khách trả ${formatNanos(g.total,g.currency)} · Hoàn ${formatNanos(g.refunded,g.currency)} · Còn ${formatNanos(g.net,g.currency)}`)),!report.count?h('p',{class:'empty'},'Chưa có giao dịch Google Play trong kỳ này.'):null);
+        latest.replaceChildren(h('div',{class:'panel-title'},h('h2',{},'Giao dịch Google Play gần đây'),button('Xem báo cáo & xuất Excel',()=>openPage('revenue'))),h('div',{class:'table-wrap'},h('table',{},h('thead',{},h('tr',{},...['Đơn Google Play','UID','Còn sau hoàn','Trạng thái'].map(label=>h('th',{},label)))),h('tbody',{},...report.transactions.slice(0,5).map(r=>h('tr',{},h('td',{},r.orderId),h('td',{},r.uid),h('td',{},r.netNanos==null||r.reconciliationPending?'Chờ đối soát':formatNanos(r.netNanos,r.currency)),h('td',{},r.reconciliationPending?'Chờ đối soát':r.status)))))));
+        return;
+      }
       const report = demoRevenue(rows,[],range);
       stat(revenueCards[0],'Doanh thu Premium · demo',formatMoney(report.amountVnd),'Tổng giao dịch mô phỏng trong kỳ',{accent:true});
       stat(revenueCards[1],'Giao dịch Premium · demo',formatCount(report.count),'Giao dịch mô phỏng thành công');
@@ -132,7 +147,7 @@ export async function dashboardPage({host, api, h, button, openPage, errorMessag
             h('td',{class:'dashboard-uid'},row.uid),h('td',{class:'number'},formatMoney(row.amountVnd))))));
         latest.append(h('div',{class:'table-wrap',tabIndex:0,'aria-label':'5 giao dịch Premium demo gần nhất trong kỳ'},table));
       }
-      },showRevenueError,()=>api.exportRange('demo_premium_transactions',{...range,isCurrent:active}));
+      },showRevenueError,()=>api.exportRange(kind,{...range,isCurrent:active}));
     } catch (error) {showRevenueError(error);}
     function showRevenueError(error) {
       if (!active()) return;
@@ -143,7 +158,7 @@ export async function dashboardPage({host, api, h, button, openPage, errorMessag
     }
   }
   host.replaceChildren(h('div',{class:'dashboard-toolbar'},
-      h('label',{class:'filter-field'},'Kỳ doanh thu',selector),periodLabel,button('Tải lại dashboard',() => dashboardPage({host,api,h,button,openPage,errorMessage,isCurrent,initialPreset:preset,onDispose}))),
+      h('label',{class:'filter-field'},'Nguồn doanh thu',source),h('label',{class:'filter-field'},'Kỳ doanh thu',selector),periodLabel,button('Tải lại dashboard',() => dashboardPage({host,api,h,button,openPage,errorMessage,isCurrent,initialPreset:preset,initialRevenueMode:revenueMode,onDispose}))),
     h('p',{class:'notice local dashboard-demo'},'PREMIUM DEMO · KHÔNG THU TIỀN. Doanh thu dưới đây là số tiền mô phỏng, chưa phải doanh thu thực nhận.'),
     metrics,revenueStatus,h('div',{class:'dashboard-hero-grid'},chart,side),latest);
   renderAccounts();

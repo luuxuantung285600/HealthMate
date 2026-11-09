@@ -1,5 +1,45 @@
 # Tiến độ HealthMate
 
+## 08/11/2026 — Giai đoạn 10: cải thiện hồ sơ người dùng
+
+Đã thêm lối tắt Hồ sơ/Cân nặng/Tài khoản; giữ độ chính xác khi sửa dữ liệu;
+chọn giờ cân, hiển thị ngày đủ năm và nguồn tính BMI; đưa về trang mới nhất
+sau thêm/sửa; phân biệt trang cũ rỗng. Xóa lần cân có xác nhận từ repository,
+chặn gửi lặp, giữ lỗi/thử lại và đóng khi đổi phiên. Hiện provider đăng nhập,
+email đã xác minh và giải thích mật khẩu cho Google. Cải thiện chữ lớn và
+trạng thái tải/lỗi. Không đổi schema, Rules, dependency hoặc query.
+
+File chính: profile screen/overview/forms/chart, mới delete dialog và formatter;
+`test/profile_quality_test.dart` thêm 12 ca. Flutter toàn bộ **1052/1052**;
+hồi quy/preview cuối **84/84**, analyzer sạch, format 23 file/0 đổi; secret
+audit 694 file/0 findings. APK debug qua, runtime config **7/7**. Chi tiết trong
+[báo cáo hồ sơ 08/11](profile-quality-2026-11-08.md).
+Cần chạy lại app/cài `healthmate-profile-quality-20261108-debug.apk`; không
+cần cấu hình Firebase mới. Chưa nghiệm
+thu Android thật/ký phát hành hoặc deploy. Bước kế tiếp chỉ đề xuất nghiệm thu
+hồ sơ trên Android khi sẵn sàng, không tự triển khai thêm giai đoạn.
+
+## 08/11/2026 — Giai đoạn 10: độ tin cậy thanh toán Premium
+
+Đã sửa chặn giao dịch thử ghi đè membership thật, completion chỉ sau máy chủ
+xác nhận acknowledge, tải/restore/verify chạy chồng, callback trùng, timeout
+và đổi tài khoản. RTDN kiểm tra JSON/package/payload, retry lỗi tạm thời với
+lỗi đã lọc secret, nhận diện refund review cần xử lý thủ công. Admin không
+hiện/xuất số tiền cũ đang chờ đối soát và từ chối đơn trùng/dữ liệu mâu thuẫn.
+
+File chính: billing model/service/notifications/functions; controller/store/
+repository/screen Premium Flutter; dashboard/verified-revenue/live-scope admin;
+unit/widget/emulator tests. Không thêm dependency/schema/Rules trong đợt này.
+Flutter **1040/1040**, kiểm lại billing sau chỉnh cuối **18/18**; analyzer sạch;
+Functions **29/29**, web **93/93**, gateway **49/49**, release guard **6/6**,
+Rules **143/143**, liên thông Firestore billing **2/2**, syntax/format qua.
+
+Cần người dùng: Play Console/app/product, Blaze và cấu hình IAM/App Check/RTDN
+trước triển khai và nghiệm thu sandbox. Source local, chưa triển khai các sửa
+này hoặc mở thu tiền. Android thật/ký phát hành tiếp tục để sau. Chi tiết,
+APK và giới hạn: [báo cáo 08/11](billing-reliability-2026-11-08.md).
+Tiếp theo đề xuất nghiệm thu Google sandbox; chưa tự thực hiện.
+
 ## 07/11/2026 — Giai đoạn 10: hoàn thiện web admin
 
 Đã bổ sung tra cứu máy chủ UID/email/đầu tên món, audit mới nhất và lọc/xuất
@@ -3563,3 +3603,318 @@ Kết quả thật, lỗi trung gian và đường dẫn log:
   bị production. Tổng Auth tự động còn chờ Functions/Blaze; Premium vẫn demo.
 - Tiếp theo đề xuất: nghiệm thu app/web thật, không tự thêm nghiệp vụ khác.
 - Chi tiết và bằng chứng: [realtime-spark-2026-11-06.md](realtime-spark-2026-11-06.md).
+
+## 07/11/2026 — Giai đoạn 10, ổn định thao tác hằng ngày trên Android
+
+1. **Giai đoạn/trạng thái:** hoàn tất gói sửa và kiểm thử local của lượt này;
+   Giai đoạn 10 tổng thể vẫn cần nghiệm thu điện thoại thật và signed release.
+2. **Đã hoàn thành:** form nước/vận động/cân nặng/hồ sơ hỏi trước khi bỏ nội
+   dung đã sửa, giữ giá trị khi lưu lỗi, chờ ACK không gửi lặp; resume làm mới
+   quyền/lịch nhắc và chặn kết quả cài đặt cũ; bước chân dừng polling UI khi
+   nền/ẩn tab, đồng bộ đúng ngày và thử lại khi quay về. Không thêm dữ liệu giả.
+3. **File chính:** `confirmed_save.dart` và bốn form; `wellness_providers.dart`,
+   `wellness_screen.dart`; Firestore realtime injection trong
+   `user_data_revision.dart`/`private_data_changes.dart`; hai test hồi quy mới,
+   native `daily_reliability_acceptance_test.dart`, runner và ba harness native.
+4. **Kiểm thử cuối:** Flutter **973/973**, **21** regression tests mới nằm trong
+   suite; nhóm tập trung **44/44**; analyze sạch; format 15 file không đổi;
+   native suite `daily` qua trên AVD Android API 30 và Auth/Firestore Emulator;
+   diff check và PowerShell parse qua. Kết quả APK và hash trong báo cáo chi tiết.
+5. **Cần người dùng làm:** cài APK debug mới và nghiệm thu trên điện thoại;
+   cung cấp signing/certificate qua cơ chế private trước bản phát hành.
+6. **Còn lại:** form bốn loại trên chưa có nháp bền vững khi tiến trình bị kết
+   thúc; nháp bữa ăn mã hóa giữ cơ chế sẵn có. Native suite `core` cũ chưa qua
+   do finder tổng kcal không phù hợp UI mới. Chưa nghiệm thu API 33+ permission,
+   cảm biến thật, Play Integrity hoặc signed release. AI/phí Premium thật,
+   tổng Auth tự động và worker xóa nền còn theo blocker các báo cáo trước.
+   Không thêm package, đổi Rules/schema, bật Blaze hoặc deploy production.
+7. **Tiếp theo đề xuất:** nghiệm thu Android thật và hoàn tất signing;
+   chưa triển khai giai đoạn khác.
+
+Hành vi, lệnh, lỗi trung gian, giới hạn và APK:
+[android-quality-2026-11-07.md](android-quality-2026-11-07.md).
+
+## 07/11/2026 — Giai đoạn 8, biểu đồ dưỡng chất và chi tiết đóng góp
+
+1. **Giai đoạn/trạng thái:** hoàn tất phần cải thiện báo cáo local; chủ dự án
+   yêu cầu làm phần khác, để nghiệm thu Android thật/signing sau.
+2. **Đã hoàn thành:** Pie thật từ snapshot món theo hệ số Carb/Đạm/Béo 4/4/9;
+   chạm lát hoặc legend mở đóng góp từng món, Back đóng chi tiết giữ bộ lọc;
+   tuần (tab Dưỡng chất), 30/90 ngày, năm và khoảng tùy chọn dùng cùng hành vi.
+   Thiếu macro/chi tiết/0 có thông báo riêng; không tạo tỷ lệ giả. Chi tiết
+   cập nhật cùng nguồn báo cáo, giữ đơn vị g/ml, hiển thị nguồn/nhãn ước tính.
+3. **File chính:** `reports/models/macro_energy_report.dart`,
+   `reports/presentation/macro_energy_card.dart`; ghép vào `progress_screen.dart`,
+   `period_report_panel.dart`; `test/macro_energy_report_test.dart` và báo cáo.
+4. **Kiểm thử:** full Flutter **997/997 qua**, nhóm mới **24/24 qua**, analyzer
+   sạch; render Inter sáng/tối **2/2 qua**, đã xem ảnh fixture. Không thêm query
+   khi mở chi tiết; kiểm nguồn tải/lỗi, đổi UID/kỳ và 320 px/chữ 200%.
+   Kết quả APK/hash và kiểm tra cuối tại báo cáo chi tiết.
+5. **Cần người dùng cấu hình:** không có dịch vụ hoặc cấu hình mới.
+6. **Giới hạn:** tỷ lệ theo các món đã ghi, không thay thế tổng kcal nhật ký
+   hoặc khuyến nghị ăn uống. Không đổi Rules/schema/dependency/billing,
+   không deploy và không chạy nghiệm thu Android thật/ký phát hành.
+7. **Tiếp theo đề xuất:** cải thiện Báo lỗi & Góp ý; chưa thực hiện.
+
+Chi tiết, lệnh, lỗi trung gian và artifact:
+[macro-energy-report-2026-11-07.md](macro-energy-report-2026-11-07.md).
+
+## 07/11/2026 — Giai đoạn 10, cải thiện Báo lỗi & Góp ý
+
+1. **Giai đoạn/trạng thái:** hoàn tất gói hỗ trợ local của lượt này; nghiệm thu
+   Android thật/signing tiếp tục được hoãn theo yêu cầu chủ dự án.
+2. **Đã hoàn thành:** Back hỏi trước khi bỏ bản soạn; chờ ACK không cho gửi
+   lặp/rời màn hình; giữ payload/mã thao tác để retry; ô trả lời riêng dưới
+   lịch sử, cuộn được khi bàn phím/chữ lớn; phản hồi admin giữ phần đang gõ.
+   Giới hạn 100 giữ nội dung để sao chép, cho retry thao tác chưa rõ ACK.
+   Chặn dữ liệu/gửi khi Auth chưa sẵn sàng và loại bỏ route khi đổi tài khoản.
+3. **File chính:** `support_screen.dart`, `support_draft_guard.dart`,
+   `support_providers.dart`, hai file test hỗ trợ và báo cáo chi tiết.
+4. **Kiểm thử:** Flutter **1018/1018 qua**; nhóm hỗ trợ **34/34 qua**, gồm 21
+   test mới; full/scoped analyzer sạch; format 5 file không đổi; render Inter
+   **2/2 qua**, đã xem PNG; runtime config **7/7 qua**; APK debug build qua.
+5. **Cần người dùng cấu hình:** không có cấu hình/dịch vụ mới.
+6. **Giới hạn:** bản soạn chỉ trong bộ nhớ màn hình; chưa kiểm thử hỗ trợ trên
+   Android/backend production ở lượt này. Rules/schema/backend/dependencies
+   giữ nguyên; warning KGP tương lai ghi trong báo cáo. Không deploy/push.
+7. **Tiếp theo đề xuất:** Giai đoạn 10, trải nghiệm lỗi/mất mạng Scanner và
+   Chatbot; chưa thực hiện.
+
+Hành vi, lệnh, lỗi trung gian, giới hạn và artifact:
+[support-quality-2026-11-07.md](support-quality-2026-11-07.md).
+
+## 07/11/2026 — Giai đoạn 10, chọn chủ đề trước khi gửi hỗ trợ
+
+1. **Giai đoạn/trạng thái:** hoàn tất mã nguồn và kiểm thử local theo yêu cầu
+   phân loại vấn đề; chưa triển khai Rules/web production.
+2. **Đã hoàn thành:** app bắt buộc chọn một trong tám chủ đề, tách với Báo
+   lỗi/Góp ý; lưu Firestore, hiển thị app/admin, lọc/tìm chủ đề ở admin; retry
+   giữ nguyên chủ đề và ID. Yêu cầu cũ có nhãn Chưa phân loại, không migrate.
+3. **File chính:** model/repository/screen support, hai module admin support,
+   firestore.rules, test Flutter/Rules/admin/SDK và database-design.md.
+4. **Kiểm thử:** source cuối Flutter **1022/1022 qua**, analyzer sạch; admin
+   **86/86**, syntax check qua; Rules **139/139**; Flutter SDK **4/4**, admin
+   SDK **9/9** trên emulator; format 11 file không đổi; diff check qua;
+   preview Inter đã xem; APK debug và runtime **7/7** qua.
+5. **Cần khi áp dụng:** publish Rules có topic trước app mới, cập nhật web rồi
+   phân phối APK; không cần dịch vụ mới/Blaze. Có gói review/hash local.
+6. **Giới hạn:** bản đang chạy chưa được cập nhật; Rules cũ từ chối topic.
+   Topic thiếu vẫn được Rules nhận cho client cũ nhưng UI mới bắt buộc chọn.
+   Nghiệm thu Android thật/signing tiếp tục để sau theo yêu cầu chủ dự án.
+7. **Tiếp theo đề xuất:** áp dụng Rules/web và APK đã kiểm thử; chưa thực hiện.
+
+Chi tiết hành vi, hợp đồng dữ liệu, test và artifact:
+[support-topics-2026-11-07.md](support-topics-2026-11-07.md).
+
+## 07/11/2026 — Giai đoạn 10 mở rộng, thanh toán Premium Google Play
+
+1. **Trạng thái:** hoàn tất phần code và kiểm thử local; chưa mở bán/deploy.
+   Chủ dự án chưa có Play Console, Blaze để bật sau; chưa thể nghiệm thu
+   giao dịch thật hoặc Google sandbox. Không tự ký release.
+2. **Đã làm:** checkout Android lấy giá Google, restore, account binding,
+   server verification và acknowledge, membership realtime, quota AI đã xác
+   minh; RTDN + vòng bù; ledger tiền/hoàn từ Orders, admin production/test/
+   demo riêng, export, Rules chỉ máy chủ ghi, nhắc hủy gói trước xóa account.
+3. **File chính:** feature premium `play_*`, app/profile/privacy, Functions
+   billing, AI policy, admin revenue/dashboard/live queries, Rules/index và
+   tests. Thêm dependency đúng nhu cầu, giữ các thay đổi trước đó.
+4. **Kiểm thử:** Flutter **1030/1030 qua**; analyzer sạch. Sau bổ sung mô tả
+   privacy, suite account **8/8** và preview Inter **2/2** qua. Admin **90/90**,
+   Functions **17/17**, gateway **49/49**, Rules **143/143**, billing integration
+   Firestore + owner/admin listener **1/1**, release preflight **6/6** qua.
+   Syntax checks qua; APK debug build thành công, runtime **7/7** qua.
+5. **Cần cấu hình:** Play Console + subscription/base plan/package, Blaze,
+   Android Publisher IAM/ADC, Functions/Rules/index/RTDN, App Check, gateway,
+   license tester/testing track. Cờ client/server thanh toán mặc định tắt;
+   release guard chặn mở trước nghiệm thu.
+6. **Giới hạn:** không có bằng chứng Google sandbox/live; chưa backfill mọi
+   gia hạn cũ hoặc nghiệm thu refund token cũ không còn đọc được. Báo cáo chỉ
+   gồm order đã đồng bộ, cần đối soát Console trước chốt sổ. Chính sách lưu
+   giữ tài chính và 6 cảnh báo moderate từ dependency Firebase cần review
+   trước production. Không cộng tiền thử vào tiền thật.
+7. **Tiếp theo đề xuất:** cấu hình Play Console/Blaze và nghiệm thu sandbox;
+   chưa tự triển khai.
+
+Chi tiết cấu hình, hành vi, giới hạn và artifact:
+[google-play-billing-2026-11-07.md](google-play-billing-2026-11-07.md).
+
+## 08/11/2026 — Giai đoạn 10, chất lượng xuất báo cáo app và admin
+
+- **Trạng thái:** hoàn tất code và kiểm thử local; chưa publish admin,
+  chưa nghiệm thu xuất trên Android thật hoặc ký release.
+- **App:** CSV chi tiết/tổng hợp theo ngày, số liệu từ snapshot thật,
+  blank/zero và dưỡng chất thiếu tách rõ, chọn lần cân cuối đúng timestamp,
+  kiểm tra khoảng đầu ngày trước khi đọc, tiến trình tải/chọn nơi lưu/ghi.
+- **Admin:** lọc toàn bộ khoảng qua mọi trang theo lựa chọn, thông tin
+  nguồn/phạm vi/bộ lọc/tổng hợp theo tiền tệ trong sheet riêng; Excel Inter,
+  xuống dòng/rộng cột phù hợp, bảo toàn chữ số dài; tải lỗi có thông báo
+  và chặn nút cũ khi phiên thay đổi. Phạm vi catalog/danh bạ được ghi rõ.
+- **File:** feature data_export; admin XLSX/download, app/revenue/workouts;
+  regression tests mới và tài liệu chi tiết bên dưới.
+- **Kiểm thử:** Flutter **1.057/1.057**, analyzer sạch, admin **99/99**,
+  syntax check qua, hai XLSX đọc độc lập bằng openpyxl/ZIP/XML qua;
+  Inter previews **2/2** qua và đã xem. APK debug build thành công.
+- **Cần cấu hình:** không phát sinh cấu hình Firebase/package mới. Muốn
+  dùng trên bản cài/web hiện hữu cần cài app cập nhật và publish admin.
+- **Giới hạn:** chưa kiểm tra thao tác lưu trên Android thật; các nguồn
+  tải riêng, không phải snapshot nguyên tử xuyên collection; vẫn giữ
+  giới hạn dữ liệu và phạm vi xuất được nêu rõ trong UI.
+- **Tiếp theo đề xuất:** nghiệm thu xuất tệp trên thiết bị/trình duyệt
+  production khi người dùng sẵn sàng, chưa tự thực hiện.
+
+Chi tiết: [report-export-quality-2026-11-08.md](report-export-quality-2026-11-08.md).
+
+## 08/11/2026 — Giai đoạn 10, độ tin cậy thư viện món/công thức
+
+1. **Trạng thái:** hoàn tất code và kiểm thử local cho nhóm thư viện;
+   không tự chuyển nhóm tiếp theo, không deploy hoặc ký release.
+2. **Đã làm:** xác nhận bỏ nội dung chưa lưu (kể cả nguyên liệu), xóa
+   chờ máy chủ và thử lại đúng món, chống gửi lặp, bỏ kết quả muộn khi
+   đổi phiên. Kiểm tra lại nguồn sau khi nhập khẩu phần, yêu cầu chọn lại
+   nếu món bị ẩn/xóa/thay đổi; nguồn thiếu macro không được thêm.
+3. **File chính:** library_forms, food_library_screen, dialog xóa mới,
+   ingredient_selection, food_library_quality_test và food_library_test.
+4. **Kiểm thử:** suite thư viện **52/52**, toàn Flutter **1.071/1.071**,
+   analyzer sạch, format sạch, preview Inter **2/2** (tám ảnh đã xem),
+   APK debug build thành công; source secret audit/diff check qua.
+5. **Cần người dùng làm:** không cần cấu hình mới; cài APK cập nhật
+   khi muốn dùng. Android thật và release signing vẫn để sau.
+6. **Giới hạn:** nháp nằm trong bộ nhớ, không phục hồi qua process death.
+   Kiểm tra nguồn dùng stream đã nhận, không phải transaction xuyên nguồn.
+   Chưa nghiệm thu mạng/thiết bị thật; cảnh báo KGP hiện hữu còn tồn tại.
+7. **Tiếp theo đề xuất:** nghiệm thu thư viện trên Android khi sẵn sàng;
+   chưa tự thực hiện.
+
+Chi tiết và artifact: [food-library-quality-2026-11-08.md](food-library-quality-2026-11-08.md).
+
+## 08/11/2026 — Giai đoạn 10, độ tin cậy khi xóa nhật ký
+
+1. **Trạng thái:** hoàn tất nhóm xóa bữa ăn/nước/vận động; chưa deploy
+   hoặc ký release, không tự triển khai nhóm kế tiếp.
+2. **Đã làm:** hiển thị đúng bản ghi/ngày giờ, chờ ACK trong hộp xóa,
+   lỗi có thể thử lại cùng ID, chặn gửi lặp và Back khi pending. Kiểm tra
+   UID stream/Auth trực tiếp, đóng dialog khi đổi phiên, dispose menu cũ
+   theo UID và không báo thành công muộn sang tài khoản khác.
+3. **File:** journal_screen, delete_journal_entry_dialog mới,
+   meal_log_section (key dòng), journal_deletion_quality_test và tài liệu.
+4. **Kiểm thử:** suite nhật ký **60/60**, toàn Flutter **1.092/1.092**;
+   sau tăng độ chặt của test menu đổi phiên, regression **21/21** qua lại.
+   Analyzer/format sạch, preview Inter **6/6** (18 ảnh đã xem), build debug
+   qua; source secret audit/diff check qua. Tổng dữ liệu còn lại khớp.
+5. **Cần người dùng làm:** không cần cấu hình mới; cài APK cập nhật khi
+   muốn sử dụng. Nghiệm thu Android thật/signing tiếp tục để sau.
+6. **Giới hạn:** chưa có nghiệm thu mạng trên thiết bị thật; không hủy
+   lệnh đã được máy chủ nhận trước khi đổi tài khoản; chưa có hoàn tác.
+   Cảnh báo plugin KGP hiện hữu còn tồn tại.
+7. **Tiếp theo đề xuất:** rà soát khôi phục nháp và chỉnh sửa bữa ăn;
+   chưa tự thực hiện.
+
+Chi tiết: [journal-deletion-quality-2026-11-08.md](journal-deletion-quality-2026-11-08.md).
+
+## 09/11/2026 — Giai đoạn 10, khôi phục nháp và chỉnh sửa bữa ăn
+
+1. **Trạng thái:** hoàn tất code và kiểm thử local cho nhóm nháp bữa ăn;
+   dừng ở nhóm này, chưa deploy hoặc ký release.
+2. **Đã làm:** mỗi lần sửa mới có mã riêng để giữ nháp cũ; khôi phục
+   update đúng bữa và chỉ dọn nháp đã lưu. Thêm tên món/thời điểm giữ,
+   nhãn sửa đúng, giữ timezone cũ, hỗ trợ bữa schema 1. Chặn mở trùng
+   từ lúc tải profile/đĩa và vô hiệu thao tác cũ qua đổi phiên/dispose.
+   Tiêu đề form đọc đầy đủ trên màn nhỏ khi tăng cỡ chữ.
+3. **File:** journal_meal_entry, draft_picker, meal_form_dialog,
+   nutrition_models, meal_draft_quality_test mới và tài liệu.
+4. **Kiểm thử:** regression/preview **11/11**, toàn Flutter cuối
+   **1.101/1.101**, analyzer/format sạch. Đã xem 12 ảnh Inter thật;
+   build APK debug qua, source secret audit/diff check qua.
+5. **Cần người dùng làm:** không cần cấu hình mới; cài APK cập nhật
+   khi muốn sử dụng. Android thật/signing tiếp tục để sau.
+6. **Giới hạn:** bảo vệ nháp cục bộ, chưa xử lý hai thiết bị sửa cùng
+   một bữa; lần ghi máy chủ sau cùng vẫn có thể ghi đè. Chưa nghiệm thu
+   mất mạng/process death trên máy thật; cảnh báo KGP hiện hữu còn.
+7. **Tiếp theo đề xuất:** rà soát mục tiêu dinh dưỡng/kế hoạch bữa ăn;
+   chưa tự thực hiện.
+
+Chi tiết và artifact: [meal-draft-quality-2026-11-09.md](meal-draft-quality-2026-11-09.md).
+
+## 09/11/2026 — Giai đoạn 10, mục tiêu dinh dưỡng/kế hoạch bữa ăn
+
+1. **Trạng thái:** hoàn tất nhóm bảo vệ nội dung form, phiên tài khoản
+   và ngày của kế hoạch; dừng tại nhóm này, chưa deploy/ký release.
+2. **Đã làm:** xác nhận khi đóng/Back/đổi ngày để giữ nội dung đang sửa;
+   bảo vệ số đo/lựa chọn/đề xuất cá nhân hóa và món/khẩu phần trong kế
+   hoạch. Lưu lỗi giữ form, khóa gửi lặp; footer cuộn, nút kế hoạch ở
+   cuối màn hình. Kiểm tra Auth trực tiếp trước ghi và dùng đồng hồ
+   chung để hiển thị nút xác nhận đã ăn khi sang ngày mới.
+3. **File:** nutrition_target_form, personal_nutrition_planner,
+   nutrition_target_providers, MealPlannerPanel/PlanMealDialog trong
+   wellness_screen; test chất lượng mới và hai test cập nhật.
+4. **Kiểm thử:** toàn Flutter **1.115/1.115**, gồm **14 regression mới**;
+   suite plan UI cuối **6/6**. Analyzer/format sạch, preview Inter **6/6**
+   và 20 ảnh đã xem. APK debug, source secret audit/diff check qua.
+5. **Cần người dùng làm:** không cần cấu hình mới; cài APK cập nhật khi
+   muốn sử dụng. Android thật/signing tiếp tục để sau.
+6. **Giới hạn:** nội dung form chỉ giữ trong RAM, chưa phục hồi qua
+   process death/logout; chưa xử lý xung đột nhiều thiết bị sửa cùng
+   mục tiêu/kế hoạch. Cảnh báo KGP của plugin hiện hữu còn.
+7. **Tiếp theo đề xuất:** rà soát xóa kế hoạch và lưu gợi ý nhiều bữa;
+   chưa tự thực hiện.
+
+Chi tiết và artifact: [nutrition-plan-quality-2026-11-09.md](nutrition-plan-quality-2026-11-09.md).
+
+## 09/11/2026 — Giai đoạn 10, xóa kế hoạch/lưu gợi ý nhiều bữa
+
+1. **Trạng thái:** hoàn tất nhóm này; dừng sau kiểm thử và báo cáo.
+2. **Đã làm:** gợi ý chỉ thêm slot trống qua transaction từng bữa, hiện
+   tiến độ sau ACK và cho lưu tiếp phần chưa xác nhận. Giữ nguyên bữa đã
+   có/sửa từ thiết bị khác. Xóa chờ ACK, giữ lỗi để thử lại, kiểm tra
+   snapshot trước khi xóa và giữ nguyên nhật ký. Hai luồng chặn gửi lặp,
+   Back lúc chờ và phiên cũ kể cả A→logout→A.
+3. **File:** wellness_repository, wellness_screen; hai dialog mới;
+   meal_plan_operations_test, plan_meal_repository_integration và fixture
+   catalog_expansion; README, database-design và báo cáo test.
+4. **Kiểm thử:** toàn Flutter **1.130/1.130**; focused cuối **34/34**;
+   emulator Rules **143/143**, SDK **22/22** (9 ca mới). Analyzer/format
+   sạch, preview Inter **4/4**, 14 ảnh đã xem; APK debug build qua.
+   Source secret audit/diff check qua.
+5. **Cần người dùng làm:** không cần cấu hình mới; cài app cập nhật khi
+   muốn dùng. Android thật/signing vẫn để sau.
+6. **Giới hạn:** tiến độ gợi ý chỉ trong RAM; đã commit không hoàn tác
+   khi đóng. Ghi đang gửi có thể hoàn tất cho UID cũ; các bữa sau dừng.
+   Chưa giải quyết xung đột chỉnh thủ công mục tiêu/kế hoạch. Cảnh báo
+   plugin KGP hiện hữu còn; chưa deploy/ký release/push GitHub.
+7. **Tiếp theo đề xuất:** kiểm soát xung đột khi chỉnh thủ công mục tiêu
+   và kế hoạch; chưa thực hiện.
+
+Chi tiết và artifact: [meal-plan-operations-2026-11-09.md](meal-plan-operations-2026-11-09.md).
+
+## Giai đoạn 10 — kiểm thử vai khách hàng và admin, 09/11/2026
+
+- **Trạng thái:** nghiệm thu một phần bằng browser thật, Firebase Emulator và
+  Android AVD; chưa kết luận toàn bộ ứng dụng trơn tru.
+- **Đã kiểm:** đăng ký/onboarding, nhật ký và dinh dưỡng, thao tác món/audit,
+  support có chủ đề và phản hồi hai chiều, khóa/mở tài khoản, cấu hình runtime,
+  xóa tài khoản liên client, báo cáo và tải XLSX. Wellness và daily reliability
+  đã đạt trên Android Emulator. Bài tập admin hiện chỉ đọc 33 mục từ mã nguồn.
+- **Sửa trực tiếp:** metadata Firebase JS dùng fromCache; local config thống
+  kê Firestore; chữ null ở danh sách support; mô tả doanh thu theo nguồn.
+  Bổ sung SDK/DOM regression và cập nhật các thao tác integration test cũ.
+- **File chính:** admin-web/dist/{firebase,live-data,support-page,admin-shell}.mjs,
+  config.js; admin-web/test/{realtime-sdk.integration,app-dom.test}.mjs;
+  integration_test/{core,nutrition,wellness}_acceptance_test.dart;
+  docs/customer-admin-acceptance-2026-11-09.md.
+- **Kiểm tra:** Flutter 1.130/1.130, analyze sạch; web 99/99, SDK 9/9 và
+  realtime SDK 12/12; Flutter Chrome runtime 3/3 và realtime 6/6; format,
+  JS check và check:billing qua. XLSX tải bằng browser có ZIP/XML hợp lệ,
+  đúng 0 dòng dữ liệu của kỳ kiểm thử. Core Android chưa chạy hết do hành
+  trình cũ chưa mở phần Vận động đang thu gọn. Nutrition Android đã
+  chạy hết 11 checkpoint, exit 0; gồm 28 kế hoạch, ghi một lần, xóa nhật ký
+  vẫn giữ kế hoạch và chặn UID khác. Lỗi trung gian ghi ở báo cáo chi tiết.
+- **Cần cấu hình thủ công:** không cần thêm cho QA local. Play Console,
+  Functions/billing, AI/App Check production và thiết bị thật vẫn cần lượt
+  cấu hình/nghiệm thu riêng; không deploy hoặc thu tiền trong lượt này.
+- **Giới hạn:** core Android còn chưa đạt toàn kịch bản; bài tập không sửa
+  từ xa; tổng Auth có chế độ snapshot thủ công. App ghép catalog bundled
+  và Firestore, số mục quản trị Firestore không đại diện mọi nguồn món.
+- **Lượt tiếp theo đề xuất:** tiếp tục nghiệm thu Giai đoạn 10 cho các hành
+  trình Android còn thiếu; chưa triển khai giai đoạn hoặc tính năng mới.
+
+Chi tiết: [customer-admin-acceptance-2026-11-09.md](customer-admin-acceptance-2026-11-09.md).

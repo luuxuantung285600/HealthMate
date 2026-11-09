@@ -169,11 +169,12 @@ test('support SDK sends a single idempotent admin reply, changes status and read
     const local=new Date(Date.now()+7*3600000);
     const dayStart=Timestamp.fromMillis(Date.UTC(local.getUTCFullYear(),local.getUTCMonth(),local.getUTCDate())-7*3600000);
     t.set(usage,{schemaVersion:1,dayStart,count:1,lastTicketId:ref.id,lastCreatedAt:serverTimestamp(),updatedAt:serverTimestamp()});
-    t.set(ref,{uid,type:'bug',title:'SDK lỗi lưu bữa',description:'Nội dung QA trên emulator.',status:'open',
+    t.set(ref,{uid,type:'bug',topic:'nutrition',title:'SDK lỗi lưu bữa',description:'Nội dung QA trên emulator.',status:'open',
       messageCount:0,lastMessageId:'',updatedBy:uid,deleting:false,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
   });
   try {
     const initial=await api.supportThread(ref.id);assert.equal(initial.messages.length,0);
+    assert.equal(initial.ticket.topic,'nutrition');
     const messageId=api.newSupportMessageId();
     await assert.rejects(api.supportReply(ref.id,messageId,'   '),/Nội dung/);
     await api.supportReply(ref.id,messageId,'Bạn vui lòng thử lại.');
@@ -188,6 +189,7 @@ test('support SDK sends a single idempotent admin reply, changes status and read
       t.update(ref,{status:'open',messageCount:count,lastMessageId:followup.id,updatedBy:uid,updatedAt:serverTimestamp()});
     });
     const result=await api.supportThread(ref.id);assert.equal(result.ticket.status,'open');assert.equal(result.messages.length,2);
+    assert.equal(result.ticket.topic,'nutrition');
     assert.equal(result.messages[1].role,'customer');
   } finally {
     const thread=await api.supportThread(ref.id);

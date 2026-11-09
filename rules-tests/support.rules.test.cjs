@@ -37,6 +37,29 @@ test('owner query reads only own tickets; other UID cannot read thread or list, 
  await assertSucceeds(getDocs(collection(ticket(db('alice')),'messages')));
  await assertFails(getDoc(doc(db('admin'),'users/alice')));
 });
+
+for(const topic of ['account','premium','nutrition','activity','tracking','food_scanner','chatbot','other']) {
+ test(`support accepts topic ${topic} and exposes it only to owner and admin`,async()=>{
+  const a=db('alice');await assertSucceeds(create(a,{topic}));
+  assert.equal((await getDoc(ticket(a))).data().topic,topic);
+  assert.equal((await getDoc(ticket(db('admin')))).data().topic,topic);
+  await assertFails(getDoc(ticket(db('bob'))));
+ });
+}
+test('support rejects unknown, blank and non-string topics',async()=>{
+ for(const topic of ['unknown','',null,42,{code:'nutrition'},['nutrition'],'__proto__'])await assertFails(create(db('alice'),{topic}));
+ await assertSucceeds(create(db('alice'),{topic:'nutrition'}));
+});
+test('support topics are immutable for owner and admin; legacy threads still accept replies',async()=>{
+ const a=db('alice'),admin=db('admin');await create(a);
+ await assertFails(updateDoc(ticket(admin),{topic:'nutrition',updatedAt:serverTimestamp(),updatedBy:'admin'}));
+ await assertSucceeds(reply(admin));
+ await env.withSecurityRulesDisabled(c=>updateDoc(ticket(c.firestore()),{topic:'nutrition'}));
+ for(const d of [a,admin])await assertFails(updateDoc(ticket(d),{topic:'account',updatedAt:serverTimestamp(),updatedBy:d===a?'alice':'admin'}));
+ await assertSucceeds(updateDoc(ticket(admin),{status:'resolved',updatedAt:serverTimestamp(),updatedBy:'admin'}));
+ await assertSucceeds(reply(a,{uid:'alice',role:'customer',msg:m2,count:2}));
+ assert.equal((await getDoc(ticket(a))).data().topic,'nutrition');
+});
 test('admin replies atomically with immutable actor, role and sequence; customer cannot impersonate admin',async()=>{
  await create(db('alice'));
  await assertFails(reply(db('alice'),{uid:'alice',role:'admin'}));

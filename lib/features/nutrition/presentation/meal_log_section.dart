@@ -252,6 +252,7 @@ class _MealTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final integer = NumberFormat.decimalPattern('vi_VN');
     return ListTile(
+      key: ValueKey('meal-log-${meal.id}'),
       contentPadding: EdgeInsets.zero,
       title: Text(
         meal.items

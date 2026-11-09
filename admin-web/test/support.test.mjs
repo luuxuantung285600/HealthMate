@@ -1,6 +1,23 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {filterSupport,supportText,supportId,validateSupportThread} from '../dist/support-model.mjs';
+import {filterSupport,supportText,supportId,validateSupportThread,supportTopics,supportTopicLabel} from '../dist/support-model.mjs';
+
+test('support topics keep stable codes and distinguish historical unclassified from other',()=>{
+ assert.deepEqual(Object.keys(supportTopics),['account','premium','nutrition','activity','tracking','food_scanner','chatbot','other']);
+ assert.equal(supportTopicLabel('premium'),'Premium & thanh toán');
+ assert.equal(supportTopicLabel('other'),'Vấn đề khác');
+ for(const topic of [undefined,null,'','unknown','__proto__',42,{}])assert.equal(supportTopicLabel(topic),'Chưa phân loại');
+});
+test('support filters topic independently and searches its Vietnamese label',()=>{
+ const rows=[{id:'a',topic:'nutrition',status:'open',type:'bug'},
+ {id:'b',topic:'premium',status:'open',type:'suggestion'},
+ {id:'c',status:'resolved',type:'bug'},
+ {id:'d',topic:'other',status:'open',type:'bug'}];
+ assert.deepEqual(filterSupport(rows,{topic:'nutrition',search:'dinh duong',type:'bug',status:'open'}).map(r=>r.id),['a']);
+ assert.deepEqual(filterSupport(rows,{topic:'unclassified'}).map(r=>r.id),['c']);
+ assert.deepEqual(filterSupport(rows,{topic:'other'}).map(r=>r.id),['d']);
+ assert.deepEqual(filterSupport(rows,{topic:'premium',status:'resolved'}),[]);
+});
 test('support filters Vietnamese text, status/type, excludes deleting and sorts latest first',()=>{
  const rows=[{id:'a',uid:'alice',title:'Góp ý nhật ký',type:'suggestion',status:'open',updatedAt:{toMillis:()=>2}},
  {id:'b',uid:'bob',title:'Báo lỗi',type:'bug',status:'resolved',updatedAt:{toMillis:()=>3}},

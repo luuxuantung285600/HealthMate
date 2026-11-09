@@ -1,6 +1,6 @@
 export const adminPageSize = 25;
 export const maxAdminRows = 5000;
-export const adminLists = ['food_catalog', 'user_directory', 'admin_audit', 'demo_premium_transactions', 'demo_premium_accounts', 'support_tickets'];
+export const adminLists = ['food_catalog', 'user_directory', 'admin_audit', 'demo_premium_transactions', 'demo_premium_accounts', 'premium_transactions', 'support_tickets'];
 
 export function normalizeSearch(value) {
   return String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')

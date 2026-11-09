@@ -9,8 +9,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:healthmate/core/theme/app_theme.dart';
+import 'package:healthmate/core/data/user_data_revision.dart';
 import 'package:healthmate/features/auth/data/firebase_auth_repository.dart';
+import 'package:healthmate/features/auth/data/firebase_account_data_repository.dart';
 import 'package:healthmate/features/auth/providers/auth_providers.dart';
 import 'package:healthmate/features/nutrition/data/food_local_database.dart';
 import 'package:healthmate/features/nutrition/data/bundled_vietnamese_foods.dart';
@@ -37,6 +40,20 @@ import 'package:healthmate/features/wellness/presentation/wellness_screen.dart';
 import 'package:healthmate/features/wellness/providers/wellness_providers.dart';
 import 'core_acceptance_test.dart' as ui;
 import 'support/emulator_email_actions.dart';
+
+Widget routedWellness(Widget screen) {
+  final router = GoRouter(
+    routes: [GoRoute(path: '/', builder: (context, state) => screen)],
+  );
+  addTearDown(router.dispose);
+  return MaterialApp.router(
+    theme: AppTheme.light,
+    locale: const Locale('vi'),
+    localizationsDelegates: GlobalMaterialLocalizations.delegates,
+    supportedLocales: const [Locale('vi')],
+    routerConfig: router,
+  );
+}
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -86,8 +103,12 @@ void main() {
       final device = WellnessDevice();
       final container = ProviderContainer(
         overrides: [
+          realtimeFirestoreProvider.overrideWithValue(db),
           authRepositoryProvider.overrideWithValue(
             FirebaseAuthRepository(auth),
+          ),
+          accountDataRepositoryProvider.overrideWithValue(
+            FirebaseAccountDataRepository(db),
           ),
           nutritionRepositoryProvider.overrideWithValue(nutrition),
           wellnessRepositoryProvider.overrideWithValue(repo),
@@ -120,13 +141,7 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: MaterialApp(
-            theme: AppTheme.light,
-            locale: const Locale('vi'),
-            localizationsDelegates: GlobalMaterialLocalizations.delegates,
-            supportedLocales: const [Locale('vi')],
-            home: const WellnessScreen(),
-          ),
+          child: routedWellness(const WellnessScreen()),
         ),
       );
       Future<void> until(bool Function() condition) async {
@@ -223,7 +238,7 @@ void main() {
         'WELLNESS_SQLITE v3 nutrients aliases and reference portion roundtrip',
       );
 
-      await ui.tap(tester, ui.keyed('wellness-tab-3'));
+      await ui.tap(tester, ui.keyed('hub-sleep'));
       await ui.waitFor(tester, ui.keyed('start-sleep'));
       await ui.tap(tester, ui.keyed('start-sleep'));
       await ui.waitFor(tester, ui.keyed('finish-sleep'));
@@ -388,13 +403,7 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: MaterialApp(
-            theme: AppTheme.light,
-            locale: const Locale('vi'),
-            localizationsDelegates: GlobalMaterialLocalizations.delegates,
-            supportedLocales: const [Locale('vi')],
-            home: const WellnessScreen(initialTab: 5),
-          ),
+          child: routedWellness(const WellnessScreen(initialTab: 5)),
         ),
       );
       await ui.waitFor(tester, find.textContaining('70 kg ·'));

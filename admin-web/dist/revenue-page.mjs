@@ -1,5 +1,5 @@
 import {demoRevenue,revenueExport,vietnamDateKey,dateBoundary} from './revenue-model.mjs';
-import {buildXlsx} from './xlsx-export.mjs';
+import {downloadReport} from './report-download.mjs';
 import {liveScope,observe} from './live-scope.mjs';
 const loads=new WeakMap();
 
@@ -59,13 +59,16 @@ export async function revenuePage({host,api,h,button,isCurrent,onDispose}) {
         stats.append(h('section',{class:'stat'},h('div',{class:'stat-label'},label),h('div',{class:'stat-number'},value)));
       const daily=h('table',{},h('thead',{},h('tr',{},...['Ngày (VN)','Giao dịch demo','Doanh thu mô phỏng'].map(title=>h('th',{},title)))),
         h('tbody',{},...report.days.map(day=>h('tr',{},h('td',{},day.day),h('td',{},String(day.transactions)),h('td',{},money(day.amountVnd))))));
+      const exportStatus=h('p',{'aria-live':'polite'});
       const exportButton=button('Xuất Excel mô phỏng',()=>{
         if(!active()||report!==captured)return;
-        const bytes=buildXlsx(revenueExport(captured));if(!active())return;
-        const url=URL.createObjectURL(new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
-        const link=h('a',{href:url,download:`healthmate-doanh-thu-demo-${range.start}-${range.end}.xlsx`});link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+        const workbook=revenueExport(captured);
+        workbook.metadata=[['Nguồn','DEMO MÔ PHỎNG · KHÔNG THU TIỀN'],['Từ ngày (VN)',range.start],['Đến hết ngày (VN)',range.end],
+          ['Tổng mô phỏng (VND)',captured.amountVnd],['Giao dịch demo',captured.count],['Khách mua demo',captured.buyers]];
+        downloadReport({workbook,filename:`healthmate-doanh-thu-demo-${range.start}-${range.end}.xlsx`,isCurrent:()=>active()&&report===captured,
+          onResult:(message,error)=>{exportStatus.textContent=message;exportStatus.className=error?'error':'muted';}});
       });
-      summary.replaceChildren(stats,h('section',{class:'panel'},h('h2',{},'Tổng hợp đầy đủ kỳ đã chọn'),h('p',{class:'muted'},`${report.count} giao dịch đã tải đủ. Tự động cập nhật khi máy chủ xác nhận thay đổi trong kỳ.`),exportButton,h('div',{class:'table-wrap'},daily)));
+      summary.replaceChildren(stats,h('section',{class:'panel'},h('h2',{},'Tổng hợp đầy đủ kỳ đã chọn'),h('p',{class:'muted'},`${report.count} giao dịch đã tải đủ. Tự động cập nhật khi máy chủ xác nhận thay đổi trong kỳ.`),exportButton,exportStatus,h('div',{class:'table-wrap'},daily)));
       },e=>{report=null;summary.replaceChildren(h('p',{class:'error',role:'alert'},e.message));},()=>api.exportRange('demo_premium_transactions',{...range,isCurrent:active}));
     }catch(e){if(current()&&(active()||!range))summary.replaceChildren(h('p',{class:'error',role:'alert'},e.message));}
   }

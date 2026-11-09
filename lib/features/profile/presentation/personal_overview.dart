@@ -16,7 +16,7 @@ class PersonalOverview extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(userProfileProvider);
-    final user = state.value;
+    final user = !state.isLoading && !state.hasError ? state.value : null;
     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -67,7 +67,7 @@ class PersonalOverview extends ConsumerWidget {
               if (user?.healthGoal?.needsTargetWeight == true &&
                   user?.targetWeightKg != null) ...[
                 Text(
-                  'Cân nặng mục tiêu: ${NumberFormat('0.#', 'vi').format(user!.targetWeightKg)} kg',
+                  'Cân nặng mục tiêu: ${NumberFormat('0.###############', 'vi').format(user!.targetWeightKg)} kg',
                 ),
                 const SizedBox(height: 8),
                 _WeightGoalProgress(target: user.targetWeightKg!),

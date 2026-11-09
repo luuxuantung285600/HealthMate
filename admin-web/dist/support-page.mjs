@@ -1,4 +1,4 @@
-import {supportStatuses,supportTypes,supportText,filterSupport} from './support-model.mjs';
+import {supportStatuses,supportTypes,supportTopics,supportTopicLabel,supportText,filterSupport} from './support-model.mjs';
 import {entityVersion} from './validation.mjs';
 import {liveScope,observe} from './live-scope.mjs';
 const loads=new WeakMap();
@@ -7,7 +7,7 @@ export async function supportPage({host,api,h,button,isCurrent,onDispose,drafts}
   const revision=(loads.get(host)??0)+1;loads.set(host,revision);
   const scope=liveScope(host,()=>isCurrent()&&loads.get(host)===revision,onDispose),current=scope.current;
   const listHost={},detailHost={};let stopList,stopDetail;
-  let search='',type='',status='',pageNumber=1,detailRevision=0,listRevision=0;
+  let search='',type='',status='',topic='',pageNumber=1,detailRevision=0,listRevision=0;
   let rows=[],hasMore=false,refreshList;const cursors=[null],replyDrafts=new Map();
   let statusDraftDirty=false;
   drafts?.set('page',()=>statusDraftDirty||[...replyDrafts.values()].some(draft=>draft.text.trim()||draft.messageId));
@@ -36,12 +36,12 @@ export async function supportPage({host,api,h,button,isCurrent,onDispose,drafts}
       const tableHost=h('div',{'aria-live':'polite'});
       function render(){
         if(!current())return;
-        const filtered=filterSupport(rows,{search,type,status}),page={rows:filtered,offset:(pageNumber-1)*25};
+        const filtered=filterSupport(rows,{search,type,status,topic}),page={rows:filtered,offset:(pageNumber-1)*25};
         const body=h('tbody',{},...page.rows.map((r,i)=>h('tr',{},h('td',{},String(page.offset+i+1)),h('td',{},h('strong',{},r.title),h('small',{},r.uid)),
-          h('td',{},supportTypes[r.type]??'—'),h('td',{},h('span',{class:`pill ${r.status==='resolved'?'off':''}`},supportStatuses[r.status]??'—')),
+          h('td',{},supportTypes[r.type]??'—'),h('td',{},supportTopicLabel(r.topic)),h('td',{},h('span',{class:`pill ${r.status==='resolved'?'off':''}`},supportStatuses[r.status]??'—')),
           h('td',{},time(r.updatedAt)),h('td',{},button('Xem & trả lời',()=>detail(r.id))))));
-        tableHost.replaceChildren(h('div',{class:'table-wrap'},h('table',{},h('thead',{},h('tr',{},...['STT','YÊU CẦU / KHÁCH HÀNG','LOẠI','TRẠNG THÁI','CẬP NHẬT (VN)','THAO TÁC'].map(t=>h('th',{},t)))),body)),
-          !filtered.length?h('p',{class:'empty'},rows.length?'Không có yêu cầu phù hợp trong trang này.':'Không có yêu cầu ở trang này.'):null,
+        tableHost.replaceChildren(h('div',{class:'table-wrap'},h('table',{},h('thead',{},h('tr',{},...['STT','YÊU CẦU / KHÁCH HÀNG','LOẠI','CHỦ ĐỀ','TRẠNG THÁI','CẬP NHẬT (VN)','THAO TÁC'].map(t=>h('th',{},t)))),body)),
+          ...(!filtered.length?[h('p',{class:'empty'},rows.length?'Không có yêu cầu phù hợp trong trang này.':'Không có yêu cầu ở trang này.')]:[]),
           h('div',{class:'table-foot'},h('span',{},`Trang ${pageNumber} · ${filtered.length}/${rows.length} yêu cầu trên trang`),h('div',{class:'pagination'},
             h('button',{type:'button',class:'button secondary',disabled:pageNumber===1,onClick:()=>load()},'Mới nhất'),
             h('button',{type:'button',class:'button secondary',disabled:pageNumber===1,onClick:()=>load(cursors[pageNumber-2],pageNumber-1)},'Trước'),
@@ -49,7 +49,8 @@ export async function supportPage({host,api,h,button,isCurrent,onDispose,drafts}
       }
       host.replaceChildren(h('section',{class:'panel'},h('div',{class:'toolbar'},searchInput,
         select('Loại yêu cầu',supportTypes,type,v=>type=v),select('Trạng thái',supportStatuses,status,v=>status=v),
-        button('Tải lại',()=>discardAnd(()=>supportPage({host,api,h,button,isCurrent,onDispose,drafts})))),h('p',{class:'muted'},'Cập nhật mới nhất lên đầu, tự đồng bộ khi có kết nối. Tìm kiếm, loại và trạng thái chỉ lọc trang đang xem.'),tableHost));refreshList=render;render();
+        select('Chủ đề',{...supportTopics,unclassified:'Chưa phân loại'},topic,v=>topic=v),
+        button('Tải lại',()=>discardAnd(()=>supportPage({host,api,h,button,isCurrent,onDispose,drafts})))),h('p',{class:'muted'},'Cập nhật mới nhất lên đầu, tự đồng bộ khi có kết nối. Tìm kiếm, loại, chủ đề và trạng thái chỉ lọc trang đang xem.'),tableHost));refreshList=render;render();
     }
     async function detail(id){
       if(!current())return;stopList?.();stopDetail?.();const detailScope=liveScope(detailHost,current,scope.add);stopDetail=detailScope.stop;
@@ -75,7 +76,8 @@ export async function supportPage({host,api,h,button,isCurrent,onDispose,drafts}
         }
         controls.append(button('← Danh sách',()=>discardAnd(()=>load())),h('label',{class:'filter-field'},'Trạng thái xử lý',statusSelect),
           button('Lưu trạng thái',()=>run(()=>api.supportStatus(id,statusSelect.value,entityVersion(confirmedTicket)))),button('Tải lại trao đổi',async()=>{if(!statusDraftDirty||!drafts||await drafts.allow(['page']))await detail(id);}));
-        const summary=h('p',{class:'muted'},`${supportTypes[ticket.type]} · ${supportStatuses[ticket.status]} · UID: ${ticket.uid}`);
+        const summaryText=()=>`${supportTypes[ticket.type]} · Chủ đề: ${supportTopicLabel(ticket.topic)} · ${supportStatuses[ticket.status]} · UID: ${ticket.uid}`;
+        const summary=h('p',{class:'muted'},summaryText());
         const input=h('textarea',{'aria-label':'Trả lời khách hàng',maxLength:2000,rows:5,placeholder:'Nhập phản hồi cho khách hàng…',onInput:()=>{draft.text=input.value;}});
         input.value=draft.text;input.readOnly=Boolean(draft.messageId);
         const send=button('Gửi phản hồi',()=>{
@@ -88,7 +90,7 @@ export async function supportPage({host,api,h,button,isCurrent,onDispose,drafts}
         if(api.watchSupportThread) detailScope.add(api.watchSupportThread(id,next=>{
           if(!active())return;
           ticket=next.ticket;
-          summary.textContent=`${supportTypes[ticket.type]} · ${supportStatuses[ticket.status]} · UID: ${ticket.uid}`;
+          summary.textContent=summaryText();
           thread.replaceChildren(message('Khách hàng',ticket.description,ticket.createdAt),...next.messages.map(m=>message(m.role==='admin'?'HealthMate hỗ trợ':'Khách hàng',m.text,m.createdAt,m.role==='admin')));
           if(!statusDirty){statusSelect.value=ticket.status;confirmedTicket=ticket;}
           if(!busy)error.textContent=statusDirty&&entityVersion(confirmedTicket)!==entityVersion(ticket)?'Cuộc trao đổi đã cập nhật. Kiểm tra trạng thái mới trước khi lưu.':'';

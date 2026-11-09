@@ -160,10 +160,33 @@ class _PlannerFormState extends ConsumerState<_PlannerForm>
   String? _error;
   final _number = NumberFormat('0.#', 'vi');
   final _scroll = ScrollController();
+  late final String? _uid;
+  late final List<Object?> _openedValues;
+  List<Object?> get _values => [
+    _age.text,
+    _height.text,
+    _weight.text,
+    _targetWeight.text,
+    _sex,
+    _activity,
+    _goal,
+    _pace,
+    _macros,
+    _eligible,
+  ];
+  bool get _current =>
+      mounted &&
+      _uid != null &&
+      ref.read(authSessionProvider).value?.uid == _uid &&
+      ref.read(authRepositoryProvider).currentUid == _uid;
+  @override
+  bool get hasUnsavedChanges =>
+      _plan != null || _values.indexed.any((e) => e.$2 != _openedValues[e.$1]);
 
   @override
   void initState() {
     super.initState();
+    _uid = ref.read(authSessionProvider).value?.uid;
     _age = TextEditingController(text: widget.seed.age?.toString() ?? '');
     _height = TextEditingController(
       text: widget.seed.heightCm?.toString() ?? '',
@@ -175,6 +198,7 @@ class _PlannerFormState extends ConsumerState<_PlannerForm>
       text: widget.seed.targetWeightKg?.toString() ?? '',
     );
     _goal = widget.seed.goal;
+    _openedValues = _values;
   }
 
   @override
@@ -221,7 +245,7 @@ class _PlannerFormState extends ConsumerState<_PlannerForm>
   }
 
   Future<void> _accept(NutritionTarget? existing) async {
-    if (saving || _plan == null) return;
+    if (!_current || saving || _plan == null) return;
     final day = localDateKey(ref.read(currentLocalTimeProvider)());
     if (day != _calculatedDay) {
       setState(() {
@@ -247,7 +271,7 @@ class _PlannerFormState extends ConsumerState<_PlannerForm>
           .read(nutritionTargetRepositoryProvider)
           .loadForDay(uid, day)
           .timeout(const Duration(seconds: 15));
-      if (!mounted || ref.read(authSessionProvider).value?.uid != uid) {
+      if (!_current) {
         return false;
       }
       if (!sameNutritionTarget(existing, latest)) {
@@ -273,6 +297,10 @@ class _PlannerFormState extends ConsumerState<_PlannerForm>
     child: TextFormField(
       key: ValueKey(key),
       controller: c,
+      onChanged: (_) => setState(() {
+        _error = null;
+        saveError = null;
+      }),
       readOnly: widget.lockProfileSeed,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       decoration: InputDecoration(
@@ -297,10 +325,13 @@ class _PlannerFormState extends ConsumerState<_PlannerForm>
     return guardSave(
       Scaffold(
         appBar: AppBar(
-          title: const Text('Kế hoạch dinh dưỡng'),
+          toolbarHeight: MediaQuery.textScalerOf(
+            context,
+          ).scale(kToolbarHeight).clamp(kToolbarHeight, double.infinity),
+          title: const Text('Kế hoạch dinh dưỡng', maxLines: 2),
           leading: IconButton(
             tooltip: 'Đóng',
-            onPressed: saving ? null : () => Navigator.pop(context),
+            onPressed: saving ? null : requestClose,
             icon: const Icon(Icons.close),
           ),
         ),
@@ -398,7 +429,7 @@ class _PlannerFormState extends ConsumerState<_PlannerForm>
               ],
               if (!saving)
                 TextButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: requestClose,
                   child: const Text('Để sau, giữ mục tiêu hiện tại'),
                 ),
             ],

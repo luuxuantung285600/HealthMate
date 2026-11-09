@@ -36,6 +36,7 @@ class MealFormDialog extends ConsumerStatefulWidget {
     required this.catalog,
     this.recentItems = const [],
     this.meal,
+    this.editingExistingMeal = false,
     this.initialConsumedAt,
     this.initialType,
     this.initialItems = const [],
@@ -70,6 +71,7 @@ class MealFormDialog extends ConsumerStatefulWidget {
   final FoodAvoidance avoidance;
   final List<MealItemSnapshot> recentItems;
   final MealLog? meal;
+  final bool editingExistingMeal;
   final DateTime? initialConsumedAt;
   final MealType? initialType;
   final List<MealItemSnapshot> initialItems;
@@ -130,6 +132,14 @@ class _MealFormDialogState extends ConsumerState<MealFormDialog>
   bool _photoVisited = false;
   bool _favoritesVisited = false;
   bool _showTools = false;
+  int get _minimumSchemaVersion {
+    final version =
+        widget.initialDraft?.minimumSchemaVersion ??
+        widget.meal?.schemaVersion ??
+        2;
+    return version == 1 ? 2 : version;
+  }
+
   set _scannerAiUsed(bool value) => _form.scannerAiUsed = value;
   String? _scanSearch;
 
@@ -192,10 +202,7 @@ class _MealFormDialogState extends ConsumerState<MealFormDialog>
   void didUpdateWidget(covariant MealFormDialog oldWidget) {
     super.didUpdateWidget(oldWidget);
     _form.onDraftChanged = widget.onDraftChanged;
-    _form.minimumSchemaVersion =
-        widget.initialDraft?.minimumSchemaVersion ??
-        widget.meal?.schemaVersion ??
-        2;
+    _form.minimumSchemaVersion = _minimumSchemaVersion;
     _form.source =
         widget.initialDraft?.source ??
         (widget.aiAssisted || widget.meal?.source == MealSource.aiAssisted
@@ -324,11 +331,10 @@ class _MealFormDialogState extends ConsumerState<MealFormDialog>
       items:
           widget.initialDraft?.items ??
           [...?widget.meal?.items, ...widget.initialItems],
-      minimumSchemaVersion:
-          widget.initialDraft?.minimumSchemaVersion ??
-          widget.meal?.schemaVersion ??
-          2,
-      timezoneOffsetOverride: widget.initialDraft?.timezoneOffsetMinutes,
+      minimumSchemaVersion: _minimumSchemaVersion,
+      timezoneOffsetOverride:
+          widget.initialDraft?.timezoneOffsetMinutes ??
+          widget.meal?.timezoneOffsetMinutes,
       source:
           widget.initialDraft?.source ??
           (widget.aiAssisted || widget.meal?.source == MealSource.aiAssisted
@@ -708,7 +714,15 @@ class _MealFormDialogState extends ConsumerState<MealFormDialog>
         Dialog.fullscreen(
           child: Scaffold(
             appBar: AppBar(
-              title: Text(widget.meal == null ? 'Thêm bữa ăn' : 'Sửa bữa ăn'),
+              toolbarHeight: MediaQuery.textScalerOf(
+                context,
+              ).scale(kToolbarHeight).clamp(kToolbarHeight, double.infinity),
+              title: Text(
+                widget.meal != null || widget.editingExistingMeal
+                    ? 'Sửa bữa ăn'
+                    : 'Thêm bữa ăn',
+                maxLines: 2,
+              ),
               leading: IconButton(
                 onPressed: _discarding ? null : _close,
                 tooltip: widget.onDraftChanged == null

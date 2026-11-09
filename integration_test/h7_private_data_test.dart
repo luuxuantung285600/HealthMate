@@ -13,6 +13,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:healthmate/features/wellness/data/energy_repository.dart';
 import 'package:healthmate/features/wellness/providers/energy_providers.dart';
 import 'package:healthmate/app.dart';
+import 'package:healthmate/features/premium/providers/play_billing_providers.dart';
 import 'package:healthmate/core/router/app_router.dart';
 import 'package:healthmate/core/router/app_routes.dart';
 import 'package:healthmate/core/utils/local_date_key.dart';
@@ -132,6 +133,7 @@ void main() {
       final nativeLocal = _ObservedAndroidLocal();
       final container = ProviderContainer(
         overrides: [
+          playBillingSupportedProvider.overrideWithValue(false),
           privateLocalDataProvider.overrideWithValue(nativeLocal),
           authRepositoryProvider.overrideWithValue(
             FirebaseAuthRepository(auth),

@@ -1,10 +1,11 @@
 import 'dart:async';
-import '../../../core/widgets/help_details.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../core/utils/local_date_key.dart';
+import '../../../shared/providers/local_clock_provider.dart';
 import '../../../core/widgets/confirmed_save.dart';
 import '../../auth/providers/auth_providers.dart';
 import '../../food_library/presentation/food_nutrition_text.dart';
@@ -24,6 +25,8 @@ import '../models/meal_plan_suggestion.dart';
 import '../providers/wellness_providers.dart';
 import '../providers/sleep_insight_providers.dart';
 import 'energy_panel.dart';
+import 'delete_meal_plan_dialog.dart';
+import 'meal_plan_suggestion_dialog.dart';
 import 'sleep_insights.dart';
 import 'weight_progress_panel.dart';
 import 'wellness_hub.dart';
@@ -659,16 +662,42 @@ class _StepPanelState extends WellnessPanelState<StepPanel>
   String? owner;
   DateTime? lastSync;
   int? lastSyncedCount;
+  String? lastSyncedDay;
+  String? lastAttemptDay;
+  String? syncError;
+  bool _visible = true;
+  bool _resumed = true;
+  int _generation = 0;
   @override
   void initState() {
     super.initState();
+    _resumed =
+        WidgetsBinding.instance.lifecycleState == null ||
+        WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _visible = TickerMode.valuesOf(context).enabled;
+    _updatePolling();
+  }
+
+  void _updatePolling() {
+    tick?.cancel();
+    tick = null;
+    if (!mounted || !_visible || !_resumed) return;
     tick = Timer.periodic(const Duration(seconds: 3), (_) => refresh());
-    WidgetsBinding.instance.addPostFrameCallback((_) => refresh());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) refresh(retrySync: true);
+    });
+    WidgetsBinding.instance.scheduleFrame();
   }
 
   @override
   void dispose() {
+    _generation++;
     tick?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -676,18 +705,24 @@ class _StepPanelState extends WellnessPanelState<StepPanel>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) refresh();
+    _resumed = state == AppLifecycleState.resumed;
+    _updatePolling();
   }
 
-  Future<void> refresh() async {
-    if (reading || !mounted) return;
+  Future<void> refresh({bool retrySync = false}) async {
+    if (reading || !mounted || !_visible || !_resumed) return;
     final uid = ref.read(authSessionProvider).value?.uid;
     if (uid == null) return;
+    final generation = _generation;
+    bool current() =>
+        mounted &&
+        generation == _generation &&
+        ref.read(authSessionProvider).value?.uid == uid;
     reading = true;
     try {
       final local = await ref.read(localWellnessProvider.future);
       if (!local.available || local.uid != uid) {
-        if (mounted && ref.read(authSessionProvider).value?.uid == uid) {
+        if (current()) {
           setState(() {
             owner = uid;
             snapshot = {'supported': false};
@@ -695,47 +730,59 @@ class _StepPanelState extends WellnessPanelState<StepPanel>
         }
         return;
       }
+      if (!current() || !_visible || !_resumed) return;
       final data = await ref.read(wellnessDeviceProvider).steps(uid);
-      if (!mounted || ref.read(authSessionProvider).value?.uid != uid) return;
+      if (!current() || !_visible || !_resumed) return;
       if (owner != uid) {
         lastSync = null;
         lastSyncedCount = null;
+        lastSyncedDay = null;
+        lastAttemptDay = null;
+        syncError = null;
       }
       setState(() {
         owner = uid;
         snapshot = data;
       });
-      final day = localDateKey(DateTime.now());
+      final now = ref.read(currentLocalTimeProvider)();
+      final day = localDateKey(now);
       final row = (data['days'] as Map?)?[day] as Map?;
       if (row != null &&
-          row['steps'] != lastSyncedCount &&
-          (lastSync == null ||
-              DateTime.now().difference(lastSync!) >
-                  const Duration(minutes: 1))) {
-        lastSync = DateTime.now();
+          (lastSyncedDay != day || row['steps'] != lastSyncedCount) &&
+          (retrySync ||
+              lastAttemptDay != day ||
+              lastSync == null ||
+              now.isBefore(lastSync!) ||
+              now.difference(lastSync!) > const Duration(minutes: 1))) {
+        lastSync = now;
+        lastAttemptDay = day;
         try {
           await ref.read(wellnessRepositoryProvider).syncSteps(uid, {
             'day': day,
             ...Map<String, dynamic>.from(row),
           });
-          if (mounted && ref.read(authSessionProvider).value?.uid == uid) {
-            lastSyncedCount = row['steps'] as int;
+          if (current()) {
+            setState(() {
+              lastSyncedCount = row['steps'] as int;
+              lastSyncedDay = day;
+              syncError = null;
+            });
           }
         } catch (_) {
-          if (mounted && ref.read(authSessionProvider).value?.uid == uid) {
+          if (current()) {
             setState(
-              () => message =
+              () => syncError =
                   'Bước chân đang giữ trên máy; chưa đồng bộ máy chủ. Có thể thử lại.',
             );
           }
         }
       }
     } catch (e) {
-      if (mounted && ref.read(authSessionProvider).value?.uid == uid) {
+      if (current()) {
         setState(() => message = _failure(e));
       }
     } finally {
-      reading = false;
+      if (generation == _generation) reading = false;
     }
   }
 
@@ -743,8 +790,21 @@ class _StepPanelState extends WellnessPanelState<StepPanel>
   Widget build(BuildContext context) {
     final history = ref.watch(stepHistoryProvider);
     final currentUid = ref.watch(authSessionProvider).value?.uid;
+    ref.listen(authSessionProvider.select((value) => value.value?.uid), (
+      before,
+      after,
+    ) {
+      if (before == after) return;
+      _generation++;
+      reading = false;
+      owner = null;
+      snapshot = null;
+      message = null;
+      syncError = null;
+      _updatePolling();
+    });
     final currentSnapshot = owner == currentUid ? snapshot : null;
-    final day = localDateKey(DateTime.now());
+    final day = localDateKey(ref.watch(localClockProvider));
     final row = (currentSnapshot?['days'] as Map?)?[day] as Map?;
     final supported = currentSnapshot?['supported'] == true;
     final running = currentSnapshot?['running'] == true;
@@ -756,6 +816,7 @@ class _StepPanelState extends WellnessPanelState<StepPanel>
           'Dùng cảm biến bước chân, không cần API trả phí hoặc vị trí GPS. Chỉ ghi trong khoảng theo dõi. Calo đi bộ là ước tính riêng và chỉ cộng ngân sách khi bạn xác nhận. Lịch sử giữ bản đo cao nhất mỗi ngày, không cộng chồng số bước từ nhiều điện thoại.',
         ),
         feedback(),
+        if (syncError != null) Text(syncError!),
         if (currentSnapshot == null)
           const LinearProgressIndicator()
         else if (!supported)
@@ -948,7 +1009,60 @@ class MealPlannerPanel extends ConsumerStatefulWidget {
 
 class _MealPlannerPanelState extends WellnessPanelState<MealPlannerPanel> {
   bool suggesting = false;
-  DateTime week = localDateOnly(DateTime.now());
+  late DateTime week;
+  @override
+  void initState() {
+    super.initState();
+    week = localDateOnly(ref.read(currentLocalTimeProvider)());
+    ref.listenManual(authSessionProvider.select((s) => s.value?.uid), (
+      before,
+      after,
+    ) {
+      if (before != after) _planSessionGeneration++;
+    });
+  }
+
+  int _planSessionGeneration = 0;
+  bool _currentPlanSession(String uid, int generation) =>
+      mounted &&
+      generation == _planSessionGeneration &&
+      ref.read(authSessionProvider).value?.uid == uid &&
+      ref.read(authRepositoryProvider).currentUid == uid;
+
+  Future<void> remove(PlannedMeal plan) async {
+    if (busy || suggesting) return;
+    final uid = ref.read(authSessionProvider).value?.uid;
+    final generation = _planSessionGeneration;
+    if (uid == null || !_currentPlanSession(uid, generation)) return;
+    setState(() {
+      busy = true;
+      message = null;
+    });
+    try {
+      final deleted = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => AccountBoundDialog(
+          child: DeleteMealPlanDialog(
+            plan: plan,
+            onDelete: () async {
+              if (!_currentPlanSession(uid, generation)) return false;
+              await ref
+                  .read(wellnessRepositoryProvider)
+                  .deletePlan(uid, plan.id, expected: plan);
+              return _currentPlanSession(uid, generation);
+            },
+          ),
+        ),
+      );
+      if (deleted == true && _currentPlanSession(uid, generation)) {
+        setState(() => message = 'Đã xóa kế hoạch. Nhật ký được giữ nguyên.');
+      }
+    } finally {
+      if (mounted) setState(() => busy = false);
+    }
+  }
+
   Future<void> edit(
     DateTime date,
     MealType type, {
@@ -983,9 +1097,15 @@ class _MealPlannerPanelState extends WellnessPanelState<MealPlannerPanel> {
             ),
             items: existing?.items ?? [],
             onSave: (draft) async {
-              if (ref.read(authSessionProvider).value?.uid != uid) return false;
+              if (!mounted ||
+                  ref.read(authSessionProvider).value?.uid != uid ||
+                  ref.read(authRepositoryProvider).currentUid != uid) {
+                return false;
+              }
               await ref.read(wellnessRepositoryProvider).savePlan(uid, draft);
-              return ref.read(authSessionProvider).value?.uid == uid;
+              return mounted &&
+                  ref.read(authSessionProvider).value?.uid == uid &&
+                  ref.read(authRepositoryProvider).currentUid == uid;
             },
           ),
         ),
@@ -995,7 +1115,7 @@ class _MealPlannerPanelState extends WellnessPanelState<MealPlannerPanel> {
   }
 
   Future<void> log(PlannedMeal plan) async {
-    final now = DateTime.now();
+    final now = ref.read(currentLocalTimeProvider)();
     if (localDateOnly(plan.date).isAfter(localDateOnly(now))) return;
     final uid = ref.read(authSessionProvider).value?.uid;
     if (uid == null) return;
@@ -1041,10 +1161,16 @@ class _MealPlannerPanelState extends WellnessPanelState<MealPlannerPanel> {
                 ? now
                 : DateTime(plan.date.year, plan.date.month, plan.date.day, 12),
             onSave: (draft) async {
-              if (ref.read(authSessionProvider).value?.uid != uid) return false;
+              if (!mounted ||
+                  ref.read(authSessionProvider).value?.uid != uid ||
+                  ref.read(authRepositoryProvider).currentUid != uid) {
+                return false;
+              }
               try {
                 await repo.recordPlanMeal(uid, refreshed, draft);
-                if (ref.read(authSessionProvider).value?.uid != uid) {
+                if (!mounted ||
+                    ref.read(authSessionProvider).value?.uid != uid ||
+                    ref.read(authRepositoryProvider).currentUid != uid) {
                   return false;
                 }
                 return true;
@@ -1062,7 +1188,8 @@ class _MealPlannerPanelState extends WellnessPanelState<MealPlannerPanel> {
 
   Future<void> suggest(List<PlannedMeal> existing) async {
     final uid = ref.read(authSessionProvider).value?.uid;
-    if (uid == null) return;
+    final generation = _planSessionGeneration;
+    if (uid == null || !_currentPlanSession(uid, generation)) return;
     final catalog = await ref.read(foodCatalogProvider.future);
     final profile = await ref
         .read(userProfileProvider.future)
@@ -1072,7 +1199,7 @@ class _MealPlannerPanelState extends WellnessPanelState<MealPlannerPanel> {
         'Chưa tải được hồ sơ và thực phẩm cần tránh. Hãy thử lại.',
       );
     }
-    if (!mounted || ref.read(authSessionProvider).value?.uid != uid) return;
+    if (!_currentPlanSession(uid, generation)) return;
     final diet = FoodDietPreference.fromAnswer(
       profile.personalization?['diet'],
     );
@@ -1080,7 +1207,7 @@ class _MealPlannerPanelState extends WellnessPanelState<MealPlannerPanel> {
       profile.personalization?['avoidFoods'],
     );
     final targets = await ref.read(weeklyNutritionTargetsProvider(week).future);
-    if (!mounted || ref.read(authSessionProvider).value?.uid != uid) return;
+    if (!mounted || !_currentPlanSession(uid, generation)) return;
     final suggestion = suggestMealPlan(
       start: week,
       catalog: catalog,
@@ -1097,117 +1224,26 @@ class _MealPlannerPanelState extends WellnessPanelState<MealPlannerPanel> {
       );
       return;
     }
-    final accept = await showDialog<bool>(
+    await showDialog<void>(
       context: context,
-      builder: (c) => AlertDialog(
-        title: const Text('Xem trước gợi ý 7 ngày'),
-        content: SizedBox(
-          width: 440,
-          height: 400,
-          child: ListView(
-            children: [
-              if (diet != FoodDietPreference.general)
-                Text('Lựa chọn trong hồ sơ: ${diet.label}.'),
-              if (avoidance.isActive) ...[
-                const SizedBox(height: 8),
-                Text('Đang tránh: ${avoidance.label}'),
-              ],
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 12),
-                child: Text('Chỉ lưu kế hoạch. Xác nhận đã ăn để ghi nhật ký.'),
-              ),
-              for (final summary in suggestion.summaries)
-                Card(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  child: ExpansionTile(
-                    key: ValueKey(
-                      'suggested-day-${localDateKey(summary.date)}',
-                    ),
-                    initiallyExpanded: summary.date == week,
-                    title: Text(
-                      DateFormat('EEEE dd/MM', 'vi').format(summary.date),
-                    ),
-                    subtitle: Padding(
-                      padding: const EdgeInsets.only(top: 6),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: 6,
-                        children: [
-                          Text(
-                            '${foodNumber(summary.plannedKcal)} kcal dự kiến'
-                            '${summary.targetKcal == null ? ' · Chưa có mục tiêu' : ' / ${foodNumber(summary.targetKcal!)} kcal mục tiêu'}',
-                          ),
-                          if (summary.outsideTarget)
-                            const Text('Lệch trên 5% · Cần kiểm tra khẩu phần'),
-                        ],
-                      ),
-                    ),
-                    children: [
-                      for (final draft in drafts.where(
-                        (d) =>
-                            localDateKey(d.consumedAt) ==
-                            localDateKey(summary.date),
-                      ))
-                        Padding(
-                          key: ValueKey(
-                            'suggested-meal-${localDateKey(draft.consumedAt)}-${draft.type.name}',
-                          ),
-                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            spacing: 6,
-                            children: [
-                              Text(
-                                '${draft.type.label} · ${foodNumber(draft.totals.kcal)} kcal',
-                                style: Theme.of(c).textTheme.titleSmall,
-                              ),
-                              for (final item in draft.items)
-                                Text(
-                                  '${item.name} · ${foodNumber(item.grams)} g',
-                                ),
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              const HelpDetails(
-                title: 'Cách gợi ý và giới hạn',
-                children: [
-                  Text(
-                    'Điều chỉnh gram theo mục tiêu kcal, giữ các bữa đã có kế hoạch. Chưa cân bằng riêng từng chất hay thay thế tư vấn dinh dưỡng.',
-                  ),
-                  Text(
-                    'Ẩn món cần tránh và món chưa rõ thành phần. Kiểm tra món thực tế; bộ lọc không xác minh nhiễm chéo.',
-                  ),
-                ],
-              ),
-            ],
-          ),
+      barrierDismissible: false,
+      builder: (_) => AccountBoundDialog(
+        child: MealPlanSuggestionDialog(
+          suggestion: suggestion,
+          diet: diet,
+          avoidance: avoidance,
+          isCurrent: () => _currentPlanSession(uid, generation),
+          onAdd: (draft) async {
+            if (!_currentPlanSession(uid, generation)) {
+              throw const FormatException('Phiên đăng nhập đã thay đổi.');
+            }
+            return ref
+                .read(wellnessRepositoryProvider)
+                .addSuggestedPlan(uid, draft);
+          },
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(c, false),
-            child: const Text('Hủy'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(c, true),
-            child: const Text('Thêm bữa còn trống'),
-          ),
-        ],
       ),
     );
-    if (accept != true ||
-        !mounted ||
-        ref.read(authSessionProvider).value?.uid != uid) {
-      return;
-    }
-    await act((uid) async {
-      for (final draft in drafts) {
-        if (ref.read(authSessionProvider).value?.uid != uid) return;
-        await ref.read(wellnessRepositoryProvider).savePlan(uid, draft);
-      }
-    });
   }
 
   @override
@@ -1215,7 +1251,7 @@ class _MealPlannerPanelState extends WellnessPanelState<MealPlannerPanel> {
     final plans = ref.watch(plansProvider(week));
     // Keep the auto-disposed catalog alive while opening/editing a plan.
     ref.watch(foodCatalogProvider);
-    final now = localDateOnly(DateTime.now());
+    final now = localDateOnly(ref.watch(localClockProvider));
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -1265,11 +1301,16 @@ class _MealPlannerPanelState extends WellnessPanelState<MealPlannerPanel> {
                 onPressed: busy || suggesting
                     ? null
                     : () async {
+                        final uid = ref.read(authSessionProvider).value?.uid;
+                        final generation = _planSessionGeneration;
                         setState(() => suggesting = true);
                         try {
                           await suggest(values);
                         } catch (e) {
-                          if (mounted) setState(() => message = _failure(e));
+                          if (uid != null &&
+                              _currentPlanSession(uid, generation)) {
+                            setState(() => message = _failure(e));
+                          }
                         } finally {
                           if (mounted) setState(() => suggesting = false);
                         }
@@ -1330,7 +1371,9 @@ class _MealPlannerPanelState extends WellnessPanelState<MealPlannerPanel> {
                                           tooltip: 'Chỉnh kế hoạch',
                                           icon: const Icon(Icons.edit_outlined),
                                           onPressed:
-                                              busy || plan?.loggedMealId != null
+                                              busy ||
+                                                  suggesting ||
+                                                  plan?.loggedMealId != null
                                               ? null
                                               : () => edit(
                                                   date,
@@ -1345,7 +1388,7 @@ class _MealPlannerPanelState extends WellnessPanelState<MealPlannerPanel> {
                                           children: [
                                             if (!date.isAfter(now))
                                               TextButton(
-                                                onPressed: busy
+                                                onPressed: busy || suggesting
                                                     ? null
                                                     : () => log(plan),
                                                 child: Text(
@@ -1355,27 +1398,9 @@ class _MealPlannerPanelState extends WellnessPanelState<MealPlannerPanel> {
                                                 ),
                                               ),
                                             TextButton(
-                                              onPressed: busy
+                                              onPressed: busy || suggesting
                                                   ? null
-                                                  : () async {
-                                                      if (await _confirm(
-                                                            context,
-                                                            'Xóa kế hoạch này? Nhật ký đã ghi được giữ nguyên.',
-                                                            ref,
-                                                          ) &&
-                                                          mounted) {
-                                                        await act(
-                                                          (uid) => ref
-                                                              .read(
-                                                                wellnessRepositoryProvider,
-                                                              )
-                                                              .deletePlan(
-                                                                uid,
-                                                                plan.id,
-                                                              ),
-                                                        );
-                                                      }
-                                                    },
+                                                  : () => remove(plan),
                                               child: const Text('Xóa kế hoạch'),
                                             ),
                                           ],
@@ -1423,6 +1448,17 @@ class PlanMealDialog extends StatefulWidget {
 class _PlanMealDialogState extends State<PlanMealDialog>
     with ConfirmedSave<MealDraft, PlanMealDialog> {
   late final List<MealItemSnapshot> items = [...widget.items];
+  late final String _openedItems;
+  @override
+  void initState() {
+    super.initState();
+    _openedItems = _itemValues;
+  }
+
+  String get _itemValues =>
+      jsonEncode(items.map((i) => i.toCompactData()).toList());
+  @override
+  bool get hasUnsavedChanges => _itemValues != _openedItems;
   String search = '';
   late FoodDietPreference diet = widget.initialDiet;
   @override
@@ -1430,12 +1466,27 @@ class _PlanMealDialogState extends State<PlanMealDialog>
     Dialog.fullscreen(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Kế hoạch ${widget.type.label.toLowerCase()}'),
-          actions: [
-            TextButton(
+          toolbarHeight: MediaQuery.textScalerOf(
+            context,
+          ).scale(kToolbarHeight).clamp(kToolbarHeight, double.infinity),
+          title: Text(
+            'Kế hoạch ${widget.type.label.toLowerCase()}',
+            maxLines: 2,
+          ),
+          leading: IconButton(
+            tooltip: 'Đóng',
+            onPressed: saving ? null : requestClose,
+            icon: const Icon(Icons.close),
+          ),
+        ),
+        bottomNavigationBar: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: FilledButton(
               key: const ValueKey('save-meal-plan'),
               onPressed:
-                  items.isEmpty ||
+                  saving ||
+                      items.isEmpty ||
                       widget.avoidance
                           .flaggedSnapshots(items, widget.catalog)
                           .isNotEmpty
@@ -1454,9 +1505,9 @@ class _PlanMealDialogState extends State<PlanMealDialog>
                       ),
                       widget.onSave,
                     ),
-              child: const Text('Lưu kế hoạch'),
+              child: Text(saving ? 'Đang chờ xác nhận' : 'Lưu kế hoạch'),
             ),
-          ],
+          ),
         ),
         body: ListView(
           padding: const EdgeInsets.all(16),

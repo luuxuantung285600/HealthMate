@@ -40,21 +40,39 @@ final localWellnessProvider =
     );
 
 class LocalWellnessController extends AsyncNotifier<LocalWellnessState> {
+  int _generation = 0;
+  int _settingsWrites = 0;
+  int _settingsRevision = 0;
+  bool _refreshing = false;
+  bool _resumePending = false;
+
+  bool _current(String uid, int generation) =>
+      ref.mounted &&
+      generation == _generation &&
+      ref.read(authSessionProvider).value?.uid == uid;
+
   @override
   Future<LocalWellnessState> build() async {
+    final generation = ++_generation;
     final session = ref.watch(authSessionProvider);
     final user = session.value;
     final device = ref.watch(wellnessDeviceProvider);
     if (!device.supported || session.isLoading) {
       return const LocalWellnessState();
     }
+    final observer = _WellnessResumeObserver(refreshDeviceState);
+    WidgetsBinding.instance.addObserver(observer);
+    ref.onDispose(() {
+      _generation++;
+      WidgetsBinding.instance.removeObserver(observer);
+    });
     try {
       final uid = user?.emailVerified == true ? user!.uid : null;
       if (uid != null) {
         // Never reactivate native writers before a server-confirmed deletion
         // check, including after a process restart or on a second device.
         final deletion = await ref.watch(accountDeletionJobProvider.future);
-        if (!ref.mounted || ref.read(authSessionProvider).value?.uid != uid) {
+        if (!_current(uid, generation)) {
           return const LocalWellnessState();
         }
         if (deletion != null) {
@@ -76,31 +94,106 @@ class LocalWellnessController extends AsyncNotifier<LocalWellnessState> {
     }
   }
 
+  /// Re-read Android permissions and restore alarms after returning from Settings
+  /// or a force stop. A resume never replaces an in-flight settings write.
+  Future<void> refreshDeviceState() async {
+    if (!ref.mounted) return;
+    if (_settingsWrites > 0) {
+      _resumePending = true;
+      return;
+    }
+    if (_refreshing) {
+      _resumePending = true;
+      return;
+    }
+    final previous = state.value;
+    final uid = previous?.uid;
+    final generation = _generation;
+    final settingsRevision = _settingsRevision;
+    final deletion = ref.read(accountDeletionJobProvider);
+    if (uid == null ||
+        previous?.available != true ||
+        !_current(uid, generation) ||
+        deletion.isLoading ||
+        deletion.hasError ||
+        deletion.value != null) {
+      return;
+    }
+    _refreshing = true;
+    _resumePending = false;
+    try {
+      final device = ref.read(wellnessDeviceProvider);
+      await device.setAccount(uid);
+      final reminders = await device.readSettings(uid);
+      final sleepReminder = await device.readSleepReminder(uid);
+      final permission = await device.notificationsAllowed();
+      if (!_current(uid, generation)) return;
+      if (_settingsWrites > 0 || settingsRevision != _settingsRevision) {
+        _resumePending = true;
+        return;
+      }
+      state = AsyncData(
+        LocalWellnessState(
+          uid: uid,
+          available: true,
+          reminders: reminders,
+          sleepReminder: sleepReminder,
+          permission: permission,
+        ),
+      );
+    } catch (error, stack) {
+      if (!_current(uid, generation)) return;
+      if (_settingsWrites > 0 || settingsRevision != _settingsRevision) {
+        _resumePending = true;
+        return;
+      }
+      state = AsyncError(error, stack);
+    } finally {
+      _refreshing = false;
+      if (_settingsWrites == 0 && _resumePending) {
+        _resumePending = false;
+        await refreshDeviceState();
+      }
+    }
+  }
+
   Future<void> saveReminders(List<MealReminder> values) async {
     final uid = ref.read(authSessionProvider).value?.uid;
     final previous = state.value;
     if (uid == null || previous?.uid != uid || previous?.available != true) {
       throw const FormatException('Thiết bị chưa sẵn sàng.');
     }
+    final generation = _generation;
     final device = ref.read(wellnessDeviceProvider);
-    if (values.any((r) => r.enabled) && !await device.requestNotifications()) {
-      throw const FormatException(
-        'Chưa được cấp quyền thông báo. Bạn có thể bật lại trong cài đặt Android.',
+    _settingsRevision++;
+    _settingsWrites++;
+    try {
+      if (values.any((r) => r.enabled) &&
+          !await device.requestNotifications()) {
+        throw const FormatException(
+          'Chưa được cấp quyền thông báo. Bạn có thể bật lại trong cài đặt Android.',
+        );
+      }
+      if (!_current(uid, generation)) return;
+      await device.saveSettings(uid, values);
+      final permission = await device.notificationsAllowed();
+      if (!_current(uid, generation)) return;
+      state = AsyncData(
+        LocalWellnessState(
+          uid: uid,
+          available: true,
+          reminders: values,
+          permission: permission,
+          sleepReminder: state.value?.sleepReminder ?? previous!.sleepReminder,
+        ),
       );
+    } finally {
+      _settingsWrites--;
+      if (_settingsWrites == 0 && _resumePending) {
+        _resumePending = false;
+        await refreshDeviceState();
+      }
     }
-    if (ref.read(authSessionProvider).value?.uid != uid) return;
-    await device.saveSettings(uid, values);
-    final permission = await device.notificationsAllowed();
-    if (!ref.mounted || ref.read(authSessionProvider).value?.uid != uid) return;
-    state = AsyncData(
-      LocalWellnessState(
-        uid: uid,
-        available: true,
-        reminders: values,
-        permission: permission,
-        sleepReminder: state.value?.sleepReminder ?? previous!.sleepReminder,
-      ),
-    );
   }
 
   Future<void> saveSleepReminder(SleepReminder value) async {
@@ -109,23 +202,43 @@ class LocalWellnessController extends AsyncNotifier<LocalWellnessState> {
     if (uid == null || previous?.uid != uid || previous?.available != true) {
       throw const FormatException('Thiết bị chưa sẵn sàng.');
     }
+    final generation = _generation;
     final device = ref.read(wellnessDeviceProvider);
-    if (value.enabled && !await device.requestNotifications()) {
-      throw const FormatException('Chưa được cấp quyền thông báo.');
+    _settingsRevision++;
+    _settingsWrites++;
+    try {
+      if (value.enabled && !await device.requestNotifications()) {
+        throw const FormatException('Chưa được cấp quyền thông báo.');
+      }
+      if (!_current(uid, generation)) return;
+      await device.saveSleepReminder(uid, value);
+      final permission = await device.notificationsAllowed();
+      if (!_current(uid, generation)) return;
+      state = AsyncData(
+        LocalWellnessState(
+          uid: uid,
+          available: true,
+          reminders: state.value?.reminders ?? previous!.reminders,
+          sleepReminder: value,
+          permission: permission,
+        ),
+      );
+    } finally {
+      _settingsWrites--;
+      if (_settingsWrites == 0 && _resumePending) {
+        _resumePending = false;
+        await refreshDeviceState();
+      }
     }
-    if (ref.read(authSessionProvider).value?.uid != uid) return;
-    await device.saveSleepReminder(uid, value);
-    final permission = await device.notificationsAllowed();
-    if (!ref.mounted || ref.read(authSessionProvider).value?.uid != uid) return;
-    state = AsyncData(
-      LocalWellnessState(
-        uid: uid,
-        available: true,
-        reminders: state.value?.reminders ?? previous!.reminders,
-        sleepReminder: value,
-        permission: permission,
-      ),
-    );
+  }
+}
+
+class _WellnessResumeObserver extends WidgetsBindingObserver {
+  _WellnessResumeObserver(this.refresh);
+  final Future<void> Function() refresh;
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) refresh();
   }
 }
 

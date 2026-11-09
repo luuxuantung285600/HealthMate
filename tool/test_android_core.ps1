@@ -6,7 +6,7 @@ param(
   [string]$AndroidSdk = "$env:LOCALAPPDATA\Android\sdk",
   [string]$JavaHome = 'C:\Program Files\Android\Android Studio\jbr',
   [switch]$CrossDriveBuild,
-  [ValidateSet('core','wellness','nutrition')]
+  [ValidateSet('core','wellness','nutrition','daily')]
   [string]$Suite = 'core'
 )
 
@@ -70,6 +70,7 @@ try {
     [System.IO.File]::AppendAllText($propertiesPath, "`nkotlin.incremental=false`n", [System.Text.UTF8Encoding]::new($false))
   }
   $target = switch ($Suite) {
+    'daily' { 'integration_test/daily_reliability_acceptance_test.dart' }
     'wellness' { 'integration_test/wellness_acceptance_test.dart' }
     'nutrition' { 'integration_test/nutrition_acceptance_test.dart' }
     default { 'integration_test/core_acceptance_test.dart' }

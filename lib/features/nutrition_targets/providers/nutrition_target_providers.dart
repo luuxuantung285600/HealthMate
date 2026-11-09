@@ -83,12 +83,15 @@ class NutritionTargetController extends Notifier<AsyncValue<void>> {
   Future<bool> save(NutritionTarget target) async {
     if (state.isLoading) return false;
     final uid = ref.read(authSessionProvider).value?.uid;
-    if (uid == null) return false;
+    if (uid == null || ref.read(authRepositoryProvider).currentUid != uid) {
+      return false;
+    }
     final generation = _generation;
     bool current() =>
         ref.mounted &&
         _generation == generation &&
-        ref.read(authSessionProvider).value?.uid == uid;
+        ref.read(authSessionProvider).value?.uid == uid &&
+        ref.read(authRepositoryProvider).currentUid == uid;
     final error = target.validate(earliestDateKey: _today());
     if (error != null) {
       state = AsyncError(NutritionTargetFailure(error), StackTrace.current);

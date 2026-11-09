@@ -7,6 +7,48 @@ import '../../features/auth/providers/auth_providers.dart';
 mixin ConfirmedSave<T, W extends StatefulWidget> on State<W> {
   bool saving = false;
   String? saveError;
+  bool _closing = false;
+  bool _allowDiscard = false;
+
+  /// Forms opt in by comparing their current values with the values at opening.
+  bool get hasUnsavedChanges => false;
+
+  Future<void> requestClose() async {
+    if (saving || _closing || !mounted) return;
+    _closing = true;
+    FocusManager.instance.primaryFocus?.unfocus();
+    try {
+      if (hasUnsavedChanges) {
+        final discard = await showDialog<bool>(
+          context: context,
+          builder: (dialogContext) => AlertDialog(
+            title: const Text('Bỏ thay đổi chưa lưu?'),
+            content: const Text(
+              'Thông tin đang nhập chưa được lưu. Bạn có thể tiếp tục nhập hoặc bỏ thay đổi.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: const Text('Tiếp tục nhập'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(dialogContext, true),
+                child: const Text('Bỏ thay đổi'),
+              ),
+            ],
+          ),
+        );
+        if (!mounted || discard != true) return;
+      }
+      setState(() => _allowDiscard = true);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) Navigator.pop(context);
+      });
+      WidgetsBinding.instance.scheduleFrame();
+    } finally {
+      _closing = false;
+    }
+  }
 
   Future<void> saveDraft(T draft, Future<bool> Function(T)? persist) async {
     if (saving) return;
@@ -14,6 +56,7 @@ mixin ConfirmedSave<T, W extends StatefulWidget> on State<W> {
       Navigator.pop(context, draft);
       return;
     }
+    FocusManager.instance.primaryFocus?.unfocus();
     setState(() {
       saving = true;
       saveError = null;
@@ -60,7 +103,10 @@ mixin ConfirmedSave<T, W extends StatefulWidget> on State<W> {
         );
 
   Widget guardSave(Widget child) => PopScope(
-    canPop: !saving,
+    canPop: !saving && (_allowDiscard || !hasUnsavedChanges),
+    onPopInvokedWithResult: (didPop, result) {
+      if (!didPop && !saving && hasUnsavedChanges) requestClose();
+    },
     child: AbsorbPointer(absorbing: saving, child: child),
   );
 }

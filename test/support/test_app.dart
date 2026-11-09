@@ -7,6 +7,7 @@ import 'package:healthmate/features/reports/providers/report_providers.dart';
 import 'package:healthmate/features/reports/data/day_review_repository.dart';
 import 'fake_day_review_repository.dart';
 import 'package:healthmate/app.dart';
+import 'package:healthmate/features/premium/providers/play_billing_providers.dart';
 import 'package:healthmate/features/wellness/data/wellness_device.dart';
 import 'package:healthmate/features/wellness/providers/wellness_providers.dart';
 import 'package:healthmate/features/wellness/models/wellness_models.dart';
@@ -233,6 +234,7 @@ Future<ProviderContainer> pumpApp(
   final library = libraryRepository ?? FakeFoodLibraryRepository();
   final container = ProviderContainer(
     overrides: [
+      playBillingSupportedProvider.overrideWithValue(false),
       if (premiumQuota != null)
         premiumQuotaProvider.overrideWithValue(premiumQuota),
       stepHistoryProvider.overrideWith((ref) => Stream.value(stepDays)),

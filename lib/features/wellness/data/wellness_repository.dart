@@ -249,8 +249,90 @@ class WellnessRepository {
     }
   }
 
-  Future<void> deletePlan(String uid, String id) =>
-      _collection(uid, 'meal_plans').doc(id).delete();
+  /// Suggestions fill gaps only. Replaying an unacknowledged create never
+  /// replaces a meal that another device has since edited or recorded.
+  Future<bool> addSuggestedPlan(String uid, MealDraft draft) async {
+    if (draft.items.isEmpty || draft.items.length > 5) {
+      throw const FormatException('Chọn từ 1 đến 5 món cho một bữa dự kiến.');
+    }
+    final id = '${draft.dateKey}-${draft.type.name}';
+    final target = _collection(uid, 'meal_plans').doc(id);
+    final meal = _collection(uid, 'meal_logs').doc('plan-$id');
+    late final bool created;
+    try {
+      created = await db.runTransaction<bool>((transaction) async {
+        final planned = await transaction.get(target);
+        final recorded = await transaction.get(meal);
+        _requireOwner(uid);
+        if (planned.exists || recorded.exists) return false;
+        transaction.set(target, {
+          'dateKey': draft.dateKey,
+          'mealType': draft.type.name,
+          'items': draft.items.map((i) => i.toCompactData()).toList(),
+          'createdAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+          'schemaVersion': 2,
+        });
+        return true;
+      });
+    } on FirebaseException catch (error) {
+      if (error.code != 'permission-denied') rethrow;
+      // A concurrent create may be evaluated by Rules before transaction retry.
+      // Confirm the winner using owner-authorized server reads, never the cache.
+      _requireOwner(uid);
+      const server = GetOptions(source: Source.server);
+      final planned = await target.get(server);
+      final recorded = await meal.get(server);
+      _requireOwner(uid);
+      if (!planned.exists && !recorded.exists) rethrow;
+      return false;
+    }
+    _requireOwner(uid);
+    return created;
+  }
+
+  Future<void> deletePlan(
+    String uid,
+    String id, {
+    PlannedMeal? expected,
+  }) async {
+    if (expected != null &&
+        (expected.id != id ||
+            expected.createdAt == null ||
+            expected.updatedAt == null)) {
+      throw const FormatException('Kế hoạch chưa được xác nhận. Hãy tải lại.');
+    }
+    final target = _collection(uid, 'meal_plans').doc(id);
+    final deleted = await db.runTransaction<bool>((transaction) async {
+      final current = await transaction.get(target);
+      _requireOwner(uid);
+      if (!current.exists) {
+        return true; // Safe retry after losing the delete ACK.
+      }
+      final data = current.data()!;
+      if (expected != null &&
+          ((data['createdAt'] as Timestamp?)?.toDate() != expected.createdAt ||
+              (data['updatedAt'] as Timestamp?)?.toDate() !=
+                  expected.updatedAt ||
+              data['dateKey'] != localDateKey(expected.date) ||
+              data['mealType'] != expected.type.name ||
+              data['loggedMealId'] != expected.loggedMealId ||
+              !sameDocumentValue(
+                data['items'],
+                expected.items.map((i) => i.toCompactData()).toList(),
+              ))) {
+        return false;
+      }
+      transaction.delete(target);
+      return true;
+    });
+    _requireOwner(uid);
+    if (!deleted) {
+      throw const FormatException(
+        'Kế hoạch đã thay đổi. Hãy đóng hộp thoại và kiểm tra lại trước khi xóa.',
+      );
+    }
+  }
 
   /// Reconcile only this deterministic pair, including legacy split writes.
   /// A missing meal clears a dangling marker; an existing meal is never changed.

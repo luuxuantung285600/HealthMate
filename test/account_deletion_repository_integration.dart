@@ -334,6 +334,7 @@ void main() {
         SupportType.bug,
         'Fixture',
         'Fixture',
+        topic: SupportTopic.account,
       );
       final directory = FirebaseAdminRuntimeRepository(secondDb);
       await directory.syncDirectory(uid: uid, displayName: '', email: email);
@@ -388,6 +389,7 @@ void main() {
           SupportType.bug,
           'Fixture',
           'Fixture',
+          topic: SupportTopic.account,
         ),
         throwsA(isA<SupportFailure>()),
       );

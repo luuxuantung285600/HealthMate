@@ -27,9 +27,18 @@ import 'journal_date_selector.dart';
 import 'journal_nutrition_overview.dart';
 import '../../../core/widgets/details_disclosure.dart';
 import '../../reports/presentation/day_review_controls.dart';
+import '../../food_library/presentation/food_nutrition_text.dart';
+import 'delete_journal_entry_dialog.dart';
 
-class JournalScreen extends ConsumerWidget {
+class JournalScreen extends ConsumerStatefulWidget {
   const JournalScreen({super.key});
+
+  @override
+  ConsumerState<JournalScreen> createState() => _JournalScreenState();
+}
+
+class _JournalScreenState extends ConsumerState<JournalScreen> {
+  bool _deleteOpen = false;
 
   DateTime _timeOnSelectedDate(DateTime selectedDate, {DateTime? source}) {
     final time = source ?? DateTime.now();
@@ -81,38 +90,20 @@ class JournalScreen extends ConsumerWidget {
 
   Future<void> _delete(
     BuildContext context,
-    WidgetRef ref,
+    String? ownerUid,
     MealLog meal,
-  ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Xóa bữa ăn?'),
-        content: Text(
-          'Bữa ${meal.type.label.toLowerCase()} này sẽ bị xóa khỏi nhật ký.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Hủy'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Xóa'),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true || !context.mounted) return;
-    final deleted = await ref
-        .read(nutritionControllerProvider.notifier)
-        .deleteMeal(meal.id);
-    if (deleted && context.mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Đã xóa bữa ăn.')));
-    }
-  }
+  ) => _confirmDelete(
+    context,
+    ownerUid,
+    'Xóa bữa ăn?',
+    '${meal.type.label} · ${_entryTime(meal.consumedAt)}\n'
+        '${meal.items.map((item) => '${item.name} · ${snapshotQuantityLabel(item)}').join('\n')}',
+    () => ref.read(nutritionControllerProvider.notifier).deleteMeal(meal.id),
+    'Đã xóa bữa ăn.',
+  );
+
+  String _entryTime(DateTime time) =>
+      DateFormat('dd/MM/yyyy · HH:mm', 'vi').format(time.toLocal());
 
   Future<void> _openWaterForm(
     BuildContext context,
@@ -202,27 +193,39 @@ class JournalScreen extends ConsumerWidget {
 
   Future<void> _confirmDelete(
     BuildContext context,
+    String? ownerUid,
     String title,
+    String details,
     Future<bool> Function() action,
+    String successMessage,
   ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: const Text('Dữ liệu này sẽ bị xóa khỏi nhật ký.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Hủy'),
+    bool current() =>
+        mounted &&
+        ownerUid != null &&
+        ref.read(authSessionProvider).value?.uid == ownerUid &&
+        ref.read(authRepositoryProvider).currentUid == ownerUid;
+    if (_deleteOpen || !current()) return;
+    _deleteOpen = true;
+    try {
+      final deleted = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => AccountBoundDialog(
+          child: DeleteJournalEntryDialog(
+            title: title,
+            details: details,
+            onDelete: () => current() ? action() : Future.value(false),
           ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Xóa'),
-          ),
-        ],
-      ),
-    );
-    if (confirmed == true) await action();
+        ),
+      );
+      if (deleted == true && current() && context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(successMessage)));
+      }
+    } finally {
+      _deleteOpen = false;
+    }
   }
 
   Future<void> _pickJournalDate(
@@ -265,8 +268,11 @@ class JournalScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     if (!TickerMode.valuesOf(context).enabled) return const SizedBox.shrink();
+    // Capture the owner in menu callbacks; a menu opened by A can outlive the
+    // rebuild for B before its delete item is selected.
+    final ownerUid = ref.watch(authSessionProvider.select((s) => s.value?.uid));
     final selectedDate = ref.watch(journalDateProvider);
     final catalogState = ref.watch(foodCatalogProvider);
     final mealsState = ref.watch(mealLogsProvider(selectedDate));
@@ -356,6 +362,9 @@ class JournalScreen extends ConsumerWidget {
         ),
         const SizedBox(height: AppSpacing.md),
         MealLogSection(
+          // Recreate menu states when the owner changes. PopupMenuButton reads
+          // its current widget callback when an already-open menu completes.
+          key: ValueKey(('meals', ownerUid)),
           compact: true,
           onOpenDrafts: () => openJournalMealForm(
             context,
@@ -399,7 +408,7 @@ class JournalScreen extends ConsumerWidget {
             ),
             duplicateFrom: meal,
           ),
-          onDelete: (meal) => _delete(context, ref, meal),
+          onDelete: (meal) => _delete(context, ownerUid, meal),
           onRetry: () {
             ref.invalidate(foodCatalogProvider);
             ref.invalidate(mealLogsProvider(selectedDate));
@@ -419,6 +428,7 @@ class JournalScreen extends ConsumerWidget {
         ),
         const SizedBox(height: AppSpacing.md),
         WaterLogSection(
+          key: ValueKey(('water', ownerUid)),
           state: waterState,
           action: waterAction,
           onAdd: () => _openWaterForm(context, ref, selectedDate),
@@ -427,8 +437,11 @@ class JournalScreen extends ConsumerWidget {
           onEdit: (log) => _openWaterForm(context, ref, selectedDate, log: log),
           onDelete: (log) => _confirmDelete(
             context,
+            ownerUid,
             'Xóa lần uống nước?',
+            '${NumberFormat.decimalPattern('vi').format(log.amountMl)} ml · ${_entryTime(log.consumedAt)}',
             () => ref.read(waterControllerProvider.notifier).delete(log.id),
+            'Đã xóa lần uống nước.',
           ),
           onRetry: () => ref.invalidate(waterLogsProvider(dateKey)),
           onDismissError: ref.read(waterControllerProvider.notifier).clearError,
@@ -438,6 +451,7 @@ class JournalScreen extends ConsumerWidget {
           key: const ValueKey('journal-activity-details'),
           title: 'Vận động',
           builder: (_) => ActivityLogSection(
+            key: ValueKey(('activity', ownerUid)),
             state: activityState,
             action: activityAction,
             onAdd: () => _openActivityForm(context, ref, selectedDate),
@@ -445,9 +459,12 @@ class JournalScreen extends ConsumerWidget {
                 _openActivityForm(context, ref, selectedDate, log: log),
             onDelete: (log) => _confirmDelete(
               context,
+              ownerUid,
               'Xóa hoạt động?',
+              '${log.type.label} · ${log.durationMinutes} phút\n${_entryTime(log.performedAt)}',
               () =>
                   ref.read(activityControllerProvider.notifier).delete(log.id),
+              'Đã xóa hoạt động.',
             ),
             onRetry: () => ref.invalidate(activityLogsProvider(dateKey)),
             onDismissError: ref

@@ -356,10 +356,10 @@ void main() {
         ),
       );
       final save = find.byKey(const ValueKey('save-meal-plan'));
-      expect(tester.widget<TextButton>(save).onPressed, isNull);
+      expect(tester.widget<FilledButton>(save).onPressed, isNull);
       await tester.tap(find.byTooltip('Bỏ món').first);
       await tester.pumpAndSettle();
-      expect(tester.widget<TextButton>(save).onPressed, isNotNull);
+      expect(tester.widget<FilledButton>(save).onPressed, isNotNull);
       expect(tester.takeException(), isNull);
     },
   );

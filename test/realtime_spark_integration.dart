@@ -280,6 +280,7 @@ void main() {
         SupportType.bug,
         'Synthetic integration request',
         'Emulator fixture only',
+        topic: SupportTopic.nutrition,
       );
       expect(
         (await received.timeout(const Duration(seconds: 20))).docs.first.id,
@@ -292,6 +293,7 @@ void main() {
         SupportType.bug,
         'Synthetic integration request',
         'Emulator fixture only',
+        topic: SupportTopic.nutrition,
       );
       expect((await db.doc('support_usage/$uid').get()).data()!['count'], 1);
       final response = support

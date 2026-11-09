@@ -546,8 +546,11 @@ service cloud.firestore {
     // Support is explicitly submitted to admins; health journals remain private.
     function validSupportTicket(d) {
       return d.keys().hasAll(['uid','type','title','description','status','createdAt','updatedAt','messageCount','lastMessageId','updatedBy','deleting'])
-        && d.keys().hasOnly(['uid','type','title','description','status','createdAt','updatedAt','messageCount','lastMessageId','updatedBy','deleting'])
+        && d.keys().hasOnly(['uid','type','topic','title','description','status','createdAt','updatedAt','messageCount','lastMessageId','updatedBy','deleting'])
         && d.uid is string && d.type in ['bug','suggestion']
+        // Optional only for older app versions/tickets; new clients require a
+        // selection. Topic is immutable under the existing update allowlist.
+        && (!('topic' in d) || d.topic in ['account','premium','nutrition','activity','tracking','food_scanner','chatbot','other'])
         && d.title is string && d.title.size() > 0 && d.title.size() <= 120 && d.title.matches('(?s).*\\S.*')
         && d.description is string && d.description.size() > 0 && d.description.size() <= 2000 && d.description.matches('(?s).*\\S.*')
         && d.status in ['open','in_progress','resolved']
@@ -661,6 +664,20 @@ service cloud.firestore {
         && a.data.startedAt <= request.time && a.data.expiresAt > request.time;
       return scan ? (premium ? 20 : 3) : (premium ? 50 : 5);
     }
+    // Verified billing records can only be written using the server identity.
+    // Owners inspect their own entitlement, never tokens or the financial ledger.
+    match /premium_memberships/{uid} {
+      allow get: if owns(uid) || admin();
+      allow list, create, update, delete: if false;
+    }
+    match /premium_transactions/{id} {
+      allow get, list: if admin();
+      allow create, update, delete: if false;
+    }
+    match /billing_accounts/{id} { allow read, write: if false; }
+    match /billing_tokens/{id} { allow read, write: if false; }
+    match /billing_locks/{id} { allow read, write: if false; }
+    match /billing_requests/{id} { allow read, write: if false; }
     match /demo_premium_accounts/{uid} {
       allow read: if owns(uid) || cleanup(uid) || admin();
       allow create, update: if ownsWrite(uid)

@@ -5,7 +5,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 
 const demoIdentity = Object.freeze({applicationId:'com.example.healthmate',versionName:'1.0.0',versionCode:1});
-const defineKeys = new Set(['HEALTHMATE_ENABLE_ADMIN_CONTROLS','HEALTHMATE_ENABLE_PREMIUM_DEMO',
+const defineKeys = new Set(['HEALTHMATE_ENABLE_ADMIN_CONTROLS','HEALTHMATE_ENABLE_PREMIUM_DEMO','HEALTHMATE_ENABLE_PLAY_BILLING',
   'HEALTHMATE_ENABLE_CHATBOT','HEALTHMATE_ENABLE_FOOD_SCANNER','HEALTHMATE_CHAT_API_URL',
   'HEALTHMATE_GOOGLE_SERVER_CLIENT_ID']);
 function validateDefines(defines) {
@@ -15,6 +15,7 @@ function validateDefines(defines) {
     if(!defineKeys.has(key)) {errors.push('unknown-or-development-define');continue;}
     if(key.startsWith('HEALTHMATE_ENABLE_') && typeof value!=='boolean') errors.push('boolean-define-required');
     if(key==='HEALTHMATE_ENABLE_PREMIUM_DEMO' && value!==false) errors.push('premium-demo-forbidden');
+    if(key==='HEALTHMATE_ENABLE_PLAY_BILLING' && value!==false) errors.push('play-billing-infrastructure-not-verified');
     if(key.endsWith('_URL') || key==='HEALTHMATE_GOOGLE_SERVER_CLIENT_ID') {
       if(typeof value!=='string') {errors.push('string-define-required');continue;}
       if(key.endsWith('_URL') && value) {

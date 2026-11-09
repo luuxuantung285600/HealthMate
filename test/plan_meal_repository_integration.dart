@@ -151,6 +151,138 @@ void main() {
   });
 
   test(
+    'suggestion replay preserves the committed snapshot and timestamps',
+    () async {
+      expect(await plans.addSuggestedPlan(uid, draft()), true);
+      final original = (await planRef().get()).data();
+      expect(await plans.addSuggestedPlan(uid, draft(grams: 200)), false);
+      expect((await planRef().get()).data(), original);
+      expect((await mealRef().get()).exists, false);
+    },
+  );
+
+  test('suggestion cannot overwrite a plan edited after preview', () async {
+    await secondPlans.savePlan(uid, draft(grams: 250));
+    final original = (await planRef().get()).data();
+    expect(await plans.addSuggestedPlan(uid, draft()), false);
+    expect((await planRef().get()).data(), original);
+  });
+
+  test('suggestion preserves a journal whose plan was removed', () async {
+    await plans.savePlan(uid, draft());
+    await record(draft());
+    await plans.deletePlan(uid, getId());
+    final original = (await mealRef().get()).data();
+    expect(await plans.addSuggestedPlan(uid, draft(grams: 200)), false);
+    expect((await planRef().get()).exists, false);
+    expect((await mealRef().get()).data(), original);
+  });
+
+  test(
+    'two devices suggest the same slot and retain exactly one winner',
+    () async {
+      final outcomes = await Future.wait([
+        plans.addSuggestedPlan(uid, draft()),
+        secondPlans.addSuggestedPlan(uid, draft(grams: 200)),
+      ]);
+      expect(outcomes.where((created) => created), hasLength(1));
+      final saved = await plans.loadPlan(uid, getId());
+      expect(saved!.items.single.grams, outcomes.first ? 100 : 200);
+      expect(
+        (await db.collection('users/$uid/meal_plans').get()).docs,
+        hasLength(1),
+      );
+    },
+  );
+
+  test(
+    '28 suggestion transactions fit existing Rules and replay without writes',
+    () async {
+      final drafts = [
+        for (var offset = 0; offset < 7; offset++)
+          for (final type in MealType.values)
+            MealDraft(
+              type: type,
+              consumedAt: DateTime(day.year, day.month, day.day + offset, 8),
+              source: MealSource.manual,
+              items: draft().items,
+            ),
+      ];
+      for (final value in drafts) {
+        expect(await plans.addSuggestedPlan(uid, value), true);
+      }
+      final before = (await db.collection('users/$uid/meal_plans').get()).docs;
+      for (final value in drafts) {
+        expect(await plans.addSuggestedPlan(uid, value), false);
+      }
+      final after = (await db.collection('users/$uid/meal_plans').get()).docs;
+      expect(
+        after.map((d) => d.data()).toList(),
+        before.map((d) => d.data()).toList(),
+      );
+      expect(after, hasLength(28));
+    },
+  );
+
+  test(
+    'stale delete refuses a changed plan and a newly recorded link',
+    () async {
+      await plans.savePlan(uid, draft());
+      final original = (await plans.loadPlan(uid, getId()))!;
+      await secondPlans.savePlan(uid, draft(grams: 250));
+      await expectLater(
+        plans.deletePlan(uid, getId(), expected: original),
+        throwsFormatException,
+      );
+      final changed = (await plans.loadPlan(uid, getId()))!;
+      await secondPlans.recordPlanMeal(uid, changed, draft(grams: 250));
+      await expectLater(
+        plans.deletePlan(uid, getId(), expected: changed),
+        throwsFormatException,
+      );
+      expect((await planRef().get()).exists, true);
+      expect((await mealRef().get()).data()?['totalKcal'], 300);
+    },
+  );
+
+  test('confirmed delete keeps journal and supports lost-ACK replay', () async {
+    await plans.savePlan(uid, draft());
+    await record(draft());
+    final confirmation = (await plans.loadPlan(uid, getId()))!;
+    final original = (await mealRef().get()).data();
+    await plans.deletePlan(uid, getId(), expected: confirmation);
+    await plans.deletePlan(uid, getId(), expected: confirmation);
+    expect((await planRef().get()).exists, false);
+    expect((await mealRef().get()).data(), original);
+  });
+
+  test('stale delete cannot remove a newly recreated plan', () async {
+    await plans.savePlan(uid, draft());
+    final original = (await plans.loadPlan(uid, getId()))!;
+    await secondPlans.deletePlan(uid, getId());
+    await secondPlans.savePlan(uid, draft());
+    await expectLater(
+      plans.deletePlan(uid, getId(), expected: original),
+      throwsFormatException,
+    );
+    expect((await planRef().get()).exists, true);
+  });
+
+  test('suggestion and guarded delete reject another UID', () async {
+    await expectLater(
+      plans.addSuggestedPlan('another-uid', draft()),
+      throwsA(isA<FirebaseException>()),
+    );
+    await plans.savePlan(uid, draft());
+    final confirmation = (await plans.loadPlan(uid, getId()))!;
+    await expectLater(
+      plans.deletePlan('another-uid', getId(), expected: confirmation),
+      throwsA(isA<FirebaseException>()),
+    );
+    expect((await planRef().get()).exists, true);
+  });
+
+  test(
     'deleting a planned journal meal clears the link and permits exactly one re-record',
     () async {
       await plans.savePlan(uid, draft());

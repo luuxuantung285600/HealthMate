@@ -1,5 +1,13 @@
 export const supportStatuses = {open:'Đã tiếp nhận',in_progress:'Đang xử lý',resolved:'Đã giải quyết'};
 export const supportTypes = {bug:'Báo lỗi',suggestion:'Góp ý'};
+export const supportTopics = Object.freeze({account:'Tài khoản & đăng nhập',premium:'Premium & thanh toán',nutrition:'Dinh dưỡng & món ăn',activity:'Bài tập & vận động',tracking:'Hồ sơ & sức khỏe',food_scanner:'AI quét món ăn',chatbot:'AI Chatbot',other:'Vấn đề khác'});
+export function supportTopicCode(value) {
+  return typeof value==='string'&&Object.hasOwn(supportTopics,value)?value:'unclassified';
+}
+export function supportTopicLabel(value) {
+  const code=supportTopicCode(value);
+  return code==='unclassified'?'Chưa phân loại':supportTopics[code];
+}
 export function supportText(value, max=2000) {
   const text=String(value??'').trim();
   if(!text || [...text].length>max)throw Error(`Nội dung cần từ 1 đến ${max} ký tự.`);
@@ -9,11 +17,11 @@ export function supportId(id) {
   if(typeof id!=='string'||!/^[a-zA-Z0-9]{20}$/.test(id))throw Error('Mã yêu cầu không hợp lệ.');
   return id;
 }
-export function filterSupport(rows,{search='',type='',status=''}={}) {
+export function filterSupport(rows,{search='',type='',status='',topic=''}={}) {
   const normalize=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase();
   const words=normalize(search).trim().split(/\s+/).filter(Boolean);
-  return rows.filter(r=>!r.deleting && (!type||r.type===type)&&(!status||r.status===status)
-    && words.every(word=>normalize(`${r.id} ${r.uid} ${r.title} ${r.description}`).includes(word)))
+  return rows.filter(r=>!r.deleting && (!type||r.type===type)&&(!status||r.status===status)&&(!topic||supportTopicCode(r.topic)===topic)
+    && words.every(word=>normalize(`${r.id} ${r.uid} ${r.title} ${r.description} ${supportTopicLabel(r.topic)}`).includes(word)))
     .sort((a,b)=>{
       const left=a.updatedAt,right=b.updatedAt;
       const byTime=typeof left?.seconds==='number'&&typeof right?.seconds==='number'

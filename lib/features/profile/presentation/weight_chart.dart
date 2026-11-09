@@ -71,6 +71,10 @@ class WeightChart extends StatelessWidget {
                       interval: math.max(1, ((maxY - minY) / 3).ceilToDouble()),
                       getTitlesWidget: (value, meta) => SideTitleWidget(
                         meta: meta,
+                        fitInside: SideTitleFitInsideData.fromTitleMeta(
+                          meta,
+                          distanceFromEdge: 2,
+                        ),
                         child: Text(
                           number.format(value),
                           style: theme.textTheme.labelSmall,

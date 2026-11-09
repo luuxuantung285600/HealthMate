@@ -6,8 +6,9 @@ import '../../../core/widgets/confirmed_save.dart';
 /// Returning null means cancel; empty string explicitly starts a new draft.
 Future<String?> chooseMealDraft(
   BuildContext context,
-  List<SavedMealDraft> drafts,
-) => showDialog<String>(
+  List<SavedMealDraft> drafts, {
+  bool editingMeal = false,
+}) => showDialog<String>(
   context: context,
   builder: (dialogContext) => AccountBoundDialog(
     child: SimpleDialog(
@@ -26,14 +27,15 @@ Future<String?> chooseMealDraft(
             onPressed: () => Navigator.pop(dialogContext, saved.operationId),
             child: Text(
               '${saved.draft.dateKey} · ${saved.draft.type.label}\n'
-              '${saved.draft.items.length} món · ${DateFormat.Hm('vi').format(saved.updatedAt.toLocal())}'
+              '${saved.draft.items.map((i) => i.name).join(', ')}\n'
+              '${saved.draft.items.length} món · Giữ lúc ${DateFormat('dd/MM HH:mm', 'vi').format(saved.updatedAt.toLocal())}'
               '${saved.mealId != null ? ' · Sửa bữa' : ''}',
             ),
           ),
         SimpleDialogOption(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           onPressed: () => Navigator.pop(dialogContext, ''),
-          child: const Text('Tạo bản mới'),
+          child: Text(editingMeal ? 'Sửa từ bữa đã lưu' : 'Tạo bản mới'),
         ),
         SimpleDialogOption(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),

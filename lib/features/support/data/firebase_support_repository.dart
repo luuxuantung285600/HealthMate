@@ -17,6 +17,7 @@ class FirebaseSupportRepository implements SupportRepository {
     id: id,
     uid: d['uid'] as String,
     type: SupportType.values.byName(d['type'] as String),
+    topic: SupportTopic.fromCode(d['topic']),
     title: d['title'] as String,
     description: d['description'] as String,
     status: SupportStatus.values.firstWhere((s) => s.code == d['status']),
@@ -115,8 +116,9 @@ class FirebaseSupportRepository implements SupportRepository {
     String id,
     SupportType type,
     String title,
-    String description,
-  ) async {
+    String description, {
+    required SupportTopic topic,
+  }) async {
     final cleanTitle = supportText(title, 120, 'Tiêu đề');
     final cleanBody = supportText(description, 2000, 'Nội dung');
     final ticket = _tickets.doc(id);
@@ -130,7 +132,8 @@ class FirebaseSupportRepository implements SupportRepository {
           if (old.data()?['uid'] != uid ||
               old.data()?['title'] != cleanTitle ||
               old.data()?['description'] != cleanBody ||
-              old.data()?['type'] != type.name) {
+              old.data()?['type'] != type.name ||
+              old.data()?['topic'] != topic.code) {
             return 'Mã yêu cầu đã được dùng. Đóng form rồi gửi yêu cầu mới.';
           }
           return null;
@@ -176,6 +179,7 @@ class FirebaseSupportRepository implements SupportRepository {
         t.set(ticket, {
           'uid': uid,
           'type': type.name,
+          'topic': topic.code,
           'title': cleanTitle,
           'description': cleanBody,
           'status': 'open',
@@ -198,7 +202,8 @@ class FirebaseSupportRepository implements SupportRepository {
           data?['uid'] != uid ||
           data?['title'] != cleanTitle ||
           data?['description'] != cleanBody ||
-          data?['type'] != type.name) {
+          data?['type'] != type.name ||
+          data?['topic'] != topic.code) {
         throw const SupportFailure('Yêu cầu không còn khả dụng. Hãy tải lại.');
       }
     } on FirebaseException catch (error) {

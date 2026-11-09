@@ -1306,3 +1306,137 @@ Script thống kê thủ công cũ không được thay thế aggregate đã chu
 ## Realtime Spark 06/11/2026
 
 Không thêm collection ghi từ client. App mặc định nghe trực tiếp đúng query/khoảng đang xem qua privateDataChangesProvider; user_sync vẫn server-only và chưa dùng ở build Spark. Web nghe các tập nhỏ với giới hạn 5.000 để tính vận hành; tổng Auth dùng manual_snapshot có nhãn, chưa dùng directory làm tổng. Chi tiết: [realtime-spark-2026-11-06.md](realtime-spark-2026-11-06.md).
+
+## 07/11/2026 — Chủ đề yêu cầu hỗ trợ
+
+Bổ sung `support_tickets/{ticketId}.topic`, mã chuỗi ổn định tách biệt với
+`type:bug|suggestion`. App mới bắt buộc người dùng chọn chủ đề trước khi tạo
+yêu cầu; không chọn sẵn hoặc suy đoán từ nội dung.
+
+| Mã | Nhãn app/admin |
+| --- | --- |
+| `account` | Tài khoản & đăng nhập |
+| `premium` | Premium & thanh toán |
+| `nutrition` | Dinh dưỡng & món ăn |
+| `activity` | Bài tập & vận động |
+| `tracking` | Hồ sơ & sức khỏe |
+| `food_scanner` | AI quét món ăn |
+| `chatbot` | AI Chatbot |
+| `other` | Vấn đề khác |
+
+Rules chỉ chấp nhận các mã trên nếu có field. `topic` không được sửa/xóa sau
+khi tạo, kể cả bởi admin; reply/status update giữ nguyên. Repository kiểm tra
+cùng topic khi thử lại cùng ID và khi xác nhận ghi từ server. Không đổi quota,
+vai trò, đường dẫn hay quyền riêng tư của hội thoại.
+
+Tương thích dữ liệu/app cũ: field không nằm trong `hasAll`, để bản app cũ và
+yêu cầu đã tồn tại tiếp tục hoạt động; thiếu field hiển thị “Chưa phân loại”,
+khác với chủ đề `other` do người dùng chủ động chọn. App/admin cũng xử lý mã
+không nhận diện như chưa phân loại khi đọc, còn ghi mã không hợp lệ bị Rules
+từ chối. Không migrate hoặc tự gán chủ đề vào yêu cầu cũ.
+
+Admin hiển thị topic ở danh sách/chi tiết và lọc/tìm theo nhãn; bộ lọc chỉ áp
+dụng trang đang xem, giữ cách phân trang/giới hạn query hiện có. Không thêm
+query, index hay collection. Không đưa nhật ký sức khỏe vào yêu cầu.
+
+Rollout: triển khai Rules có `topic` trước khi phân phối app mới; web admin
+mới đọc được cả yêu cầu cũ/mới. Rules cũ từ chối field `topic`, nên APK mới
+chưa thể gửi chủ đề lên production nếu chưa cập nhật Rules. Không xóa topic
+để âm thầm gửi bằng schema cũ. Lượt này kiểm thử local, chưa deploy production.
+
+## 07/11/2026 — Premium Google Play đã xác minh (chưa deploy)
+
+Firestore vẫn là database duy nhất. Mọi collection dưới đây chỉ máy chủ ghi;
+không dùng field client hoặc giao dịch demo để cấp quyền thật:
+
+| Đường dẫn | Dữ liệu / quyền client |
+| --- | --- |
+| `premium_memberships/{uid}` | provider google_play, verified, environment production/test, productId/basePlanId, status, active, autoRenewing, startedAt/expiresAt/updatedAt Timestamp, tokenHash; chủ tài khoản đang được phép hoặc admin chỉ get, không list/ghi |
+| `premium_transactions/{sha256(orderId)}` | uid, orderId/productId/provider, verified, environment, status, currency, totalNanos/refundedNanos/netNanos dạng chuỗi số nguyên, reconciliationPending, occurredAt/providerUpdatedAt/updatedAt Timestamp; chỉ admin đọc/list |
+| `billing_tokens/{sha256(token)}` | UID binding bất biến, token gốc để đối soát với Google, environment, startedAt/checkedAt, retryOrderIds; tất cả client bị chặn |
+| `billing_accounts/{accountId}` | accountId=SHA256 domain-separated UID, ánh xạ UID để nhận giao dịch trước lần verify của app; tất cả client bị chặn |
+| `billing_locks/{uid}` | lease và until Timestamp tuần tự hóa đối soát theo UID; mọi client bị chặn |
+| `billing_requests/{uid}` | minute/count, giới hạn callable 10 lần/phút/UID; mọi client bị chặn |
+
+Nanos là 1/1.000.000.000 đơn vị tiền tệ, lưu chuỗi để không mất chính xác JS;
+tổng hợp dùng BigInt, không trộn tiền tệ. Giá chỉ từ Google Orders. Chưa lấy
+được order thì `awaiting_order` và amount null; lỗi đối soát lại giữ bằng chứng
+cũ nhưng đánh dấu pending và loại khỏi tổng cho tới khi xác nhận lại.
+Hoàn tiền điều chỉnh đơn gốc theo kỳ `occurredAt`, không phải báo cáo dòng
+tiền hoàn theo ngày xử lý. Không gọi số sau hoàn là doanh thu ngân hàng ròng.
+
+Index mới: premium_transactions(environment ASC, occurredAt DESC, __name__ DESC)
+để tách test/production và phân trang cùng listener. Báo cáo hữu hạn 5.000 đơn.
+Không dùng count từ trang đầu như tổng toàn kỳ. Khi listeners lỗi, bỏ tổng và
+khóa xuất cũ, không hiển thị số 0 thay lỗi.
+
+Membership chỉ phản ánh trạng thái đã xác minh; client không quyết định quyền
+AI. Gateway đọc membership qua identity máy chủ, kiểm tra active/status và
+thời hạn bằng đồng hồ máy chủ, tách test qua cấu hình. Account suspension và
+deletion được kiểm tra trong transaction cấp quyền và mỗi yêu cầu AI.
+
+Xóa dữ liệu sức khỏe không tự hủy thuê bao Google Play. Biên nhận tài chính,
+binding/token phục vụ đối soát còn ở collection riêng, không đưa nhật ký sức
+khỏe vào ledger. Chưa có TTL tài chính tự động; phải chốt chính sách lưu giữ
+phù hợp trước mở bán. Chủ tài khoản khác/admin không thể lấy raw token qua SDK.
+
+RTDN luôn đọc lại Publisher, không tin giá/quyền từ message. Ledger cùng order
+ID được cập nhật thay vì thêm dòng trùng. Lease chặn API phản hồi cũ ghi đè
+song song; token gói cũ không ghi đè membership mới hơn. Vòng bù hữu hạn và
+retryOrderIds sửa các Orders lỗi đã biết. Chưa backfill mọi kỳ gia hạn bị bỏ
+lỡ; cần đối chiếu Play Console trước chốt sổ. Chi tiết cấu hình/giới hạn:
+[google-play-billing-2026-11-07.md](google-play-billing-2026-11-07.md).
+
+### 08/11/2026 — Củng cố contract billing, không thêm collection
+
+Ưu tiên membership production trước test bất kể thời điểm nhận thông báo;
+sandbox không thể thay bản production đang active hoặc đã hết hạn. Production
+không pending thay bản test dù timestamp cũ hơn; cùng môi trường vẫn kiểm token
+và thời gian bắt đầu để tránh gói cũ ghi đè gói mới. Ledger vẫn ghi từng order
+và môi trường độc lập. Callable `active` phản ánh grant của token đang đối soát.
+
+Callable verify trả `completionAllowed` boolean bắt buộc; chỉ true khi Google
+đã acknowledge hoặc server acknowledge thành công. Pending/canceled-pending
+luôn false; `pending` chỉ true khi thực sự đang chờ. Đây là response contract,
+không phải field Firestore hoặc quyền ghi từ client. App chỉ complete khi đã
+verified và completionAllowed, session còn đúng và chưa timeout.
+
+`reconciliationPending` phải là boolean nếu có. Admin loại các đơn đang chờ
+khỏi tổng/count/buyers, ẩn số tiền cũ cả dashboard/chi tiết/Excel; validation
+từ chối orderId trùng trên document khác và refund mâu thuẫn. Lỗi nguồn hoặc
+validation làm bỏ tổng/nút xuất cũ, không biến lỗi thành số 0.
+
+RTDN chỉ chọn token/order để đọc lại Publisher. Thông báo JSON/package hoặc
+payload lỗi bị từ chối có log đã lọc; lỗi tạm thời được retry. Refund review
+được ghi log cần xử lý trong Console, không ghi ledger như tiền đã hoàn và
+không tự quyết định refund. Không thay Rules/index/schema trong đợt này.
+Xem [báo cáo độ tin cậy](billing-reliability-2026-11-08.md).
+
+## 09/11/2026 — Xóa kế hoạch và lưu gợi ý nhiều bữa
+
+Giữ schema 2 và ID `meal_plans/{dateKey}-{mealType}`. Không thêm field,
+collection, index hoặc Rules; không sửa snapshot dinh dưỡng lịch sử.
+
+- `addSuggestedPlan`: mỗi bữa dùng một transaction đọc plan và journal
+  `meal_logs/plan-{id}`. Chỉ tạo khi cả hai đều chưa tồn tại; nếu đã có
+  thì trả kết quả giữ nguyên, không đổi items/timestamp/liên kết. Retry
+  sau mất ACK không ghi đè bữa đã lưu hoặc chỉnh từ thiết bị khác.
+- Không dùng transaction chung cho 28 bữa vì giới hạn truy cập document
+  trong Rules. Tiến độ trên UI tăng sau ACK từng bữa. Lỗi giữ nguyên bản
+  xem trước và vị trí chưa xác nhận; “Lưu tiếp” xử lý từ vị trí đó. Khi
+  đóng sau lỗi, các bữa đã lưu vẫn tồn tại. Bộ đếm “Giữ nguyên” cũng gồm
+  bữa đã commit nhưng mất ACK ở lần thử trước.
+- Xóa từ app truyền snapshot `expected`: transaction so `createdAt`,
+  `updatedAt`, ngày, loại bữa, items và `loggedMealId`. Có thay đổi thì
+  không xóa; trả kết quả xung đột ra ngoài transaction để giữ thông báo
+  nghiệp vụ trên cả Flutter web và Android. Không tồn tại thì xác nhận
+  thành công để retry an toàn; bản vừa tạo lại bị chặn bởi timestamp mới.
+- Chỉ xóa document plan. Journal liên quan và số liệu thực tế được giữ.
+  API xóa không truyền `expected` vẫn dành cho luồng tương thích đang có;
+  thao tác xóa trên giao diện luôn gửi snapshot đã hiển thị.
+- Form ràng buộc tài khoản; callback kiểm tra cả UID trực tiếp của Auth,
+  UID stream và thế hệ phiên. Đổi phiên dừng các bữa chưa gửi. Ghi đang
+  ở máy chủ có thể hoàn tất cho UID cũ, không chuyển sang UID mới.
+
+Chi tiết và kiểm thử tại
+[meal-plan-operations-2026-11-09.md](meal-plan-operations-2026-11-09.md).

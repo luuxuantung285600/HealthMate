@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:healthmate/app.dart';
+import 'package:healthmate/features/premium/providers/play_billing_providers.dart';
 import 'package:healthmate/core/utils/local_date_key.dart';
 import 'package:healthmate/features/activity/data/firebase_activity_repository.dart';
 import 'package:healthmate/features/activity/providers/activity_providers.dart';
@@ -38,6 +39,7 @@ import 'package:healthmate/features/nutrition_targets/providers/nutrition_target
 import 'package:healthmate/features/profile/data/firebase_health_profile_repository.dart';
 import 'package:healthmate/features/profile/models/health_goal.dart';
 import 'package:healthmate/features/profile/models/onboarding_draft.dart';
+import 'package:healthmate/core/data/user_data_revision.dart';
 import 'package:healthmate/features/profile/models/personalization_answers.dart';
 import 'package:healthmate/features/profile/providers/profile_providers.dart';
 import 'package:healthmate/features/reports/data/day_review_repository.dart';
@@ -134,6 +136,8 @@ void main() {
       );
       final container = ProviderContainer(
         overrides: [
+          playBillingSupportedProvider.overrideWithValue(false),
+          realtimeFirestoreProvider.overrideWithValue(db),
           authRepositoryProvider.overrideWithValue(
             FirebaseAuthRepository(auth),
           ),
@@ -222,6 +226,20 @@ void main() {
         }
       }
 
+      Future<void> saveReviewedMeal() async {
+        await ui.tap(tester, ui.keyed('save-meal'));
+        await tester.pump(const Duration(milliseconds: 500));
+        if (find.text('Kiểm tra thực phẩm cần tránh').evaluate().isNotEmpty) {
+          expect(
+            find.textContaining('Ghi nhật ký không có nghĩa món này an toàn'),
+            findsOneWidget,
+          );
+          await binding.takeScreenshot('c6-nutrition-avoidance-review');
+          await ui.tap(tester, find.text('Vẫn ghi nhật ký'));
+        }
+        await ui.waitFor(tester, find.byType(MealFormDialog), absent: true);
+      }
+
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
@@ -232,7 +250,7 @@ void main() {
       final watch = Stopwatch()..start();
       final catalog = await loadBundledVietnameseFoods();
       watch.stop();
-      expect(catalog, hasLength(7606));
+      expect(catalog, hasLength(11169));
       final apple = catalog.firstWhere(
         (f) => f.originalName == 'Apples, raw, without skin',
       );
@@ -268,24 +286,25 @@ void main() {
 
       await ui.tap(tester, ui.keyed('nav-journal'));
       await ui.tap(tester, ui.keyed('add-meal-lunch'));
+      await ui.tap(tester, ui.keyed('meal-more-tools'));
+      await ui.tap(tester, ui.keyed('meal-diet-options'));
       await ui.waitFor(tester, ui.keyed('food-diet-filter'));
       await ui.tap(tester, ui.keyed('food-diet-filter'));
       await ui.tap(tester, find.text('Tất cả chế độ').last);
       await enter('food-search', 'Sữa đặc');
       await tester.pump(const Duration(seconds: 1));
-      expect(ui.keyed('catalog-food-vn2007-10008'), findsNothing);
+      expect(find.byTooltip('Thêm Sữa đặc có đường'), findsNothing);
       expect(find.textContaining('Đang tránh:'), findsWidgets);
       await checkpoint('03-avoidance-all-diets');
       await enter('food-search', 'Apples, raw, without skin');
-      await ui.waitFor(tester, ui.keyed('catalog-food-${apple.id}'));
+      await ui.waitFor(tester, find.byTooltip('Thêm ${apple.name}'));
       await ui.tap(tester, find.byTooltip('Thêm ${apple.name}'));
       await ui.tap(tester, find.text('Tên gốc và nguồn USDA'));
       await ui.waitFor(tester, find.text('Apples, raw, without skin'));
       await enter('meal-grams', '150');
       await checkpoint('04-vietnamese-original-grams');
       await ui.tap(tester, find.widgetWithText(FilledButton, 'Xác nhận'));
-      await ui.tap(tester, ui.keyed('save-meal'));
-      await ui.waitFor(tester, find.byType(MealFormDialog), absent: true);
+      await saveReviewedMeal();
       var logs = await meals();
       expect(logs, hasLength(1));
       expect(logs.single.items.single.grams, 150);
@@ -298,8 +317,7 @@ void main() {
       await ui.tap(tester, find.byTooltip('Sửa khẩu phần'));
       await enter('meal-grams', '200');
       await ui.tap(tester, find.widgetWithText(FilledButton, 'Xác nhận'));
-      await ui.tap(tester, ui.keyed('save-meal'));
-      await ui.waitFor(tester, find.byType(MealFormDialog), absent: true);
+      await saveReviewedMeal();
       logs = await meals();
       expect(logs, hasLength(1));
       expect(logs.single.id, mealId);
@@ -330,6 +348,9 @@ void main() {
       expect((await db.collection('users/$alice/meal_plans').get()).size, 0);
       await ui.tap(tester, ui.keyed('suggest-week-plan'));
       await ui.tap(tester, find.text('Thêm bữa còn trống'));
+      await ui.waitFor(tester, find.text('Xong'));
+      expect(find.textContaining('Đã xử lý 28/28 bữa'), findsOneWidget);
+      await ui.tap(tester, find.text('Xong'));
       await ui.waitFor(
         tester,
         find.text('Xem trước gợi ý 7 ngày'),
@@ -374,7 +395,7 @@ void main() {
       // Return through the app navigation; deleting a diary must not delete plans.
       await ui.tap(tester, find.byTooltip('Quay lại').first);
       await ui.tap(tester, ui.keyed('nav-journal'));
-      await ui.waitFor(tester, find.byType(PopupMenuButton<String>).first);
+      await ui.waitFor(tester, find.byType(PopupMenuButton<String>));
       await ui.tap(tester, find.byType(PopupMenuButton<String>).first);
       await ui.tap(tester, find.text('Xóa').last);
       await ui.tap(tester, find.widgetWithText(FilledButton, 'Xóa'));

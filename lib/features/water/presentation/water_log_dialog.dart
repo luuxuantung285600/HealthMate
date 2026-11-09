@@ -25,6 +25,12 @@ class _WaterLogDialogState extends State<WaterLogDialog>
   late final TextEditingController _amount;
   late DateTime _consumedAt;
   String? _timeError;
+  late final DateTime _initialAt;
+  late final String _initialAmount;
+
+  @override
+  bool get hasUnsavedChanges =>
+      _amount.text != _initialAmount || _consumedAt != _initialAt;
 
   @override
   void initState() {
@@ -42,7 +48,12 @@ class _WaterLogDialogState extends State<WaterLogDialog>
           now.hour,
           now.minute,
         );
+    _initialAt = _consumedAt;
+    _initialAmount = _amount.text;
+    _amount.addListener(_changed);
   }
+
+  void _changed() => setState(() {});
 
   @override
   void dispose() {
@@ -132,10 +143,7 @@ class _WaterLogDialogState extends State<WaterLogDialog>
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Hủy'),
-          ),
+          TextButton(onPressed: requestClose, child: const Text('Hủy')),
           FilledButton(
             key: const ValueKey('save-water'),
             onPressed: saving ? null : _submit,

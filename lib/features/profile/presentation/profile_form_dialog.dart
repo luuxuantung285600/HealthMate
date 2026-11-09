@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../../core/widgets/confirmed_save.dart';
 
 import '../models/health_goal.dart';
 import '../models/profile_validation.dart';
 import '../models/user_profile.dart';
+import 'profile_number_input.dart';
 
 class ProfileFormDialog extends StatefulWidget {
   const ProfileFormDialog({required this.profile, this.onSave, super.key});
@@ -24,20 +26,37 @@ class _ProfileFormDialogState extends State<ProfileFormDialog>
   late DateTime? _birthDate;
   late HealthGoal? _goal;
   String? _birthDateError;
+  late final String _initialName, _initialHeight, _initialTarget;
+
+  @override
+  bool get hasUnsavedChanges =>
+      _nameController.text != _initialName ||
+      _heightController.text != _initialHeight ||
+      _targetWeightController.text != _initialTarget ||
+      _birthDate != widget.profile.birthDate ||
+      _goal != widget.profile.healthGoal;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.profile.displayName);
     _heightController = TextEditingController(
-      text: widget.profile.heightCm?.toStringAsFixed(1) ?? '',
+      text: profileNumberInput(widget.profile.heightCm),
     );
     _targetWeightController = TextEditingController(
-      text: widget.profile.targetWeightKg?.toStringAsFixed(1) ?? '',
+      text: profileNumberInput(widget.profile.targetWeightKg),
     );
     _birthDate = widget.profile.birthDate;
     _goal = widget.profile.healthGoal;
+    _initialName = _nameController.text;
+    _initialHeight = _heightController.text;
+    _initialTarget = _targetWeightController.text;
+    _nameController.addListener(_changed);
+    _heightController.addListener(_changed);
+    _targetWeightController.addListener(_changed);
   }
+
+  void _changed() => setState(() {});
 
   @override
   void dispose() {
@@ -98,7 +117,6 @@ class _ProfileFormDialogState extends State<ProfileFormDialog>
 
   @override
   Widget build(BuildContext context) {
-    final locale = MaterialLocalizations.of(context);
     return guardSave(
       AlertDialog(
         title: const Text('Chỉnh sửa hồ sơ'),
@@ -112,6 +130,10 @@ class _ProfileFormDialogState extends State<ProfileFormDialog>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     saveFeedback(),
+                    const Text(
+                      'Cân nặng hiện tại được cập nhật riêng trong Lịch sử cân nặng. Thay đổi mục tiêu ở đây không sửa các lần cân đã lưu.',
+                    ),
+                    const SizedBox(height: 16),
                     TextFormField(
                       key: const ValueKey('profile-name'),
                       controller: _nameController,
@@ -119,6 +141,7 @@ class _ProfileFormDialogState extends State<ProfileFormDialog>
                       textInputAction: TextInputAction.next,
                       textCapitalization: TextCapitalization.words,
                       autofillHints: const [AutofillHints.name],
+                      maxLength: 50,
                       decoration: const InputDecoration(
                         labelText: 'Tên hiển thị',
                         prefixIcon: Icon(Icons.badge_outlined),
@@ -135,11 +158,19 @@ class _ProfileFormDialogState extends State<ProfileFormDialog>
                       textInputAction: TextInputAction.done,
                       decoration: const InputDecoration(
                         labelText: 'Chiều cao (cm)',
+                        helperText: 'Từ 80 đến 250 cm; có thể nhập dấu phẩy.',
+                        helperMaxLines: 3,
                         prefixIcon: Icon(Icons.height_rounded),
                       ),
                       validator: ProfileValidation.requiredHeight,
                     ),
                     const SizedBox(height: 16),
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Ngày sinh · HealthMate dành cho người từ 18 tuổi',
+                      ),
+                    ),
                     OutlinedButton.icon(
                       key: const ValueKey('profile-birth-date'),
                       onPressed: _pickBirthDate,
@@ -147,7 +178,7 @@ class _ProfileFormDialogState extends State<ProfileFormDialog>
                       label: Text(
                         _birthDate == null
                             ? 'Chọn ngày sinh'
-                            : locale.formatMediumDate(_birthDate!),
+                            : DateFormat('dd/MM/yyyy').format(_birthDate!),
                       ),
                     ),
                     if (_birthDateError != null) ...[
@@ -207,10 +238,7 @@ class _ProfileFormDialogState extends State<ProfileFormDialog>
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Hủy'),
-          ),
+          TextButton(onPressed: requestClose, child: const Text('Hủy')),
           FilledButton(
             key: const ValueKey('save-profile'),
             onPressed: _submit,

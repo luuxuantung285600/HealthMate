@@ -17,6 +17,7 @@ Future<void> openNutritionTargetForm(
   NutritionTarget? initial,
 ) async {
   final uid = ref.read(authSessionProvider).value?.uid;
+  if (uid == null || ref.read(authRepositoryProvider).currentUid != uid) return;
   final result = await showDialog<NutritionTarget>(
     context: context,
     barrierDismissible: false,
@@ -25,7 +26,8 @@ Future<void> openNutritionTargetForm(
   );
   if (result != null &&
       context.mounted &&
-      ref.read(authSessionProvider).value?.uid == uid) {
+      ref.read(authSessionProvider).value?.uid == uid &&
+      ref.read(authRepositoryProvider).currentUid == uid) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -47,6 +49,8 @@ class NutritionTargetForm extends ConsumerStatefulWidget {
 class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
     with ConfirmedSave<NutritionTarget, NutritionTargetForm> {
   final _fields = List.generate(4, (_) => TextEditingController());
+  late final List<String> _openedValues;
+  late List<String> _loadedNumbers;
   late DateTime _day;
   String? _uid;
   String? _error;
@@ -56,7 +60,19 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
   int _loadGeneration = 0;
   DateTime get _today => localDateOnly(ref.read(currentLocalTimeProvider)());
   bool get _current =>
-      mounted && ref.read(authSessionProvider).value?.uid == _uid;
+      mounted &&
+      _uid != null &&
+      ref.read(authSessionProvider).value?.uid == _uid &&
+      ref.read(authRepositoryProvider).currentUid == _uid;
+  List<String> get _numbers => _fields.map((f) => f.text).toList();
+  List<String> get _values => [localDateKey(_day), ..._numbers];
+  bool get _editedNumbers => !_sameValues(_numbers, _loadedNumbers);
+  @override
+  bool get hasUnsavedChanges => !_sameValues(_values, _openedValues);
+
+  bool _sameValues(List<String> a, List<String> b) =>
+      a.length == b.length &&
+      a.indexed.every((entry) => entry.$2 == b[entry.$1]);
 
   @override
   void initState() {
@@ -64,6 +80,8 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
     _uid = ref.read(authSessionProvider).value?.uid;
     _day = _today;
     _fill(widget.initial);
+    _loadedNumbers = _numbers;
+    _openedValues = _values;
   }
 
   void _fill(NutritionTarget? value) {
@@ -98,6 +116,7 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
       final target = await ref.read(provider.future);
       if (!_current || generation != _loadGeneration) return;
       _fill(target);
+      _loadedNumbers = _numbers;
     } catch (_) {
       if (_current && generation == _loadGeneration) {
         _loadError =
@@ -112,24 +131,56 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
   }
 
   Future<void> _pickDate() async {
-    final today = _today;
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _day.isBefore(today) ? today : _day,
-      firstDate: today,
-      lastDate: DateTime(today.year + 20, 12, 31),
-      helpText: 'Ngày bắt đầu áp dụng',
-    );
-    if (picked == null ||
-        !_current ||
-        localDateKey(picked) == localDateKey(_day)) {
-      return;
+    if (!_current || saving || _confirming || _loading) return;
+    setState(() => _confirming = true);
+    try {
+      final today = _today;
+      final picked = await showDatePicker(
+        context: context,
+        initialDate: _day.isBefore(today) ? today : _day,
+        firstDate: today,
+        lastDate: DateTime(today.year + 20, 12, 31),
+        helpText: 'Ngày bắt đầu áp dụng',
+      );
+      if (picked == null ||
+          !mounted ||
+          !_current ||
+          localDateKey(picked) == localDateKey(_day)) {
+        return;
+      }
+      if (_editedNumbers) {
+        final discard = await showDialog<bool>(
+          context: context,
+          builder: (dialogContext) => AccountBoundDialog(
+            child: AlertDialog(
+              title: const Text('Đổi ngày áp dụng?'),
+              content: const Text(
+                'Các giá trị đang sửa sẽ được thay bằng mục tiêu của ngày vừa chọn. Bạn có muốn bỏ các thay đổi đang nhập?',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext, false),
+                  child: const Text('Tiếp tục sửa'),
+                ),
+                FilledButton(
+                  key: const ValueKey('confirm-change-target-date'),
+                  onPressed: () => Navigator.pop(dialogContext, true),
+                  child: const Text('Đổi ngày và tải mục tiêu'),
+                ),
+              ],
+            ),
+          ),
+        );
+        if (!_current || discard != true) return;
+      }
+      setState(() {
+        _day = picked;
+        _error = null;
+      });
+      await _loadDay();
+    } finally {
+      if (_current) setState(() => _confirming = false);
     }
-    setState(() {
-      _day = picked;
-      _error = null;
-    });
-    await _loadDay();
   }
 
   double? _number(int index) => _fields[index].text.trim().isEmpty
@@ -137,7 +188,9 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
       : double.tryParse(_fields[index].text.trim().replaceAll(',', '.')) ??
             double.nan;
   Future<void> _submit() async {
-    if (saving || _confirming || _loading || _loadError != null) return;
+    if (!_current || saving || _confirming || _loading || _loadError != null) {
+      return;
+    }
     FocusScope.of(context).unfocus();
     final target = NutritionTarget(
       effectiveFromDateKey: localDateKey(_day),
@@ -194,10 +247,13 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
       Dialog.fullscreen(
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('Mục tiêu dinh dưỡng'),
+            toolbarHeight: MediaQuery.textScalerOf(
+              context,
+            ).scale(kToolbarHeight).clamp(kToolbarHeight, double.infinity),
+            title: const Text('Mục tiêu dinh dưỡng', maxLines: 2),
             leading: IconButton(
               tooltip: 'Đóng',
-              onPressed: busy ? null : () => Navigator.pop(context),
+              onPressed: busy ? null : requestClose,
               icon: const Icon(Icons.close),
             ),
           ),
@@ -244,6 +300,10 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
                           ][i],
                         ),
                         controller: _fields[i],
+                        onChanged: (_) => setState(() {
+                          _error = null;
+                          saveError = null;
+                        }),
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
@@ -265,69 +325,80 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
             ),
           ),
           bottomNavigationBar: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const HelpDetails(
-                    title: 'Cách đặt mục tiêu',
+            child: Material(
+              color: Theme.of(context).colorScheme.surface,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.sizeOf(context).height * .45,
+                ),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        'Bạn có thể nhập chỉ kcal hoặc thêm mục tiêu ba chất. Chọn ngày áp dụng rồi lưu; các ngày trước được giữ nguyên. Giới hạn nhập là giới hạn kỹ thuật, không phải khuyến nghị ăn uống.',
+                      const HelpDetails(
+                        title: 'Cách đặt mục tiêu',
+                        children: [
+                          Text(
+                            'Bạn có thể nhập chỉ kcal hoặc thêm mục tiêu ba chất. Chọn ngày áp dụng rồi lưu; các ngày trước được giữ nguyên. Giới hạn nhập là giới hạn kỹ thuật, không phải khuyến nghị ăn uống.',
+                          ),
+                        ],
+                      ),
+                      TextButton.icon(
+                        key: const ValueKey('personalize-target-form'),
+                        icon: const Icon(Icons.auto_awesome_outlined),
+                        label: const Text('Cá nhân hóa kcal và ba chất'),
+                        onPressed: () async {
+                          final result = await openPersonalNutritionPlanner(
+                            context,
+                            saveToAccount: false,
+                          );
+                          if (!_current || result == null) return;
+                          setState(() {
+                            _fill(result);
+                            _error = null;
+                          });
+                        },
+                      ),
+                      TextButton.icon(
+                        key: const ValueKey('open-energy-estimate'),
+                        icon: const Icon(Icons.calculate_outlined),
+                        label: const Text('Tham khảo mức duy trì (tùy chọn)'),
+                        onPressed: () async {
+                          final result = await showDialog<double>(
+                            context: context,
+                            builder: (_) => const AccountBoundDialog(
+                              child: EnergyEstimateDialog(),
+                            ),
+                          );
+                          if (!_current || result == null) return;
+                          setState(() {
+                            _fields[0].text = result.toStringAsFixed(0);
+                            _error = null;
+                          });
+                        },
+                      ),
+                      if (_error != null)
+                        Text(
+                          _error!,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                      if (saveError != null &&
+                          failure is NutritionTargetFailure)
+                        Text(failure.message),
+                      saveFeedback(),
+                      FilledButton(
+                        key: const ValueKey('save-target'),
+                        onPressed: busy || _loadError != null ? null : _submit,
+                        child: Text(
+                          saving ? 'Đang chờ xác nhận' : 'Lưu mục tiêu',
+                        ),
                       ),
                     ],
                   ),
-                  TextButton.icon(
-                    key: const ValueKey('personalize-target-form'),
-                    icon: const Icon(Icons.auto_awesome_outlined),
-                    label: const Text('Cá nhân hóa kcal và ba chất'),
-                    onPressed: () async {
-                      final result = await openPersonalNutritionPlanner(
-                        context,
-                        saveToAccount: false,
-                      );
-                      if (!_current || result == null) return;
-                      setState(() {
-                        _fill(result);
-                        _error = null;
-                      });
-                    },
-                  ),
-                  TextButton.icon(
-                    key: const ValueKey('open-energy-estimate'),
-                    icon: const Icon(Icons.calculate_outlined),
-                    label: const Text('Tham khảo mức duy trì (tùy chọn)'),
-                    onPressed: () async {
-                      final result = await showDialog<double>(
-                        context: context,
-                        builder: (_) => const AccountBoundDialog(
-                          child: EnergyEstimateDialog(),
-                        ),
-                      );
-                      if (!_current || result == null) return;
-                      setState(() {
-                        _fields[0].text = result.toStringAsFixed(0);
-                        _error = null;
-                      });
-                    },
-                  ),
-                  if (_error != null)
-                    Text(
-                      _error!,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                    ),
-                  if (saveError != null && failure is NutritionTargetFailure)
-                    Text(failure.message),
-                  saveFeedback(),
-                  FilledButton(
-                    key: const ValueKey('save-target'),
-                    onPressed: busy || _loadError != null ? null : _submit,
-                    child: Text(saving ? 'Đang chờ xác nhận' : 'Lưu mục tiêu'),
-                  ),
-                ],
+                ),
               ),
             ),
           ),

@@ -128,6 +128,10 @@ class AccountInformationScreen extends StatelessWidget {
         'Báo lỗi và góp ý',
         'Chỉ nội dung bạn chủ động gửi tại Báo lỗi & Góp ý, mã tài khoản và thời điểm trao đổi được cung cấp cho admin để hỗ trợ. Admin không được truy cập nhật ký sức khỏe qua tính năng này. Không gửi mật khẩu, thông tin ngân hàng hoặc hồ sơ sức khỏe nhạy cảm. Yêu cầu và phản hồi được xóa cùng dữ liệu HealthMate khi bạn xóa tài khoản trong ứng dụng.',
       ),
+      _InformationSection(
+        'Thanh toán Premium',
+        'Khi Premium được mở bán, Google Play xử lý thanh toán; HealthMate không thu thập số thẻ. Máy chủ lưu UID, mã đơn, gói, thời hạn, số tiền và trạng thái hoàn tiền để cấp quyền và đối soát; admin chỉ xem báo cáo giao dịch, không xem nhật ký sức khỏe. Biên nhận và token đối soát được bảo vệ trên máy chủ, có thể còn được giữ sau khi xóa tài khoản. Xóa tài khoản HealthMate không tự hủy gia hạn; hãy quản lý hoặc hủy gói trong Google Play.',
+      ),
     ],
   ),
   AccountInformationPage.disclaimer => (

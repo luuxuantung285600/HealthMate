@@ -8,10 +8,10 @@ const api=await connect({firebase:{apiKey:'demo-key',projectId:'demo-healthmate-
 const base='http://127.0.0.1:8092/v1/projects/demo-healthmate-admin/databases/(default)/documents';
 let user,stopRole;const stopAuth=api.authChanges(value=>user=value);
 const pauses=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-async function write(path,fields){const response=await fetch(`${base}/${path}`,{method:fields?'PATCH':'DELETE',headers:{Authorization:'Bearer owner','Content-Type':'application/json'},...(fields?{body:JSON.stringify({fields})}:{})});assert.ok(response.ok,`local fixture write failed ${response.status}`);}
+async function write(path,fields){const response=await fetch(`${base}/${path}`,{method:fields?'PATCH':'DELETE',headers:{Authorization:'Bearer owner','Content-Type':'application/json',Connection:'close'},...(fields?{body:JSON.stringify({fields})}:{})});assert.ok(response.ok,`local fixture write failed ${response.status}`);await response.arrayBuffer();}
 function stream(attach){let latest,fail;const stop=attach(value=>{latest=value;},error=>{if(!/Đang kết nối lại/.test(error.message))fail=error;});return{stop,get value(){return latest;},get error(){return fail;},async until(matches){const end=Date.now()+15000;while(Date.now()<end){if(fail)throw fail;if(latest!==undefined&&matches(latest))return latest;await pauses(40);}throw Error('Live SDK timeout; last emulator snapshot: '+JSON.stringify(latest));}};}
 test.before(async()=>{await api.login('admin@healthmate.local','LocalHealthMate!2026');const gate=stream((next,error)=>api.role(user.uid,next,error));await gate.until(value=>value===true);stopRole=gate.stop;});
-test.after(async()=>{api.stopAll();stopRole?.();await api.logout();stopAuth();hooks.deregister();const {deleteApp,getApps}=require('firebase/app');await Promise.all(getApps().map(deleteApp));});
+test.after(async()=>{api.stopAll();stopRole?.();const {disableNetwork,terminate,getFirestore}=require('firebase/firestore');await disableNetwork(getFirestore());await api.logout();stopAuth();await terminate(getFirestore());hooks.deregister();const {deleteApp,getApps}=require('firebase/app');await Promise.all(getApps().map(deleteApp));});
 
 test('Spark operational totals update without Cloud Functions, exclude orphan locks and stop after disposal',async()=>{
   const {createLiveData}=await import('../dist/live-data.mjs');
@@ -80,6 +80,30 @@ test('Spark Auth snapshot receives trusted manual refreshes while operational co
     const id=`rt-web-count-${Date.now()}`;await write(`food_catalog/${id}`,{name:{stringValue:'Counter fixture'}});
     await counts.until(data=>data[0]===before[0]+1);await write(`food_catalog/${id}`,null);await counts.until(data=>data[0]===before[0]);
   }finally{live.stop();counts.stop();}
+});
+
+test('cached first snapshots are not published before server confirmation',async()=>{
+  const firestore=require('firebase/firestore'),db=firestore.getFirestore();
+  const {createLiveData}=await import('../dist/live-data.mjs');
+  const id=`rt-cache-${Date.now()}`;
+  await write(`food_catalog/${id}`,{name:{stringValue:'Synthetic offline cache fixture'}});
+  await firestore.getDocFromServer(firestore.doc(db,'food_catalog',id));
+  const spark=createLiveData(db,()=>()=>{}, {statisticsMode:'firestore'});
+  const received=[],errors=[];
+  let stop;
+  try {
+    stop=spark.watchPage('food_catalog',{idFrom:id,idTo:id},value=>received.push(value),error=>{
+      if(/Đang kết nối lại/.test(error.message))assert.equal(received.length,0,'Initial cache must not be presented as a server ACK');
+      errors.push(error);
+    });
+    const reconnect=Date.now()+15000;
+    while(!received.length&&Date.now()<reconnect)await pauses(25);
+    assert.ok(errors.some(error=>/Đang kết nối lại/.test(error.message)),'Initial cache must be labeled unconfirmed');
+    assert.equal(received.at(-1)?.rows[0]?.name,'Synthetic offline cache fixture');
+  } finally {
+    stop?.();spark.stopAll();
+    await write(`food_catalog/${id}`,null);
+  }
 });
 
 test('new support enters the first live page regardless of ID; timestamp cursors survive a deleted anchor',async()=>{

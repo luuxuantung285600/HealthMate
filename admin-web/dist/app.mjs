@@ -1,7 +1,7 @@
 import { foodPayload, configPayload, text, validFoodId, entityVersion } from './validation.mjs';
 import { filterRows, canControlAccount, exportRows } from './list-model.mjs';
-import { buildXlsx } from './xlsx-export.mjs';
-import { revenuePage } from './revenue-page.mjs';
+import { downloadReport } from './report-download.mjs';
+import { revenuePage } from './play-revenue-page.mjs';
 import { supportPage } from './support-page.mjs';
 import { dashboardPage } from './dashboard-page.mjs';
 import {liveScope,observe} from './live-scope.mjs';
@@ -117,7 +117,8 @@ async function openPage(key,{force=false,history='push'}={}) {
   const content = h('div',{id:'page-content'}); main.append(content);
   if (key === 'overview') return overview(content);
   if (key === 'workouts') {
-    return workoutsPage({host:content,h,button});
+    const g=generation,p=pageGeneration;
+    return workoutsPage({host:content,h,button,isCurrent:()=>safeCurrent(g)&&pageGeneration===p});
   }
   if (key === 'chatbot') return chatbotPage(content);
   if (key === 'app_config') return configPage(content);
@@ -233,22 +234,35 @@ function exportList(){
   const kind=currentPage,g=generation,p=pageGeneration;
   let cancelled=false,cancel;
   const audit=kind==='admin_audit',today=vietnamDateKey(new Date());
+  const capturedFilters={search:filter,category:categoryFilter,status:statusFilter,role:roleFilter};
+  const visibleIds=rows.map(row=>row.id).sort();
   openEditor(audit?'Xuất nhật ký theo ngày Việt Nam':'Xuất Excel theo khoảng mã',[
-    h('p',{},`Xuất tối đa 5.000 mục trong khoảng ${audit?'ngày Việt Nam':'mã'}, gồm mọi trang. Nếu vượt giới hạn, chọn khoảng nhỏ hơn. Bộ lọc trang và tra cứu không áp dụng cho tệp này.`),
+    h('p',{},`Xuất tối đa 5.000 mục trong khoảng ${audit?'ngày Việt Nam':'mã'}, gồm mọi trang. Nếu vượt giới hạn, chọn khoảng nhỏ hơn. Tra cứu máy chủ không giới hạn tệp này; bạn chọn áp dụng bộ lọc bên dưới.`),
+    checkbox('applyFilters','Áp dụng tìm kiếm và bộ lọc hiện tại',true,'Áp dụng trên toàn bộ khoảng xuất, gồm mọi trang.'),
+    h('p',{class:'muted'},`Từ khóa: ${capturedFilters.search||'Tất cả'} · Nhóm: ${capturedFilters.category||'Tất cả'} · Trạng thái: ${capturedFilters.status||'Tất cả'} · Vai trò: ${capturedFilters.role||'Tất cả'}`),
+    ...(kind==='food_catalog'?[h('p',{class:'notice'},'Chỉ xuất danh mục trên Firebase, không bao gồm toàn bộ thư viện thực phẩm đi kèm app hoặc món riêng của người dùng.')]:[]),
     ...(audit?[field('start','Từ ngày (VN)',serverRange.start??today,{type:'date'}),field('end','Đến ngày (VN)',serverRange.end??today,{type:'date'})]:[
-      field('idFrom','Từ mã (bao gồm)',rows[0]?.id??'',{max:1500,optional:true}),
-      field('idTo','Đến mã (bao gồm)',rows.at(-1)?.id??'',{max:1500,optional:true})]),
+      field('idFrom','Từ mã (bao gồm)',visibleIds[0]??'',{max:1500,optional:true}),
+      field('idTo','Đến mã (bao gồm)',visibleIds.at(-1)??'',{max:1500,optional:true})]),
     h('p',{class:'notice'},kind==='user_directory'?'Tệp có email và UID. Chỉ lưu vào nơi bạn quản lý; tệp tải về không tự bị xóa khi đăng xuất.':'Tệp Excel có số liệu nguồn và trạng thái hiện tại. Không gồm nhật ký sức khỏe cá nhân.'),
   ],async form=>{
     const current=()=>!cancelled&&safeCurrent(g)&&pageGeneration===p;
     const input=values(form),range=audit?{start:input.start,end:input.end}:{idFrom:input.idFrom.trim(),idTo:input.idTo.trim()};
     const selected=await Promise.race([api.exportRange(kind,{...range,isCurrent:current}),new Promise((_,reject)=>{cancel=()=>reject(Error('Đã hủy xuất.'));})]);
     if(!current())throw Error('Phiên xuất đã thay đổi.');
-    const bytes=buildXlsx(exportRows(kind,selected));
-    if(!current())throw Error('Phiên xuất đã thay đổi.');
-    const url=URL.createObjectURL(new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
-    const a=h('a',{href:url,download:`HealthMate-${kind}-${new Date().toISOString().slice(0,10)}.xlsx`});
-    document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    const filtered=input.applyFilters?filterRows(selected,kind,capturedFilters):selected;
+    if(!filtered.length)throw Error('Không có dữ liệu phù hợp trong khoảng và bộ lọc đã chọn. Chưa tạo tệp; hãy điều chỉnh rồi thử lại.');
+    const workbook=exportRows(kind,filtered);
+    workbook.metadata=[['Báo cáo',workbook.name],['Nguồn','Firestore · dữ liệu máy chủ tại lúc tải'],
+      ['Phạm vi',audit?`${range.start} – ${range.end} (ngày Việt Nam, gồm ngày cuối)`:`Mã từ ${range.idFrom||'đầu'} đến ${range.idTo||'cuối'} (bao gồm)`],
+      ['Bộ lọc',input.applyFilters?JSON.stringify(capturedFilters):'Không áp dụng'],
+      ['Số bản ghi trong khoảng trước lọc',selected.length],
+      ['Lưu ý',kind==='food_catalog'?'Chỉ danh mục Firebase; không bao gồm thư viện đi kèm app.':kind==='user_directory'?'Danh bạ tài khoản đã đồng bộ; không khẳng định đầy đủ Firebase Authentication. Tệp không tự xóa khi đăng xuất.':'Tệp tải về không tự cập nhật hoặc tự xóa khi đăng xuất.']];
+    let resultMessage='Phiên xuất đã thay đổi.';
+    const requested=downloadReport({workbook,filename:`HealthMate-${kind}-${vietnamDateKey(new Date())}.xlsx`,isCurrent:current,
+      onResult:message=>{resultMessage=message;}});
+    if(!requested)throw Error(resultMessage);
+    editorSuccess=resultMessage;
   },{reason:false,success:'Đã tạo tệp Excel và yêu cầu trình duyệt tải xuống.',cancel:()=>{cancelled=true;cancel?.();}});
 }
 function field(name,label,value='',{type='text',max=100,optional=false,hint='',readonly=false}={}) {

@@ -16,6 +16,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:healthmate/features/wellness/data/energy_repository.dart';
 import 'package:healthmate/features/wellness/providers/energy_providers.dart';
 import 'package:healthmate/app.dart';
+import 'package:healthmate/features/premium/providers/play_billing_providers.dart';
 import 'package:healthmate/core/config/app_feature_flags.dart';
 import 'package:healthmate/core/utils/local_date_key.dart';
 import 'package:healthmate/features/auth/data/firebase_auth_repository.dart';
@@ -50,6 +51,7 @@ import 'package:healthmate/features/meal_templates/providers/meal_template_provi
 import 'package:healthmate/features/reports/data/day_review_repository.dart';
 import 'package:healthmate/features/reports/providers/report_providers.dart';
 import 'package:healthmate/features/progress/presentation/progress_overview.dart';
+import 'package:healthmate/core/data/user_data_revision.dart';
 
 const _project = 'demo-healthmate-rules';
 const _host = '10.0.2.2';
@@ -67,6 +69,9 @@ Future<void> waitFor(
   final until = DateTime.now().add(const Duration(seconds: 35));
   while ((finder.evaluate().isEmpty) != absent) {
     if (DateTime.now().isAfter(until)) {
+      debugPrint(
+        'QA_TIMEOUT_VISIBLE_TEXT\n${tester.widgetList<Text>(find.byType(Text)).map((text) => text.data ?? text.textSpan?.toPlainText() ?? '').join('\n')}',
+      );
       fail('Timed out waiting for ${absent ? "absence of " : ""}$finder');
     }
     await tester.pump(const Duration(milliseconds: 150));
@@ -304,6 +309,8 @@ void main() {
       final library = FirebaseFoodLibraryRepository(db);
       final container = ProviderContainer(
         overrides: [
+          playBillingSupportedProvider.overrideWithValue(false),
+          realtimeFirestoreProvider.overrideWithValue(db),
           authRepositoryProvider.overrideWithValue(
             FirebaseAuthRepository(auth),
           ),
@@ -419,7 +426,15 @@ void main() {
 
       await tap(tester, keyed('nav-journal'));
       await waitFor(tester, keyed('add-meal-lunch'));
-      await waitFor(tester, find.text('0 kcal / 2000 kcal'));
+      await waitFor(
+        tester,
+        find.byWidgetPredicate(
+          (w) =>
+              w is Text &&
+              w.key == const ValueKey('nutrition-daily-totals') &&
+              w.semanticsLabel == '0 kcal / 2000 kcal',
+        ),
+      );
       // A target-save SnackBar can temporarily cover an otherwise visible button.
       await waitFor(tester, find.byType(SnackBar), absent: true);
       // Native first viewport proof: no reveal/ensureVisible before measuring.
@@ -433,7 +448,9 @@ void main() {
       debugPrint('U1_VIEWPORT journal add=$breakfastAdd body=$journalViewport');
       await capture('c6-u1-journal-first-viewport');
       await tap(tester, keyed('add-meal-lunch'));
-      await waitFor(tester, keyed('catalog-food-$_catalogId'));
+      await waitFor(tester, keyed('food-search'));
+      await enter(tester, 'food-search', 'Cơm fixture C6');
+      await waitFor(tester, find.byTooltip('Thêm Cơm fixture C6'));
       await tap(tester, find.byTooltip('Thêm Cơm fixture C6'));
       await tap(tester, keyed('portion-unit'));
       await enter(tester, 'meal-grams', '0,75');
@@ -470,10 +487,8 @@ void main() {
       expect(todayMeals.single.totals.kcal, 260);
       final sourceId = todayMeals.single.id;
       await mealMenu('Nhân bản bữa');
-      await tap(
-        tester,
-        find.widgetWithIcon(OutlinedButton, Icons.calendar_today_outlined).last,
-      );
+      await tap(tester, find.byTooltip('Ngày và giờ ăn'));
+      await tap(tester, find.textContaining('Ngày:'));
       await pickDate(tester, _yesterday);
       await tap(tester, keyed('save-meal'));
       await waitFor(tester, find.byType(MealFormDialog), absent: true);
@@ -482,15 +497,31 @@ void main() {
       expect(copies.single.totals.kcal, 260);
       expect(copies.single.id, isNot(sourceId));
       await tap(tester, keyed('journal-previous-day'));
-      await waitFor(tester, find.text('260 kcal / 1800 kcal'));
+      await waitFor(
+        tester,
+        find.byWidgetPredicate(
+          (w) =>
+              w is Text &&
+              w.key == const ValueKey('nutrition-daily-totals') &&
+              w.semanticsLabel == '260 kcal / 1800 kcal',
+        ),
+      );
       await capture('c6-01-journal-history');
       await checkpoint('04-edit-copy-selected-day');
 
       Future<void> quick(String action) async {
-        await tap(tester, keyed('quick-add-menu'));
-        await tap(tester, keyed('quick-action-$action'));
+        if (action == 'meal') {
+          await tap(tester, keyed('quick-add-menu'));
+        } else if (action == 'weight') {
+          await profileRoot();
+          await tap(tester, keyed('add-metric'));
+        } else {
+          await tap(tester, keyed('nav-journal'));
+          await tap(tester, keyed('add-$action'));
+        }
       }
 
+      await tap(tester, keyed('journal-next-day'));
       await quick('water');
       await enter(tester, 'water-amount', '350');
       await tap(tester, keyed('save-water'));

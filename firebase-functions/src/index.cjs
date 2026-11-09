@@ -5,6 +5,7 @@ const {FieldValue}=require('firebase-admin/firestore');
 const functions=require('firebase-functions/v1');
 const {collections,key,reconcileAuth,reconcileOperation}=require('./sync.cjs');
 initializeApp();let database;const getDb=()=>database??=getFirestore();
+Object.assign(exports,require('./billing-functions.cjs'));
 const runtime=functions.region('asia-southeast1').runWith({memory:'256MB',timeoutSeconds:120,maxInstances:3,failurePolicy:true});
 exports.authRegistered=runtime.auth.user().onCreate((user,context)=>reconcileAuth(getDb(),{uid:user.uid,active:true,eventAt:Date.parse(context.timestamp),registeredAt:Date.parse(user.metadata.creationTime),displayName:user.displayName??'',email:user.email??''}));
 exports.authDeleted=runtime.auth.user().onDelete((user,context)=>reconcileAuth(getDb(),{uid:user.uid,active:false,eventAt:Date.parse(context.timestamp)}));

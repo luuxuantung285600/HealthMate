@@ -27,6 +27,16 @@ class _ActivityLogDialogState extends State<ActivityLogDialog>
   late ActivityType _type;
   late DateTime _performedAt;
   String? _timeError;
+  late final DateTime _initialAt;
+  late final String _initialDuration, _initialNote;
+  late final ActivityType _initialType;
+
+  @override
+  bool get hasUnsavedChanges =>
+      _duration.text != _initialDuration ||
+      _note.text != _initialNote ||
+      _type != _initialType ||
+      _performedAt != _initialAt;
 
   @override
   void initState() {
@@ -46,7 +56,15 @@ class _ActivityLogDialogState extends State<ActivityLogDialog>
           now.hour,
           now.minute,
         );
+    _initialAt = _performedAt;
+    _initialType = _type;
+    _initialDuration = _duration.text;
+    _initialNote = _note.text;
+    _duration.addListener(_changed);
+    _note.addListener(_changed);
   }
+
+  void _changed() => setState(() {});
 
   @override
   void dispose() {
@@ -165,10 +183,7 @@ class _ActivityLogDialogState extends State<ActivityLogDialog>
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Hủy'),
-          ),
+          TextButton(onPressed: requestClose, child: const Text('Hủy')),
           FilledButton(
             key: const ValueKey('save-activity'),
             onPressed: saving ? null : _submit,

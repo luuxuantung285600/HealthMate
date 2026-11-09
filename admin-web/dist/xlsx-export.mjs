@@ -20,26 +20,46 @@ function zip(files) {
   const directory=concat(central),count=Object.keys(files).length;
   return concat([...local,directory,bytes(22,[[0,0x06054b50,4],[8,count,2],[10,count,2],[12,directory.length,4],[16,offset,4]])]);
 }
-export function buildXlsx({name, headers, rows}) {
+function sheetXml({name, headers, rows}) {
   if(!Array.isArray(headers)||!headers.length||headers.length>100||!Array.isArray(rows)||rows.length>5000)throw Error('Danh sách Excel vượt giới hạn.');
-  const sheetName=String(name??'Danh sách').replace(/[\\/?*\[\]:]/g,' ').slice(0,31)||'Danh sách';
+  if([headers,...rows].some(row=>!Array.isArray(row)||row.length>headers.length))throw Error('Số cột Excel không khớp; chưa xuất tệp thiếu dữ liệu.');
+  const sheetName=String(name??'Danh sách').replace(/[\\/?*\[\]:]/g,' ').replace(/^'+|'+$/g,'').trim().slice(0,31)||'Danh sách';
   const data=[headers,...rows];
-  const sheet=data.map((row,i)=>`<row r="${i+1}">${headers.map((_,j)=>{
+  const widths=headers.map((_,j)=>Math.min(54,Math.max(14,...data.slice(0,200).map(row=>String(row[j]??'').split(/\r?\n/).reduce((n,line)=>Math.max(n,[...line].length),0)+2))));
+  const sheet=data.map((row,i)=>{
+    const lineCount=Math.max(...headers.map((_,j)=>String(row[j]??'').split(/\r?\n/).reduce((n,line)=>n+Math.max(1,Math.ceil([...line].length/(widths[j]-2))),0)));
+    return `<row r="${i+1}" ht="${Math.min(240,Math.max(i===0?36:20,lineCount*15))}" customHeight="1">${headers.map((_,j)=>{
     const value=row[j],ref=`${column(j)}${i+1}`,style=i===0?' s="1"':'';
     if(value===null||value===undefined)return `<c r="${ref}"${style}/>`;
-    if(typeof value==='number'){if(!Number.isFinite(value))throw Error('Số không hữu hạn trong Excel.');return `<c r="${ref}"${style}><v>${value}</v></c>`;}
+    if(typeof value==='number'){
+      if(!Number.isFinite(value))throw Error('Số không hữu hạn trong Excel.');
+      // Excel retains only 15 significant digits; keep larger values as text.
+      if(String(value).replace(/[^0-9]/g,'').length<=15)return `<c r="${ref}"${style}><v>${value}</v></c>`;
+    }else if(typeof value!=='string'&&typeof value!=='boolean')throw Error('Kiểu dữ liệu ô Excel không hợp lệ.');
     if(String(value).length>32767)throw Error('Một ô Excel quá dài.');
     return `<c r="${ref}" t="inlineStr"${style}><is><t xml:space="preserve">${xml(value)}</t></is></c>`;
-  }).join('')}</row>`).join('');
+  }).join('')}</row>`;}).join('');
+  return {name:sheetName,xml:`<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><dimension ref="A1:${column(headers.length-1)}${data.length}"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="30"/><cols>${widths.map((w,j)=>`<col min="${j+1}" max="${j+1}" width="${w}" customWidth="1"/>`).join('')}</cols><sheetData>${sheet}</sheetData><autoFilter ref="A1:${column(headers.length-1)}${data.length}"/><pageSetup orientation="landscape" fitToWidth="1" fitToHeight="0"/></worksheet>`};
+}
+
+export function buildXlsx({metadata=[],...data}) {
+  if(!Array.isArray(metadata))throw Error('Thông tin báo cáo không hợp lệ.');
+  const sheets=[sheetXml(data)];
+  if(metadata.length){
+    const info=sheetXml({name:'Thông tin báo cáo',headers:['Thông tin','Giá trị'],rows:[...metadata,['Số dòng dữ liệu',data.rows.length],['Thời điểm tạo (UTC)',new Date().toISOString()]]});
+    if(info.name===sheets[0].name)info.name='Thông tin xuất';
+    sheets.push(info);
+  }
   const declaration='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
-  const result=zip({
-    '[Content_Types].xml':declaration+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>',
+  const files={
+    '[Content_Types].xml':declaration+`<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>${sheets.map((_,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>`,
     '_rels/.rels':declaration+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>',
-    'xl/workbook.xml':declaration+`<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="${xml(sheetName)}" sheetId="1" r:id="rId1"/></sheets></workbook>`,
-    'xl/_rels/workbook.xml.rels':declaration+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>',
-    'xl/styles.xml':declaration+'<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>',
-    'xl/worksheets/sheet1.xml':declaration+`<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><dimension ref="A1:${column(headers.length-1)}${data.length}"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols><col min="1" max="${headers.length}" width="22" customWidth="1"/></cols><sheetData>${sheet}</sheetData><autoFilter ref="A1:${column(headers.length-1)}${data.length}"/></worksheet>`,
-  });
+    'xl/workbook.xml':declaration+`<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${sheets.map((s,i)=>`<sheet name="${xml(s.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')}</sheets></workbook>`,
+    'xl/_rels/workbook.xml.rels':declaration+`<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((_,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')}<Relationship Id="rId${sheets.length+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`,
+    'xl/styles.xml':declaration+'<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Inter"/></font><font><b/><color rgb="FFFFFFFF"/><sz val="11"/><name val="Inter"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF16705A"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>',
+  };
+  sheets.forEach((sheet,i)=>files[`xl/worksheets/sheet${i+1}.xml`]=declaration+sheet.xml);
+  const result=zip(files);
   if(result.length>12*1024*1024)throw Error('Tệp Excel vượt 12 MB; hãy chia phạm vi dữ liệu.');
   return result;
 }

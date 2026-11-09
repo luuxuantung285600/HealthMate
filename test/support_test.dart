@@ -16,24 +16,29 @@ const user = AuthUser(
   emailVerified: true,
 );
 final now = DateTime.utc(2026, 10, 30, 14);
-SupportTicket ticket({SupportStatus status = SupportStatus.resolved}) =>
-    SupportTicket(
-      id: 'AbCdEfGhIjKlMnOpQrSt',
-      uid: 'alice',
-      type: SupportType.bug,
-      title: 'Không lưu được bữa sáng',
-      description: 'Bấm lưu nhưng không thấy món.',
-      status: status,
-      createdAt: now,
-      updatedAt: now,
-      messageCount: 1,
-    );
+SupportTicket ticket({
+  SupportStatus status = SupportStatus.resolved,
+  SupportTopic? topic,
+}) => SupportTicket(
+  id: 'AbCdEfGhIjKlMnOpQrSt',
+  uid: 'alice',
+  type: SupportType.bug,
+  topic: topic,
+  title: 'Không lưu được bữa sáng',
+  description: 'Bấm lưu nhưng không thấy món.',
+  status: status,
+  createdAt: now,
+  updatedAt: now,
+  messageCount: 1,
+);
 
 class FakeSupport implements SupportRepository {
   bool fail = false, listError = false;
   final created = <String>[], replied = <String>[];
+  final createdTopics = <SupportTopic>[];
   int ids = 0;
   int ticketWatches = 0;
+  SupportTopic? ticketTopic;
   List<SupportTicketPage>? pages;
   final pageRequests = <SupportTicketCursor?>[];
   @override
@@ -63,7 +68,7 @@ class FakeSupport implements SupportRepository {
 
   @override
   Stream<SupportTicket?> watchTicket(String uid, String id) =>
-      Stream.value(ticket());
+      Stream.value(ticket(topic: ticketTopic));
   @override
   Stream<List<SupportMessage>> watchMessages(String uid, String id) =>
       Stream.value([
@@ -81,9 +86,11 @@ class FakeSupport implements SupportRepository {
     String id,
     SupportType type,
     String title,
-    String description,
-  ) async {
+    String description, {
+    required SupportTopic topic,
+  }) async {
     created.add(id);
+    createdTopics.add(topic);
     if (fail) throw const SupportFailure('Chưa xác nhận gửi yêu cầu');
   }
 
@@ -132,13 +139,24 @@ Future<void> open(
 
 Future<void> tapKey(WidgetTester tester, String key) async {
   final finder = find.byKey(ValueKey(key));
+  if (finder.evaluate().isEmpty) {
+    await tester.scrollUntilVisible(
+      finder,
+      key == 'support-topic' ? -300 : 300,
+      scrollable: find.byType(Scrollable).first,
+    );
+  }
   await tester.ensureVisible(finder);
+  await tester.pump();
   await tester.tap(finder);
   await tester.pumpAndSettle();
 }
 
 Future<void> fillTicket(WidgetTester tester) async {
   await tapKey(tester, 'new-support-ticket');
+  await tapKey(tester, 'support-topic');
+  await tester.tap(find.text(SupportTopic.nutrition.label).last);
+  await tester.pumpAndSettle();
   await tester.enterText(
     find.byKey(const ValueKey('support-title')),
     'Lỗi ghi nhận bữa sáng',
@@ -152,6 +170,109 @@ Future<void> fillTicket(WidgetTester tester) async {
 }
 
 void main() {
+  test(
+    'support topics have stable codes and preserve unknown historical topics as unclassified',
+    () {
+      expect(SupportTopic.values.map((topic) => topic.code), [
+        'account',
+        'premium',
+        'nutrition',
+        'activity',
+        'tracking',
+        'food_scanner',
+        'chatbot',
+        'other',
+      ]);
+      for (final topic in SupportTopic.values) {
+        expect(SupportTopic.fromCode(topic.code), same(topic));
+      }
+      for (final missing in [
+        null,
+        '',
+        'invalid',
+        42,
+        {'code': 'account'},
+      ]) {
+        expect(SupportTopic.fromCode(missing), isNull);
+      }
+      expect(ticket().topicLabel, 'Chưa phân loại');
+      expect(ticket(topic: SupportTopic.other).topicLabel, 'Vấn đề khác');
+    },
+  );
+
+  testWidgets(
+    'a filled support request cannot send until its topic is selected',
+    (tester) async {
+      final repository = FakeSupport();
+      await open(tester, repository);
+      await tapKey(tester, 'new-support-ticket');
+      await tester.enterText(
+        find.byKey(const ValueKey('support-title')),
+        'Cần hỗ trợ',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('support-description')),
+        'Nội dung kiểm thử',
+      );
+      tester.testTextInput.hide();
+      await tester.pumpAndSettle();
+      await tapKey(tester, 'send-support-ticket');
+      expect(repository.created, isEmpty);
+      expect(repository.ids, 0);
+      expect(find.textContaining('Hãy chọn chủ đề'), findsOneWidget);
+      await tapKey(tester, 'support-topic');
+      await tester.tap(find.text(SupportTopic.premium.label).last);
+      await tester.pumpAndSettle();
+      await tapKey(tester, 'send-support-ticket');
+      expect(repository.created, hasLength(1));
+      expect(repository.createdTopics, [SupportTopic.premium]);
+    },
+  );
+
+  testWidgets('topic appears in both ticket history and thread', (
+    tester,
+  ) async {
+    final repository = FakeSupport()
+      ..ticketTopic = SupportTopic.premium
+      ..pages = [
+        SupportTicketPage(tickets: [ticket(topic: SupportTopic.premium)]),
+      ];
+    await open(tester, repository);
+    expect(find.textContaining(SupportTopic.premium.label), findsOneWidget);
+    await tapKey(tester, 'support-AbCdEfGhIjKlMnOpQrSt');
+    expect(find.text('Chủ đề: ${SupportTopic.premium.label}'), findsOneWidget);
+  });
+
+  testWidgets(
+    'all topics fit at 320px and 200 percent text; choosing only a topic protects the draft',
+    (tester) async {
+      await open(tester, FakeSupport(), scale: 2);
+      await tapKey(tester, 'new-support-ticket');
+      for (final topic in SupportTopic.values) {
+        await tapKey(tester, 'support-topic');
+        final option = find.text(topic.label);
+        await tester.scrollUntilVisible(
+          option,
+          200,
+          scrollable: find.byType(Scrollable).last,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(option.last);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+      }
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expect(find.text('Bỏ nội dung đang soạn?'), findsOneWidget);
+      await tester.tap(find.text('Tiếp tục soạn'));
+      await tester.pumpAndSettle();
+      final dropdown = tester.widget<DropdownButtonFormField<SupportTopic>>(
+        find.byKey(const ValueKey('support-topic')),
+      );
+      expect(dropdown.initialValue, SupportTopic.other);
+    },
+  );
+
   test('same-day quota preserves count from SDK local DateTime timestamps', () {
     final instant = DateTime.utc(2026, 10, 31, 5);
     final utcStart = SupportPolicy.dayStart(instant);
@@ -273,7 +394,7 @@ void main() {
       await tapKey(tester, 'new-support-ticket');
       await tapKey(tester, 'send-support-ticket');
       expect(repository.created, isEmpty);
-      expect(find.textContaining('Tiêu đề cần'), findsOneWidget);
+      expect(find.textContaining('Hãy chọn chủ đề'), findsOneWidget);
       await tester.pageBack();
       await tester.pumpAndSettle();
       expect(repository.created, isEmpty);
@@ -296,6 +417,10 @@ void main() {
       await tapKey(tester, 'send-support-ticket');
       expect(repository.created.length, 2);
       expect(repository.created[0], repository.created[1]);
+      expect(repository.createdTopics, [
+        SupportTopic.nutrition,
+        SupportTopic.nutrition,
+      ]);
     },
   );
   testWidgets(

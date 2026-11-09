@@ -14,8 +14,9 @@ abstract interface class SupportRepository {
     String id,
     SupportType type,
     String title,
-    String description,
-  );
+    String description, {
+    required SupportTopic topic,
+  });
   Future<void> reply(
     String uid,
     String ticketId,

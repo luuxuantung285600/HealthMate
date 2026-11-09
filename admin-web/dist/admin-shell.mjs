@@ -1,6 +1,6 @@
 export const adminPages = {
   overview:['Tổng quan','Tổng quan','Theo dõi tài khoản, Premium và hoạt động HealthMate.'],
-  revenue:['Doanh thu','Doanh thu Premium','Theo dõi giao dịch và báo cáo. Premium hiện dùng giao dịch demo, chưa thu tiền thật.'],
+  revenue:['Doanh thu','Doanh thu Premium','Theo dõi giao dịch và báo cáo theo nguồn dữ liệu đã chọn.'],
   user_directory:['Khách hàng','Khách hàng','Quản lý tài khoản đã đồng bộ từ ứng dụng và quyền truy cập.'],
   food_catalog:['Thực phẩm','Danh mục thực phẩm','Quản lý món ăn, nguồn và thông tin dinh dưỡng dùng chung.'],
   workouts:['Bài tập luyện','Bài tập luyện','Tra cứu và xuất danh mục bài tập đang có trong mã nguồn HealthMate.'],

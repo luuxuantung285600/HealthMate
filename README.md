@@ -20,6 +20,9 @@ Kết quả cuối và giới hạn xem [tiến độ](docs/improvement-progress
 - Luồng nhập món, barcode, nhật ký, cá nhân hóa, kế hoạch và báo cáo dùng
   repository thật; snapshot dinh dưỡng lịch sử được bảo toàn. Catalog offline
   có 11.169 mục; [nguồn và giới hạn dữ liệu](docs/current-food-data-2026-10-27.md).
+- Gợi ý thực đơn chỉ thêm bữa còn trống, hiện tiến độ từng bữa và cho lưu
+  tiếp khi lỗi. Xóa kế hoạch giữ nhật ký và từ chối snapshot đã thay đổi;
+  [hành vi, kiểm thử và giới hạn](docs/meal-plan-operations-2026-11-09.md).
 - Support có reply hai chiều, giới hạn tạo 3 ticket/ngày Việt Nam và cách nhau
   ít nhất 60 giây qua transaction/Rules; lịch sử 25 ticket/trang. Candidate
   Rules cần triển khai phối hợp client mới. [Chính sách](docs/package8-support-policy.md).
@@ -149,3 +152,10 @@ provider thật, chi phí production hoặc nghiệm thu native Android.
 [Database](docs/database-design.md) · [Tiến độ cải thiện](docs/improvement-progress.md) ·
 [Test report](docs/test-report.md) · [Release](docs/release-readiness.md) ·
 [Lịch sử](CHANGELOG.md)
+
+Tích hợp Premium qua Google Play, điều kiện mở bán và giới hạn kiểm thử:
+[Hướng dẫn thanh toán](docs/google-play-billing-2026-11-07.md).
+Độ tin cậy restore, callback trùng, tách gói thật/thử và đối soát admin:
+[Cập nhật 08/11](docs/billing-reliability-2026-11-08.md).
+Chưa có Play Console/Blaze được cấu hình thì để thanh toán tắt; không dùng
+dữ liệu demo như doanh thu thật.

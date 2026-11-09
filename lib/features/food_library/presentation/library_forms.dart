@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/widgets/confirmed_save.dart';
@@ -10,6 +12,8 @@ import '../providers/food_library_providers.dart';
 import 'food_portion_dialog.dart';
 import 'food_nutrition_text.dart';
 import '../../nutrition/models/extra_nutrients.dart';
+import '../../auth/providers/auth_providers.dart';
+import '../models/ingredient_selection.dart';
 
 Widget libraryField(
   TextEditingController controller,
@@ -43,6 +47,7 @@ Widget libraryField(
               'library-carbs' ||
               'library-fat' ||
               'recipe-servings' => 1000.0,
+              'library-fiber' => 100.0,
               'recipe-yield' => 20000.0,
               _ => 2000.0,
             };
@@ -126,6 +131,29 @@ class _PersonalFoodFormState extends ConsumerState<PersonalFoodForm>
       _servingGrams,
       _source;
   String? _error;
+  late final List<String> _openingValues;
+  List<TextEditingController> get _controllers => [
+    _name,
+    _aliases,
+    _kcal,
+    _protein,
+    _carbs,
+    _fat,
+    _fiber,
+    _defaultGrams,
+    _servingLabel,
+    _servingGrams,
+    _source,
+    ..._extraControllers.values,
+  ];
+  @override
+  bool get hasUnsavedChanges =>
+      widget.initialFood != null ||
+      _controllers.indexed.any(
+        (entry) => entry.$2.text != _openingValues[entry.$1],
+      );
+
+  void _changed() => setState(() {});
   @override
   void initState() {
     super.initState();
@@ -169,6 +197,10 @@ class _PersonalFoodFormState extends ConsumerState<PersonalFoodForm>
     _source = TextEditingController(
       text: food?.sourceLabel ?? 'Người dùng nhập · Ước tính',
     );
+    _openingValues = _controllers.map((c) => c.text).toList();
+    for (final controller in _controllers) {
+      controller.addListener(_changed);
+    }
   }
 
   @override
@@ -195,6 +227,7 @@ class _PersonalFoodFormState extends ConsumerState<PersonalFoodForm>
   }
 
   Future<void> _submit() async {
+    if (saving) return;
     if (!_form.currentState!.validate()) return;
     double read(TextEditingController c) =>
         NutritionValidation.parseDecimal(c.text) ?? double.nan;
@@ -250,7 +283,7 @@ class _PersonalFoodFormState extends ConsumerState<PersonalFoodForm>
         context: context,
         title: 'Món của tôi',
         save: saving ? null : _submit,
-        cancel: () => Navigator.pop(context),
+        cancel: requestClose,
         feedback: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -377,6 +410,19 @@ class _RecipeFormState extends ConsumerState<RecipeForm>
   late final TextEditingController _name, _yield, _servings;
   late final List<MealItemSnapshot> _ingredients;
   String? _error;
+  late final List<String> _openingValues;
+  late final String _openingIngredients;
+  String get _ingredientValues =>
+      jsonEncode(_ingredients.map((i) => i.toData()).toList());
+  @override
+  bool get hasUnsavedChanges =>
+      [
+        _name,
+        _yield,
+        _servings,
+      ].indexed.any((entry) => entry.$2.text != _openingValues[entry.$1]) ||
+      _ingredientValues != _openingIngredients;
+  void _changed() => setState(() {});
   @override
   void initState() {
     super.initState();
@@ -386,6 +432,11 @@ class _RecipeFormState extends ConsumerState<RecipeForm>
     _yield = TextEditingController(text: recipe?.yieldGrams.toString());
     _servings = TextEditingController(text: recipe?.servingsCount?.toString());
     _ingredients = [...?recipe?.ingredients];
+    _openingValues = [_name.text, _yield.text, _servings.text];
+    _openingIngredients = _ingredientValues;
+    for (final controller in [_name, _yield, _servings]) {
+      controller.addListener(_changed);
+    }
   }
 
   @override
@@ -427,6 +478,7 @@ class _RecipeFormState extends ConsumerState<RecipeForm>
   }
 
   Future<void> _submit() async {
+    if (saving) return;
     if (!_form.currentState!.validate()) return;
     try {
       final recipe = FoodRecipe(
@@ -466,7 +518,7 @@ class _RecipeFormState extends ConsumerState<RecipeForm>
         context: context,
         title: 'Công thức',
         save: saving ? null : _submit,
-        cancel: () => Navigator.pop(context),
+        cancel: requestClose,
         feedback: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -571,18 +623,89 @@ class _IngredientPickerState extends ConsumerState<IngredientPicker> {
   bool _custom = false;
   int _limit = 40, _visible = 12;
   String _query = '';
+  bool _choosing = false;
+  String? _selectionError;
+  int _session = 0;
   Future<void> _choose(FoodCatalogItem food) async {
-    final grams = await askFoodGrams(
-      context,
-      initial: food.defaultServingGrams,
-      food: food,
-    );
-    if (grams == null || !mounted) return;
-    Navigator.pop(context, MealItemSnapshot.fromCatalog(food, grams));
+    if (_choosing || !canUseRecipeIngredient(food)) return;
+    final uid = ref.read(authSessionProvider).value?.uid, session = _session;
+    if (uid == null) return;
+    final custom = _custom, limit = _limit;
+    setState(() {
+      _choosing = true;
+      _selectionError = null;
+    });
+    try {
+      final grams = await askFoodGrams(
+        context,
+        initial: food.defaultServingGrams,
+        food: food,
+      );
+      if (grams == null ||
+          !mounted ||
+          session != _session ||
+          ref.read(authSessionProvider).value?.uid != uid) {
+        return;
+      }
+      final List<FoodCatalogItem> available;
+      if (custom) {
+        final state = ref.read(
+          foodLibraryProvider((kind: FoodSourceKind.custom, limit: limit)),
+        );
+        if (state.isLoading || state.hasError || !state.hasValue) {
+          throw const FormatException(
+            'Chưa xác nhận được nguồn nguyên liệu. Hãy tải lại và chọn lại.',
+          );
+        }
+        available = state.requireValue.items
+            .map((entry) => entry.asFood())
+            .toList();
+      } else {
+        final state = ref.read(foodCatalogProvider),
+            visibility = ref.read(foodVisibilityProvider);
+        if (state.isLoading ||
+            state.hasError ||
+            !state.hasValue ||
+            visibility.isLoading ||
+            visibility.hasError ||
+            !visibility.hasValue) {
+          throw const FormatException(
+            'Chưa xác nhận được danh mục. Hãy tải lại và chọn lại.',
+          );
+        }
+        available = state.requireValue
+            .where(visibility.requireValue.allows)
+            .toList();
+      }
+      final latest = available.where((item) => item.id == food.id).firstOrNull;
+      if (latest == null || !canUseRecipeIngredient(latest)) {
+        throw const FormatException(
+          'Nguyên liệu đã bị xóa, ẩn hoặc không còn đủ dữ liệu. Hãy chọn nguyên liệu khác.',
+        );
+      }
+      if (ingredientSelectionRevision(latest) !=
+          ingredientSelectionRevision(food)) {
+        throw const FormatException(
+          'Thông tin nguyên liệu vừa thay đổi. Hãy chọn lại để xem dữ liệu và khẩu phần mới.',
+        );
+      }
+      Navigator.pop(context, MealItemSnapshot.fromCatalog(latest, grams));
+    } on FormatException catch (error) {
+      if (mounted) setState(() => _selectionError = error.message);
+    } finally {
+      if (mounted) setState(() => _choosing = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(authSessionProvider.select((s) => s.value?.uid), (
+      before,
+      after,
+    ) {
+      if (before != after) _session++;
+    });
+    final visibility = _custom ? null : ref.watch(foodVisibilityProvider);
     final state = _custom
         ? ref
               .watch(
@@ -595,7 +718,15 @@ class _IngredientPickerState extends ConsumerState<IngredientPicker> {
                 (page) => page.items.map((item) => item.asFood()).toList(),
               )
         : ref.watch(foodCatalogProvider);
-    final foods = searchFoodCatalog(state.value ?? [], _query);
+    final visibilityPending =
+        visibility != null &&
+        (visibility.isLoading || visibility.hasError || !visibility.hasValue);
+    final foods = searchFoodCatalog(
+      (state.value ?? [])
+          .where((food) => _custom || visibility?.value?.allows(food) == true)
+          .toList(),
+      _query,
+    );
     return Dialog.fullscreen(
       child: Scaffold(
         appBar: AppBar(
@@ -631,6 +762,28 @@ class _IngredientPickerState extends ConsumerState<IngredientPicker> {
                 decoration: const InputDecoration(labelText: 'Tìm nguyên liệu'),
                 onChanged: (value) => setState(() => _query = value),
               ),
+              if (_selectionError != null)
+                Semantics(
+                  liveRegion: true,
+                  child: Text(
+                    _selectionError!,
+                    key: const ValueKey('ingredient-selection-error'),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                ),
+              if (visibilityPending) ...[
+                Text(
+                  visibility.hasError
+                      ? 'Chưa xác nhận được trạng thái hiển thị của nguyên liệu.'
+                      : 'Đang đồng bộ trạng thái nguyên liệu…',
+                ),
+                TextButton(
+                  onPressed: () => ref.invalidate(foodVisibilityProvider),
+                  child: const Text('Thử tải trạng thái nguyên liệu'),
+                ),
+              ],
               if (state.isLoading)
                 const LinearProgressIndicator()
               else if (state.hasError) ...[
@@ -665,16 +818,21 @@ class _IngredientPickerState extends ConsumerState<IngredientPicker> {
                   ),
                 if (foods.isEmpty)
                   const Text('Chưa có nguyên liệu phù hợp trong nguồn đã tải.'),
-                for (final food in foods.take(_visible))
+                for (final food
+                    in (visibilityPending ? <FoodCatalogItem>[] : foods).take(
+                      _visible,
+                    ))
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(food.name),
                     subtitle: Text(
-                      food.hasNutritionData
+                      canUseRecipeIngredient(food)
                           ? '${nutritionLabel(food.nutritionPer100g)} /100 g'
                           : 'Thiếu dữ liệu dinh dưỡng',
                     ),
-                    onTap: food.hasNutritionData ? () => _choose(food) : null,
+                    onTap: !_choosing && canUseRecipeIngredient(food)
+                        ? () => _choose(food)
+                        : null,
                   ),
                 if (foods.length > _visible)
                   TextButton(

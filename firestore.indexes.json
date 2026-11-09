@@ -1,6 +1,15 @@
 {
   "indexes": [
     {
+      "collectionGroup": "premium_transactions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath":"environment","order":"ASCENDING"},
+        {"fieldPath":"occurredAt","order":"DESCENDING"},
+        {"fieldPath":"__name__","order":"DESCENDING"}
+      ]
+    },
+    {
       "collectionGroup": "meal_logs",
       "queryScope": "COLLECTION",
       "fields": [

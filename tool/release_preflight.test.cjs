@@ -11,6 +11,8 @@ test('release config is explicit, preserves barcode entry and closes unverified 
   assert.deepEqual(validateDefines(config()),[]);
   assert.ok(validateDefines({...config(),HEALTHMATE_ENABLE_CHATBOT:true,HEALTHMATE_CHAT_API_URL:'https://example.com/v1/chat'}).includes('ai-infrastructure-not-verified'));
   assert.ok(validateDefines({...config(),HEALTHMATE_ENABLE_PREMIUM_DEMO:true}).includes('premium-demo-forbidden'));
+  assert.ok(validateDefines({...config(),HEALTHMATE_ENABLE_PLAY_BILLING:true}).includes('play-billing-infrastructure-not-verified'));
+  assert.deepEqual(validateDefines({...config(),HEALTHMATE_ENABLE_PLAY_BILLING:false}),[]);
   assert.ok(validateDefines({}).includes('explicit-feature-config-required'));
 });
 test('debug token, emulator config, booleans encoded as strings and credentials in URLs are rejected without values',()=>{

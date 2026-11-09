@@ -6,12 +6,14 @@ import 'package:intl/intl.dart';
 import '../../../core/data/bounded_range.dart';
 import '../../../core/utils/local_date_key.dart';
 import '../../food_library/presentation/food_nutrition_text.dart';
+import '../../auth/providers/auth_providers.dart';
 import '../../nutrition/models/nutrition_models.dart';
 import '../../nutrition_targets/models/nutrition_target.dart';
 import '../../profile/presentation/weight_chart.dart';
 import '../models/period_report.dart';
 import '../providers/report_providers.dart';
 import 'day_review_controls.dart';
+import 'macro_energy_card.dart';
 
 class PeriodReportPanel extends ConsumerStatefulWidget {
   const PeriodReportPanel({
@@ -75,6 +77,7 @@ class _PeriodReportPanelState extends ConsumerState<PeriodReportPanel> {
       widget.today.day + 1 + widget.days * _offset,
     );
     final range = widget.selectedRange ?? ReportRange(rollingEnd, widget.days);
+    final ownerUid = ref.watch(authSessionProvider).value?.uid;
     final end = range.end;
     final meals = ref.watch(periodMealsProvider(range));
     final targets = ref.watch(periodTargetsProvider(range));
@@ -171,6 +174,15 @@ class _PeriodReportPanelState extends ConsumerState<PeriodReportPanel> {
                   'Chưa ghi bữa ăn trong khoảng này; chưa có trung bình năng lượng.',
                 ),
               Text(nutritionLabel(total)),
+              const SizedBox(height: 16),
+              if (ownerUid != null)
+                MacroEnergyCard(
+                  ownerUid: ownerUid,
+                  meals: values,
+                  range: range,
+                  today: widget.today,
+                ),
+              const SizedBox(height: 16),
               Text(
                 '${coverage.recordedDays}/${coverage.dates.length} ngày có ghi bữa; chỉ phản ánh mức độ ghi nhận.',
               ),

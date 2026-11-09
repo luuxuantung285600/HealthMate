@@ -9,7 +9,7 @@ const hooks=registerHooks({resolve(specifier,context,next){
   return next(specifier,context);
 }});
 let serial=0;
-async function setup({member=false,pendingList=false,live=false,hash=''}={}) {
+async function setup({member=false,pendingList=false,live=false,hash='',billing='demo'}={}) {
   const {window,document}=parseHTML(await readFile(new URL('../dist/index.html',import.meta.url),'utf8'));
   globalThis.window=window;globalThis.document=document;
   window.location={hash};window.history={pushState(_a,_b,value){window.location.hash=value;},replaceState(_a,_b,value){window.location.hash=value;}};
@@ -17,6 +17,7 @@ async function setup({member=false,pendingList=false,live=false,hash=''}={}) {
   const dialog=document.querySelector('#editor');dialog.showModal=()=>dialog.setAttribute('open','');dialog.close=()=>dialog.removeAttribute('open');
   Object.defineProperty(document.querySelector('#editor-form'),'elements',{configurable:true,get(){return this.querySelectorAll('input,select,textarea,button');}});
   Object.defineProperty(window.HTMLSelectElement.prototype,'value',{configurable:true,get(){return this.querySelector('option[selected]')?.value??this.querySelector('option')?.value??'';},set(value){for(const option of this.querySelectorAll('option'))option.toggleAttribute('selected',option.value===String(value));}});
+  Object.defineProperty(window.HTMLInputElement.prototype,'checked',{configurable:true,get(){return this.hasAttribute('checked');},set(value){this.toggleAttribute('checked',Boolean(value));}});
   globalThis.FormData=class {constructor(form){this.values=[...form.querySelectorAll('input,textarea,select')].filter(el=>el.name&&!el.disabled&&(!(el.type==='checkbox')||el.checked)).map(el=>[el.name,el.value]);}*[Symbol.iterator](){yield* this.values;}};
   const stamp={seconds:1,nanoseconds:0,toDate:()=>new Date('2026-10-27T00:00:00Z')};
   const rows=Array.from({length:67},(_,i)=>({id:`qa-${i}`,name:i===56?'Cơm tấm sườn':'QA Món '+String(i).padStart(3,'0'),alternateNames:[],category:i%2?'Món chính':'Trái cây',isActive:true,kcalPer100g:130,proteinGPer100g:2,carbsGPer100g:28,fatGPer100g:.3,fiberGPer100g:null,sourceLabel:'Nguồn QA',sourceUrl:'https://example.com',isEstimated:true,updatedAt:stamp}));
@@ -26,7 +27,7 @@ async function setup({member=false,pendingList=false,live=false,hash=''}={}) {
     role(uid,data){this.roleData=data;data(!member);return()=>{};},
     async logout(){this.auth(null);},async counts(){return[67,3,0,0];},async config(){return{chatbotEnabled:true,foodScannerEnabled:true,maintenanceMode:false};},
     async registeredAccounts(){return this.registeredSummary ?? null;},
-    async source(kind){if(pendingList)await held;if(kind==='support_tickets')return this.supportRows??[];if(kind.startsWith('demo_premium_'))return this.demoRows?.[kind] ?? [];return kind==='food_catalog'?this.rows:[{id:'member',email:'member@example.com',displayName:'Member',adminRole:null,control:null},{id:'admin',email:'admin@example.com',adminRole:{enabled:true}}];},
+    async source(kind){if(pendingList)await held;if(kind==='support_tickets')return this.supportRows??[];if(kind==='premium_transactions')return this.paidRows??[];if(kind.startsWith('demo_premium_'))return this.demoRows?.[kind] ?? [];return kind==='food_catalog'?this.rows:[{id:'member',email:'member@example.com',displayName:'Member',adminRole:null,control:null},{id:'admin',email:'admin@example.com',adminRole:{enabled:true}}];},
     async listPage(kind,{cursor=null,...range}={}){this.listCalls++;this.lastRange=range;const source=(await this.source(kind)).filter(row=>!range.lookupField||(range.lookupField==='name'?row.name.startsWith(range.lookupValue):row[range.lookupField==='id'?'id':range.lookupField]===range.lookupValue));const offset=cursor?.offset??0,rows=source.slice(offset,offset+25);return{rows,cursor:{id:rows.at(-1)?.id,offset:offset+25},hasMore:offset+25<source.length};},
     async exportRange(kind,{idFrom='',idTo='',isCurrent=()=>true}={}){const source=await this.source(kind);if(!isCurrent())throw Error('Phiên tải đã kết thúc.');return source.filter(row=>(!idFrom||row.id>=idFrom)&&(!idTo||row.id<=idTo));},
     async save(kind,id,payload,reason,version){this.saves.push({kind,id,payload,reason,version});if(this.failSave)throw Error('Lỗi nguồn QA');const row=this.rows.find(r=>r.id===id);if(row)Object.assign(row,payload);else this.rows.push({...payload,id});},
@@ -55,8 +56,37 @@ async function setup({member=false,pendingList=false,live=false,hash=''}={}) {
   const button=label=>[...document.querySelectorAll('button')].find(el=>el.textContent===label);
   const submit=async()=>{document.querySelector('#editor-form').dispatchEvent(new window.Event('submit',{cancelable:true}));await flush();};
   await flush();
+  // Legacy cases below intentionally exercise demo fixtures. Production is the
+  // product default and has separate tests with billing:'production'.
+  const revenueSource=document.querySelector('#dashboard-revenue-source');
+  if(revenueSource&&billing==='demo'){revenueSource.value='demo';revenueSource.dispatchEvent(new window.Event('change'));await flush();}
   return{window,document,api,click,button,submit,flush};
 }
+
+async function selectDemoRevenue(t){const input=t.document.querySelector('#revenue-environment');input.value='demo';input.dispatchEvent(new t.window.Event('change'));await t.flush();}
+
+test('real billing defaults to production, streams verified amounts, separates sandbox and drops stale totals',async()=>{
+  const t=await setup({billing:'production',live:true});
+  assert.equal(t.document.querySelector('#dashboard-revenue-source').value,'production');
+  const paid={id:'verified-order',orderId:'GPA-fixture',uid:'alice',provider:'google_play',verified:true,environment:'production',status:'paid',currency:'VND',totalNanos:'29000000000000',refundedNanos:'0',netNanos:'29000000000000',occurredAt:{toMillis:()=>Date.now()}};
+  const sandbox={...paid,id:'sandbox',environment:'test',orderId:'GPA-test'};
+  t.api.emit('range',[paid,sandbox]);assert.match(t.document.querySelector('#dashboard-revenue').textContent,/29\.000 VND/);
+  assert.equal(t.document.querySelector('#dashboard-transactions .stat-number').textContent,'1');
+  t.api.emit('range',[{...paid,reconciliationPending:true}]);
+  assert.doesNotMatch(t.document.querySelector('#dashboard-latest').textContent,/29\.000/);
+  assert.match(t.document.querySelector('#dashboard-latest').textContent,/Chờ đối soát/);
+  assert.equal(t.document.querySelector('#dashboard-transactions .stat-number').textContent,'0');
+  await t.click(t.document.querySelector('[data-page="revenue"]'));
+  assert.equal(t.document.querySelector('#revenue-environment').value,'production');
+  t.api.emit('range',[paid,sandbox]);assert.match(t.document.querySelector('#revenue-summary').textContent,/29\.000 VND/);
+  t.api.emit('range',[{...paid,reconciliationPending:'true'}]);
+  assert.doesNotMatch(t.document.querySelector('#revenue-summary').textContent,/29\.000/);
+  assert.equal(t.button('Xuất Excel đã xác minh'),undefined);
+  t.api.emit('range',Error('Mất kết nối máy chủ'),true);assert.doesNotMatch(t.document.querySelector('#revenue-summary').textContent,/29\.000/);assert.equal(t.button('Xuất Excel đã xác minh'),undefined);
+  const input=t.document.querySelector('#revenue-environment');input.value='test';input.dispatchEvent(new t.window.Event('change'));await t.flush();
+  t.api.emit('range',[paid,sandbox]);assert.match(t.document.querySelector('#page-content').textContent,/KHÔNG CỘNG VÀO DOANH THU THẬT/);assert.match(t.document.querySelector('#revenue-summary').textContent,/1 đơn đã thanh toán/);
+  await t.api.logout();await t.flush();assert.ok([...t.api.liveListeners.values()].flat().every(row=>!row.active));
+});
 test('dashboard distinguishes unavailable registered total from synced accounts; server paging and search stay page-local',async()=>{
   const t=await setup();
   assert.equal(t.document.querySelectorAll('.stat-number').length,4);
@@ -126,6 +156,7 @@ test('Google sign-in opens from login and handles popup rejection without a stuc
 
 test('revenue page displays only simulated money, empty state and confirmed order totals',async()=>{
   const t=await setup();await t.click(t.document.querySelector('[data-page="revenue"]'));
+  await selectDemoRevenue(t);
   assert.match(t.document.querySelector('#page-content').textContent,/KHÔNG THU TIỀN/);
   assert.match(t.document.querySelector('#revenue-results').textContent,/Chưa có giao dịch/);
   const now=Date.now();
@@ -155,6 +186,7 @@ test('support list filters and replies safely, retains failed draft/id and updat
   t.api.supportStatus=async(id,status)=>{ticket.status=status;};
   await t.click(t.document.querySelector('[data-page="support"]'));
   assert.match(t.document.querySelector('tbody').textContent,/<script>QA/);
+  assert.doesNotMatch(t.document.querySelector('#page-content').textContent,/null/);
   assert.equal(t.document.querySelectorAll('#app script').length,0);
   await t.click(t.button('Xem & trả lời'));
   await t.click(t.button('Gửi phản hồi'));assert.equal(sends.length,0);
@@ -168,6 +200,31 @@ test('support list filters and replies safely, retains failed draft/id and updat
   t.document.querySelector('[aria-label="Trạng thái xử lý"]').value='resolved';await t.click(t.button('Lưu trạng thái'));
   assert.equal(ticket.status,'resolved');
   await t.api.logout();await t.flush();assert.equal(t.document.querySelector('.support-thread'),null);
+});
+
+test('support shows topics in list/detail and filters topics including historical unclassified',async()=>{
+ const t=await setup();
+ const stamp={toDate:()=>new Date(),seconds:1,nanoseconds:0};
+ const base={uid:'member',description:'Fixture only',type:'bug',status:'open',messageCount:0,createdAt:stamp,updatedAt:stamp};
+ t.api.supportRows=[{...base,id:'AbCdEfGhIjKlMnOpQrSt',title:'Cần hỗ trợ dinh dưỡng',topic:'nutrition'},
+ {...base,id:'BbCdEfGhIjKlMnOpQrSt',title:'Cần hỗ trợ Premium',topic:'premium'},
+ {...base,id:'CbCdEfGhIjKlMnOpQrSt',title:'Yêu cầu trước đây'}];
+ t.api.supportThread=async(id)=>({ticket:t.api.supportRows.find(row=>row.id===id),messages:[]});
+ t.api.newSupportMessageId=()=> 'ZbCdEfGhIjKlMnOpQrSt';
+ await t.click(t.document.querySelector('[data-page="support"]'));
+ assert.match(t.document.querySelector('thead').textContent,/CHỦ ĐỀ/);
+ assert.match(t.document.querySelector('tbody').textContent,/Dinh dưỡng & món ăn/);
+ const filter=t.document.querySelector('[aria-label="Chủ đề"]');
+ const select=async value=>{filter.value=value;filter.dispatchEvent(new t.window.Event('change',{bubbles:true}));await t.flush();};
+ await select('unclassified');
+ assert.equal(t.document.querySelectorAll('tbody tr').length,1);
+ assert.match(t.document.querySelector('tbody').textContent,/Yêu cầu trước đây.*Chưa phân loại/);
+ await select('premium');
+ assert.equal(t.document.querySelectorAll('tbody tr').length,1);
+ assert.match(t.document.querySelector('tbody').textContent,/Cần hỗ trợ Premium/);
+ await t.click(t.button('Xem & trả lời'));
+ assert.match(t.document.querySelector('#app').textContent,/Chủ đề: Premium & thanh toán/);
+ await t.api.logout();await t.flush();
 });
 
 test('late support thread after logout never restores customer content',async()=>{
@@ -204,6 +261,65 @@ test('revoked role while range export is pending discards all late private rows'
     t.document.querySelector('#editor-form').dispatchEvent(new t.window.Event('submit',{cancelable:true}));await t.flush();
     t.api.roleData(false);await t.flush();release([{id:'private',email:'private@example.com'}]);await t.flush();
     assert.equal(downloads,0);assert.doesNotMatch(t.document.body.textContent,/private@example/);
+  }finally{URL.createObjectURL=original;}
+});
+
+test('Excel applies captured filters across the full range and records report context',async()=>{
+  const t=await setup();await t.click(t.document.querySelector('[data-page="food_catalog"]'));
+  const search=t.document.querySelector('#list-search');search.value='com tam';
+  search.dispatchEvent(new t.window.Event('input'));await t.flush();
+  let downloaded;const original=URL.createObjectURL;URL.createObjectURL=blob=>{downloaded=blob;return 'blob:filtered';};
+  try{
+    await t.click(t.button('Xuất Excel theo khoảng mã'));
+    t.document.querySelector('[name="idFrom"]').value='qa-';
+    t.document.querySelector('[name="idTo"]').value='qa-zzzz';
+    await t.submit();
+    assert.ok(downloaded,'the result comes from every server page, not the empty visible page');
+    const text=await downloaded.text();
+    assert.match(text,/Cơm tấm sườn/);assert.doesNotMatch(text,/QA Món 000/);
+    assert.match(text,/Thông tin báo cáo/);assert.match(text,/com tam/);
+    assert.match(text,/Số bản ghi trong khoảng trước lọc/);assert.match(text,/<v>67<\/v>/);
+    assert.match(text,/Số dòng dữ liệu/);assert.match(text,/<v>1<\/v>/);
+  }finally{URL.createObjectURL=original;}
+});
+
+test('empty filtered export stays reviewable with no download',async()=>{
+  const t=await setup();await t.click(t.document.querySelector('[data-page="food_catalog"]'));
+  const search=t.document.querySelector('#list-search');search.value='khong ton tai';search.dispatchEvent(new t.window.Event('input'));await t.flush();
+  let downloads=0;const original=URL.createObjectURL;URL.createObjectURL=()=>{downloads++;return 'blob:unexpected';};
+  try{
+    await t.click(t.button('Xuất Excel theo khoảng mã'));await t.submit();
+    assert.equal(downloads,0);assert.ok(t.document.querySelector('#editor[open]'));
+    assert.match(t.document.querySelector('#editor-error').textContent,/Không có dữ liệu phù hợp/);
+  }finally{URL.createObjectURL=original;}
+});
+
+test('verified revenue download failure displays an error and can be retried',async()=>{
+  const t=await setup({billing:'production',live:true});
+  await t.click(t.document.querySelector('[data-page="revenue"]'));
+  t.api.emit('range',[{id:'order',orderId:'GPA-order',uid:'member',provider:'google_play',verified:true,environment:'production',status:'paid',currency:'VND',totalNanos:'29000000000000',refundedNanos:'0',netNanos:'29000000000000',occurredAt:{toMillis:()=>Date.now()}}]);
+  const original=URL.createObjectURL;
+  try{
+    URL.createObjectURL=()=>{throw Error('Trình duyệt không cho tải tệp');};
+    await t.click(t.button('Xuất Excel đã xác minh'));
+    assert.match(t.document.querySelector('#revenue-summary .error').textContent,/Chưa xuất được báo cáo/);
+    let blob;URL.createObjectURL=value=>{blob=value;return 'blob:retry';};
+    await t.click(t.button('Xuất Excel đã xác minh'));
+    assert.match(t.document.querySelector('#revenue-summary').textContent,/Đã tạo 1 dòng/);
+    const text=await blob.text();assert.match(text,/Đến hết ngày \(VN\)/);
+    assert.match(text,/Còn sau hoàn \(VND\)/);assert.match(text,/29.000 VND/);
+  }finally{URL.createObjectURL=original;}
+});
+
+test('workout export carries filters, and a detached button cannot download after logout',async()=>{
+  const t=await setup();await t.click(t.document.querySelector('[data-page="workouts"]'));
+  const exportButton=t.button('Xuất danh mục đang lọc');
+  let downloads=0,blob;const original=URL.createObjectURL;URL.createObjectURL=value=>{downloads++;blob=value;return 'blob:workouts';};
+  try{
+    await t.click(exportButton);assert.equal(downloads,1);
+    const text=await blob.text();assert.match(text,/Nguồn MET/);assert.match(text,/Thông tin báo cáo/);
+    await t.api.logout();await t.flush();
+    await t.click(exportButton);assert.equal(downloads,1);
   }finally{URL.createObjectURL=original;}
 });
 
@@ -448,6 +564,7 @@ test('live dashboard receives Auth, operational counts, config and receipts with
 test('live revenue updates the complete period and transaction page automatically and rejects stale snapshots',async()=>{
   const t=await setup({live:true});
   await t.click(t.document.querySelector('[data-page="revenue"]'));
+  await selectDemoRevenue(t);
   t.api.emit('range',[dashboardReceipt('arrived')]);
   t.api.emit('page:demo_premium_transactions',{rows:[dashboardReceipt('arrived')],cursor:null,hasMore:false});
   assert.match(t.document.querySelector('#revenue-summary').textContent,/20\.000đ/);

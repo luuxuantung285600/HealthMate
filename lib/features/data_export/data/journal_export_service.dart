@@ -43,6 +43,10 @@ final journalExportServiceProvider = Provider<JournalExportService>((ref) {
   );
 });
 
+enum JournalExportFormat { detailed, dailySummary }
+
+enum JournalExportStage { loading, choosingDestination, writing }
+
 class JournalExportService {
   JournalExportService({
     required this.local,
@@ -67,6 +71,8 @@ class JournalExportService {
     DateTime start,
     DateTime end, {
     bool Function()? stillOpen,
+    JournalExportFormat format = JournalExportFormat.detailed,
+    void Function(JournalExportStage)? onStage,
   }) async {
     if (_busy) throw StateError('Đang xuất dữ liệu.');
     if (!local.supported) {
@@ -94,6 +100,7 @@ class JournalExportService {
     _busy = true;
     String? ticket;
     try {
+      onStage?.call(JournalExportStage.loading);
       final (meals, waterLogs, activities, weights) = await (
         loadReportRange(
           range,
@@ -133,7 +140,10 @@ class JournalExportService {
         ),
       ).wait;
       check();
-      final csv = buildJournalCsv(
+      final build = format == JournalExportFormat.dailySummary
+          ? buildDailySummaryCsv
+          : buildJournalCsv;
+      final csv = build(
         start: start,
         endExclusive: end,
         meals: meals,
@@ -143,12 +153,16 @@ class JournalExportService {
       );
       String date(DateTime d) =>
           '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+      onStage?.call(JournalExportStage.choosingDestination);
+      check();
       ticket = await local.chooseCsv(
-        'HealthMate-${date(start)}-${date(DateTime(end.year, end.month, end.day - 1))}.csv',
+        'HealthMate-${format == JournalExportFormat.dailySummary ? 'tong-hop-ngay-' : ''}${date(start)}-${date(DateTime(end.year, end.month, end.day - 1))}.csv',
       );
       if (ticket == null) return null;
       check(); // The OS picker may have remained open through sign-out or account switch.
       final bytes = utf8.encode(csv);
+      onStage?.call(JournalExportStage.writing);
+      check();
       final verified = await local.writeCsv(ticket, bytes);
       ticket = null;
       if (verified != bytes.length) {

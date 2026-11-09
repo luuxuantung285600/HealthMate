@@ -16,7 +16,7 @@ export function createLiveData(db, session, {statisticsMode = 'server'} = {}) {
     const listen = (target, receive, unverified = () => {}) => {
       const unsubscribe = onSnapshot(target, {includeMetadataChanges:true}, snapshot => {
         if (!current()) return;
-        if (snapshot.metadata.isFromCache || snapshot.metadata.hasPendingWrites) {
+        if (snapshot.metadata.fromCache || snapshot.metadata.hasPendingWrites) {
           unverified();
           fail(Error('Đang kết nối lại. Dữ liệu chưa được máy chủ xác nhận.')); return;
         }
@@ -58,8 +58,8 @@ export function createLiveData(db, session, {statisticsMode = 'server'} = {}) {
     },error,options),
     watchRange(kind, range, receive, error, options) {
       const scope = pageScope(kind,range);
-      if (kind !== 'demo_premium_transactions' || !scope.start) throw Error('Chọn kỳ doanh thu để đồng bộ.');
-      return watch(options,error,({listen}) => listen(query(collection(db,kind),where('occurredAt','>=',new Date(scope.lower)),where('occurredAt','<',new Date(scope.upper)),orderBy('occurredAt','desc'),orderBy(documentId(),'desc'),limit(5001)), snapshot => {
+      if (!['demo_premium_transactions','premium_transactions'].includes(kind) || !scope.start) throw Error('Chọn kỳ doanh thu để đồng bộ.');
+      return watch(options,error,({listen}) => listen(query(collection(db,kind),...(scope.environment?[where('environment','==',scope.environment)]:[]),where('occurredAt','>=',new Date(scope.lower)),where('occurredAt','<',new Date(scope.upper)),orderBy('occurredAt','desc'),orderBy(documentId(),'desc'),limit(5001)), snapshot => {
         if (snapshot.size > 5000) throw Error('Kỳ này vượt 5.000 giao dịch. Chọn khoảng ngày nhỏ hơn để tổng hợp đầy đủ.');
         receive(snapshot.docs.map(s => ({...s.data(),id:s.id})));
       }));

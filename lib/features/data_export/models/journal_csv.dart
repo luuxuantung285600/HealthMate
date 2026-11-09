@@ -73,7 +73,33 @@ String buildJournalCsv({
   List<WaterLog> water = const [],
   List<ActivityLog> activities = const [],
   List<BodyMetric> weights = const [],
+}) => _encodeCsv(
+  journalCsvColumns,
+  _journalRows(
+    start: start,
+    endExclusive: endExclusive,
+    meals: meals,
+    water: water,
+    activities: activities,
+    weights: weights,
+  ),
+);
+
+List<Map<String, Object?>> _journalRows({
+  required DateTime start,
+  required DateTime endExclusive,
+  List<MealLog> meals = const [],
+  List<WaterLog> water = const [],
+  List<ActivityLog> activities = const [],
+  List<BodyMetric> weights = const [],
 }) {
+  if (start != DateTime(start.year, start.month, start.day) ||
+      endExclusive !=
+          DateTime(endExclusive.year, endExclusive.month, endExclusive.day)) {
+    throw const FormatException(
+      'Khoảng xuất phải bắt đầu và kết thúc ở đầu ngày theo múi giờ thiết bị.',
+    );
+  }
   final first = localDateKey(start), last = localDateKey(endExclusive);
   final days = DateTime.utc(
     endExclusive.year,
@@ -251,7 +277,11 @@ String buildJournalCsv({
     );
   }
   rows.sort((a, b) {
-    for (final key in ['recorded_at_utc', 'record_kind', 'record_id']) {
+    final time = DateTime.parse(
+      a['recorded_at_utc'] as String,
+    ).compareTo(DateTime.parse(b['recorded_at_utc'] as String));
+    if (time != 0) return time;
+    for (final key in ['record_kind', 'record_id']) {
       final comparison = (a[key] as String).compareTo(b[key] as String);
       if (comparison != 0) return comparison;
     }
@@ -259,10 +289,117 @@ String buildJournalCsv({
       (b['item_index'] as int?) ?? 0,
     );
   });
+  return rows;
+}
+
+String _encodeCsv(List<String> columns, List<Map<String, Object?>> rows) {
   final output =
-      '\uFEFF${[journalCsvColumns.map(csvCell).join(','), for (final row in rows) journalCsvColumns.map((key) => csvCell(row[key])).join(',')].join('\r\n')}\r\n';
+      '\uFEFF${[columns.map(csvCell).join(','), for (final row in rows) columns.map((key) => csvCell(row[key])).join(',')].join('\r\n')}\r\n';
   if (utf8.encode(output).length > 5 * 1024 * 1024) {
     throw const FormatException('File vượt 5 MB; hãy chọn khoảng ngắn hơn.');
   }
   return output;
+}
+
+/// Totals describe recorded items only. An unrecorded day never means zero intake.
+/// Share validation and snapshot rows with the detailed export, not meal totals
+/// or today's catalog, so edits to the catalog cannot rewrite historical reports.
+String buildDailySummaryCsv({
+  required DateTime start,
+  required DateTime endExclusive,
+  List<MealLog> meals = const [],
+  List<WaterLog> water = const [],
+  List<ActivityLog> activities = const [],
+  List<BodyMetric> weights = const [],
+}) {
+  final detail = _journalRows(
+    start: start,
+    endExclusive: endExclusive,
+    meals: meals,
+    water: water,
+    activities: activities,
+    weights: weights,
+  );
+  final byDay = <String, List<Map<String, Object?>>>{};
+  for (final row in detail) {
+    byDay.putIfAbsent(row['date_key'] as String, () => []).add(row);
+  }
+  const columns = [
+    'Ngày',
+    'Số bữa đã ghi',
+    'Số món đã ghi',
+    'kcal đã ghi',
+    'Đạm đã ghi (g)',
+    'Trạng thái đạm',
+    'Carb đã ghi (g)',
+    'Trạng thái carb',
+    'Béo đã ghi (g)',
+    'Trạng thái béo',
+    'Xơ đã ghi (g)',
+    'Trạng thái xơ',
+    'Nước đã ghi (ml)',
+    'Vận động đã ghi (phút)',
+    'Cân nặng gần nhất trong ngày (kg)',
+    'Thời điểm cân (UTC)',
+    'Số món ước tính',
+    'Tình trạng ghi nhận',
+    'Từ ngày',
+    'Đến hết ngày',
+    'Cách xác định ngày',
+    'Lưu ý',
+  ];
+  final result = <Map<String, Object?>>[];
+  var day = start;
+  while (day.isBefore(endExclusive)) {
+    final key = localDateKey(day), rows = byDay[key] ?? const [];
+    final items = rows.where((r) => r['record_kind'] == 'meal_item').toList();
+    final waters = rows.where((r) => r['record_kind'] == 'water').toList();
+    final activity = rows.where((r) => r['record_kind'] == 'activity').toList();
+    final weight = rows.where((r) => r['record_kind'] == 'weight').lastOrNull;
+    num? sum(List<Map<String, Object?>> entries, String field) =>
+        entries.isEmpty
+        ? null
+        : entries.fold<num>(0, (n, r) => n + (r[field] as num? ?? 0));
+    final row = <String, Object?>{
+      'Ngày': key,
+      'Số bữa đã ghi': items.map((r) => r['record_id']).toSet().length,
+      'Số món đã ghi': items.length,
+      'kcal đã ghi': sum(items, 'kcal'),
+      'Nước đã ghi (ml)': sum(waters, 'water_ml'),
+      'Vận động đã ghi (phút)': sum(activity, 'activity_minutes'),
+      'Cân nặng gần nhất trong ngày (kg)': weight?['weight_kg'],
+      'Thời điểm cân (UTC)': weight?['recorded_at_utc'],
+      'Số món ước tính': items.where((r) => r['is_estimated'] == true).length,
+      'Tình trạng ghi nhận': rows.isEmpty ? 'Chưa có nhật ký' : 'Có nhật ký',
+      'Từ ngày': localDateKey(start),
+      'Đến hết ngày': localDateKey(
+        DateTime(endExclusive.year, endExclusive.month, endExclusive.day - 1),
+      ),
+      'Cách xác định ngày':
+          'Bữa ăn/nước/vận động: ngày đã lưu; bản ghi cũ và cân nặng: múi giờ thiết bị lúc xuất',
+      'Lưu ý':
+          'Chỉ tổng hợp dữ liệu đã ghi, không xác nhận đầy đủ cả ngày. Ô trống là chưa có dữ liệu; không thay thế tư vấn y tế.',
+    };
+    for (final (field, label) in [
+      ('protein', 'đạm'),
+      ('carbs', 'carb'),
+      ('fat', 'béo'),
+      ('fiber', 'xơ'),
+    ]) {
+      final known = items.where((r) => r['${field}_status'] == 'known').length;
+      final total = sum(items, '${field}_g');
+      final hasData =
+          known > 0 || items.any((r) => r['${field}_status'] == 'partial');
+      final title = '${label[0].toUpperCase()}${label.substring(1)}';
+      row['$title đã ghi (g)'] = hasData ? total : null;
+      row['Trạng thái $label'] = items.isEmpty || !hasData
+          ? 'Chưa có dữ liệu'
+          : known == items.length
+          ? 'Đủ dữ liệu trong các món đã ghi'
+          : 'Thiếu dữ liệu một phần';
+    }
+    result.add(row);
+    day = DateTime(day.year, day.month, day.day + 1);
+  }
+  return _encodeCsv(columns, result);
 }

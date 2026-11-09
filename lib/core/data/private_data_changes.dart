@@ -119,7 +119,8 @@ final privateDataChangesProvider = StreamProvider.autoDispose
       if (user?.emailVerified != true || Firebase.apps.isEmpty) {
         return const Stream.empty();
       }
-      final source = FirebaseFirestore.instance
+      final source = ref
+          .watch(realtimeFirestoreProvider)
           .collection('users')
           .doc(user!.uid)
           .collection(scope.collection);

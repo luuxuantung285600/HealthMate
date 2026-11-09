@@ -24,6 +24,8 @@ class _JournalExportDialogState extends ConsumerState<JournalExportDialog> {
       widget.initialRange?.start ??
       DateTime(_end.year, _end.month, _end.day - 6);
   bool _consent = false, _busy = false;
+  JournalExportFormat _format = JournalExportFormat.detailed;
+  JournalExportStage? _stage;
   String? _message;
   ReportRange? _initialRange() {
     try {
@@ -65,12 +67,16 @@ class _JournalExportDialogState extends ConsumerState<JournalExportDialog> {
             _start,
             DateTime(_end.year, _end.month, _end.day + 1),
             stillOpen: () => mounted,
+            format: _format,
+            onStage: (stage) {
+              if (mounted) setState(() => _stage = stage);
+            },
           );
       if (mounted) {
         setState(
           () => _message = bytes == null
               ? 'Đã hủy chọn nơi lưu; chưa xuất dữ liệu.'
-              : 'Đã lưu và đọc lại kiểm tra tệp CSV ($bytes byte). Khoảng trống chỉ có dòng tiêu đề.',
+              : 'Đã lưu và đọc lại kiểm tra tệp CSV ($bytes byte), từ ${DateFormat('dd/MM/yyyy').format(_start)} đến hết ${DateFormat('dd/MM/yyyy').format(_end)}.',
         );
       }
     } catch (e) {
@@ -86,7 +92,12 @@ class _JournalExportDialogState extends ConsumerState<JournalExportDialog> {
         );
       }
     } finally {
-      if (mounted) setState(() => _busy = false);
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _stage = null;
+        });
+      }
     }
   }
 
@@ -106,11 +117,50 @@ class _JournalExportDialogState extends ConsumerState<JournalExportDialog> {
           padding: const EdgeInsets.all(24),
           children: [
             const Text(
-              'Bữa ăn (từng món), nước, vận động và cân nặng đã ghi. Không bao gồm hồ sơ, hội thoại, mục tiêu hoặc nháp. Mỗi lần 1–366 ngày, tối đa 10.000 bản ghi mỗi nguồn và 5 MB. Mỗi phần tối đa 90 ngày/2.000 bản ghi; dữ liệu quá nhiều cần chia khoảng nhỏ hơn, không tự cắt bớt.',
+              'Xuất bữa ăn, nước, vận động và cân nặng trong khoảng bạn chọn, từ nhật ký đã lưu.',
             ),
             const SizedBox(height: 16),
             const Text(
-              'CSV có đơn vị, ngày ghi, UTC, offset và phiên bản schema. Ô thiếu để trống; số 0 thật được giữ. Cân nặng không có múi giờ lịch sử nên dùng múi giờ thiết bị lúc xuất. UTF-8 phù hợp tiếng Việt.',
+              'Ô trống là chưa có dữ liệu; số 0 đã ghi được giữ nguyên.',
+            ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<JournalExportFormat>(
+              key: const ValueKey('export-format'),
+              initialValue: _format,
+              isExpanded: true,
+              decoration: const InputDecoration(labelText: 'Nội dung tệp CSV'),
+              items: const [
+                DropdownMenuItem(
+                  value: JournalExportFormat.detailed,
+                  child: Text(
+                    'Nhật ký chi tiết',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                DropdownMenuItem(
+                  value: JournalExportFormat.dailySummary,
+                  child: Text(
+                    'Tổng hợp theo ngày',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+              onChanged: _busy
+                  ? null
+                  : (format) {
+                      if (format != null) {
+                        setState(() {
+                          _format = format;
+                          _message = null;
+                        });
+                      }
+                    },
+            ),
+            const SizedBox(height: 12),
+            Text(
+              _format == JournalExportFormat.dailySummary
+                  ? 'Mỗi ngày một dòng: bữa ăn, kcal và dưỡng chất đã ghi, nước, vận động, lần cân cuối trong ngày. Dưỡng chất thiếu được ghi rõ; không coi nhật ký là đầy đủ cả ngày.'
+                  : 'Từng món ăn và từng bản ghi, giữ nguồn, nhãn ước tính, UTC và múi giờ. Khoảng không có nhật ký chỉ có dòng tiêu đề.',
             ),
             const SizedBox(height: 16),
             OutlinedButton.icon(
@@ -160,6 +210,19 @@ class _JournalExportDialogState extends ConsumerState<JournalExportDialog> {
               onPressed: _busy ? null : () => _pick(false),
               child: Text('Đến hết ${DateFormat.yMd('vi').format(_end)}'),
             ),
+            const ExpansionTile(
+              title: Text('Nội dung và giới hạn tệp'),
+              childrenPadding: EdgeInsets.only(bottom: 16),
+              children: [
+                Text(
+                  'Mỗi lần 1–366 ngày, tối đa 10.000 bản ghi mỗi nguồn và 5 MB. Mỗi phần tải tối đa 90 ngày/2.000 bản ghi; quá giới hạn cần chọn khoảng nhỏ hơn, không tự cắt bớt.',
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'CSV UTF-8 giữ tiếng Việt và đơn vị. Không có nhật ký không có nghĩa là không ăn hoặc không vận động. Cân nặng và bản ghi cũ dùng múi giờ thiết bị lúc xuất. Không bao gồm giấc ngủ, hồ sơ, hội thoại, mục tiêu hoặc nháp.',
+                ),
+              ],
+            ),
             const Text(
               'Tệp chứa dữ liệu sức khỏe cá nhân. Bạn chủ động chọn nơi lưu và chịu trách nhiệm khi chia sẻ.',
             ),
@@ -175,7 +238,16 @@ class _JournalExportDialogState extends ConsumerState<JournalExportDialog> {
                   : (v) => setState(() => _consent = v ?? false),
               title: const Text('Tôi đồng ý xuất tệp riêng tư này.'),
             ),
-            if (_busy) const LinearProgressIndicator(),
+            if (_busy) ...[
+              const LinearProgressIndicator(),
+              Text(switch (_stage) {
+                JournalExportStage.choosingDestination =>
+                  'Đang chờ bạn chọn nơi lưu…',
+                JournalExportStage.writing =>
+                  'Đang ghi và đọc lại kiểm tra tệp…',
+                _ => 'Đang tải đủ dữ liệu trong khoảng đã chọn…',
+              }, key: const ValueKey('export-stage')),
+            ],
             if (_message != null)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),

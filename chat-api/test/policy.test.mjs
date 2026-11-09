@@ -21,6 +21,16 @@ const error = (status, code) => e => e instanceof ApiError && e.status === statu
 const usage = (store, now) => store.data.get(`ai_gateway_usage/user-a/days/${dayKey(now)}`)?.chats ?? 0;
 const job = store => store.data.get(`ai_gateway_reservations/user-a/requests/${id}`);
 
+test('paid quota requires server verified, live and unexpired entitlement; test gated separately',async()=>{
+  const now=Date.now();
+  for(const [patch,allowed,allowTestPurchases] of [[{},true,false],[{verified:false},false,false],[{active:false},false,false],[{expiresAt:now},false,false],[{environment:'test'},false,false],[{environment:'test'},true,true],[{status:'SUBSCRIPTION_STATE_ON_HOLD'},false,false]]){
+    const {store,policy}=fixture({now:()=>now,allowTestPurchases});
+    store.data.set('premium_memberships/user-a',{provider:'google_play',verified:true,active:true,environment:'production',status:'SUBSCRIPTION_STATE_ACTIVE',startedAt:now-1000,expiresAt:now+1000,...patch});
+    store.data.set(`ai_gateway_usage/user-a/days/${dayKey(now)}`,{dayKey:dayKey(now),chats:5});
+    if(allowed)await policy.reserve('user-a',id);else await assert.rejects(policy.reserve('user-a',id),error(429,'quota_exceeded'));
+  }
+});
+
 test('missing trusted runtime identity fails closed before any model call', async () => {
   let calls = 0;
   const handler = createHandler(async () => ({ uid: 'user-a', authTime: 1 }));

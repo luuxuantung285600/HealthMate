@@ -9,6 +9,7 @@ import '../providers/food_library_providers.dart';
 import '../providers/favorite_food_providers.dart';
 import 'library_forms.dart';
 import 'food_nutrition_text.dart';
+import 'delete_library_entry_dialog.dart';
 
 Future<void> openLibraryForm(
   BuildContext context, {
@@ -98,41 +99,42 @@ class LibraryFoodList extends ConsumerStatefulWidget {
 
 class _LibraryFoodListState extends ConsumerState<LibraryFoodList> {
   int _limit = 40;
+  bool _deleteOpen = false;
   Future<void> _delete(LibraryEntry entry) async {
-    final uid = ref.read(authSessionProvider).value?.uid;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AccountBoundDialog(
-        child: AlertDialog(
-          title: const Text('Xóa khỏi thư viện?'),
-          content: Text(
-            'Xóa “${entry.name}”? Các bữa ăn và snapshot công thức đã ghi vẫn được giữ.',
+    if (_deleteOpen) return;
+    _deleteOpen = true;
+    try {
+      final uid = ref.read(authSessionProvider).value?.uid;
+      final saved = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogContext) => AccountBoundDialog(
+          child: DeleteLibraryEntryDialog(
+            entry: entry,
+            onDelete: () {
+              if (!mounted ||
+                  uid == null ||
+                  ref.read(authSessionProvider).value?.uid != uid) {
+                return Future.value(false);
+              }
+              return ref
+                  .read(foodLibraryControllerProvider.notifier)
+                  .delete(entry);
+            },
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text('Hủy'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(dialogContext, true),
-              child: const Text('Xóa'),
-            ),
-          ],
         ),
-      ),
-    );
-    if (confirmed != true ||
-        !mounted ||
-        ref.read(authSessionProvider).value?.uid != uid) {
-      return;
+      );
+      if (saved != true ||
+          !mounted ||
+          ref.read(authSessionProvider).value?.uid != uid) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Đã xóa nguồn khỏi thư viện.')),
+      );
+    } finally {
+      _deleteOpen = false;
     }
-    final saved = await ref
-        .read(foodLibraryControllerProvider.notifier)
-        .delete(entry);
-    if (!mounted || !saved) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đã xóa nguồn khỏi thư viện.')),
-    );
   }
 
   Future<void> _favorite(LibraryEntry entry) async {

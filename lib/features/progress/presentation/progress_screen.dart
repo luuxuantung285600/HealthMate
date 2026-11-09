@@ -5,12 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../core/widgets/feature_page.dart';
 import '../../../core/widgets/confirmed_save.dart';
+import '../../auth/providers/auth_providers.dart';
 import '../../../shared/providers/local_clock_provider.dart';
 import '../../data_export/presentation/journal_export_dialog.dart';
 import '../../weekly_reflection/presentation/weekly_reflection_card.dart';
 import '../../weekly_reflection/providers/weekly_reflection_providers.dart';
 import '../../weekly_reflection/models/weekly_reflection.dart';
 import '../../reports/presentation/period_report_panel.dart';
+import '../../reports/presentation/macro_energy_card.dart';
 import '../../reports/presentation/report_range_dialog.dart';
 import '../../reports/models/period_report.dart';
 import '../../reports/providers/report_providers.dart';
@@ -37,6 +39,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
   Widget build(BuildContext context) {
     if (!TickerMode.valuesOf(context).enabled) return const SizedBox.shrink();
     final today = ref.watch(localClockProvider);
+    final ownerUid = ref.watch(authSessionProvider).value?.uid;
     final weekly = _mode == 'preset' && _days == 7;
     final selectedYear = _year ?? today.year;
     final monday = weekStart(today);
@@ -268,26 +271,43 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                 ),
               ],
             ),
-            data: (logs) => ProgressOverview(
-              reflection: summarizeWeek(start, today, logs),
-              tab: _tab,
-              confirmedDays:
-                  reviews == null || reviews.isLoading || reviews.hasError
-                  ? null
-                  : reviews.value
-                        ?.where(
-                          (r) => r.matches(
-                            logs.meals
-                                .where(
-                                  (m) =>
-                                      (m.dateKey ??
-                                          localDateKey(m.consumedAt)) ==
-                                      r.dateKey,
-                                )
-                                .toList(),
-                          ),
-                        )
-                        .length,
+            data: (logs) => Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (_tab == 3 && ownerUid != null) ...[
+                  MacroEnergyCard(
+                    ownerUid: ownerUid,
+                    meals: logs.meals,
+                    range: ReportRange(
+                      DateTime(end.year, end.month, end.day + 1),
+                      7,
+                    ),
+                    today: today,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                ProgressOverview(
+                  reflection: summarizeWeek(start, today, logs),
+                  tab: _tab,
+                  confirmedDays:
+                      reviews == null || reviews.isLoading || reviews.hasError
+                      ? null
+                      : reviews.value
+                            ?.where(
+                              (r) => r.matches(
+                                logs.meals
+                                    .where(
+                                      (m) =>
+                                          (m.dateKey ??
+                                              localDateKey(m.consumedAt)) ==
+                                          r.dateKey,
+                                    )
+                                    .toList(),
+                              ),
+                            )
+                            .length,
+                ),
+              ],
             ),
           ),
         ],

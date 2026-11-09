@@ -17,11 +17,11 @@ export class MemoryStore {
     } finally { release(); }
   }
 }
-export function fixture({ now = Date.now, premiumDemo = false } = {}) {
+export function fixture({ now = Date.now, premiumDemo = false, allowTestPurchases = false } = {}) {
   const store = new MemoryStore();
   store.data.set('app_config/runtime', { chatbotEnabled: true, foodScannerEnabled: true, maintenanceMode: false });
   for (const uid of ['user-a', 'user-b']) store.data.set(`users/${uid}`, {
     birthDate: Date.UTC(2000, 0, 1), onboardingCompletedAt: Date.UTC(2026, 0, 1),
   });
-  return { store, policy: new AiPolicy(store, { now, premiumDemo }) };
+  return { store, policy: new AiPolicy(store, { now, premiumDemo, allowTestPurchases }) };
 }

@@ -405,9 +405,12 @@ void main() {
   testWidgets('planner preview excludes meat and eggs for a vegan profile', (
     tester,
   ) async {
+    final auth = FakeAuthRepository(user: FakeAuthRepository.testUser);
+    addTearDown(auth.dispose);
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          authRepositoryProvider.overrideWithValue(auth),
           authSessionProvider.overrideWith(
             (ref) => Stream.value(FakeAuthRepository.testUser),
           ),

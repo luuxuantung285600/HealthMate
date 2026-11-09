@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../../core/widgets/confirmed_save.dart';
 
 import '../models/body_metric.dart';
 import '../models/profile_validation.dart';
+import 'profile_number_input.dart';
 
 class BodyMetricFormDialog extends StatefulWidget {
   const BodyMetricFormDialog({this.metric, this.onSave, super.key});
@@ -20,19 +22,35 @@ class _BodyMetricFormDialogState extends State<BodyMetricFormDialog>
   late final TextEditingController _weightController;
   late final TextEditingController _noteController;
   late DateTime _measuredAt;
+  late final DateTime _initialAt;
+  late final String _initialWeight, _initialNote;
+  String? _timeError;
+
+  @override
+  bool get hasUnsavedChanges =>
+      _weightController.text != _initialWeight ||
+      _noteController.text != _initialNote ||
+      _measuredAt != _initialAt;
 
   @override
   void initState() {
     super.initState();
     _weightController = TextEditingController(
-      text: widget.metric?.weightKg.toStringAsFixed(1) ?? '',
+      text: profileNumberInput(widget.metric?.weightKg),
     );
     _noteController = TextEditingController(text: widget.metric?.note ?? '');
-    final initial = widget.metric?.measuredAt ?? DateTime.now();
+    final initial = widget.metric?.measuredAt.toLocal() ?? DateTime.now();
     // Preserve an edited reading's timestamp; a new reading keeps the current
     // time so it can become the latest reading even after onboarding today.
     _measuredAt = initial;
+    _initialAt = initial;
+    _initialWeight = _weightController.text;
+    _initialNote = _noteController.text;
+    _weightController.addListener(_changed);
+    _noteController.addListener(_changed);
   }
+
+  void _changed() => setState(() {});
 
   @override
   void dispose() {
@@ -43,11 +61,16 @@ class _BodyMetricFormDialogState extends State<BodyMetricFormDialog>
 
   Future<void> _pickDate() async {
     final now = DateTime.now();
+    final today = DateUtils.dateOnly(now);
+    final existingDay = DateUtils.dateOnly(_measuredAt);
+    final earliest = existingDay.isBefore(DateTime(2000))
+        ? existingDay
+        : DateTime(2000);
     final selected = await showDatePicker(
       context: context,
-      initialDate: _measuredAt,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(now.year, now.month, now.day),
+      initialDate: existingDay.isAfter(today) ? today : existingDay,
+      firstDate: earliest,
+      lastDate: today,
       helpText: 'Ngày đo',
       cancelText: 'Hủy',
       confirmText: 'Chọn',
@@ -63,12 +86,44 @@ class _BodyMetricFormDialogState extends State<BodyMetricFormDialog>
         _measuredAt.millisecond,
         _measuredAt.microsecond,
       );
-      setState(() => _measuredAt = candidate.isAfter(now) ? now : candidate);
+      setState(() {
+        _measuredAt = candidate;
+        _timeError = null;
+      });
     }
   }
 
+  Future<void> _pickTime() async {
+    final selected = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(_measuredAt),
+      helpText: 'Giờ đo',
+      cancelText: 'Hủy',
+      confirmText: 'Chọn',
+    );
+    if (selected == null || !mounted) return;
+    if (selected.hour == _measuredAt.hour &&
+        selected.minute == _measuredAt.minute) {
+      return;
+    }
+    setState(() {
+      _measuredAt = DateTime(
+        _measuredAt.year,
+        _measuredAt.month,
+        _measuredAt.day,
+        selected.hour,
+        selected.minute,
+      );
+      _timeError = null;
+    });
+  }
+
   void _submit() {
-    if (!_formKey.currentState!.validate()) return;
+    final error = _measuredAt.isAfter(DateTime.now())
+        ? 'Thời điểm đo không được ở tương lai. Hãy chọn lại ngày hoặc giờ.'
+        : null;
+    setState(() => _timeError = error);
+    if (!_formKey.currentState!.validate() || error != null) return;
     saveDraft(
       BodyMetricDraft(
         weightKg: ProfileValidation.parseDecimal(
@@ -107,6 +162,8 @@ class _BodyMetricFormDialogState extends State<BodyMetricFormDialog>
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
                       labelText: 'Cân nặng (kg)',
+                      helperText: 'Từ 20 đến 500 kg; có thể nhập dấu phẩy.',
+                      helperMaxLines: 3,
                       prefixIcon: Icon(Icons.monitor_weight_outlined),
                     ),
                     validator: ProfileValidation.weight,
@@ -116,8 +173,28 @@ class _BodyMetricFormDialogState extends State<BodyMetricFormDialog>
                     key: const ValueKey('metric-date'),
                     onPressed: _pickDate,
                     icon: const Icon(Icons.calendar_today_outlined),
-                    label: Text(locale.formatMediumDate(_measuredAt)),
+                    label: Text(DateFormat('dd/MM/yyyy').format(_measuredAt)),
                   ),
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    key: const ValueKey('metric-time'),
+                    onPressed: _pickTime,
+                    icon: const Icon(Icons.schedule_outlined),
+                    label: Text(
+                      locale.formatTimeOfDay(
+                        TimeOfDay.fromDateTime(_measuredAt),
+                        alwaysUse24HourFormat: true,
+                      ),
+                    ),
+                  ),
+                  const Text('Ngày và giờ theo múi giờ của thiết bị.'),
+                  if (_timeError != null)
+                    Text(
+                      _timeError!,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
                   const SizedBox(height: 16),
                   TextFormField(
                     key: const ValueKey('metric-note'),
@@ -139,10 +216,7 @@ class _BodyMetricFormDialogState extends State<BodyMetricFormDialog>
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Hủy'),
-          ),
+          TextButton(onPressed: requestClose, child: const Text('Hủy')),
           FilledButton(
             key: const ValueKey('save-metric'),
             onPressed: _submit,

@@ -847,6 +847,8 @@ void main() {
             FocusManager.instance.primaryFocus?.unfocus();
             await tester.pumpAndSettle();
             await tap(tester, find.byTooltip('Hủy'));
+            expect(find.text('Bỏ thay đổi chưa lưu?'), findsOneWidget);
+            await tap(tester, find.text('Bỏ thay đổi'));
             await tap(tester, find.widgetWithText(ChoiceChip, 'Công thức'));
             await tap(tester, find.byKey(const ValueKey('edit-recipe-recipe')));
             await input(tester, 'recipe-yield', '500');
@@ -876,6 +878,8 @@ void main() {
               await captureImage(tester, capture, 'six-ingredients-large');
             }
             await tap(tester, find.byTooltip('Hủy'));
+            expect(find.text('Bỏ thay đổi chưa lưu?'), findsOneWidget);
+            await tap(tester, find.text('Bỏ thay đổi'));
             await openJournal(tester, container);
             await tap(tester, find.byKey(const ValueKey('add-custom-food')));
             await input(tester, 'custom-food-fat', '0');

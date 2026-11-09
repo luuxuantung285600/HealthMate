@@ -22,6 +22,8 @@ import 'support/fake_nutrition_repository.dart';
 
 class ControlledPlans implements WellnessRepository {
   int checks = 0, loads = 0, saves = 0;
+  int planSaves = 0;
+  bool marked = true;
   bool recorded = false;
   Completer<bool>? checking;
   Completer<String>? saving;
@@ -32,7 +34,7 @@ class ControlledPlans implements WellnessRepository {
     date: date,
     type: MealType.breakfast,
     items: [MealItemSnapshot.fromCatalog(FakeNutritionRepository.rice, 100)],
-    loggedMealId: 'plan-${localDateKey(date)}-breakfast',
+    loggedMealId: marked ? 'plan-${localDateKey(date)}-breakfast' : null,
     createdAt: date,
     updatedAt: date,
   );
@@ -56,6 +58,11 @@ class ControlledPlans implements WellnessRepository {
   }
 
   @override
+  Future<void> savePlan(String uid, MealDraft draft) async {
+    planSaves++;
+  }
+
+  @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
@@ -63,12 +70,17 @@ Future<void> pumpPlanner(
   WidgetTester tester,
   ControlledPlans repo, {
   Stream<AuthUser?>? session,
+  FakeAuthRepository? repository,
 }) async {
+  final auth =
+      repository ?? FakeAuthRepository(user: FakeAuthRepository.testUser);
+  addTearDown(auth.dispose);
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
+        authRepositoryProvider.overrideWithValue(auth),
         authSessionProvider.overrideWith(
-          (ref) => session ?? Stream.value(FakeAuthRepository.testUser),
+          (ref) => session ?? auth.authStateChanges(),
         ),
         userProfileProvider.overrideWith(
           (ref) => Stream.value(FakeHealthProfileRepository.testProfile),
@@ -96,11 +108,50 @@ Future<void> pumpPlanner(
     ),
   );
   await tester.pumpAndSettle();
-  await tester.ensureVisible(find.text('Đã ghi · Kiểm tra'));
+  await tester.ensureVisible(
+    find.text(repo.marked ? 'Đã ghi · Kiểm tra' : 'Xác nhận đã ăn'),
+  );
   await tester.pumpAndSettle();
 }
 
 void main() {
+  for (final editing in [true, false]) {
+    testWidgets(
+      'plan ${editing ? 'editing' : 'logging'} rejects Auth change before stream delivery',
+      (tester) async {
+        final auth = FakeAuthRepository(user: FakeAuthRepository.testUser);
+        final repo = ControlledPlans()..marked = !editing;
+        await pumpPlanner(tester, repo, repository: auth);
+        if (editing) {
+          final editButton = find
+              .byWidgetPredicate(
+                (w) => w is IconButton && w.tooltip == 'Chỉnh kế hoạch',
+              )
+              .first;
+          await tester.ensureVisible(editButton);
+          await tester.pumpAndSettle();
+          await tester.tap(editButton);
+        } else {
+          await tester.tap(find.text('Đã ghi · Kiểm tra'));
+        }
+        // The panel remains busy while its entry dialog is open.
+        await tester.pump(const Duration(milliseconds: 300));
+        final save = find.byKey(
+          ValueKey(editing ? 'save-meal-plan' : 'save-meal'),
+        );
+        await tester.ensureVisible(save);
+        await tester.pump(const Duration(milliseconds: 300));
+        auth.emitUser(null);
+        tester.widget<FilledButton>(save).onPressed!();
+        await tester.pumpAndSettle();
+        expect(repo.planSaves, 0);
+        expect(repo.saves, 0);
+        expect(find.byType(PlanMealDialog), findsNothing);
+        expect(find.byType(MealFormDialog), findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
   testWidgets('dangling marker is checkable and duplicate taps open one form', (
     tester,
   ) async {

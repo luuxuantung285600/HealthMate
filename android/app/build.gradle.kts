@@ -38,6 +38,7 @@ gradle.taskGraph.whenReady {
         val releaseDefines = mutableMapOf<String, String>()
         val allowedHealthMateDefines = setOf(
             "HEALTHMATE_ENABLE_ADMIN_CONTROLS", "HEALTHMATE_ENABLE_PREMIUM_DEMO",
+            "HEALTHMATE_ENABLE_PLAY_BILLING",
             "HEALTHMATE_ENABLE_CHATBOT", "HEALTHMATE_ENABLE_FOOD_SCANNER",
             "HEALTHMATE_CHAT_API_URL", "HEALTHMATE_GOOGLE_SERVER_CLIENT_ID",
         )
@@ -62,6 +63,9 @@ gradle.taskGraph.whenReady {
             releaseDefines[key] = value
             if (key == "HEALTHMATE_ENABLE_PREMIUM_DEMO" && value != "false") {
                 throw GradleException("Premium demo must be disabled in release builds.")
+            }
+            if (key == "HEALTHMATE_ENABLE_PLAY_BILLING" && value != "false") {
+                throw GradleException("Real Play billing requires sandbox acceptance before enabling a release build.")
             }
         }
         val requiredDefines = mapOf(

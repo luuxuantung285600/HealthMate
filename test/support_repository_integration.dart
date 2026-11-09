@@ -172,8 +172,28 @@ void main() {
         SupportType.bug,
         'Fixture report',
         'Fixture body',
+        topic: SupportTopic.nutrition,
       );
       expect((await db.doc('support_usage/$uid').get()).data()!['count'], 1);
+      expect(
+        (await db.doc('support_tickets/$id').get()).data()!['topic'],
+        'nutrition',
+      );
+      expect(
+        (await repository.watchTicket(uid, id).first)?.topic,
+        SupportTopic.nutrition,
+      );
+      await expectLater(
+        repository.create(
+          uid,
+          id,
+          SupportType.bug,
+          'Fixture report',
+          'Fixture body',
+          topic: SupportTopic.premium,
+        ),
+        throwsA(isA<SupportFailure>()),
+      );
       await expectLater(
         repository.create(
           uid,
@@ -181,6 +201,7 @@ void main() {
           SupportType.suggestion,
           'Fixture report',
           'Fixture body',
+          topic: SupportTopic.nutrition,
         ),
         throwsA(isA<SupportFailure>()),
       );
@@ -191,6 +212,7 @@ void main() {
         SupportType.bug,
         'Fixture report',
         'Fixture body',
+        topic: SupportTopic.nutrition,
       );
       expect(
         (await db
@@ -210,6 +232,7 @@ void main() {
           SupportType.bug,
           'Other',
           'Fixture',
+          topic: SupportTopic.other,
         ),
         throwsA(isA<SupportFailure>()),
       );
@@ -235,6 +258,7 @@ void main() {
             SupportType.suggestion,
             'Synthetic suggestion',
             'Fixture',
+            topic: SupportTopic.other,
           );
           return true;
         } on SupportFailure {
@@ -276,6 +300,7 @@ void main() {
       });
       final first = await repository.watchTicketPage(uid).first;
       expect(first.tickets, hasLength(25));
+      expect(first.tickets.every((ticket) => ticket.topic == null), isTrue);
       expect(first.nextCursor, isNotNull);
       expect(first.nextCursor!.nanoseconds, 123456000);
       final deletion = await http.delete(

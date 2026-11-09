@@ -6,6 +6,27 @@ enum SupportType {
   final String label;
 }
 
+enum SupportTopic {
+  account('account', 'Tài khoản & đăng nhập'),
+  premium('premium', 'Premium & thanh toán'),
+  nutrition('nutrition', 'Dinh dưỡng & món ăn'),
+  activity('activity', 'Bài tập & vận động'),
+  tracking('tracking', 'Hồ sơ & sức khỏe'),
+  foodScanner('food_scanner', 'AI quét món ăn'),
+  chatbot('chatbot', 'AI Chatbot'),
+  other('other', 'Vấn đề khác');
+
+  const SupportTopic(this.code, this.label);
+  final String code, label;
+
+  static SupportTopic? fromCode(Object? code) {
+    for (final topic in values) {
+      if (topic.code == code) return topic;
+    }
+    return null;
+  }
+}
+
 /// New ticket allowance only. Existing-thread replies do not consume it.
 abstract final class SupportPolicy {
   static const dailyTicketLimit = 3;
@@ -89,9 +110,13 @@ class SupportTicket {
     required this.createdAt,
     required this.updatedAt,
     required this.messageCount,
+    this.topic,
   });
   final String id, uid, title, description;
   final SupportType type;
+  // Historical tickets have no topic. Do not infer one from their content.
+  final SupportTopic? topic;
+  String get topicLabel => topic?.label ?? 'Chưa phân loại';
   final SupportStatus status;
   final DateTime createdAt, updatedAt;
   final int messageCount;

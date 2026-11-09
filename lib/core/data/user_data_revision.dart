@@ -3,6 +3,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/auth/providers/auth_providers.dart';
 
+/// Tests and secondary Firebase apps must bind every realtime listener to the
+/// same instance as their repositories, rather than falling back to [DEFAULT].
+final realtimeFirestoreProvider = Provider<FirebaseFirestore>(
+  (ref) => FirebaseFirestore.instance,
+);
+
 /// Only revision timestamps, never health records. One listener per signed-in
 /// user invalidates server-backed range reports after changes on another device.
 final serverRevisionSyncProvider = Provider<bool>(
@@ -15,7 +21,8 @@ final userDataRevisionProvider = StreamProvider<Map<String, dynamic>>((ref) {
   if (user?.emailVerified != true || Firebase.apps.isEmpty) {
     return Stream.value(const {});
   }
-  return FirebaseFirestore.instance
+  return ref
+      .watch(realtimeFirestoreProvider)
       .collection('user_sync')
       .doc(user!.uid)
       .snapshots(includeMetadataChanges: true)

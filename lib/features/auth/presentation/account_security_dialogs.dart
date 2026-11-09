@@ -359,12 +359,15 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
               'Tài khoản sẽ khóa ghi mới rồi xóa dữ liệu cá nhân và đăng nhập. Không thể hoàn tác. Giữ ứng dụng mở và có mạng; nếu gián đoạn, đăng nhập lại để tiếp tục.',
             ),
             const Text('UID, trạng thái xóa và nhật ký quản trị vẫn được giữ.'),
+            const Text(
+              'Xóa tài khoản không tự hủy gói Google Play. Hãy hủy gia hạn tại Play Store → Thanh toán và gói đăng ký.',
+            ),
             const ExpansionTile(
               tilePadding: EdgeInsets.zero,
               title: Text('Chi tiết dữ liệu được giữ lại'),
               children: [
                 Text(
-                  'Mã tài khoản và trạng thái xóa ngăn dữ liệu cũ tạo lại. Nhật ký quản trị bất biến, quyền quản trị và nội dung danh mục chung cần quản trị viên xử lý theo chính sách lưu giữ. Tệp đã xuất hoặc ảnh trong thư viện của bạn không bị xóa. Xem thêm tại Quyền riêng tư.',
+                  'Mã tài khoản và trạng thái xóa ngăn dữ liệu cũ tạo lại. Nhật ký quản trị bất biến, quyền quản trị và nội dung danh mục chung cần quản trị viên xử lý theo chính sách lưu giữ. Biên nhận tài chính được giữ để đối soát, không chứa nhật ký sức khỏe. Tệp đã xuất hoặc ảnh trong thư viện của bạn không bị xóa. Xem thêm tại Quyền riêng tư.',
                 ),
               ],
             ),

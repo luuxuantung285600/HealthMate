@@ -488,6 +488,7 @@ class MealLog {
     items: items,
     source: source,
     minimumSchemaVersion: schemaVersion,
+    timezoneOffsetOverride: timezoneOffsetMinutes,
   );
 
   MealDraft copyDraft({required DateTime day, DateTime? now}) {

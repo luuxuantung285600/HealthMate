@@ -1,5 +1,49 @@
 # Giai đoạn 10 — Báo cáo kiểm thử và rà soát MVP
 
+## 08/11/2026 — Hồ sơ, tài khoản và lịch sử cân nặng
+
+Flutter **1052/1052**, 0 skip, 102 giây; 12 ca mới về bảo toàn độ chính xác,
+ngày/giờ, delete pending/fail/retry/logout, lối tắt và phân trang. Sau chỉnh
+nhãn trục/trình bày số chạy lại bộ hồi quy liên quan. Inter thật được render
+và xem ở 390px/sáng/100%, 320px/tối/200%; UX suite còn kiểm 320/390/412px ×
+100/150/200% × sáng/tối. Kết quả cuối analyzer/build và bằng chứng:
+[báo cáo hồ sơ](profile-quality-2026-11-08.md).
+
+Lượt cuối **84/84** (82 hồi quy + 2 preview), analyzer toàn dự án sạch
+(35,8 giây), format 23 file/0 thay đổi, diff check qua; source secret audit
+694 file/0 findings. APK debug mới build qua (17,6 giây), runtime config 7/7.
+Đã xem lại ảnh Inter sau chỉnh nhãn trục/ngày/số cuối; không còn nhãn đầu
+trục bị cắt. Build còn cảnh báo KGP cũ; chưa nâng dependency.
+
+Không sửa dữ liệu/schema/Rules/backend hoặc triển khai production. Không chạy
+lại Rules/web billing do không sửa các phần đó. Chưa nghiệm thu Android thật
+hoặc ký phát hành. Giữ các kết quả lịch sử bên dưới theo ngày/phạm vi.
+
+## 08/11/2026 — Độ tin cậy thanh toán Premium
+
+- Flutter unit/widget **1040/1040**, 0 skip; sau chỉnh chặn queue/callback
+  pending thiếu token chạy lại billing controller/store **18/18**. Analyzer
+  toàn dự án **No issues found**, 91,4 giây; format các file sửa qua.
+- Functions **29/29**: tách môi trường membership, acknowledge an toàn,
+  thời hạn, outage/retry, RTDN parsing/retry và không log token/SDK error.
+- Web **93/93**: dashboard pending không hiện tiền cũ, báo cáo fail-closed,
+  không xuất dữ liệu lỗi, đơn trùng, refund, BigInt và tách môi trường.
+- Gateway **49/49**, release preflight **6/6**, syntax Functions/admin qua.
+- Firebase Emulator: Security Rules **143/143**; billing Firestore SDK
+  **2/2**, xác nhận owner/admin listeners, replay, refund, suspension và
+  sandbox mới hơn không thay membership production. Google Publisher là
+  fixture, không có khoản thu thật. Emulator được dừng sau kiểm thử.
+
+Lỗi ban đầu được sửa: fixture app thiếu completion contract mới; DOM phát
+hiện dashboard hiện tiền pending cũ và callback validation chưa chuyển qua
+failure handler. Lần emulator riêng bị timeout khởi động lạnh; thêm xác nhận
+baseline trống từ server trước đo update, giữ timeout 10 giây và assertions;
+chạy lại cuối **2/2**. Không bỏ assertions hoặc bỏ test. Chi tiết lệnh, file, APK
+và giới hạn: [báo cáo 08/11](billing-reliability-2026-11-08.md).
+
+Chưa deploy; chưa nghiệm thu Google sandbox/live, Play Console/Blaze, native
+Android và ký phát hành. Các mục bên dưới là lịch sử các lượt trước.
+
 ## 07/11/2026 — Bổ sung chức năng vận hành web admin
 
 Web **83/83**, syntax qua; Web SDK thật **9/9 + 11/11** trên emulator.
@@ -2987,3 +3031,376 @@ Bằng chứng chính: `build/realtime-flutter-summary.json`,
   bị production. Tổng Auth tự động còn chờ Functions/Blaze; Premium vẫn demo.
 - Tiếp theo đề xuất: nghiệm thu app/web thật, không tự thêm nghiệp vụ khác.
 - Chi tiết và bằng chứng: [realtime-spark-2026-11-06.md](realtime-spark-2026-11-06.md).
+
+## 07/11/2026 — Giai đoạn 10: Android daily reliability
+
+| Lệnh/nhóm cuối | Kết quả thực tế |
+| --- | --- |
+| `flutter analyze --no-pub` | Không issues |
+| `flutter test --no-pub --reporter expanded` | **973/973 qua** |
+| Hai suite mới: daily form + Android lifecycle | **21/21 qua**, đã gồm trong full suite |
+| Hai suite mới + `ux_meal_recovery_test.dart` | **44/44 qua** |
+| Native `-Suite daily` trên AVD riêng/API 30 | **Qua**, một scenario/năm checkpoint |
+| `dart format --output=none --set-exit-if-changed` | 15 file Dart, 0 thay đổi |
+| `git diff --check`, parse PowerShell runner | Qua |
+| Admin build configuration với `HEALTHMATE_VERIFY_ADMIN_BUILD=true` | **7/7 qua** |
+| `./tool/build_android.ps1` | Debug APK build thành công, Gradle 17,0 giây |
+
+Native suite dùng plugin Android/Firebase SDK thật với Auth/Firestore Emulator
+demo. Kiểm tra resume đọc lại lịch mã hóa/quyền và đăng thông báo; nháp mã hóa
+đọc lại sau tạo store mới; ngắt mạng SDK rồi nối lại lưu nước 350 ml/vận động
+45 phút, mỗi loại đúng một bản ghi phía server; đổi UID đóng form và không
+đọc chéo dữ liệu native/Firestore. `permission-denied` đọc chéo là kết quả
+mong đợi được assertion kiểm tra. Lượt cuối dùng cùng source sản phẩm với APK.
+
+Lỗi đã phát hiện/sửa: callback PopScope mới ảnh hưởng form bữa ăn cũ; callback
+chỉ hoạt động khi form opt-in có thay đổi. Lượt cuối giữ assertions cũ. Thêm
+regression tái hiện lỗi đọc cài đặt cũ ghi đè lần lưu mới; test đỏ trước sửa,
+xanh sau guard revision. Native harness từng rơi về default Firebase instance;
+đã inject cùng named instance như repository. Analyzer sửa một dòng braces
+trong test native mới; các lần gõ nhầm file test được ghi rõ trong báo cáo.
+
+**Chưa đạt:** suite native `core` cũ dừng ở finder text tổng kcal đã thay đổi
+sau redesign; chưa coi là nghiệm thu toàn app. Không sửa assertion để che lỗi.
+Chưa kiểm thử điện thoại thật, Android 13+ notification permission/cảm biến
+thật, process death, chuyển mạng OS, Play Integrity hoặc signed release.
+Form nước/vận động/cân nặng/hồ sơ chỉ giữ nội dung trong bộ nhớ. Không thay
+Rules nên không chạy lại Rules suite; không tuyên bố đây là kiểm toán bảo mật
+toàn bộ. Không deploy, bật billing hoặc thêm dependency trong lượt này.
+
+Log cuối: `build/android-quality-analyze-last.log`,
+`build/android-quality-full-last.log`,
+`build/android-quality-focused-last-valid.log`,
+`build/android-quality-native-daily-final.log`.
+AVD do task tạo đã được tắt, emulator backend đã dừng; không còn listener trên
+8080/9099 khi kiểm tra cuối. Chi tiết artifact/build và giới hạn:
+[android-quality-2026-11-07.md](android-quality-2026-11-07.md).
+
+## 07/11/2026 — Giai đoạn 8: biểu đồ năng lượng dưỡng chất
+
+| Kiểm tra | Kết quả |
+| --- | --- |
+| `flutter test --no-pub --reporter expanded` | **997/997 qua**, gồm 24 test mới |
+| `flutter test --no-pub test/macro_energy_report_test.dart` | **24/24 qua**; chạy lại sau khi tăng assertion tải/lỗi/phục hồi nguồn |
+| `flutter analyze --no-pub` | Không issues |
+| Render fixture với Inter, chế độ sáng/tối | **2/2 qua**, đã xem PNG |
+| Format 5 file Dart / `git diff --check` | 0 thay đổi / qua |
+| Admin runtime config / APK debug | **7/7 qua** / build thành công |
+
+Nhóm mới kiểm mẫu số 4/4/9 độc lập total kcal/khẩu phần, giữ ml, partial/unknown/
+zero/invalid, dateKey/biên kỳ/future/dedup, cộng mỗi lần xuất hiện món, thứ tự
+đóng góp, chạm Pie/legend, Back giữ kỳ, cập nhật cùng kỳ, reset khác kỳ/UID,
+phân trang hiển thị 20/40/45 và bố cục 320/390/720 px × chữ100%/200% × sáng/tối.
+Test tích hợp dùng repository fake và router thật xác nhận không tăng lượt
+đọc khi mở chi tiết; nguồn loading/error ẩn biểu đồ cũ, dữ liệu mới về đổi tổng
+1000 → 200 kcal; phục hồi nguồn hiện đúng. Không gọi đây là kiểm thử backend
+realtime production hoặc nghiệm thu thiết bị Android.
+
+Lỗi đầu chỉ ở helper kiểm thử: dùng `_` như biến trong Dart mới gây compile
+failure; sau đó cuộn chưa được pump làm tap ngoài vùng nhìn. Đã sửa helper,
+giữ assertion. UI cũng cuộn đến chi tiết sau khi chạm. Source sản phẩm không
+đổi sau full suite; các assertion nguồn được thêm rồi chạy lại nhóm mới.
+
+Log: `build/macro-energy-full-tests.log`, `build/macro-energy-tests-final.log`,
+`build/macro-energy-analyze-last.log`, `build/macro-energy-preview.log`.
+Preview fixture có banner rõ ràng, không lưu dữ liệu minh họa vào sản phẩm.
+Không đổi Rules/Firestore schema/indexes/package nên không chạy suite backend
+khác; không deploy, migration hoặc bật billing. Chủ dự án hoãn nghiệm thu
+Android thật/signing; lượt này không làm hai phần đó.
+
+[Báo cáo tính năng và artifact](macro-energy-report-2026-11-07.md).
+
+## 07/11/2026 — Giai đoạn 10: độ tin cậy Báo lỗi & Góp ý
+
+| Kiểm tra | Kết quả |
+| --- | --- |
+| `flutter test --no-pub --reporter expanded` | **1018/1018 qua**, thêm 21 test |
+| Hai suite hỗ trợ | **34/34 qua**, chạy cuối sau tăng assertion Back/bàn phím |
+| `flutter analyze --no-pub` / scoped `dart analyze` cuối | Không issues |
+| Format 5 file Dart / `git diff --check` | 0 thay đổi / qua |
+| Preview font Inter sáng/tối với nhãn fixture | **2/2 qua**, đã xem PNG |
+| Admin runtime / helper APK debug | **7/7 qua** / build thành công |
+
+Nhóm mới kiểm Back giữ/bỏ bản soạn, chặn Back và gửi lặp khi chờ ACK,
+retry cùng ID/payload sau lỗi không xác định, lịch sử dài/phản hồi admin khi
+đang gõ, cap100 và ACK cuối, A→B→A trong khi đang gửi, Auth error phục hồi,
+email chưa xác minh, cùng 320/390 px × chữ100%/200% × sáng/tối khi inset bàn
+phím 260 px còn mở. Dùng repository và stream fixture; không ghi dữ liệu mẫu
+vào Firestore thật và không coi là nghiệm thu production.
+
+Lỗi test trung gian: thiếu `emailVerified`, helper `pageBack()` tìm tooltip
+tiếng Anh trong locale Việt, tap cần pump sau cuộn; analyzer báo hai braces.
+Đã sửa helper/fixture/lint, giữ assertion hành vi. Source sản phẩm giữ nguyên
+sau full suite; test Back/nút gửi khi bàn phím mở được tăng assertion sau đó,
+rồi chạy lại 34/34 và scoped analyzer. Không chạy lại Rules suite vì không
+đổi backend/Rules. Chưa nghiệm thu Android thật hoặc ký release theo chỉ dẫn.
+Bản soạn hỗ trợ chỉ trong bộ nhớ; build có warning KGP tương lai của plugin.
+
+Log: `build/support-quality-full-tests.log`,
+`build/support-quality-focused-final.log`,
+`build/support-quality-analyze-final.log`,
+`build/support-quality-scoped-analyze-final.log`,
+`build/support-quality-preview-final.log`, `build/support-quality-apk.log`.
+
+[Báo cáo hỗ trợ và artifact](support-quality-2026-11-07.md).
+
+## 07/11/2026 — Giai đoạn 10: phân loại chủ đề hỗ trợ
+
+| Kiểm tra | Kết quả |
+| --- | --- |
+| Flutter full suite cuối | **1022/1022 qua**, gồm 38 ca support và 4 test mới |
+| Flutter analyzer / format 11 file | Không issues / 0 thay đổi |
+| Admin unit + DOM / syntax check | **86/86 qua** / qua |
+| Rules trên emulator | **139/139 qua**, gồm 10 test chủ đề mới |
+| Flutter web SDK support / admin SDK | **4/4** / **9/9 qua** trên emulator |
+| Render Inter chủ đề sáng/tối | Đã xem ảnh, lựa chọn xuống dòng đầy đủ ở chữ200% |
+| Admin runtime config / APK debug | **7/7 qua** / build thành công |
+| `git diff --check` | Qua |
+
+Kiểm bắt buộc chọn trước ghi, các mã chuẩn và legacy null, nội dung/ID/topic
+giữ qua retry, chủ đề hiển thị app và admin; lọc/tìm admin không lẫn type/status;
+Rules chặn topic lạ/không đúng kiểu hoặc sửa topic, chặn truy cập chéo UID.
+SDK thật xác nhận field tồn tại trong server và giữ qua phản hồi/trạng thái.
+
+Lỗi trung gian: helper tìm widget ngoài vùng dựng của ListView/popup cần cuộn
+trước; preview Inter phát hiện label lựa chọn bị cắt do dense dropdown. Đã
+sửa chiều cao UI và helper, giữ assertion, full suite cuối xanh sau các sửa.
+Không ghi fixture vào production. Hai bộ emulator đã tự shutdown; không thay
+package/index hoặc dịch vụ. Chưa deploy Rules/web; Rules production cần có
+topic trước khi app mới gửi được. Nghiệm thu Android thật/signing vẫn hoãn.
+
+Log: `build/support-topics-full-final.log`, `build/support-topics-analyze-final.log`,
+`build/support-topics-admin-tests.log`, `build/support-topics-admin-check.log`,
+`build/support-topics-emulators.log`, `build/support-topics-admin-sdk.log`,
+`build/support-topics-preview-final.log`, `build/support-topics-apk.log`.
+
+[Báo cáo chủ đề hỗ trợ và artifact](support-topics-2026-11-07.md).
+
+## 07/11/2026 — Google Play Billing, kiểm thử local (chưa deploy)
+
+| Kiểm tra đã chạy | Kết quả thực tế |
+| --- | --- |
+| `dart format` các file Dart thay đổi | Qua, không sửa định dạng toàn repo |
+| `flutter analyze --no-pub` cuối | **No issues found** |
+| `flutter test --no-pub --reporter expanded` | **1030/1030 qua** |
+| Sau đoạn privacy cuối: account + preview | **8/8 + 2/2 qua** |
+| `npm test --prefix firebase-functions` | **17/17 qua** |
+| `npm test --prefix admin-web` | **90/90 qua** |
+| `npm test --prefix chat-api` | **49/49 qua** |
+| Syntax Functions/admin/admin billing/gateway | Qua |
+| `node --test tool/release_preflight.test.cjs` | **6/6 qua**, gồm guard billing chưa nghiệm thu |
+| Firestore/Auth emulators, toàn bộ Rules | **143/143 qua** |
+| `node --test firebase-functions/test/billing.emulator.cjs` | **1/1 qua**, transaction thật + listener owner/admin |
+| `tool/build_android.ps1`, bản debug cuối | Build thành công, runtime config **7/7 qua** |
+| Preview Inter 390px/100% sáng, 320px/200% tối | Đã xem ảnh, cuộn tới checkout được, không overflow |
+| Google sandbox/production, cloud runtime Node 22 | **Chưa chạy**: chưa Play Console/Blaze/configuration |
+
+Test mới xác minh UID/product/base plan/environment, expiry và trạng thái
+grace/canceled/hold/pending, duplicate replay, lease cạnh tranh, token cũ,
+order/receipt mismatch, tiền chính xác không floating-point, hoàn tiền,
+Orders outage → chờ đối soát → retry, Auth revoked/disabled, quota 5/50,
+Rule chặn owner/admin giả quyền/sửa tiền/đọc raw token và truy cập chéo.
+App test pending/cancel, chống double tap, xác minh trước complete, retry/
+restore không mua lại và đổi phiên khi đang chờ. Admin test production mặc
+định, test/demo riêng, listener/session cleanup, lỗi bỏ tổng và khóa export.
+
+Chỉ Publisher boundary được giả lập trong emulator: không tự tạo biên nhận
+hợp lệ với Google, không gửi fixture tới production. Fixture luôn có nhãn
+kiểm thử; không gọi kết quả này là nghiệm thu thanh toán thật.
+
+Lỗi trung gian đã sửa: shared widget harness chưa inject boundary billing mới
+nên thử truy cập Firebase chưa khởi tạo; thêm override cho external service,
+giữ nguyên assertion nghiệp vụ. Sau đó ba test dialog xóa không bấm trúng
+checkbox vì đoạn cảnh báo mới dài; rút gọn cảnh báo và để chi tiết trong phần
+mở rộng, không bỏ assertion. Full suite cuối xanh. Preview đầu thiếu AppCanvas
+nên nền trong suốt đen; sửa harness và render/xem lại với theme thật.
+
+Log: `build/billing-all-flutter-tests.log`, `play-billing-analyze-final.log`,
+`billing-functions-tests.log`, `billing-admin-tests.log`, `billing-ai-tests.log`,
+`billing-emulator-final.log`, `billing-final-focused.log`, `billing-apk-final.log`.
+Emulator đã shutdown. APK và manifest trong `build/releases/`, billing tắt.
+Không deploy/push/thu tiền. Node local 24.18.0 khác runtime cloud Node 22.
+Audit Functions có 6 moderate ở nhánh Firebase Admin transitives; không
+high/critical, chưa nâng major hàng loạt. Cần review trước production.
+
+[Cấu hình và giới hạn thanh toán](google-play-billing-2026-11-07.md).
+
+## 08/11/2026 — Giai đoạn 10, xuất báo cáo app/admin
+
+- `flutter test --no-pub`: **1.057/1.057 qua** (1:44).
+- `flutter analyze --no-pub`: không có vấn đề (28,7 giây).
+- Format feature data_export và regression mới: hoàn tất.
+- Admin `npm test`: **99/99 qua**; `npm run check`: qua.
+- Hai XLSX được đọc độc lập bằng openpyxl 3.1.5, kiểm tra ZIP CRC và XML:
+  relationship/hai sheet, kiểu ô/số dài, blank/zero, inline text chống
+  formula, bộ lọc/giữ tiêu đề và Inter/wrap/header style đều qua.
+- Preview UI Inter thật **2/2 qua**, 390 px sáng 100% / 320 px tối 200%,
+  đã xem ảnh tùy chọn và xác nhận. Không có overflow.
+- APK debug build thành công (24,5 giây), vẫn có cảnh báo KGP hiện hữu.
+- Kiểm thử mới gồm ngày nhuận, ngày lưu ở UTC+7, snapshot thay vì tổng cũ,
+  dưỡng chất thiếu/0 thật, microsecond lần cân cuối; native verification
+  và tiến trình xuất; lọc toàn bộ khoảng vượt trang, xuất rỗng, lỗi tải/
+  thử lại, metadata đúng và nút cũ sau logout.
+
+Log `build/export-*.log`; artifact/giới hạn/những lỗi fixture trung gian
+đã sửa được ghi trong [report-export-quality-2026-11-08.md](report-export-quality-2026-11-08.md).
+Không chạy thao tác xuất trên Android thật, ký release, deploy, hoặc ghi
+dữ liệu kiểm thử vào Firebase production.
+
+## 08/11/2026 — Giai đoạn 10, độ tin cậy thư viện món/công thức
+
+- Suite thư viện **52/52 qua**, có **14 regression mới**: nháp Back/Hủy,
+  sửa nguyên liệu, giữ số liệu chính xác, xóa chờ ACK/lỗi/thử lại/chống
+  gửi lặp, logout trong khi chờ, nguyên liệu bị ẩn/xóa/sửa giữa bước chọn
+  và xác nhận gram, chọn lại dữ liệu mới và chặn thiếu macro.
+- `flutter test --no-pub`: **1.071/1.071 qua**; analyzer không có vấn đề;
+  format phạm vi thay đổi không còn diff.
+- Preview Inter thật **2/2 qua**, sáng 390 px/100% và tối 320 px/200%;
+  đã xem tám ảnh của dialog xóa/pending/retry/bỏ thay đổi, không overflow.
+- APK debug build qua (31 giây); giữ cảnh báo plugin KGP hiện hữu.
+- Source secret audit không phát hiện theo pattern; `git diff --check` qua.
+- Lỗi finder trùng chip ở hai route trong test mới và cảnh báo analyzer
+  trung gian đã sửa, không giảm assertion. Full suite cuối chạy lại sau
+  chỉnh trạng thái nút khi pending.
+
+Log `build/library-quality-*.log`. Báo cáo/artifact/giới hạn tại
+[food-library-quality-2026-11-08.md](food-library-quality-2026-11-08.md).
+Không nghiệm thu Android thật, ký release, deploy hoặc ghi fixture lên
+Firebase production; draft vẫn chỉ nằm trong bộ nhớ và revalidation chỉ
+dựa trên stream đã nhận.
+
+## 08/11/2026 — Giai đoạn 10, xóa nhật ký bữa ăn/nước/vận động
+
+- `flutter test --no-pub`: **1.092/1.092 qua** (1:43).
+- Suite journal mới + core_journal + journal_sections: **60/60 qua**.
+  Sau tăng độ chặt của ca popup đổi phiên (giữ nguyên JournalScreen qua
+  A → B thay vì dựa vào router teardown), regression mới **21/21** qua lại.
+- Có kiểm tra xác nhận/Hủy, chờ ACK, double tap/Back, lỗi/thử lại cùng ID,
+  ACK mất sau khi thao tác đã áp dụng, Auth UID đổi trước stream, menu
+  cũ qua tài khoản mới và logout khi đang chờ. Xác minh stream tổng còn
+  lại 155 kcal/200 ml/15 phút và không xóa bản ghi khác trong fixture.
+- Analyzer chạy lại sạch; format phạm vi thay đổi sạch.
+- Preview Inter thật **6/6 qua**, sáng 390 px/100%, tối 320 px/200%;
+  đã xem 18 ảnh (confirm/pending/retry) qua ba contact sheet, không overflow.
+- APK debug build thành công (25,6 giây); cảnh báo KGP hiện hữu còn.
+- Source secret audit không phát hiện theo pattern; diff check qua.
+
+Lỗi fixture trung gian (finder trùng, thiếu profile cho UID B, provider
+key ngày có giờ) đã sửa; giữ nguyên assertion nghiệp vụ. Log
+`build/journal-delete-*.log`; chi tiết/artifact/giới hạn trong
+[journal-deletion-quality-2026-11-08.md](journal-deletion-quality-2026-11-08.md).
+Không ghi fixture lên production, deploy, ký release hoặc nghiệm thu
+Android thật. Test dùng boundary giả lập; thao tác đã gửi cho tài khoản
+gốc có thể hoàn tất sau logout, nhưng không thông báo thành công sang
+phiên khác.
+
+## 09/11/2026 — Giai đoạn 10, khôi phục nháp/chỉnh sửa bữa ăn
+
+- Suite h7_private_data + ux_meal_recovery + core_journal: **86/86 qua**.
+- Chín regression mới: toDraft giữ offset; sửa mới giữ nháp cũ; khôi phục
+  sửa/update/lỗi/thử lại/dọn đúng nháp; schema 1; mở trùng lúc đọc đĩa;
+  lỗi đĩa mở lại; A → logout → A; hủy chooser; dispose điểm mở cũ.
+- Regression + preview sau chỉnh sửa cuối: **11/11 qua**.
+- `flutter test --no-pub` cuối: **1.101/1.101 qua** (2:07).
+- `flutter analyze --no-pub` cuối sạch; format năm file: 0 thay đổi.
+- Preview Inter/icon thật **2/2 qua**, sáng 390 px/100%, tối 320 px/200%.
+  Đã xem 12 ảnh gồm chooser/cuộn/restored/pending/retry/nút sau cuộn;
+  không layout exception, tiêu đề và nút thử lại tiếp cận được.
+- APK debug build qua (36,4 giây), còn cảnh báo KGP của plugin hiện hữu.
+- Source secret audit không phát hiện theo pattern; diff check qua.
+
+Ca đổi phiên ban đầu phát hiện listener bị pause khi provider chỉ được
+read; đã dùng listenManual trong luồng và đóng subscription đúng vòng đời.
+Harness giữ subscription profile tương tự router nhưng không dispose
+điểm mở qua đổi phiên; không bỏ assertion để che lỗi.
+
+Log `build/meal-draft-*.log`; chi tiết/artifact/giới hạn trong
+[meal-draft-quality-2026-11-09.md](meal-draft-quality-2026-11-09.md).
+Không ghi fixture lên production, deploy, ký release hoặc nghiệm thu
+Android thật. Không sửa Rules/query/schema hoặc phát sinh dịch vụ mới.
+Chưa có phát hiện xung đột sửa cùng bữa từ hai thiết bị; nháp cục bộ giữ
+giới hạn và thời hạn hiện hữu.
+
+## 09/11/2026 — Giai đoạn 10, mục tiêu dinh dưỡng/kế hoạch bữa ăn
+
+- `flutter test --no-pub` cuối: **1.115/1.115 qua** (2:01).
+- Thêm **14 regression**: 12 trong nutrition_plan_quality_test, hai ca
+  sửa/ghi kế hoạch chặn Auth đổi trước stream trong plan_meal_ui_test.
+  Suite plan UI cuối **6/6 qua**.
+- Kiểm tra Back/Đóng/Để sau, hủy hoặc xác nhận đổi ngày, lỗi tải ngày/
+  tải lại, giữ lịch sử cũ, số đo/lựa chọn cá nhân hóa, bỏ món/khẩu phần,
+  pending/chống gửi lặp/thử lại cùng snapshot, đồng hồ qua nửa đêm và
+  Auth trực tiếp. Khẩu phần 225,5 g giữ đúng 293,15 kcal trong fixture.
+- Analyzer cuối sạch; format bốn source và ba test: 0 file thay đổi.
+- Preview Inter/icon thật **6/6 qua**, ba form ở 390 px sáng/100% và
+  320 px tối/200%. Đã xem 20 ảnh, có kiểm tra cuộn tới nút và các trạng
+  thái xác nhận/pending/retry; không layout exception.
+- APK debug build qua (31,6 giây), còn cảnh báo plugin KGP hiện hữu.
+- Source secret audit không phát hiện theo pattern; diff check qua.
+
+Các lỗi fixture trung gian về loại nút, nguồn Auth, vị trí tooltip sau
+cuộn và chờ settle trong trạng thái có tiến trình đã sửa; không bỏ
+assertion nghiệp vụ. Log `build/nutrition-plan-*.log`, ảnh/harness trong
+`build/nutrition-plan-quality/`; chi tiết/artifact/giới hạn tại
+[nutrition-plan-quality-2026-11-09.md](nutrition-plan-quality-2026-11-09.md).
+Không ghi fixture lên production, deploy, ký release hoặc nghiệm thu
+Android thật. Form chỉ giữ nội dung trong RAM; chưa thêm xử lý xung đột
+nhiều thiết bị hoặc thay đổi Rules/query/repository Firestore.
+
+## 09/11/2026 — Xóa kế hoạch và lưu gợi ý nhiều bữa
+
+- `flutter test --no-pub --reporter expanded`: **1.130/1.130 qua**, 2:16.
+- Focused cuối operations/plan UI/catalog expansion: **34/34 qua** sau
+  sửa lint; thêm **15 regression widget**, giữ assertion hủy/Back/gửi
+  lặp/lỗi/thử lại/ACK mất-muộn/phiên A→logout→A/Auth trước stream.
+- Firebase demo emulator: **143/143 Rules**, **22/22 SDK**; **9 ca SDK
+  mới** kiểm create-only, 28 bữa và replay không ghi lại timestamp, hai
+  FirebaseApp cùng thêm một slot, xóa stale/recreated/linked, mất ACK,
+  journal không đổi và từ chối UID khác. Chỉ dùng loopback/demo project.
+- SDK vòng đầu bắt đúng lỗi thông báo xung đột bị web transaction bọc;
+  đã sửa source trả trạng thái rồi ném FormatException ngoài callback,
+  chạy lại toàn Rules và SDK đều qua. Không nới matcher để che lỗi.
+- Analyzer cuối sạch; format 7 Dart file: **0 thay đổi**. Preview Inter/
+  icon thật **4/4 qua**, xem **14 ảnh** ở 390 sáng/100% và 320 tối/200%.
+- `flutter build apk --debug --no-pub`: qua, Gradle **23,3 giây**;
+  source secret audit không phát hiện theo pattern, diff check qua.
+  Cảnh báo KGP của plugin hiện hữu còn.
+
+Log `build/meal-plan-operations-*.log`; ảnh/harness trong
+`build/meal-plan-operations/`. APK, hash, file thay đổi, lỗi trung gian và
+giới hạn ghi trong [meal-plan-operations-2026-11-09.md](meal-plan-operations-2026-11-09.md).
+Chưa deploy/ghi production, ký release, nghiệm thu Android thật hoặc push.
+Tiến độ không tồn tại qua process death; đóng không hoàn tác các bữa đã
+commit. Chỉnh thủ công mục tiêu/kế hoạch vẫn chưa có kiểm soát xung đột.
+
+## Kiểm thử vai khách hàng/admin — 09/11/2026
+
+Giai đoạn 10, môi trường demo độc lập, không ghi production. Đã thao tác
+web trực tiếp qua browser và chạy SDK thật với Rules cùng Android AVD.
+
+- Flutter: **1.130/1.130**, flutter analyze và analyze các integration test
+  sửa trong lượt này đều không có issue; dart format đã chạy.
+- Web: **99/99**, check và check:billing qua; SDK **9/9**, realtime SDK
+  **12/12**, đều exit 0. Cache ban đầu không được nhận là server ACK.
+- Flutter Chrome: runtime **3/3**, realtime Spark **6/6**, exit 0; gồm
+  support, khóa/mở tài khoản, cấu hình, catalog, mục tiêu, báo cáo và xóa UID.
+- Android: wellness và daily reliability đạt; core mới qua đăng ký,
+  mục tiêu, thêm/sửa/nhân bản bữa, dừng vì thao tác activity chưa mở chi
+  tiết. Không gọi đây là nghiệm thu core đầy đủ. Nutrition chạy hết
+  11 checkpoint và toàn test đạt, exit 0; output +2 gồm teardown.
+- Browser thực tế: thêm/sửa/ẩn/khôi phục món và audit; gửi yêu cầu chủ đề
+  dinh dưỡng từ client khách SDK, trả lời/đổi trạng thái bằng UI admin,
+  client khách nhận live. Xuất XLSX qua nút thật, archive/XML hợp lệ và
+  header-only đúng 0 giao dịch của kỳ, có sheet thông tin báo cáo.
+
+Đã sửa sai tên metadata Firebase JS, cấu hình thống kê local, null thừa
+ở support và mô tả doanh thu. Một lần ẩn món ban đầu báo chưa xác nhận;
+retry không nhân audit, sau tải bản sửa ẩn/khôi phục thành công; chưa đủ
+bằng chứng quy nguyên nhân chính xác. Bản thử Node disable/enable network
+kẹt timer teardown không được tính là test pass; bản regression cache cuối
+thoát bình thường. Các lỗi harness/fixture trung gian được giữ trong log.
+
+Chi tiết, file, ma trận và giới hạn: [customer-admin-acceptance-2026-11-09.md](customer-admin-acceptance-2026-11-09.md).
+Log/ảnh trong build/customer-admin-qa; log gốc Android tại
+D:/HealthMateMaintenanceQA/customer-admin-20261109/build. Chưa nghiệm thu
+Play billing/Gemini/App Check production, Android thật hoặc ký phát hành.

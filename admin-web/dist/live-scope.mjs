@@ -19,7 +19,9 @@ export function observe(scope, api, method, args, receive, failure, fallback) {
   if (!api[method]) return fallback().then(value => { if (scope.current()) receive(value); }).catch(error => { if (scope.current()) failure(error); });
   return new Promise(resolve => {
     scope.add(api[method](...args, value => {
-      if (scope.current()) receive(value); resolve();
+      try { if (scope.current()) receive(value); }
+      catch (error) { if (scope.current()) failure(error); }
+      finally { resolve(); }
     }, error => {
       if (scope.current()) failure(error); resolve();
     }, {isCurrent: scope.current}));

@@ -18,6 +18,27 @@ import '../../meal_drafts/data/meal_draft_store.dart';
 import '../../meal_drafts/presentation/draft_picker.dart';
 import '../providers/journal_date_provider.dart';
 
+// One active entry flow per session, including profile/disk reads and chooser.
+// Tokens invalidate across A -> B -> A; late cleanup cannot release a new flow.
+class _MealEntryGate {
+  final _tokens = <String, ({Object token, BuildContext context})>{};
+  Object? acquire(String uid, BuildContext context) {
+    if (_tokens[uid]?.context.mounted == true) return null;
+    final token = Object();
+    _tokens[uid] = (token: token, context: context);
+    return token;
+  }
+
+  bool owns(String uid, Object token) => identical(_tokens[uid]?.token, token);
+  void release(String uid, Object token) {
+    if (owns(uid, token)) _tokens.remove(uid);
+  }
+
+  void invalidate() => _tokens.clear();
+}
+
+final _mealEntryGateProvider = Provider((ref) => _MealEntryGate());
+
 // Shared confirmed entry flow, including account guards and durable draft IDs.
 Future<void> openJournalMealForm(
   BuildContext context,
@@ -34,13 +55,68 @@ Future<void> openJournalMealForm(
   MealEntryMode initialEntryMode = MealEntryMode.manual,
 }) async {
   final uid = ref.read(authSessionProvider).value?.uid;
-  if (uid == null) return;
+  if (uid == null || ref.read(authRepositoryProvider).currentUid != uid) return;
+  final gate = ref.read(_mealEntryGateProvider),
+      token = gate.acquire(uid, context);
+  if (token == null) return;
+  // Keep session events active while awaiting disk/profile, even when no widget
+  // watches the gate. A read-only provider's own listeners can be paused.
+  final session = ref.listenManual(
+    authSessionProvider.select((s) => s.value?.uid),
+    (before, after) {
+      if (before != after) gate.invalidate();
+    },
+  );
+  bool current() =>
+      context.mounted &&
+      gate.owns(uid, token) &&
+      ref.read(authSessionProvider).value?.uid == uid &&
+      ref.read(authRepositoryProvider).currentUid == uid;
+  try {
+    await _openJournalMealForm(
+      context,
+      ref,
+      catalog,
+      uid: uid,
+      current: current,
+      meal: meal,
+      suggestedFood: suggestedFood,
+      suggestedGrams: suggestedGrams,
+      initialSearch: initialSearch,
+      aiAssisted: aiAssisted,
+      initialConsumedAt: initialConsumedAt,
+      duplicateFrom: duplicateFrom,
+      initialType: initialType,
+      initialEntryMode: initialEntryMode,
+    );
+  } finally {
+    session.close();
+    gate.release(uid, token);
+  }
+}
+
+Future<void> _openJournalMealForm(
+  BuildContext context,
+  WidgetRef ref,
+  List<FoodCatalogItem> catalog, {
+  required String uid,
+  required bool Function() current,
+  MealLog? meal,
+  FoodCatalogItem? suggestedFood,
+  double suggestedGrams = 100,
+  String initialSearch = '',
+  bool aiAssisted = false,
+  DateTime? initialConsumedAt,
+  MealLog? duplicateFrom,
+  MealType? initialType,
+  MealEntryMode initialEntryMode = MealEntryMode.manual,
+}) async {
   // Do not silently disable a saved avoidance filter while the profile loads.
   final profile = await ref
       .read(userProfileProvider.future)
       .timeout(const Duration(seconds: 15))
       .catchError((Object _) {
-        if (context.mounted) {
+        if (context.mounted && current()) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text(
@@ -51,9 +127,7 @@ Future<void> openJournalMealForm(
         }
         return null;
       });
-  if (profile == null ||
-      !context.mounted ||
-      ref.read(authSessionProvider).value?.uid != uid) {
+  if (profile == null || !current()) {
     return;
   }
   final store = ref.read(mealDraftStoreProvider);
@@ -64,20 +138,22 @@ Future<void> openJournalMealForm(
       final saved = (await store.list(
         uid,
       )).where((d) => meal == null || d.mealId == meal.id).toList();
-      if (!context.mounted || ref.read(authSessionProvider).value?.uid != uid) {
+      if (!context.mounted || !current()) {
         return;
       }
       if (saved.isNotEmpty) {
-        final choice = await chooseMealDraft(context, saved);
-        if (!context.mounted ||
-            ref.read(authSessionProvider).value?.uid != uid ||
-            choice == null) {
+        final choice = await chooseMealDraft(
+          context,
+          saved,
+          editingMeal: meal != null,
+        );
+        if (!current() || choice == null) {
           return;
         }
         restored = saved.where((d) => d.operationId == choice).firstOrNull;
       }
     } catch (_) {
-      if (context.mounted) {
+      if (context.mounted && current()) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -92,13 +168,7 @@ Future<void> openJournalMealForm(
   final editingId = restored?.mealId ?? meal?.id;
   final operationId =
       restored?.operationId ??
-      (editingId == null
-          ? ref.read(nutritionRepositoryProvider).newMealId()
-          : 'edit-$editingId');
-  bool current() =>
-      context.mounted &&
-      ref.read(authSessionProvider).value?.uid == uid &&
-      ref.read(authRepositoryProvider).currentUid == uid;
+      '${editingId == null ? '' : 'edit-'}${ref.read(nutritionRepositoryProvider).newMealId()}';
   Future<void> keep(MealDraft value) async {
     if (!current()) throw StateError('Phiên tài khoản đã thay đổi.');
     await store.put(
@@ -116,11 +186,13 @@ Future<void> openJournalMealForm(
     day: initialConsumedAt ?? ref.read(journalDateProvider),
     now: ref.read(currentLocalTimeProvider)(),
   );
+  if (!context.mounted || !current()) return;
   final draft = await showDialog<MealDraft>(
     context: context,
     barrierDismissible: false,
     builder: (_) => AccountBoundDialog(
       child: MealFormDialog(
+        editingExistingMeal: editingId != null,
         initialEntryMode: initialEntryMode,
         initialDraft: restored?.draft,
         onDraftChanged: localSupported ? keep : null,
@@ -136,9 +208,11 @@ Future<void> openJournalMealForm(
               _ => null,
             },
         newLibraryId: () => ref.read(foodLibraryRepositoryProvider).newId(),
-        onSavePersonalFood: (food) => ref
-            .read(foodLibraryControllerProvider.notifier)
-            .save(food, create: true),
+        onSavePersonalFood: (food) => !current()
+            ? Future.value(false)
+            : ref
+                  .read(foodLibraryControllerProvider.notifier)
+                  .save(food, create: true),
         saveErrorMessage: () =>
             switch (ref.read(nutritionControllerProvider).error) {
               NutritionFailure failure => failure.message,
@@ -171,8 +245,7 @@ Future<void> openJournalMealForm(
         initialSearch: initialSearch,
         aiAssisted: aiAssisted || copy?.source == MealSource.aiAssisted,
         onSave: (draft) async {
-          if (!context.mounted ||
-              ref.read(authSessionProvider).value?.uid != uid) {
+          if (!current()) {
             return false;
           }
           // Durable operation ID + payload must reach local disk before Firestore.
@@ -204,15 +277,15 @@ Future<void> openJournalMealForm(
       ),
     ),
   );
-  if (draft == null ||
-      !context.mounted ||
-      ref.read(authSessionProvider).value?.uid != uid) {
+  if (draft == null || !current()) {
     return;
   }
   if (context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(meal == null ? 'Đã lưu bữa ăn.' : 'Đã cập nhật bữa ăn.'),
+        content: Text(
+          editingId == null ? 'Đã lưu bữa ăn.' : 'Đã cập nhật bữa ăn.',
+        ),
       ),
     );
   }

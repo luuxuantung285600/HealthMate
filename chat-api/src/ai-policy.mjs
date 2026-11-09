@@ -34,11 +34,11 @@ function checkPolicy(records, uid, now) {
   }
 }
 export class AiPolicy {
-  constructor(store, { now = Date.now, premiumDemo = false } = {}) { this.store = store; this.now = now; this.premiumDemo = premiumDemo; }
+  constructor(store, { now = Date.now, premiumDemo = false, allowTestPurchases = false } = {}) { this.store = store; this.now = now; this.premiumDemo = premiumDemo; this.allowTestPurchases = allowTestPurchases; }
   paths(uid, id, day) {
     return [`account_deletions/${uid}`, `account_controls/${uid}`, 'app_config/runtime', `users/${uid}`,
       `demo_premium_accounts/${uid}`, `ai_gateway_usage/${uid}`, `ai_gateway_usage/${uid}/days/${day}`,
-      `ai_gateway_reservations/${uid}/requests/${id}`];
+      `ai_gateway_reservations/${uid}/requests/${id}`, `premium_memberships/${uid}`];
   }
   async authorize(identity) { validateUid(identity.uid); await this.store.assertIdentity(identity); }
   async reserve(uid, id) {
@@ -53,10 +53,15 @@ export class AiPolicy {
         return { value: previous };
       }
       const membership = records.get(paths[4]);
-      const premium = this.premiumDemo && membership?.mode === 'demo' && membership.planId === 'premium_demo_30d' &&
+      const verified = records.get(paths[8]);
+      const paid = verified?.provider === 'google_play' && verified.verified === true && verified.active === true &&
+        (verified.environment === 'production' || this.allowTestPurchases && verified.environment === 'test') &&
+        ['SUBSCRIPTION_STATE_ACTIVE','SUBSCRIPTION_STATE_IN_GRACE_PERIOD','SUBSCRIPTION_STATE_CANCELED'].includes(verified.status) &&
+        Number.isFinite(verified.startedAt) && verified.startedAt <= now && Number.isFinite(verified.expiresAt) && verified.expiresAt > now;
+      const demo = this.premiumDemo && membership?.mode === 'demo' && membership.planId === 'premium_demo_30d' &&
         Number.isFinite(membership.startedAt) && membership.startedAt <= now && membership.expiresAt > now &&
         membership.expiresAt - membership.startedAt === 30 * 86400000;
-      const limit = premium ? 50 : 5;
+      const limit = paid || demo ? 50 : 5;
       const usage = records.get(paths[6]);
       if (usage && (!integer(usage.chats, 50) || usage.dayKey !== day)) throw new ApiError(503, 'policy_invalid');
       const count = usage?.chats ?? 0;
@@ -116,5 +121,5 @@ export class AiPolicy {
   }
 }
 export function createTrustedPolicy(env) {
-  return new AiPolicy(new TrustedFirestore(env), { premiumDemo: env.AI_GATEWAY_PREMIUM_DEMO === 'true' });
+  return new AiPolicy(new TrustedFirestore(env), { premiumDemo: env.AI_GATEWAY_PREMIUM_DEMO === 'true', allowTestPurchases: env.AI_GATEWAY_ALLOW_TEST_PURCHASES === 'true' });
 }
