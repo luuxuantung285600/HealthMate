@@ -42,6 +42,7 @@ const _collections = [
   'meal_logs',
   'water_logs',
   'activity_logs',
+  'workout_sessions',
   'goals',
   'daily_quests',
   'nutrition_targets',

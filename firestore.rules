@@ -431,7 +431,7 @@ service cloud.firestore {
         ])
         && data.keys().hasOnly([
           'activityType', 'durationMinutes', 'performedAt', 'dateKey',
-          'timezoneOffsetMinutes', 'note', 'createdAt', 'updatedAt'
+          'timezoneOffsetMinutes', 'note', 'caloriesBurned', 'createdAt', 'updatedAt'
         ])
         && data.activityType in [
           'walking', 'running', 'cycling', 'strength', 'yoga', 'other'
@@ -444,6 +444,9 @@ service cloud.firestore {
         && validDateKeyAndTimezone(data, data.performedAt)
         && data.note is string
         && data.note.size() <= 200
+        && (data.get('caloriesBurned', 0) is number
+          && data.get('caloriesBurned', 0) >= 0
+          && data.get('caloriesBurned', 0) <= 10000)
         && data.createdAt is timestamp
         && data.updatedAt is timestamp;
     }
@@ -1058,9 +1061,41 @@ service cloud.firestore {
           && request.resource.data.updatedAt == request.time
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
             'activityType', 'durationMinutes', 'performedAt', 'dateKey',
-            'timezoneOffsetMinutes', 'note', 'updatedAt'
+            'timezoneOffsetMinutes', 'note', 'caloriesBurned', 'updatedAt'
           ]);
 
+        allow delete: if owns(uid);
+      }
+
+      match /workout_sessions/{sessionId} {
+        allow read: if owns(uid);
+        allow create: if ownsWrite(uid)
+          && request.resource.data.keys().hasOnly([
+            'workoutId', 'workoutName', 'startedAt', 'completedAt',
+            'activeSeconds', 'caloriesBurned', 'completedExerciseIds',
+            'dateKey', 'timezoneOffsetMinutes', 'createdAt'
+          ])
+          && request.resource.data.workoutId is string
+          && request.resource.data.workoutId.size() >= 1
+          && request.resource.data.workoutId.size() <= 80
+          && request.resource.data.workoutName is string
+          && request.resource.data.workoutName.size() >= 1
+          && request.resource.data.workoutName.size() <= 120
+          && request.resource.data.startedAt is timestamp
+          && request.resource.data.completedAt is timestamp
+          && request.resource.data.completedAt >= request.resource.data.startedAt
+          && request.resource.data.activeSeconds is int
+          && request.resource.data.activeSeconds >= 1
+          && request.resource.data.activeSeconds <= 86400
+          && request.resource.data.caloriesBurned is number
+          && request.resource.data.caloriesBurned >= 0
+          && request.resource.data.caloriesBurned <= 10000
+          && request.resource.data.completedExerciseIds is list
+          && request.resource.data.completedExerciseIds.size() <= 100
+          && request.resource.data.dateKey is string
+          && request.resource.data.timezoneOffsetMinutes is int
+          && request.resource.data.createdAt == request.time;
+        allow update: if false;
         allow delete: if owns(uid);
       }
 

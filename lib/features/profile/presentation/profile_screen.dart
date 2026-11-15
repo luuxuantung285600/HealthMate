@@ -131,6 +131,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 onTap: () => context.push(AppRoutes.wellness),
               ),
+              const Divider(height: 1),
+              ListTile(
+                key: const ValueKey('open-workouts'),
+                leading: const Icon(Icons.fitness_center_outlined),
+                title: const Text('Tập luyện'),
+                subtitle: const Text('Chọn buổi tập, theo dõi tiến độ và xem lịch sử'),
+                trailing: const Icon(Icons.chevron_right_rounded),
+                onTap: () => context.push(AppRoutes.workouts),
+              ),
               ListTile(
                 key: const ValueKey('open-goals-quests'),
                 leading: const Icon(Icons.flag_outlined),

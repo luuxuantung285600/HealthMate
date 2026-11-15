@@ -80,6 +80,7 @@ class FirebaseActivityRepository implements ActivityRepository {
     'dateKey': draft.dateKey,
     'timezoneOffsetMinutes': draft.timezoneOffsetMinutes,
     'note': draft.note.trim(),
+    if (draft.caloriesBurned != null) 'caloriesBurned': draft.caloriesBurned!,
   };
 
   ActivityLog _fromDoc(String id, Map<String, dynamic> data) => ActivityLog(
@@ -95,6 +96,7 @@ class FirebaseActivityRepository implements ActivityRepository {
     timezoneOffsetMinutes:
         (data['timezoneOffsetMinutes'] as num?)?.toInt() ?? 0,
     note: data['note'] as String? ?? '',
+    caloriesBurned: (data['caloriesBurned'] as num?)?.toDouble(),
     createdAt: _date(data['createdAt']),
     updatedAt: _date(data['updatedAt']),
   );

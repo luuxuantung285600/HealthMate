@@ -16,6 +16,7 @@ import '../../features/support/presentation/support_screen.dart';
 import '../../features/progress/presentation/progress_screen.dart';
 import '../../features/food_library/presentation/food_library_screen.dart';
 import '../../features/wellness/presentation/wellness_screen.dart';
+import '../../features/workouts/presentation/workout_screen.dart';
 import '../../features/profile/presentation/account_information_screen.dart';
 import '../../features/profile/presentation/onboarding_screen.dart';
 import '../../features/profile/providers/profile_providers.dart';
@@ -170,6 +171,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                       int.tryParse(state.uri.queryParameters['tab'] ?? '') ??
                       -1,
                 ),
+              ),
+              GoRoute(
+                path: AppRoutes.workouts,
+                builder: (context, state) => const WorkoutScreen(),
               ),
             ],
           ),
