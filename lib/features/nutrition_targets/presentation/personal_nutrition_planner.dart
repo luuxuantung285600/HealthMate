@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import '../../../core/widgets/help_details.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +14,7 @@ import '../models/energy_estimate.dart';
 import '../models/nutrition_target.dart';
 import '../models/personal_nutrition_plan.dart';
 import '../providers/nutrition_target_providers.dart';
+import 'nutrition_target_form.dart';
 
 Future<NutritionTarget?> openPersonalNutritionPlanner(
   BuildContext context, {
@@ -213,6 +215,30 @@ class _PlannerFormState extends ConsumerState<_PlannerForm>
   double? _decimal(TextEditingController c) =>
       double.tryParse(c.text.trim().replaceAll(',', '.'));
 
+  void _changed() => setState(() {
+    _error = null;
+    saveError = null;
+  });
+
+  void _reviewInput() {
+    FocusScope.of(context).unfocus();
+    if (_scroll.hasClients) _scroll.jumpTo(0);
+  }
+
+  Future<void> _manualTarget(NutritionTarget? existing) async {
+    if (!_current || saving) return;
+    final result = await showDialog<NutritionTarget>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) =>
+          AccountBoundDialog(child: NutritionTargetForm(initial: existing)),
+    );
+    // The manual form owns explicit confirmation and persistence. Returning
+    // without a result keeps this planner and its unsaved inputs intact.
+    if (!mounted || !_current || result == null) return;
+    Navigator.pop(context, result);
+  }
+
   void _calculate() {
     FocusScope.of(context).unfocus();
     try {
@@ -254,7 +280,7 @@ class _PlannerFormState extends ConsumerState<_PlannerForm>
       });
       return;
     }
-    final draft = _plan!.toTarget(day);
+    final draft = _plan!.toTarget(day, preserveMarkers: existing);
     if (!widget.saveToAccount) {
       Navigator.pop(context, draft);
       return;
@@ -332,7 +358,7 @@ class _PlannerFormState extends ConsumerState<_PlannerForm>
           leading: IconButton(
             tooltip: 'Đóng',
             onPressed: saving ? null : requestClose,
-            icon: const Icon(Icons.close),
+            icon: const Icon(AppIcons.x),
           ),
         ),
         body: SingleChildScrollView(
@@ -357,6 +383,26 @@ class _PlannerFormState extends ConsumerState<_PlannerForm>
                     ),
                   ),
                 ),
+              if (_error != null && _plan == null) ...[
+                OutlinedButton(
+                  key: const ValueKey('nutrition-plan-review-input'),
+                  onPressed: _reviewInput,
+                  child: const Text('Kiểm tra lại thông tin đã nhập'),
+                ),
+                if (widget.saveToAccount)
+                  OutlinedButton.icon(
+                    key: const ValueKey('nutrition-plan-manual'),
+                    onPressed: !ready || saving
+                        ? null
+                        : () => _manualTarget(existing),
+                    icon: const Icon(AppIcons.squarePen),
+                    label: const Text('Nhập mục tiêu dinh dưỡng thủ công'),
+                  )
+                else
+                  const Text(
+                    'Bạn vẫn có thể hoàn tất hồ sơ. Sau đó mở Mục tiêu dinh dưỡng để nhập các mốc được tư vấn riêng.',
+                  ),
+              ],
               if (_plan != null && widget.saveToAccount) ...[
                 if (existingState.isLoading) const LinearProgressIndicator(),
                 if (existingState.hasError) ...[
@@ -393,7 +439,7 @@ class _PlannerFormState extends ConsumerState<_PlannerForm>
                 FilledButton.icon(
                   key: const ValueKey('nutrition-plan-calculate'),
                   onPressed: _calculate,
-                  icon: const Icon(Icons.calculate_outlined),
+                  icon: const Icon(AppIcons.calculator),
                   label: const Text('Xem đề xuất của tôi'),
                 )
               else ...[
@@ -479,7 +525,10 @@ class _PlannerFormState extends ConsumerState<_PlannerForm>
           ),
         ),
       ],
-      onChanged: (v) => setState(() => _sex = v),
+      onChanged: (v) {
+        _sex = v;
+        _changed();
+      },
     ),
     const SizedBox(height: 16),
     DropdownButtonFormField<PlanActivity>(
@@ -494,7 +543,10 @@ class _PlannerFormState extends ConsumerState<_PlannerForm>
             child: Text(a.label, maxLines: 1, overflow: TextOverflow.ellipsis),
           ),
       ],
-      onChanged: (v) => setState(() => _activity = v),
+      onChanged: (v) {
+        _activity = v;
+        _changed();
+      },
     ),
     if (_activity != null) Text(_activity!.description),
     const SizedBox(height: 8),
@@ -521,7 +573,10 @@ class _PlannerFormState extends ConsumerState<_PlannerForm>
       ],
       onChanged: widget.lockProfileSeed
           ? null
-          : (v) => setState(() => _goal = v),
+          : (v) {
+              _goal = v;
+              _changed();
+            },
     ),
     if (_goal?.needsTargetWeight == true) ...[
       const SizedBox(height: 16),
@@ -548,7 +603,10 @@ class _PlannerFormState extends ConsumerState<_PlannerForm>
               ),
             ),
         ],
-        onChanged: (v) => setState(() => _pace = v ?? _pace),
+        onChanged: (v) {
+          _pace = v ?? _pace;
+          _changed();
+        },
       ),
       const SizedBox(height: 8),
       const Text('Nhịp kcal khởi đầu, không dự báo ngày đạt cân nặng đích.'),
@@ -570,19 +628,25 @@ class _PlannerFormState extends ConsumerState<_PlannerForm>
             ),
           ),
       ],
-      onChanged: (v) => setState(() => _macros = v ?? _macros),
+      onChanged: (v) {
+        _macros = v ?? _macros;
+        _changed();
+      },
     ),
     const Text('Tỷ lệ % năng lượng: đạm / carbohydrate / chất béo.'),
     const SizedBox(height: 16),
     const Text(
-      'Đề xuất dành cho người 18–65 tuổi, không mang thai/cho con bú, không có chế độ ăn điều trị, rối loạn ăn uống hoặc nhu cầu thể thao chuyên nghiệp. Ngoài phạm vi, bạn vẫn có thể nhập mục tiêu được tư vấn riêng.',
+      'Đề xuất dành cho người 18–65 tuổi, BMI hiện tại và BMI mục tiêu từ 18,5 đến dưới 40; không mang thai/cho con bú, không có chế độ ăn điều trị, rối loạn ăn uống hoặc nhu cầu thể thao chuyên nghiệp. Ngoài phạm vi, bạn vẫn có thể chọn mục tiêu sức khỏe và nhập các mốc dinh dưỡng được tư vấn riêng.',
     ),
     CheckboxListTile(
       key: const ValueKey('nutrition-plan-eligible'),
       contentPadding: EdgeInsets.zero,
       title: const Text('Tôi đã đọc và thuộc phạm vi áp dụng'),
       value: _eligible,
-      onChanged: (v) => setState(() => _eligible = v == true),
+      onChanged: (v) {
+        _eligible = v == true;
+        _changed();
+      },
     ),
   ];
 

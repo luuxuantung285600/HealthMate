@@ -1,3 +1,4 @@
+import 'support/load_icon_font.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
 
@@ -34,9 +35,12 @@ void _expectAiUnused(ProviderContainer container, FakeChatRepository history) {
 
 void main() {
   setUpAll(() async {
-    final fonts = FontLoader('Inter');
+    await loadIconFont();
+    final fonts = FontLoader('Public Sans');
     for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      fonts.addFont(rootBundle.load('assets/fonts/inter/Inter-$weight.ttf'));
+      fonts.addFont(
+        rootBundle.load('assets/fonts/public_sans/PublicSans-$weight.ttf'),
+      );
     }
     await fonts.load();
     await (FontLoader(
@@ -107,15 +111,11 @@ void main() {
             _expectAiUnused(container, history);
             for (final tab in [
               'nav-journal',
+              'nav-workouts',
               'nav-progress',
-              'nav-profile',
               'nav-dashboard',
             ]) {
-              if (tab == 'nav-profile') {
-                await openProfileFromShell(tester);
-              } else {
-                await tester.tap(find.byKey(ValueKey(tab)));
-              }
+              await tester.tap(find.byKey(ValueKey(tab)));
               await tester.pumpAndSettle();
               expect(find.byKey(const ValueKey('open-chat')), findsNothing);
               expect(find.byKey(const ValueKey('scan-food')), findsNothing);

@@ -1,3 +1,4 @@
+import 'support/load_icon_font.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
@@ -43,9 +44,12 @@ Future<void> saveCapture(
 
 void main() {
   setUpAll(() async {
-    final fonts = FontLoader('Inter');
+    await loadIconFont();
+    final fonts = FontLoader('Public Sans');
     for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      fonts.addFont(rootBundle.load('assets/fonts/inter/Inter-$weight.ttf'));
+      fonts.addFont(
+        rootBundle.load('assets/fonts/public_sans/PublicSans-$weight.ttf'),
+      );
     }
     await fonts.load();
     await (FontLoader(

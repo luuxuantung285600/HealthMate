@@ -1,9 +1,22 @@
+import '../theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/journal/providers/journal_date_provider.dart';
 import '../../features/journal/providers/journal_quick_action_provider.dart';
 import '../theme/app_spacing.dart';
+import '../theme/app_feature_visuals.dart';
+import '../theme/home_palette.dart';
+
+Color _destinationColor(int branch, Brightness brightness) => switch (branch) {
+  1 => AppFeatureVisual.nutrition.foreground(brightness),
+  7 => AppFeatureVisual.workout.foreground(brightness),
+  5 => AppFeatureVisual.report.foreground(brightness),
+  _ =>
+    brightness == Brightness.dark
+        ? const Color(0xFFEEEEEE)
+        : const Color(0xFF262626),
+};
 
 class AppShell extends ConsumerWidget {
   const AppShell({required this.navigationShell, super.key});
@@ -13,31 +26,31 @@ class AppShell extends ConsumerWidget {
   static const _visibleDestinations = [
     (
       branch: 0,
-      label: 'Hôm nay',
-      icon: Icons.home_outlined,
-      selected: Icons.home_outlined,
+      label: 'Trang chủ',
+      icon: AppIcons.home,
+      selected: AppIcons.homeSelected,
       key: ValueKey('nav-dashboard'),
     ),
     (
       branch: 1,
       label: 'Nhật ký',
-      icon: Icons.menu_book_outlined,
-      selected: Icons.menu_book_outlined,
+      icon: AppIcons.journal,
+      selected: AppIcons.journalSelected,
       key: ValueKey('nav-journal'),
+    ),
+    (
+      branch: 7,
+      label: 'Tập luyện',
+      icon: AppIcons.workout,
+      selected: AppIcons.workoutSelected,
+      key: ValueKey('nav-workouts'),
     ),
     (
       branch: 5,
       label: 'Tiến độ',
-      icon: Icons.bar_chart_outlined,
-      selected: Icons.bar_chart_outlined,
+      icon: AppIcons.progress,
+      selected: AppIcons.progressSelected,
       key: ValueKey('nav-progress'),
-    ),
-    (
-      branch: 4,
-      label: 'Cá nhân',
-      icon: Icons.person_outline_rounded,
-      selected: Icons.person_rounded,
-      key: ValueKey('nav-profile'),
     ),
   ];
 
@@ -63,67 +76,88 @@ class AppShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final showRail = constraints.maxWidth >= AppSpacing.railBreakpoint;
-        final currentBranch = navigationShell.currentIndex;
-        final visibleIndex = _visibleDestinations.indexWhere(
-          (destination) => destination.branch == currentBranch,
-        );
-        return Scaffold(
-          body: SafeArea(
-            bottom: showRail,
-            child: Row(
-              children: [
-                if (showRail) ...[
-                  NavigationRail(
-                    selectedIndex: visibleIndex < 0 ? null : visibleIndex,
-                    onDestinationSelected: (index) =>
-                        _selectBranch(_visibleDestinations[index].branch),
-                    labelType: NavigationRailLabelType.all,
-                    leading: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: AppSpacing.lg,
-                      ),
-                      child: Column(
-                        children: [
-                          const Icon(Icons.spa_rounded, size: 32),
-                          const SizedBox(height: AppSpacing.lg),
-                          FloatingActionButton.small(
-                            key: const ValueKey('quick-add-menu'),
-                            heroTag: 'quick-add-rail',
-                            tooltip: 'Thêm bữa ăn',
-                            onPressed: () => _addMeal(ref),
-                            child: const Icon(Icons.add_rounded),
-                          ),
-                        ],
-                      ),
-                    ),
-                    destinations: [
-                      for (final destination in _visibleDestinations)
-                        NavigationRailDestination(
-                          icon: Icon(destination.icon),
-                          selectedIcon: Icon(destination.selected),
-                          label: Text(destination.label),
+    return Theme(
+      data: navigationShell.currentIndex == 0
+          ? HomePalette.of(context)
+          : Theme.of(context),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final showRail = constraints.maxWidth >= AppSpacing.railBreakpoint;
+          final currentBranch = navigationShell.currentIndex;
+          final visibleIndex = _visibleDestinations.indexWhere(
+            (destination) => destination.branch == currentBranch,
+          );
+          return Scaffold(
+            body: SafeArea(
+              bottom: showRail,
+              child: Row(
+                children: [
+                  if (showRail) ...[
+                    NavigationRail(
+                      selectedIndex: visibleIndex < 0 ? null : visibleIndex,
+                      onDestinationSelected: (index) =>
+                          _selectBranch(_visibleDestinations[index].branch),
+                      labelType: NavigationRailLabelType.all,
+                      leading: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppSpacing.lg,
                         ),
-                    ],
-                  ),
-                  const VerticalDivider(width: 1),
+                        child: Column(
+                          children: [
+                            const Icon(AppIcons.brand, size: 32),
+                            const SizedBox(height: AppSpacing.lg),
+                            FloatingActionButton.small(
+                              key: const ValueKey('quick-add-menu'),
+                              heroTag: 'quick-add-rail',
+                              tooltip: 'Thêm bữa ăn',
+                              onPressed: () => _addMeal(ref),
+                              child: const Icon(AppIcons.plus),
+                            ),
+                          ],
+                        ),
+                      ),
+                      destinations: [
+                        for (final destination in _visibleDestinations)
+                          NavigationRailDestination(
+                            icon: Icon(destination.icon),
+                            selectedIcon: Icon(
+                              destination.selected,
+                              color: _destinationColor(
+                                destination.branch,
+                                Theme.of(context).brightness,
+                              ),
+                            ),
+                            label: Text(
+                              destination.label,
+                              style: destination.branch == currentBranch
+                                  ? TextStyle(
+                                      color: _destinationColor(
+                                        destination.branch,
+                                        Theme.of(context).brightness,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                          ),
+                      ],
+                    ),
+                    const VerticalDivider(width: 1),
+                  ],
+                  Expanded(child: navigationShell),
                 ],
-                Expanded(child: navigationShell),
-              ],
+              ),
             ),
-          ),
-          bottomNavigationBar: showRail
-              ? null
-              : _FloatingNavigationBar(
-                  currentBranch: currentBranch,
-                  destinations: _visibleDestinations,
-                  onSelect: _selectBranch,
-                  onQuickAdd: () => _addMeal(ref),
-                ),
-        );
-      },
+            bottomNavigationBar: showRail
+                ? null
+                : _FloatingNavigationBar(
+                    currentBranch: currentBranch,
+                    destinations: _visibleDestinations,
+                    onSelect: _selectBranch,
+                    onQuickAdd: () => _addMeal(ref),
+                  ),
+          );
+        },
+      ),
     );
   }
 }
@@ -154,10 +188,10 @@ class _FloatingNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Material(
-      color: scheme.surface,
+      color: Theme.of(context).scaffoldBackgroundColor,
       elevation: 0,
       shadowColor: scheme.shadow.withValues(alpha: 0.12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+      shape: Border(top: BorderSide(color: scheme.outlineVariant)),
       clipBehavior: Clip.antiAlias,
       child: SafeArea(
         top: false,
@@ -165,8 +199,8 @@ class _FloatingNavigationBar extends StatelessWidget {
           builder: (context, constraints) {
             final style = Theme.of(
               context,
-            ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w400);
-            var height = 68.0;
+            ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600);
+            var height = 76.0;
             for (final label in [
               ...destinations.map((d) => d.label),
               'Thêm món',
@@ -182,7 +216,7 @@ class _FloatingNavigationBar extends StatelessWidget {
                         (constraints.maxWidth / (destinations.length + 1) - 4)
                             .clamp(1, double.infinity),
                   );
-              final needed = painter.height + 45;
+              final needed = painter.height + 56;
               if (needed > height) height = needed;
               painter.dispose();
             }
@@ -199,6 +233,10 @@ class _FloatingNavigationBar extends StatelessWidget {
                             ? destination.selected
                             : destination.icon,
                         selected: currentBranch == destination.branch,
+                        selectedColor: _destinationColor(
+                          destination.branch,
+                          Theme.of(context).brightness,
+                        ),
                         onTap: () => onSelect(destination.branch),
                       ),
                     ),
@@ -206,9 +244,11 @@ class _FloatingNavigationBar extends StatelessWidget {
                     child: _NavigationButton(
                       key: const ValueKey('quick-add-menu'),
                       label: 'Thêm món',
-                      icon: Icons.add_rounded,
+                      icon: AppIcons.plus,
                       selected: false,
-                      actionColor: scheme.primary,
+                      actionColor: AppFeatureVisual.nutrition.foreground(
+                        Theme.of(context).brightness,
+                      ),
                       onTap: onQuickAdd,
                     ),
                   ),
@@ -221,6 +261,10 @@ class _FloatingNavigationBar extends StatelessWidget {
                             ? destination.selected
                             : destination.icon,
                         selected: currentBranch == destination.branch,
+                        selectedColor: _destinationColor(
+                          destination.branch,
+                          Theme.of(context).brightness,
+                        ),
                         onTap: () => onSelect(destination.branch),
                       ),
                     ),
@@ -241,6 +285,7 @@ class _NavigationButton extends StatelessWidget {
     required this.selected,
     required this.onTap,
     this.actionColor,
+    this.selectedColor,
     super.key,
   });
 
@@ -249,6 +294,7 @@ class _NavigationButton extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
   final Color? actionColor;
+  final Color? selectedColor;
 
   @override
   Widget build(BuildContext context) {
@@ -256,40 +302,70 @@ class _NavigationButton extends StatelessWidget {
     final color =
         actionColor ??
         (selected
-            ? theme.colorScheme.onSurface
+            ? selectedColor ?? theme.colorScheme.primary
             : theme.colorScheme.onSurfaceVariant);
     return Semantics(
       selected: selected,
       button: true,
       label: label,
+      onTap: onTap,
+      excludeSemantics: true,
       child: InkWell(
         onTap: onTap,
         child: Container(
-          decoration: BoxDecoration(
-            color: actionColor == null
-                ? null
-                : theme.colorScheme.primaryContainer.withValues(alpha: .35),
-          ),
           padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 8),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                color: selected ? theme.colorScheme.primary : color,
-                size: 24,
-                applyTextScaling: false,
-              ),
-              const SizedBox(height: 3),
-              Text(
-                label,
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.w400,
+              if (actionColor != null)
+                ExcludeSemantics(
+                  child: Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: actionColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      icon,
+                      size: 32,
+                      color: theme.brightness == Brightness.dark
+                          ? Colors.black
+                          : Colors.white,
+                    ),
+                  ),
+                )
+              else ...[
+                AnimatedContainer(
+                  key: ValueKey('navigation-indicator-$label'),
+                  duration: const Duration(milliseconds: 180),
+                  width: 52,
+                  height: 32,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: selected
+                        ? color.withValues(alpha: .13)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: color,
+                    size: 24,
+                    applyTextScaling: false,
+                  ),
                 ),
-              ),
+                const SizedBox(height: 5),
+                Text(
+                  label,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: color,
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                  ),
+                ),
+              ],
             ],
           ),
         ),

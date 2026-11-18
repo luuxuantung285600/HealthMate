@@ -1,5 +1,457 @@
 # Giai đoạn 10 — Báo cáo kiểm thử và rà soát MVP
 
+## 19/11/2026 — Kiểm tra toàn bộ trước bàn giao/Git push
+
+- `flutter test --no-pub --concurrency=2 --reporter expanded`: **1.434 qua,
+  1 skip**, exit 0, 5 phút 57 giây. Ca skip là screenshot tùy chọn cần
+  WORKOUT_CAPTURE. `flutter analyze --no-pub`: No issues found (25,3s).
+  Kiểm format 260 file Dart thay đổi: 0 cần sửa.
+- Admin 176/176, chat-api 49/49, Functions 29/29, tool 64/64 qua; JS syntax,
+  generator exercise catalog và background profile checks qua.
+- Toàn bộ Rules: **183/183 qua**, Firestore Emulator riêng 127.0.0.1:8096,
+  project demo, không ghi production; PERMISSION_DENIED ở ca từ chối là mong đợi.
+- Lượt toàn bộ đầu: 1.427 qua/7 lỗi/1 skip. Hai ca chưa chờ layout sau scroll,
+  một ca restore nằm ngoài phần ListView đã dựng, bốn ca U1 thiếu fake activity
+  repository sau khi ngân sách đọc thêm vận động. Đã giữ assertion cũ, thêm
+  hit-test/scroll và fixture; 4 suite tập trung 58/58 qua rồi toàn bộ qua.
+- Rules lượt đầu 176 qua/7 lỗi khởi tạo do hai fixture tìm firestore.rules
+  theo cwd. Đã dùng __dirname, chạy lại đủ 183 qua; không sửa logic Rules.
+- `git diff --cached --check` qua sau dọn whitespace/EOF; điều chỉnh generator
+  attribution tránh sinh dòng trắng cuối. Source secret audit: 0 findings.
+- File bàn giao: HANDOVER.md, README và hai báo cáo này. Log thật ở build/
+  handover-20261119/ (ignored) cùng log lượt đầu handover-flutter-tests-20261119.log.
+  Không chạy build Android/release, mua Play thật, deploy Hosting/Functions hoặc
+  bật billing. Các việc cần cấu hình còn lại ghi rõ trong HANDOVER.md.
+
+## 19/11/2026 — Giai đoạn 11: ảnh tĩnh trên thẻ nguồn ExerciseDB
+
+- Admin 176/176 qua, gồm bảy ca mới cho ảnh tĩnh/lazy load/giải phóng nguồn,
+  giới hạn decoder, gate, abort/late response, tab ẩn, lỗi và thử lại.
+- JS syntax và generator --check qua; format file Dart generated qua.
+  Không chạy lại Flutter/analyze/Rules cho thay đổi UI admin, không đổi
+  logic Flutter/backend/quyền hay ghi production.
+- Chrome thật với API/GIF thật: sáu bố cục sáng/tối 1440/390/320px không
+  tràn; screenshot ảnh tĩnh cách 900ms trùng từng byte; mở GIF thật, CSS
+  filter dưới CSP, chuyển bản nháp/lưu adapter QA và giải phóng canvas qua.
+  Pixel screenshot xác nhận nền RGB0 tối/RGB255 sáng ở cả sáu bố cục,
+  ảnh đều có nội dung nhân vật; 0 runtime exception, 0 production writes.
+- Log/ảnh/giới hạn: build/exercisedb-thumbnails-20261119/ và
+  docs/exercisedb-thumbnails-2026-11-19.md. Chưa push/deploy.
+
+## 19/11/2026 — Giai đoạn 11: picker kho ExerciseDB trong admin
+
+- Toàn bộ admin169/169 qua, Flutter4 suite27/27 qua; analyze No issues found
+  (62,3s). JS check/check:exercises và generated profile check qua.
+- API thật1.500 bài,10 nhóm/30 dụng cụ; hai trang25 không trùng; lọc kết hợp
+  name/bodyParts/equipments qua. Chrome thật6 bố cục dark/light1440/390/320
+  không tràn; xem GIF thật, prefill/lưu adapter QA, CSP filter qua.
+- Firestore Emulator6/6 qua gồm draft/payload của picker, audit/quyền và
+  listener UID thường nhận thay đổi CRUD không reload; không đổi Rules.
+- Không ghi production, không push/deploy. Log/screenshots/giới hạn và
+  lỗi setup đã xử lý: docs/exercisedb-admin-browser-2026-11-19.md; bằng chứng
+  build/exercisedb-browser-20261119/. Chưa nghiệm thu Android vật lý.
+
+
+## 19/11/2026 — Giai đoạn 11: nền trắng khép kín GIF nữ
+
+- Flutter5 suite36/36 qua; native toàn bộ126 khung/10 GIF qua,110 vùng nền
+  (27.378pixel) alpha0, kiểm giữ chi tiết trắng và premultiplied RGBA.
+- Admin155/155 qua, lần cuối sau chỉnh khung ảnh DOM/media63/63 qua.
+- Analyze No issues found (20,8s); format qua; generator --check qua.
+- Dart web JS:5 trạng thái DOM qua,8 filter trùng admin. SVG offline9 mẫu
+  360px +24 khung có điều kiện,3.494pixel nội thất nền alpha0 qua.
+- Báo cáo/log/giới hạn: docs/exercise-enclosed-background-2026-11-19.md;
+  build/gif-closed-matte-20261118/. Không gọi đây là nghiệm thu browser/
+  Android vật lý. Chưa push/deploy.
+
+
+## 17/11/2026 — Giai đoạn 11: bốn GIF nhân vật nữ
+
+- Bốn API+GIF thật HTTP 200, ID/MIME khớp, 180×180 và 12–18 khung; đã xem
+  ảnh để xác nhận nữ và biến thể. Catalog chung có 54 ID; 50 bản ghi cũ nguyên vẹn.
+- Format sáu file 0 thay đổi, catalog generation check qua, analyze toàn repo
+  No issues found. Mười một suite Flutter: **99 ca qua**, một ca chụp tùy chọn
+  skip. Toàn bộ test admin: **149/149 qua**; npm check qua.
+- Kiểm tìm không dấu và bộ lọc, đúng source ID khi mở từng bài, ẩn/khôi phục
+  không làm mất 50 bài cũ, admin payload/DOM, lazy load, pause, dispose và timer.
+- Lượt đầu ba test chạm thẻ trước khi frame cuộn render: bổ sung pump và hit-test;
+  hai assertion DOM cũ đếm 50 được đổi thành 54 kèm kiểm đủ bốn ID nữ, chạy lại qua.
+- Chưa nghiệm thu Android vật lý, build release hoặc deploy Firebase/GitHub.
+  Giữ giới hạn media thử nghiệm phi thương mại; không đổi schema/Rules hay phí.
+- Lệnh, nguồn, file và log: docs/female-exercise-gifs-2026-11-17.md,
+  build/exercise-female-review-20261117/.
+
+## 17/11/2026 — Giai đoạn 4: UX tìm và chọn món
+
+- Chín suite Flutter: **87/87 qua**, exit 0, 34 giây. Danh sách/lệnh/file
+  và giới hạn: docs/food-search-ux-2026-11-17.md.
+- Format bảy file 0 thay đổi; analyze No issues found, exit 0, 62,4 giây.
+  Diff-check các file trong phạm vi qua. Log: build/food-search-ux-20261117/.
+- Kiểm nút X hủy request chờ/giữ bộ lọc, từ khóa mới không bị phản hồi cũ
+  ghi đè, phím Tìm tức thì/không gọi thêm vì debounce/đóng bàn phím, trạng
+  thái tìm giữ sau thêm món. Có hồi quy UID/nguồn/chi tiết USDA, nhật ký/
+  snapshot/bản nháp, sáng/tối 320px/chữ 2x và đọc được trên màn hẹp.
+- Hai assertion lượt đầu bắt nhầm thanh tiến độ trang chủ đã giới hạn đúng
+  phần tìm; lỗi phần thư viện tạo lại khi thêm món đã sửa trong UI bằng key
+  ổn định. Giữ kiểm nút xóa/nhóm được chọn và chạy lại toàn bộ suite liên quan.
+- Chưa Android vật lý hoặc gọi API/Firebase production; không đổi quyền,
+  schema hay deploy/push Git. Build JavaScript web release qua, exit 0,
+  122,7 giây; Wasm dry run còn cảnh báo từ mobile_scanner hiện có.
+  Không dùng test fake để tuyên bố nghiệm thu production.
+
+## 17/11/2026 — Giai đoạn 3: tên, ảnh hồ sơ và cỡ chữ
+
+- 12 suite Flutter cuối 138/138 qua, exit0,43giây; riêng10 ca hồ sơ chạy lại
+  sau điều chỉnh vị trí cuộn ảnh kiểm thử cũng qua, không cộng lặp.
+  Suite/file/lệnh: docs/profile-identity-2026-11-17.md.
+- Format21file0 thay đổi; analyze No issues found, exit0,40,6giây. Build web
+  JavaScript release qua, exit0,107,5giây; vẫn có Wasm dry-run warning từ
+  mobile_scanner hiện có. Diff-check qua.
+- Firestore emulator61/61 qua,17,6giây: owner/UID khác/guest/unverified/admin,
+  validation/dung lượng, khóa tài khoản và cleanup. Firebase SDK thật Chrome
+  + Auth/Firestore demo emulator1/1 qua,6giây: lưu/đọc server/listener,
+  giữ field sức khỏe, chỉnh hồ sơ cũ không mất ảnh, đăng nhập lại, gỡ ảnh,
+  chặn truy cập chéo. Không dùng dữ liệu hoặc tài khoản production.
+- UI320px chữ2x/390px chữ1x, sáng/tối; lưu chờ máy chủ/chặn lặp, lỗi và thử
+  lại, hủy/chọn/gỡ ảnh, đổi tài khoản lúc đang chọn. Đã xem render với font
+  thật; ảnh minh họa là fixture. Clip avatar và fixture đổi UID/lints/hit-test
+  ở lượt đầu đã sửa, giữ assertion kiểm thử.
+- Deploy Rules exit0 và đọc lại khớp SHA256 local; field exemption ảnh đã
+  áp dụng/đọc lại, composite index không đổi. Compiler Rules còn cảnh báo
+  knownNumber chưa dùng đã có từ trước. Backup và log:
+  build/profile-personalization-20261117/. Chưa Android thật/ký/phát hành;
+  không push Git hoặc deploy app/admin/Functions trong lượt này.
+
+## 17/11/2026 — Giai đoạn 1: Tabler Icons, theme trung tính và vòng calo
+
+- 14 suite cuối: **187/187 qua**, exit0, 23giây. Danh sách và lệnh trong
+  `docs/neutral-icons-calorie-ring-2026-11-17.md`; log `build/neutral-ui-regression.log`.
+- `flutter analyze`: sạch, exit0,19,2giây. Build JS web release qua, exit0,
+  60giây. `mobile_scanner` còn cảnh báo trong Wasm dry run; không phải lỗi build
+  JS. Log `build/neutral-ui-analyze-final.log`, `build/neutral-ui-build-web.log`.
+- Có kiểm pixel ba đoạn màu/track; tỷ lệ4/4/9 và kcal catalog dùng mẫu số riêng;
+  macro0/thiếu/âm/NaN/vô hạn/tràn số; mục tiêu chưa có/vượt; UI theo bữa sửa/xóa;
+  legend/giải thích/semantics, sáng/tối320px chữ2x vàtablet. Các suite còn kiểm
+  auth/onboarding, chọn món/barcode, tabs, workouts, progress, Premium, chat/hỗ trợ.
+- Generator xác minh116glyph không rỗng,142alias, selected variant/cmap/hash/
+  MIT license qua. Font33432byte, release tree-shake33140byte. Xem ảnh thực tế
+  ở `build/icon-system`, `build/home-reference`, `build/neutral-ui-20261116`.
+- Các ảnh có số dùng fixture kiểm thử. Không ghi mẫu lên production; chưa
+  nghiệm thu Android vật lý hoặc Firebase runtime. Lượt đầu raster test treo
+  fake async,4ca rò semantics handle và1lint đã sửa ở test harness; lượt cuối
+  giữ đủ assertion và qua. Chi tiết giới hạn/nguồn/file trong báo cáo riêng.
+
+## 16/11/2026 — Giai đoạn 6: ghi nhanh nước và hoàn tác an toàn
+
+- Format kiểm cuối 12 file Dart qua/0 thay đổi; analyze toàn repo sạch,
+  exit0, 24,9 giây. Diff-check vùng thay đổi qua.
+- 7 suite `water_quick_entry_test`, `dashboard_test`, `daily_logs_test`,
+  `daily_form_recovery_test`, `journal_sections_test`, `security_regression_test`,
+  `stage_6b_test`: **56/56 qua**, exit0, 11 giây. Có15 ca mới, không cộng lại
+  các lượt chạy lặp. Kiểm empty/loading/error, ghi nhanh/ngày cũ, receipt sau
+  xác nhận, chặn bấm lặp, undo/retry/đã xóa, giữ mục đã sửa, UID/phiên cũ và
+  form nhanh/tùy chọn ở sáng/tối320px chữ2x và390px chữ1x.
+- SDK thật Chrome + Auth/Firestore emulator, project demo-healthmate-rules:
+  ca `water quick undo is atomic, preserves edits and enforces UID privacy`
+  **1/1 qua**, exit0. Timestamp server, transaction, cùng ID/đã mất, bảo vệ
+  sửa và sửa về giá trị cũ, chặn UID khác, chủ tài khoản hoàn tác được.
+- Lượt SDK chạy được đầu phát hiện web bridge bọc domain exception thành lỗi
+  chung; sửa callback trả bool, ném domain error sau transaction, giữ assertion
+  mã lỗi và chạy lại qua. Lượt trước bị treo vì test server CanvasKit404; chỉ
+  phục vụ lại bytes engine gốc của SDK trong browser test riêng. Không mock
+  Firebase hoặc sửa Flutter SDK/code sản phẩm để khắc phục engine404.
+- Đã xem render Public Sans sáng/tối; ảnh fixture tại
+  `build/water-quick-entry-20261116/form-{light,dark}.png`. Logs cuối:
+  `regression-final.log`, `analyze-final.log`, `sdk-emulator-rerun.log`,
+  `canvaskit-workaround-final.log` trong cùng thư mục. Không QA production,
+  nghiệm thu Android thật/build ký/push/deploy trong lượt này.
+- Báo cáo file/lệnh, sự cố tooling và giới hạn:
+  `docs/water-quick-entry-2026-11-16.md`.
+
+## 16/11/2026 — Giai đoạn 8: so sánh tuần và ngày xuất báo cáo
+
+- Format 7 file Dart thay đổi: 0 thay đổi ở kiểm cuối. Analyze toàn repo
+  `flutter analyze --no-pub`: **No issues found**, exit0, 20,2 giây.
+- Lượt cuối `flutter test --no-pub` với `week_comparison_test`,
+  `progress_comparison_ui_test`, `progress_test`, `weekly_reflection_test`,
+  `year_reports_test`, `h5_period_report_test`, `report_export_quality_test`:
+  **88/88 qua**, exit0, 23 giây. Không cộng lặp các lượt test trước đó.
+- Tính toán kiểm ngày ghép cùng thứ, tuần vắt năm/chưa đủ, số 0 đã ghi và
+  thiếu dữ liệu, cân trung bình ngày, ID trùng, dateKey và ngày tương lai.
+  Widget kiểm lazy đọc tuần trước/chia sẻ tuần hiện tại, lỗi/thử lại, chuyển
+  tuần nhanh/đăng xuất đang tải và xuất đúng tuần/30/90 ngày/năm đang xem.
+- Ca rời tab rồi quay lại đã tái hiện lệch panel/header, sửa bằng khôi phục
+  offset, chạy lại qua. Chi tiết tuần và biểu đồ giữ cùng tuần. Layout mới
+  kiểm sáng/tối 320px chữ2x và 390px chữ1x; đã xem ảnh render sáng/tối390px.
+- Diff-check vùng sửa qua. Các fixture chỉ ở test; không ghi dữ liệu mẫu
+  production. Không test Firebase SDK thật/Rules mới vì không đổi backend;
+  chưa nghiệm thu Android thật hoặc build ký/deploy trong lượt này.
+- Báo cáo và file/lệnh: `docs/progress-comparison-2026-11-16.md`. Logs cuối:
+  `build/progress-comparison-analyze-final.log`,
+  `build/progress-comparison-final-tests.log`. Ảnh trong
+  `build/progress-comparison-20261116/`.
+
+## 15/11/2026 — Giai đoạn tùy chọn 11: GIF matte v3 và thay filter web cũ
+
+- Format 4 file Dart qua/0 đổi ở lượt cuối. 6 suite liên quan **54/54**
+  qua, exit0; analyze **No issues found**,126,4s. Web debug build exit0,59,6s.
+- Mã web Dart compile JS chạy với DOM giả: **5/5** trạng thái qua (tối,
+  gọi lặp, sáng, tối lại, phục hồi stylesheet bị mất). Xác nhận chỉ một
+  SVG/style của HealthMate, bỏ definition cũ và tham chiếu revision3.
+  Đây là kiểm tương tác DOM trong bộ nhớ, không phải test Chrome thật.
+- Render native bằng decoder/Canvas Flutter, GIF thật I4hDWkc: **1/1**
+  qua; xem 3/12 frame0/6/11, RGBA premultiplied hợp lệ. Xem filter SVG
+  lấy từ mã Dart biên dịch bằng sharp/librsvg offline trên frame thật.
+- Vòng đầu test vùng nội thất dùng hình quá nhỏ nên mẫu nằm trong dải
+  feather mới; đã mở rộng fixture, giữ kiểm vùng thật sự bên trong không
+  đổi. Harness DOM ban đầu thiếu document.currentScript/scripts; đã sửa
+  harness, không sửa sản phẩm để chiều mock. Render review đầu dùng
+  testWidgets bị HTTP mock400; chuyển sang test engine không có binding
+  widget, tải GIF thật trong bộ nhớ và render thành công.
+- Kiểm cửa sổ Chrome bằng computer-use bị dừng vì không xác định được
+  URL; đã kết thúc CUA và không tiếp tục điều khiển browser. Lượt này
+  không có bằng chứng UI Chrome/Android vật lý mới. Nguồn180p vẫn có
+  pixel/ghost pose trong một số frame; không tuyên bố chất lượng HD.
+
+[Phạm vi, log, ảnh và giới hạn](workout-gif-smoothing-v3-2026-11-15.md).
+
+## 15/11/2026 — Giai đoạn tùy chọn 11: làm mềm viền GIF trên nền đen
+
+- Format 3 file Dart: qua, lần cuối 0 thay đổi; analyze --no-pub sạch,
+  exit 0, 17,6 giây. 6 suite **54/54 qua**, exit 0.
+- Kiểm viền trắng có alpha thấp, đường bao chuyển mềm, giữ màu cơ/vùng
+  sáng phía trong, RGB premultiplied hợp lệ, buffer gốc không đổi, giữ
+  ảnh không có nền trắng/translucent và validation. Hồi quy codec thật
+  đổi sáng/tối, pause/lifecycle, layout và luồng tập qua.
+- Web debug harness build exit 0, 47,3 giây. Chụp/xem chi tiết tối,
+  danh sách tối/sáng bằng widget/theme/service thật. GIF hoàn tất ghi
+  nhận lần lượt 1/4/3; mỗi màn 0 JS exception. Một GIF trong ảnh danh
+  sách sáng chưa hoàn tất lúc chụp; không tính đã kiểm đủ 50 GIF.
+- Đã xem so sánh 3 cách xử lý trên GIF thật trước khi chọn co/feather
+  matte. Ảnh trước/sau cuối crop từ screenshot Flutter thật, không dùng
+  hình tạo hoặc sửa nhân vật để minh họa kết quả.
+- Không đọc/ghi Firebase, thêm dependency hay cache GIF; chưa đo FPS/CPU,
+  nghiệm thu Android vật lý hoặc phát hành app/web.
+
+[Phạm vi, bằng chứng và giới hạn](workout-gif-edge-refinement-2026-11-15.md).
+
+## 15/11/2026 — Giai đoạn tùy chọn 11: nền đen quanh GIF tập luyện
+
+- Format các file Dart đã sửa: qua; flutter analyze --no-pub:
+  **No issues found**, 15,6 giây.
+- 6 suite liên quan: **51/51 qua**, exit 0. Kiểm tách nền nối mép,
+  giữ vùng trắng khép kín/màu cơ, không sửa buffer gốc, kiểm kích thước.
+  Widget test dùng codec thật xác nhận sáng → tối → sáng với một lượt
+  tải GIF; hồi quy layout, pause/lifecycle và luồng tập qua.
+- Web debug harness build: exit 0, 53,6 giây. Chụp/xem danh sách tối,
+  sáng và chi tiết tối bằng widget/theme/service thật; GIF hoàn tất
+  4/4/1, mỗi màn 0 JS exception. Stream bundled/rỗng chỉ dùng cho preview;
+  không khởi tạo Firebase hoặc đọc/ghi tài khoản.
+- Test chuyển theme ban đầu vướng animation của MaterialApp; đã đặt
+  themeAnimationDuration bằng 0 trong test để kiểm thời điểm đổi theme
+  xác định, chạy lại toàn nhóm thành công. Các prototype đảo màu/tách
+  mọi pixel trắng đã bị loại vì làm mất chi tiết cơ thể.
+- Chưa đo FPS/CPU hoặc nghiệm thu Android vật lý. Giữ gate GIF miễn phí
+  chỉ ở bản debug phi thương mại; không phát hành hoặc cache tệp GIF.
+
+[Phạm vi, log và ảnh](workout-gif-black-background-2026-11-15.md).
+
+## 15/11/2026 — Giai đoạn tùy chọn 11: UX/UI Tập luyện
+
+- Format các file presentation/test đã sửa: qua; analyze --no-pub: exit 0,
+  **No issues found**.
+- 9 suite liên quan: **88/88**, exit 0. Lọc nhiều điều kiện/hủy nháp/reset,
+  đổi tab giữ tìm kiếm; layout sáng/tối, 320/430/900 px và chữ 200%; thumbnail
+  pause, cover đúng variant/ẩn từ admin. Hồi quy service GIF/lifecycle/lazy,
+  đồng bộ và timer/xác nhận/lưu vận động qua.
+- Build web debug harness: exit 0; chạy đúng widget/theme/service sản phẩm,
+  stream thư viện bundled và vận động rỗng chỉ phục vụ review độc lập.
+  Đã xem ảnh thật với GIF ExerciseDB; không dùng ảnh fixture thay minh họa.
+- Vòng đầu lỗi import, overflow và expectation chữ cũ đã được sửa/chạy lại.
+  Capture buổi tập lần đầu timeout; mapping cover đã sửa và bổ sung test.
+  Có lần tải nguồn GIF bị lỗi tạm thời; kiểm lại riêng buổi tập tải 3 GIF
+  hoàn tất, metadata/media HTTP 200, 0 JS exception. Không che lỗi mạng.
+- Không đọc/ghi Firebase, không nghiệm thu Android vật lý hoặc phát hành.
+  GIF miễn phí giữ gate debug kiểm thử phi thương mại.
+
+[Báo cáo và log/ảnh](workout-ui-refresh-2026-11-15.md).
+
+## 14/11/2026 — Giai đoạn tùy chọn 11: UI web admin và thư viện bài tập
+
+- `npm --prefix admin-web run check`, `run check:exercises`: exit 0.
+- `npm --prefix admin-web test`: **147/147**, 0 bỏ qua. Hồi quy quyền/session,
+  báo cáo, món ăn/ảnh cùng tests mới cho GIF owner/queue/viewport và trạng thái.
+- Chrome riêng: **72 lượt trang** sáng/tối × 1440/1024/390/320; candidate chính
+  xác cũng qua, không tràn ngang. GIF thật Burpee/chống đẩy chân trên bục load
+  hoàn tất trong local, chỉ hai ảnh cho danh sách 50 bài; đã xem screenshot.
+- Auth/Firestore Emulator, Rules production hiện tại, đúng candidate SDK:
+  **1/1 luồng** tạo/sửa/ẩn/khôi phục, atomic audit, live snapshot và từ chối
+  phiên bản cũ. Không ghi thử production. Lần đầu cấu hình Rules ngoài thư mục
+  bị emulator từ chối; sửa đường dẫn/copy đúng Rules và chạy lại thành công.
+- Lần mạng GIF trên candidate đầu timeout, kiểm riêng lại qua. Assertion browser
+  cũ cho form ảnh và cách đếm listener đã được cập nhật đúng hành vi hiện tại;
+  chi tiết và mọi log lỗi/đợt chạy lại trong báo cáo, không che lỗi test.
+- Deploy **chỉ Hosting**, 434 tệp/13 thay đổi; **17/17 URL** sau deploy HTTP 200,
+  byte/hash khớp candidate; version `d18532468d67f18a`. Config và 421 tệp ngoài phạm vi
+  giữ nguyên. Không deploy Rules/Functions, không sửa Dart hay chạy lại Flutter.
+
+[Báo cáo, phạm vi phát hành và giới hạn](admin-ui-refresh-2026-11-14.md).
+
+## 10/11/2026 — Phát hành dữ liệu xác minh (Giai đoạn 4)
+
+- Node công cụ publish + catalog/ảnh: **25/25 qua**; merge/mask, exact source,
+  missing/zero/cleared, xung đột, audit/preconditions, idempotency và readback.
+- Admin `npm test`: **113/113 qua**; sau sửa xuống dòng URL, nhóm DOM và
+  publication chạy lại **50/50 qua**. Chrome headless exact staged web: **9/9**
+  chi tiết món ở 320/390/1440 px, đúng số liệu/unknown/zero, không tràn/lỗi JS.
+- Ghi production rồi verify: **110/110 món, 110/110 audit**; dữ liệu ngoài
+  patch nguyên vẹn. Hosting **33/33 hash**, config và 2 file công khai khớp.
+- APK artifact đọc ZIP khớp byte asset hiện tại; Hảo Hảo75g đúng 4g đường,
+  1778mg natri. Không rebuild hoặc chạy lại full Flutter khi Dart không đổi.
+- `node --check`, diff check qua. Không deploy Rules/Functions, chưa nghiệm
+  thu Android vật lý hoặc ký/Play Store.
+
+[Kết quả, nguồn và bằng chứng phát hành](verified-nutrients-release-2026-11-10.md).
+
+## 10/11/2026 — Giai đoạn 4: dưỡng chất có nguồn cho món Việt/đồ gói
+
+- Node catalog/ảnh **15/15 qua**; kiểm bằng chứng nguồn, số hàng nghìn mg,
+  gram/gói và chuẩn hóa100g, missing/zero, sodium/sugar bounds, giữ macro.
+- Flutter nguồn/đồ gói/Home **17/17 qua**: đúng Hảo Hảo75g→4g đường và
+  1.778mg natri→4,445g muối; VDD và exact FDC IDs, snapshot, dữ liệu thiếu.
+- Toàn Flutter **1.235/1.235 qua**, exit0,2m17s; analyze sạch,24,8s.
+- Dart format hai file/0đổi, diff check qua.
+- Fallback chỉ cho catalog document cũ chưa có extras và ID/tên/sourceLabel/
+  bốn macro/cơ sở g/100g khớp. `{}`/null/0 phía server được tôn trọng; đổi
+  nguồn/tên/macro/unit/basis không được kế thừa. Snapshot cũ không tra lại.
+- Đọc/kiểm mã trang cho101 nguồn VDD, render đối chiếu mẫu14/107/450/509;
+  kiểm đúng tab, ảnh và bốn macro của22 biến thể Acecook trước bổ sung.
+- Debug APK build thành công, exit0,20,7s. Asset đọc lại từ APK khớp hash
+  source và đúng số liệu gói75g; cảnh báo KGP từ plugin hiện có không chặn build.
+- Rules/web không thay đổi; không ghi Firebase production, chưa thử Android
+  thật/ký release.
+
+Log và nguồn QA: `build/nutrient-research/`.
+[Báo cáo nguồn và giới hạn](vietnamese-nutrients-2026-11-10.md).
+
+## 10/11/2026 — Muối, đường và chất xơ (Giai đoạn 8 mở rộng)
+
+- Toàn Flutter **1.233/1.233 qua**, exit 0, 2m19s. Gồm Home dùng snapshot,
+  vuốt/chọn nhóm, gram/tiến độ, unknown/zero, đổi khẩu phần, marker tùy chọn,
+  giữ marker đã lưu/đang nhập khi tính lại kcal, 320/390px × chữ 100/200% ×
+  sáng/tối. Đã xem ảnh render Inter/icon thật của nhóm mới.
+- `flutter analyze`: **No issues found**, exit 0, 38,2s.
+- `flutter build apk --debug --no-pub`: **thành công**, exit 0,
+  assembleDebug 49,4s. Cảnh báo KGP từ plugin hiện có, không chặn build.
+- Dart format 15 file/0 đổi; `git diff --check` qua.
+- Admin Node/DOM **110/110**, syntax check qua; kiểm giữ vi chất, nhập/gỡ
+  đường/natri, preview muối và giá trị 0 thật.
+- Auth/Firestore Emulator admin/core Rules **71/71 qua**; optional/null/zero,
+  bounds/key/type, quyền admin và chặn truy cập chéo UID.
+- Flutter Web SDK thật trên Auth/Firestore Emulator **1/1 qua**: catalog,
+  nhật ký 200g/snapshot, lưu/đọc ngày và khoảng ngày, cập nhật/gỡ mốc.
+- Chrome admin **72 lượt trang + form ở 8 cấu hình**, không production writes.
+- Lượt full đầu phát hiện tràn nhãn chuyển nhóm khi chữ lớn; đã sửa layout.
+  Assertion chi tiết dinh dưỡng bổ sung hàng muối và giữ kiểm dữ liệu thiếu;
+  lượt full cuối sạch. Không bỏ test/assertion lỗi.
+
+Log `build/secondary-nutrients-*.log`; ảnh `build/secondary-nutrients/` dùng
+fixture. Không deploy/push hoặc ghi Firebase production, chưa nghiệm thu
+thiết bị Android thật/ký release. [Chi tiết](secondary-nutrients-2026-11-10.md).
+
+## 10/11/2026 — Giai đoạn 4 mở rộng: admin quản lý ảnh món ăn
+
+- `npm --prefix admin-web test`: **108/108 qua**.
+- `npm --prefix admin-web run check`: qua, gồm module ảnh mới.
+- Emulator admin Rules: **13/13 qua**, có kiểm unsafe/incomplete metadata,
+  quyền admin/audit, update/gỡ/khôi phục, đọc bằng user thường.
+- Auth/Firestore Emulator + realtime SDK: **13/13 qua**, có admin save thật,
+  listener trình khách khác, photo trong audit, chống ghi đè bản mới.
+- Chrome: **72 lượt trang**, thêm form ảnh tại 8 cấu hình 320–1440 px ×
+  sáng/tối; preview asset decode 512 px, hidden/URL sai, form không tràn.
+- `flutter test`: **1.220/1.220 qua**, 2m18s. Fixture Consumer dùng catalog
+  override/ProviderScope; unmount/flush trước đổi container, giữ assertion.
+- `flutter analyze`: **No issues found**. Dart format file sửa và diff check qua.
+- `flutter build apk --debug --no-pub`: **thành công**, assembleDebug 40,2s;
+  cảnh báo KGP có sẵn từ plugin, chưa nâng dependencies ngoài phạm vi.
+- 51 preview admin khớp hash/credit/license từ manifest app; verifier **3/3 qua**.
+
+Log `build/admin-photo-*.log`; ảnh browser `build/admin-identity-20261110/food-photo-editor-*.png`.
+Chỉ fixture local/emulator; không ghi Firebase production. Chưa deploy/push,
+nghiệm thu Android thật hoặc ký release. Ảnh mới bằng URL, chưa upload tệp;
+cần phát hành Rules/web/app mới để áp dụng trên online.
+[Chi tiết](admin-food-photos-2026-11-10.md).
+
+
+## 10/11/2026 — Giai đoạn tùy chọn 11: nhận diện admin/app
+
+- Node admin **104/104 qua**, syntax check qua.
+- Chrome: **72 lượt trang** = 9 trang × 320/390/1024/1440px × sáng/tối;
+  đúng nền/font, không tràn ngang; form, đăng nhập, drawer bàn phím, thu gọn
+  desktop, thay đổi thiết bị và lưu theme qua reload hoạt động.
+- Kiểm icon/màu/giấy phép khớp nguồn Flutter và asset có trong gói release.
+  Đã xem ảnh QA browser; adapter local trống, không Firebase SDK/production.
+- Không sửa Flutter/Rules/data; web online chưa deploy. Log và ảnh trong
+  `build/admin-identity-20261110/`; [chi tiết](admin-app-identity-2026-11-10.md).
+
+## 10/11/2026 — Giai đoạn tùy chọn 11: hệ icon
+
+- Toàn Flutter **1.217/1.217 qua**, exit 0, 2m12s;
+  `build/icon-system/full-tests.log`.
+- Nhóm icon/Home/food detail/MFP **34/34 qua**; kiểm vùng chạm, nhãn và
+  selected semantics, bốn tab, thêm món, 320/390px × chữ100/200% × sáng/tối.
+- Verifier font qua: đúng hash/font/glyph có nét, 119 glyph/138 tên,
+  giấy phép ISC/MIT; không còn `Icons.*` trực tiếp trong `lib/`.
+- Đã xem ảnh render font thật toàn bộ glyph, Home, Cá nhân, menu tính năng
+  và bảng icon sáng/tối. Test capture hiện có nạp font mới.
+- Chưa nghiệm thu trên điện thoại thật hoặc ký phát hành. Kết quả analyzer,
+  format và đóng gói cuối ghi tại [báo cáo bộ icon](icon-system-2026-11-10.md).
+
+## 10/11/2026 — Giao diện chọn món và bảng dinh dưỡng
+
+- Toàn Flutter **1.210/1.210**, exit0, 2 phút8 giây;
+  `build/food-detail/full-tests-verified.log`.
+- Node catalog/photo **14/14**; analyze toàn repo sạch, exit0,28,2giây;
+  format20 file/0đổi và diff check sạch.
+- Màn chi tiết/bảng dinh dưỡng/ảnh sáng/tối ở390px và320px/chữ200%; kiểm
+  đúng tỷ lệ4/4/9, quy đổi nguyên liệu/gram/phần, thiếu dữ liệu, xác nhận
+  không tự lưu, giữ snapshot lịch sử và nháp/thử lại không trùng.
+- Debug APK build qua34,2giây; ZIP51 ảnh đúng hash, manifest và các asset
+  dinh dưỡng khớp. Chưa kiểm thiết bị vật lý hoặc ký phát hành.
+- Hai lỗi test đầu do chưa cuộn theo bố cục mới (USDA disclosure và nháp)
+  đã sửa thao tác kiểm thử; không giảm assertion về hành vi dữ liệu.
+
+Xem [báo cáo đầy đủ](food-selection-detail-2026-11-10.md).
+
+
+## 09/11/2026 — Tập luyện theo bộ đếm
+
+Model **13/13**, UI **20/20**, SDK Firebase/Auth/Firestore trên emulator
+**1/1** qua. Bao gồm đúng thời gian/nghỉ/tạm dừng/bỏ qua, ghi phần đã tập,
+xác nhận lưu/thử lại cùng ID/đổi tài khoản, ghi đồng thời không trùng,
+giữ timestamp và chặn truy cập chéo UID. UI kiểm 320/390/412px × chữ
+100/200% × sáng/tối và xem ba ảnh render Inter. Analyzer sạch, 31,4 giây.
+Toàn bộ Flutter **1173/1173** qua, 2 phút; format/diff qua. Debug APK build
+thành công (30,4s); source audit 725 file/0 finding. Chưa có thiết bị Android
+để nghiệm thu. Không deploy hoặc đổi Rules/schema.
+Chi tiết: [báo cáo tập luyện](guided-workouts-2026-11-09.md).
+
+## 09/11/2026 — Luồng thiết lập từng câu và kế hoạch cá nhân
+
+- Flutter toàn bộ **1140/1140**, 2 phút 56 giây; questionnaire/journey sau
+  chỉnh câu chữ cuối **17/17**. Bao gồm đủ năm mục tiêu, kcal thay đổi theo
+  nhịp, xem trước không ghi, bỏ áp dụng không tạo target, giữ target cũ sau
+  từ chối, lưu lỗi/thử lại, chuyển nháp 1→2 và giữ nháp theo UID.
+- Analyzer toàn dự án sạch (43,1 giây), format 11 file/0 đổi và diff check qua.
+- Android admin runtime đúng config **7/7**; build debug APK qua với defines
+  riêng của F5. Chưa cài bản mới vì điện thoại đã ngắt kết nối.
+- Xem ảnh render Inter của màn mục tiêu/kế hoạch; UX matrix 320/390/412px ×
+  100/150/200% × sáng/tối. Sửa tràn nhãn số đo ở 320px/200%.
+- Không đổi backend/Rules, không chạy lại emulator hay end-to-end trên
+  Android thật; harness core đã cập nhật để hỏi từng màn.
+
+Chi tiết và thao tác chạy lại: [báo cáo onboarding](onboarding-journey-2026-11-09.md).
+
 ## 08/11/2026 — Hồ sơ, tài khoản và lịch sử cân nặng
 
 Flutter **1052/1052**, 0 skip, 102 giây; 12 ca mới về bảo toàn độ chính xác,
@@ -3404,3 +3856,842 @@ Chi tiết, file, ma trận và giới hạn: [customer-admin-acceptance-2026-11
 Log/ảnh trong build/customer-admin-qa; log gốc Android tại
 D:/HealthMateMaintenanceQA/customer-admin-20261109/build. Chưa nghiệm thu
 Play billing/Gemini/App Check production, Android thật hoặc ký phát hành.
+
+
+## 10/11/2026 — Giai đoạn 11, video hướng dẫn miễn phí
+
+- Toàn bộ `flutter test --reporter expanded`: **1.183/1.183**, exit 0, log
+  `build/exercise-video-research/flutter-tests.log`.
+- Sau những sửa cuối ở adapter/player/biến thể: workout/tutorial/session
+  **43/43**, exit 0; test trang thông tin/quyền riêng tư **1/1**, exit 0.
+  Log workout: `build/exercise-video-research/workout-tests-verified.log`.
+- `dart format --output=none --set-exit-if-changed` trên 18 file liên quan:
+  không file nào cần đổi; `flutter analyze`: **No issues found**, exit 0.
+- Android AVD HealthMateMaintenanceQA, opt-in
+  `integration_test/workout_video_smoke_test.dart` với
+  `RUN_WORKOUT_VIDEO_SMOKE=true`: **14/14**, exit 0. Thật sự tạo WebView,
+  chờ trạng thái YouTube cued, kiểm tra 13 video nguồn duy nhất và ID lỗi;
+  không dùng fake player, không truy cập dữ liệu khách hàng/Firebase.
+  Log `build/exercise-video-research/android-video-smoke-verified.log`.
+- Một lượt trước đó 13 nguồn đều timeout, logcat có DNS timeout và
+  `ping: unknown host www.youtube.com`; máy host HTTP 200. Khởi động lạnh
+  AVD với DNS tạm đã chạy lại thành công. Không che các kết quả lỗi; log
+  `build/exercise-video-research/android-video-smoke-final.log` còn nguyên.
+- Browser thật đã phát/tạm dừng video Nuffield Health trong sheet Flutter,
+  khung hình YouTube và hướng dẫn Việt hiện đồng thời. Kiểm tra màn 390px,
+  nguồn/phần chữ/nút đóng/khung video 200px đầy đủ. Ảnh trong
+  `build/workout-preview/tutorial-{web,mobile}.png`.
+- Web playback cần không pause khi focus iframe (Flutter inactive trên web);
+  native inactive và web hidden vẫn pause. Các test kiểm tra lazy init,
+  retry/dispose, lỗi, màn hẹp/chữ lớn và không cộng thời gian xem vào tập.
+- Không thay Rules/schema; không chạy lại emulator Firestore vì không có
+  thay đổi ở đường dữ liệu. Không tuyên bố đã xem hết 13 video trên Android
+  thật; chưa nghiệm thu thiết bị vật lý, ký/phát hành hoặc đảm bảo video
+  nguồn luôn tồn tại. Video cần Internet, có thể có quảng cáo.
+
+Nguồn và triển khai: [workout-media-sourcing-2026-11-10.md](workout-media-sourcing-2026-11-10.md).
+
+- Build app cuối: `flutter build apk --debug` với cấu hình debug riêng ngoài
+  repo, exit 0; Gradle 51,2s. APK app (không phải APK integration):
+  `build/releases/healthmate-workout-videos-20261110-debug.apk`, 238.167.226 byte.
+  Log `build/exercise-video-research/app-debug-build.log`. Có cảnh báo migration
+  Kotlin Gradle Plugin từ các Firebase/mobile_scanner hiện có, build vẫn thành công;
+  không nâng dependencies ngoài phạm vi để xử lý cảnh báo tương lai.
+  SHA-256: D30B5E2E2BC46FCDACC034952E06E6F4804F3321D9BFE2F4C8E1C9B8802D8B0D.
+
+## 10/11/2026 — Giai đoạn 11, Trang chủ sáng/trắng và tối/đen
+
+- `dart format --output=none --set-exit-if-changed` trên 14 file giao diện
+  và test liên quan: exit 0, không file nào cần đổi.
+- `flutter analyze`: exit 0, **No issues found**, 37,2 giây.
+  Log `build/home-reference-analyze-final.log`.
+- Nhóm hồi quy dashboard/widget/MFP/UX/navigation/wellness: **73/73**, exit 0.
+  Log `build/home-reference-tests.log`.
+- Home và reference UI cuối: **18/18**, exit 0. Kiểm tra đổi trực tiếp
+  Sáng/Tối/Theo hệ thống, chọn ngày và chặn ngày tương lai, dữ liệu thật
+  theo ngày, điều hướng báo cáo, vận động thiếu/có calo, không cộng kcal
+  vận động vào ngân sách, vượt mục tiêu, macro chưa biết, tương phản màu
+  và bố cục màn hẹp/chữ lớn. Log `build/home-reference-final-focused.log`.
+- Toàn bộ `flutter test --reporter expanded` cuối: **1.192/1.192**, exit 0,
+  thời gian 2 phút 28 giây; log `build/home-reference-full-tests-final.log`.
+  Lượt trước có **1.190 qua, 1 lỗi**: test reference còn tìm chuỗi giao
+  diện cũ `1.160 đã ăn`. Đã sửa để kiểm tra đúng giá trị **1.160** bằng
+  khóa `today-recorded-energy`; không đổi fixture hoặc giá trị mong đợi.
+  Giữ log lỗi `build/home-reference-full-tests.log`.
+- APK debug cuối: exit 0, Gradle **38,1 giây**, log
+  `build/home-reference-apk-final.log`. Dùng cấu hình debug riêng ngoài
+  repo, không thêm credential vào mã nguồn. Có cảnh báo KGP của plugin
+  hiện hữu; không phát sinh lỗi build.
+  Bản cài: `build/releases/healthmate-home-20261110-debug.apk`,
+  238.175.048 byte; SHA-256
+  `73B861A9CFF4C7AD5FB937892A8127E4CA6061A555ABFBB06A96327546661B60`.
+- Đã xem ảnh sáng/tối ở 390px và ảnh tối ở 320px/chữ 200%, có Inter và
+  Material Icons thật. Ảnh trong `build/home-reference/`; ảnh ghép
+  `home-light-dark.png`. Số liệu chỉ nằm trong fixture kiểm thử riêng,
+  không tạo dữ liệu giả trong luồng sản phẩm.
+- `git diff --check`: exit 0, chỉ có cảnh báo chuyển LF/CRLF.
+- Không đổi backend/rules/schema và không yêu cầu cấu hình Firebase mới.
+  Chưa nghiệm thu Android vật lý, ký phát hành hoặc deploy/push trong lượt.
+
+## 10/11/2026 — Giai đoạn 11, ảnh món và thứ tự món Việt
+
+- Nhóm tập trung cuối food_photos/h1_catalog/food_catalog/current_food_catalog/catalog_expansion/
+  unified_meal_entry/food_library_quality/meal_search_controller: **69/69**, exit 0.
+  Log `build/food-photos/focused-tests-verified.log`. Chín ca mới kiểm asset thật,
+  metadata/giấy phép, chống gán ảnh khi đổi tên/ID, thứ tự và độ khớp tìm kiếm,
+  món không ảnh giữ text-only, mở nguồn không thêm món, chọn 200 g và lưu đúng
+  snapshot; bốn trường hợp kích thước/theme/chữ lớn kèm ảnh chụp Flutter.
+- Format cuối 11 file: exit 0, không file nào cần đổi.
+- Kiểm ảnh bằng Python/Pillow: 19/19 hash và kích thước 256×256 khớp manifest,
+  tổng WebP 294.392 byte. Kết quả `build/food-photos/asset-audit.json`.
+- Đã xem bốn ảnh giao diện sáng/tối 390px/100% và 320px/200%, ảnh nguồn trước
+  chọn. Asset có nguồn/tác giả/giấy phép và mô tả cắt/thu nhỏ; không tạo số
+  dinh dưỡng hoặc ảnh người dùng giả trong ứng dụng.
+- Toàn bộ `flutter test --reporter expanded`: **1.201/1.201**, exit 0,
+  2 phút 13 giây; log `build/food-photos/full-tests-verified.log`.
+- `flutter analyze`: **No issues found**, exit 0, 38,1 giây; log
+  `build/food-photos/analyze-complete.log`. `git diff --check` exit 0,
+  chỉ cảnh báo LF/CRLF.
+- Android debug build: exit 0, Gradle 32,2 giây; log
+  `build/food-photos/android-debug-build-verified.log`. APK
+  `build/releases/healthmate-food-photos-20261110-debug.apk`, 238.196.862 byte,
+  SHA-256 `8D52FE43D130E1A99B081BE002BB9EDACE97104C0D5EDF20D1B0E7394BA96D20`.
+  Kiểm ZIP xác nhận 19/19 ảnh đúng hash và attribution/manifest có trong APK;
+  `build/food-photos/apk-asset-audit.json`. Cảnh báo migration KGP hiện hữu còn.
+- Giữ các log lỗi trung gian ở `build/food-photos/`; các lỗi đã sửa được ghi
+  trong [food-photos-2026-11-10.md](food-photos-2026-11-10.md).
+- Không đổi backend/rules/schema, không thêm package/billing và không ghi
+  Firebase/Cloud Storage. Chưa nghiệm thu Android vật lý hoặc ký phát hành.
+
+## 10/11/2026 — Giai đoạn 4 bổ sung, 51 món/đồ gói và 47 ảnh
+
+- Node catalog/photo cuối: **14/14**, exit0; log
+  `build/food-photos/quality-node-tests.log`. Kiểm nguồn, quy đổi nhãn từng
+  gói, ID/tên trùng, chọn danh sách ID khi import, hash và vùng cắt ≥512px.
+- Flutter tập trung9 file: **72/72**, exit0;
+  `quality-focused-tests-verified.log`. Ba ca đồ gói kiểm 22 nhãn, tìm alias,
+  khẩu phần1/2 gói và không gán ảnh nhà hàng vào sản phẩm cụ thể.
+- Sau kiểm fallback document Firebase thiếu defaultServingGrams: nhóm hồi
+  quy **20/20**; `package-server-regression.log`. Offline và server đều mặc
+  định1 gói, Hảo Hảo75g=350kcal; nhắc không cộng nước pha.
+- Toàn bộ `flutter test --reporter expanded` cuối: **1.204/1.204**, exit0,
+  2 phút6 giây; `quality-full-tests-final.log`. Sau đó chỉ bỏ dấu `!` thừa
+  không đổi hành vi theo analyzer. Analyze cuối sạch, exit0, 14 giây;
+  `quality-analyze-clean.log`. Format8 file không đổi. `git diff --check` sạch.
+- So Git base: 162 ID/tên/bốn chất/khối lượng phục vụ cũ giữ nguyên; thêm51.
+  Ba asset load đủ **11.220** mục, trong đó local Việt213.
+- Xem ảnh nguồn và toàn bộ47 khung cuối; phở gà có người đã thay; các ảnh
+  bàn ăn rối được cắt chỉ món chính. WebP512×512, 2.025.086byte; license,
+  tác giả, tọa độ cắt nguồn và SHA-256 trong manifest. Đã xem4 ảnh giao diện
+  sáng/tối, màn390/chữ100% và320/chữ200%.
+- Firebase dry-run có giới hạn51 ID: additions51/updates0/conflicts0;
+  apply nguyên tử thành công. Đọc lại so158 document cũ, toàn bộ fields và
+  timestamps giữ nguyên; 51 mục mới đúng nguồn và có server timestamp.
+  Dry-run sau: existing209/additions0/skipped51/updates0/conflicts0.
+  Bằng chứng `live-catalog-audit.json`; không sửa/xóa users/*.
+- Lỗi trung gian: số lượng test còn dùng phiên bản11.169; URL giấy phép
+  HTTP; thiếu trường tác giả máy đọc của bánh tét; nhãn gói bị script đổi
+  thành phần tham khảo; default server thiếu field; cảnh báo `!` thừa.
+  Đã sửa code/metadata, lấy đầy đủ credit trong trang nguồn. Không bỏ
+  assertion nguồn, dinh dưỡng, quyền sử dụng, lịch sử hoặc bộ lọc để qua test.
+- Android debug build cuối: exit0, Gradle15 giây;
+  `quality-android-debug-build-final.log`. APK
+  `build/releases/healthmate-vietnamese-foods-20261110-debug.apk`,
+  238.196.712byte, SHA-256
+  `233E1473D15B26B721A851608DDBF5E834DD5C5ED04B90A886542A92120CF767`.
+  ZIP có47/47 ảnh khớp hash, manifest/attribution và ba asset đủ11.220 mục
+  khớp byte; `quality-apk-asset-audit.json`. Còn cảnh báo plugin Kotlin hiện hữu.
+- Không thay Rules/query/backend/dependency, không bật billing, không ghi
+  ảnh lên Firebase, không push/deploy. Chưa nghiệm thu Android vật lý/ký release.
+# 10/11/2026 — Trái cây và đồ uống, Giai đoạn 4 bổ sung
+
+- `flutter analyze`: No issues found, exit0, 25,9 giây.
+- `flutter test --reporter expanded`: **1.244/1.244 pass**, exit0, 2 phút57 giây;
+  log `build/fruit-drink-flutter-tests-final.log`.
+- Flutter tập trung45/45; UI/paging cuối12/12, gồm nhóm, tìm kiếm qua trang,
+  hủy request cũ, chọn khẩu phần, snapshot/tổng dinh dưỡng và bố cục chữ lớn.
+- Node tool28/28: dữ liệu, create-only/audit, bảo vệ bản ghi cũ, đọc lại và
+  hồi quy bản phát hành dưỡng chất đã có.
+- Verifier độc lập: 27 dòng VDD,147 bản ghi USDA SR,63 cốc nguồn;8 ô đường
+  mâu thuẫn được giữ bằng chứng và loại khỏi dữ liệu dùng mới.
+- Firebase xác minh177 creates/177 audit,209 document cũ nguyên vẹn;
+  review lặp lại0 creates/200 skipped/0 conflicts.
+- Lượt full đầu có1 lỗi test bấm paging trước khi cuộn nút vào vùng bấm.
+  Đã sửa thao tác `ensureVisible`, giữ assertion, chạy tập trung và full lại qua.
+- APK debug build qua (Gradle 62,9 giây), bản cài
+  `build/releases/healthmate-fruit-drinks-20261110-debug.apk`; đã kiểm ZIP
+  3 asset khớp source và đủ 11.247 ID riêng biệt. Android vật lý/ký phát
+  hành chưa thực hiện; cảnh báo KGP từ plugin hiện hữu vẫn còn.
+
+Chi tiết: [fruit-drink-catalog-2026-11-10.md](fruit-drink-catalog-2026-11-10.md).
+
+# 10/11/2026 — Bộ lọc 10 nhóm, Giai đoạn 4 bổ sung
+
+- `dart format --output=none --set-exit-if-changed` 3 file Dart: 0 thay đổi,
+  exit0. `flutter analyze`: No issues found, exit0, 34 giây.
+- `flutter test test/food_browse_groups_test.dart test/fruit_drink_browse_test.dart
+  --reporter expanded`: **16/16 qua**, exit0; log `build/food-groups-focused.log`.
+- `flutter test --reporter expanded`: **1.252/1.252 qua**, exit0, 3 phút18
+  giây; log `build/food-groups-full.log`.
+- Kiểm tra dữ liệu thật11.247 ID: mọi nhóm có dữ liệu; Thịt và Cá & hải
+  sản không giao nhau; trứng tách đúng, sữa thực vật không vào sữa động vật,
+  sữa chua đóng gói có hai nhóm. Nước mắm/súp/bánh mì cá không vào cá nguyên
+  liệu, món Việt tổng hợp không bị phân nhóm theo từ khóa nguyên liệu.
+- Widget kiểm tra chọn thịt rồi cá và lưu chung đúng snapshot trên hai
+  bộ chọn; nhóm phối hợp với ăn chay, tránh đậu phộng và admin ẩn món.
+  Menu truy cập đủ10 nhóm, nhãn chọn nằm trọn vùng nhìn và không tràn dòng
+  ở320px/chữ200%. Đã xem ảnh cuối sáng/tối trong `build/food-groups-ui/`.
+- Lỗi trong lượt tập trung đầu đã sửa: sữa ở category Đồ uống, tự cuộn hai
+  hướng, kích thước chip khi animation; test giữ assertions. Thao tác test
+  cuộn ListView được sửa để tạo lại ô tìm kiếm đã bị dispose ngoài màn hình.
+- APK debug build qua, exit0, Gradle53,7 giây;
+  `build/releases/healthmate-food-groups-20261110-debug.apk`.
+  Cảnh báo KGP hiện hữu còn; chưa nghiệm thu Android vật lý/ký phát hành.
+- Không sửa/deploy backend, dữ liệu cloud, rules hoặc dependency.
+
+Chi tiết: [food-browse-groups-2026-11-10.md](food-browse-groups-2026-11-10.md).
+
+# 10/11/2026 — Khởi chạy Flutter web trong VS Code
+
+- `node --test tool/prepare_vscode_android.test.cjs`: **5/5 qua**, exit0;
+  log `build/web-launcher-node.log`. Launcher Chrome/Edge chọn đúng thiết bị
+  và không gọi task/token Android; fixture Android vẫn dừng khi thiếu token.
+- `flutter analyze`: No issues found, exit0,14,1 giây;
+  `build/web-launch-analyze.log`.
+- `flutter build web --dart-define-from-file=config/chat-api.json
+  --dart-define-from-file=config/admin-runtime.json`: qua, exit0,68 giây;
+  `build/web-launch-build.log`. Wasm dry run cảnh báo mobile_scanner dùng
+  dart:html/package:js; output JavaScript thành công ở `build/web`.
+- Browser smoke test bản build tại localhost:7357: Firebase khởi tạo và app
+  đến màn hình đăng nhập `/#/auth?from=/dashboard`. Quan sát Email, Mật khẩu,
+  Đăng nhập và Tiếp tục với Google; không dùng tài khoản/ghi production.
+- Không thay Dart hoặc chạy lại full Flutter tests. Chưa bấm F5 trực tiếp
+  trong VS Code/chưa kiểm tra đăng nhập thật trên Chrome/Edge.
+
+Chi tiết: [web-launch-fix-2026-11-10.md](web-launch-fix-2026-11-10.md).
+
+# 10/11/2026 — Nhật ký theo giờ (Giai đoạn 4 bổ sung)
+
+- Format16 file Dart thay đổi: **0 thay đổi**, exit0.
+- `flutter analyze`: **No issues found**, exit0,121,1 giây;
+  log `build/journal-hourly-verified-analyze.log`.
+- `flutter test --reporter expanded`: **1.261/1.261 qua**, exit0,2 phút59
+  giây; log `build/journal-hourly-verified-final.log`.
+- Có9 test timeline mới:09:30/09:05 chung09:00 và tổng đúng, timezone qua
+  nửa đêm/offset âm/legacy, thứ tự phút khi trộn legacy và offset, slot
+  quá khứ/hiện tại/tương lai; giao diện ảnh/giờ/tổng sáng/tối/chữ200%; lưu
+  thật qua form rồi stream chuyển09:30→08:15→00:15 và xóa xác nhận; thiếu
+  ảnh/macro giữ đúng trạng thái. Dùng repository fixture trong test.
+- Test tập trung trước ca mixed-offset:51/51 nhật ký/dinh dưỡng và14/14
+  timeline/camera qua. Lượt full đầu1259 qua/1 lỗi: camera ở chữ200% chạm
+  nút thêm ngoài viewport. Test sửa dùng helper cuộn sẵn có, giữ toàn bộ
+  assertion camera; lượt full tiếp1260/1260 và lượt cuối1261/1261 qua.
+- Đã xem ảnh `build/journal-timeline/`: sáng/tối390px/chữ100% và tối320px/
+  chữ200%, thẻ tự xuống dòng, ảnh thiếu giữ chữ, thanh tiến độ thẳng hàng.
+- `flutter build apk --debug --dart-define-from-file=<cấu hình riêng>`:
+  qua, exit0,Gradle60,5 giây; log `build/journal-hourly-apk.log`.
+  Artifact: `build/releases/healthmate-hourly-journal-20261110-debug.apk`,
+  238.290.841 byte, SHA256:
+  `27671cc07d489d2a05047a3612a5b7f02968d2cad71987bd2ff1aaad94637894`.
+- `flutter build web --dart-define-from-file=config/chat-api.json
+  --dart-define-from-file=config/admin-runtime.json`: qua, exit0,79,1 giây;
+  output `build/web`, log `build/journal-hourly-web.log`. Wasm dry run còn
+  cảnh báo mobile_scanner, JavaScript build thành công; không deploy hosting.
+- `git diff --check`: exit0; cảnh báo LF/CRLF hiện hữu.
+- Chưa nghiệm thu Android vật lý, chưa chạy Firebase integration/emulator,
+  chưa ký release. Integration selectors đã cập nhật và analyze qua; không
+  tuyên bố các kịch bản này đã chạy. Không đổi backend/rules/dependency.
+
+Chi tiết: [hourly-journal-2026-11-10.md](hourly-journal-2026-11-10.md).
+
+# 10/11/2026 — Font Public Sans theo phong cách X (Giai đoạn 11)
+
+- `dart format` theme token và30 file test đổi font loader:31 file,
+  30 file được format lại; không thay assertion nghiệp vụ.
+- `flutter analyze`: **No issues found**, exit0,124,1 giây;
+  log `build/public-sans-analyze.log`.
+- `flutter test --reporter expanded`: **1.261/1.261 qua**, exit0,
+  2 phút36 giây; log `build/public-sans-flutter-tests.log`.
+  Các ca UI hiện có dùng font thật mới, gồm320px/chữ200%, sáng/tối,
+  hồ sơ, onboarding, chatbot, tìm món, nhật ký, báo cáo và tập luyện.
+- `npm run check` trong admin-web: qua, exit0;
+  log `build/public-sans-admin-check.log`.
+- `npm test` trong admin-web: **113/113 qua**, exit0,13,1 giây;
+  log `build/public-sans-admin-tests.log`.
+- `node admin-web/test/browser-identity.cjs`: **8 cấu hình/72 lượt trang
+  qua**, exit0,0 lỗi,0 lần ghi production; log
+  `build/public-sans-admin-ui.log`. Chrome headless dùng adapter local.
+  Xác nhận Public Sans thực sự tải cả400/500/600/700 từ WOFF2 local;
+  không tràn ngang, kiểm tra form/dialog/login/drawer/theme vẫn qua.
+- Kiểm tra fontTools cmap trên cả4 TTF: đủ134 ký tự tiếng Việt có dấu;
+  đối chiếu SHA-256 của8 file với manifest và giấy phép app/web đều qua.
+- Đã xem ảnh `build/home-reference/home-light.png`,
+  `build/journal-timeline/overview-dark-2.0.png` và
+  `build/admin-identity-20261110/overview-dark-390.png`. Số liệu trong
+  ảnh là fixture kiểm thử, không phải dữ liệu tài khoản thật.
+- Chưa nghiệm thu Android thật hoặc chạy lại Firebase integration;
+  không thay backend/rules/package. Không deploy hosting trong lượt.
+
+Chi tiết: [x-style-typography-2026-11-10.md](x-style-typography-2026-11-10.md).
+
+- `flutter build apk --debug --dart-define-from-file=<cấu hình riêng>`:
+  **qua**, exit0,Gradle24,9 giây; log `build/public-sans-apk.log`.
+  APK: `build/releases/healthmate-public-sans-20261110-debug.apk`,
+  238.291.163 byte; SHA-256:
+  `b8fb1fc4aaf5b8db18f54384482fdb81594069b656dc5d3970009dd2e0a862d3`.
+  FontManifest trong APK khai báo4 font Public Sans và có giấy phép OFL;
+  Inter không còn là family đăng ký. Cảnh báo KGP/plugin hiện hữu còn.
+- `flutter build web --dart-define-from-file=config/chat-api.json
+  --dart-define-from-file=config/admin-runtime.json`: **qua**, exit0,
+  83 giây; output `build/web`, log `build/public-sans-web.log`.
+  Wasm dry run cảnh báo mobile_scanner hiện hữu; bản JavaScript build qua.
+  Không deploy hosting, không ký bản phát hành trong lượt.
+- Kiểm tra format cuối:31 file,0 thay đổi, exit0.
+
+# 10/11/2026 — Luồng đăng ký Premium trong app (Giai đoạn 10 bổ sung)
+
+- `dart format --output=none --set-exit-if-changed lib/features/premium
+  test/play_billing_test.dart test/play_store_test.dart
+  test/play_premium_flow_test.dart`: **14 file,0 thay đổi**, exit0.
+- `dart analyze lib/features/premium test/play_premium_flow_test.dart
+  test/play_billing_test.dart`: **No issues found**, exit0.
+- `flutter analyze --no-pub`, lượt cuối: **No issues found**, exit0,
+  33,7 giây; log `build/premium-flow-full-analyze.log`.
+  Lượt đầu quét nhầm bản nháp Dart tạm trong build/ với relative import
+  sai; đã xóa đúng file tạm do agent tạo, không thay rule hoặc bỏ qua lỗi
+  source. Bản source chính không có các import sai đó.
+- Test billing/store hiện có: **18/18 qua**, exit0; log
+  `build/premium-flow-existing-tests.log`.
+- Test tập trung cuối ba file billing/store/premium flow: **39/39 qua**,
+  exit0,4 giây; log `build/premium-flow-focused-tests.log`.
+- `flutter test --no-pub --reporter expanded`: **1.282/1.282 qua**,
+  exit0,3 phút09 giây; log `build/premium-flow-full-tests.log`.
+- 21 test mới: chặn mua lại khi verify lỗi; pending hủy không cấp quyền;
+  resume khôi phục checkout mất callback/không chồng verify; chỉ kích hoạt
+  sau stream membership; sáu trạng thái gói/expiry; quản lý đúng URL và
+  fallback; recovery qua UI; quyền riêng tư/quay lại; chưa mở bán không
+  bịa giá; lỗi đọc membership chặn mua đến khi retry; listener phiên dừng
+  sau logout;320px/chữ100–200% sáng/tối. Test dùng fixture receipt local.
+- `npm run check --prefix firebase-functions`: qua, exit0;
+  log `build/premium-flow-functions-check.log`.
+- `npm test --prefix firebase-functions`: **29/29 qua**, exit0,14,9 giây;
+  log `build/premium-flow-functions-tests.log`. Backend/Rules không đổi;
+  đây là regression contract/acknowledge/revenue với Publisher fixture.
+- Đã xem `build/premium-flow/ready-dark.png`; ảnh này và ready-light.png
+  là kiểm thử, giá29.000đ không phải giá production được tự đặt trong app.
+- `git diff --check`: qua, exit0, cảnh báo LF/CRLF hiện hữu.
+- Chưa chạy Google sandbox/production, không tạo khoản thu, không chạy lại
+  Firebase Emulator hoặc nghiệm thu Android thật. Play Console/Blaze,
+  product/base plan, IAM/App Check/RTDN và signing vẫn là bước cấu hình.
+
+Chi tiết: [premium-subscription-flow-2026-11-10.md](premium-subscription-flow-2026-11-10.md).
+
+- `flutter build apk --debug --no-pub
+  --dart-define-from-file=<cấu hình debug riêng>`: **qua**, exit0,
+  Gradle36,7 giây; log `build/premium-flow-apk.log`.
+  Artifact: `build/releases/healthmate-premium-flow-20261110-debug.apk`,
+  238.301.480 byte; SHA-256:
+  `f7a299c638689f2cffb9d3a79d7b18ebbf99d14fa527ed3a6d6e890a8fb1d7b9`.
+  Chỉ kiểm tra boolean cờ debug: Play Billing không được bật; không in
+  file cấu hình hoặc credential. Cảnh báo KGP/plugin hiện hữu còn.
+- `flutter build web --no-pub --dart-define-from-file=config/chat-api.json
+  --dart-define-from-file=config/admin-runtime.json`: **qua**, exit0,
+  97,9 giây; log `build/premium-flow-web.log`, output `build/web`.
+  Wasm dry run cảnh báo mobile_scanner hiện hữu; JavaScript build qua.
+- `node tool/audit_source_secrets.cjs`:812 source text files,0 findings;
+  không phải audit APK hoặc credential store. Không deploy/push Git.
+
+
+## 10/11/2026 — Giai đoạn 4 bổ sung, 500 mục catalog
+
+- `flutter analyze`: No issues found, exit0,135,2 giây;
+  `build/catalog-500-analyze.log`.
+- `flutter test --no-pub --reporter compact`: **1.282/1.282 qua**, exit0,
+  2 phút32 giây; `build/catalog-500-all-tests-final.log`. Lần đầu có1281 qua,
+  1 lỗi assertion cũ “mọi gói không có ảnh”; đã yêu cầu packshot Hảo Hảo75g
+  phải khớp barcode8934563138165, giữ các vị khác không ảnh, chạy lại đủ suite.
+- Node catalog/photo/source/publisher **24/24 qua**, exit0;
+  `build/catalog-500-node-tests-final.log`. Admin **113/113 qua**, exit0;
+  `build/catalog-500-admin-tests.log`. Focused packaged **3/3 qua**.
+- Format6 Dart file của lượt này:0 thay đổi, exit0;
+  `build/catalog-500-format-scoped.log`. Check442 file lib/test/tool exit1
+  vì lib/main.dart đang cần format từ trước, output=none không sửa file;
+  `build/catalog-500-format.log`.
+- APK debug build exit0,25,5 giây; `build/catalog-500-apk.log`.
+  `build/releases/healthmate-catalog-500-20261110-debug.apk`,238.312.985 byte,
+  SHA256 `9650232f346aa546ac1a290f3f3f1cd64db28593cdaab424bf30c8eda416fd81`.
+  Kiểm tra trong ZIP:86 ảnh đúng hash,354 mục core. Chưa test thiết bị thật.
+- Web JavaScript build exit0,95,2 giây; `build/catalog-500-web.log`.
+  Cảnh báo mobile_scanner Wasm dry run/KGP hiện hữu không chặn build.
+- Source secret audit817 tệp,0 findings; `build/catalog-500-secret-audit-final.log`.
+  Không phải audit APK hoặc credential store. Diff check và Python compile7
+  công cụ đều exit0. Không thay Rules/backend nên không chạy lại emulator.
+- Production readback: **114 mục mới đúng field/timestamp**, **386 cũ giữ
+  nguyên**, **114 audit đúng**, tổng500. Review sau phát hành0 creates,
+  114 skipped/0 conflict. Artifacts trong build/catalog-500-review-v2 và
+  build/catalog-500-after-release. Không ghi nhật ký/hồ sơ người dùng.
+- Ảnh:35 mới,86 tổng;414 mục chưa có ảnh. Đã xem crop/contact sheet và
+  build/catalog-500-preview.jpg. Không tuyên bố500 ảnh hoặc500 nhãn hãng.
+
+Chi tiết: [catalog-500-2026-11-10.md](catalog-500-2026-11-10.md).
+
+## 11/11/2026 — 379 mục có ảnh, loại121 mục thiếu ảnh
+
+- Flutter analyze cuối: No issues found, exit0,14,2s; log
+  build/full-food-photos/flutter-analyze-final.log.
+- dart format9 file Dart thuộc phạm vi:0 thay đổi, exit0.
+- Flutter test --no-pub cuối: **1.289/1.289 qua**, exit0,2m11s;
+  build/full-food-photos/flutter-suite-final.log. Lượt đầu8 lỗi:5 fixture
+  nhật ký phụ thuộc giờ07:00,2 fixture cá chép đã bị loại,1 shader transient.
+  Đã sửa dữ liệu/ngày test phù hợp yêu cầu mới, không bỏ assertion; test
+  Home riêng21/21 và toàn suite cuối đều qua.
+- Node catalog/photo/publisher:31/31 qua;
+  build/full-food-photos/node-tests-final.log. Kiểm tra mọi hash/name/license,
+  đủ ảnh cho toàn bộ visibleIds, partition379/121 trong scope500, precondition,
+  update mask, audit, custom photo và legacy thiếu isActive.
+- Admin syntax check qua; npm test cuối115/115 qua, gồm chặn khôi phục thiếu
+  ảnh, thêm ảnh+activate và giữ quyền khôi phục custom. Chưa QA browser live
+  production trong lượt này. Ảnh/credits379 mục app/admin đúng cùng hash.
+- Python py_compile công cụ source/stage qua; source secret audit833 source
+  text files/0 findings, không phải audit APK/credential store. Diff check qua.
+- APK debug build exit0,Gradle40,7s; bản tại
+  build/releases/healthmate-food-photos-20261111-debug.apk,238.402.763 byte.
+  Đọc ZIP xác minh379 ảnh đúng hash+manifest. SHA256:
+  d8f581c26b8ac46e1828a45dbf8b7e7d14d598dbb7f4d56468572a4b2d2838d9.
+- Web JavaScript build exit0,64,7s; build/full-food-photos/web-build.log.
+  Cảnh báo KGP/mobile_scanner Wasm hiện hữu không chặn hai build.
+- Firebase readback:121 hidden/379 unchanged/500 total,121 audit xác minh;
+  build/photo-visibility-release-20261111-v3/. Review sau apply0 thay đổi,
+  121 đã ẩn/0 conflict. Không ghi hồ sơ/nhật ký và không xóa document.
+- Đã xem381 ảnh contact sheet, loại2 ảnh cuối, chốt379; xem UI sáng/tối,
+  320px/chữ200%. Preview6 ảnh: build/full-food-photos/preview.jpg.
+- Chưa test Android vật lý, ký release, publish hosting/Functions hoặc chạy
+  lại Rules emulator (không đổi Rules). Danh mục tham khảo USDA ngoài scope
+  và món riêng không bị xóa.
+
+Chi tiết: [food-photo-release-2026-11-11.md](food-photo-release-2026-11-11.md).
+
+## 11/11/2026 — Phát hành admin ảnh/bộ lọc (Giai đoạn 4 bổ sung)
+
+- npm --prefix admin-web run check và node --check hai module nhóm: qua.
+- npm --prefix admin-web test:129/129 qua. Fixture Linkedom được cung cấp bộ tải
+  Image giả lập vì Image mặc định không phát load/error; không bỏ assertion lưu/lỗi.
+- Đúng Rules catalog tối thiểu sẽ deploy:14/14 test emulator qua.
+- SDK Auth/Firestore realtime14/14 qua; nguồn lọc nhận27 món xuyên trang, cập nhật
+  photo và dừng subscription. Không ghi thử production.
+- Browser72 lượt trang,4 kích thước/2theme;10nhóm,65món/tìm xuyên trang/lọc trạng
+  thái+nút Sửa ảnh. Screenshots build/admin-identity-20261110/food-filter-global-*.
+- Deploy Firestore Rules+Hosting exit0.14 URL online HTTP200/hash khớp/CSP/no-store;
+  SHA Rules đọc lại6569cc8744a52e1c9ea0001ba3b14d9448a3c600d4260f5c2ead2f3bd7195088.
+- Quét430 tệp release:0 secret findings.379ảnh được đóng gói.
+- Không đổi Dart nên không chạy lại Flutter; chưa nghiệm thu Android thật hoặc
+  đăng nhập/lưu production bằng admin thật. Compiler cảnh báo knownNumber chưa dùng
+  ở baseline; không chặn compile/deploy.
+
+Chi tiết và log: [admin-food-release-2026-11-11.md](admin-food-release-2026-11-11.md).
+
+## 11/11/2026 — Giai đoạn 10: quyền app và Rules production
+
+- Trước sửa, chạy cùng assertions trên backup production:16 trường hợp tạo
+  bug/suggestion×8topic bị permission-denied; marker target cũng permission-denied.
+  Đây là kiểm chứng lỗi baseline, không phải kết quả test candidate.
+- Candidate đúng firestore.rules:170/170 test Rules qua (main57,module89,
+  support regression24). Bao gồm owner khác, guest/unverified/suspended/deleting,
+  quota3/ngày+60giây, enum immutable/legacy, nullable targets và billing clientdeny.
+- Firebase SDK thật trên Chrome+Auth/Firestore Emulator:63/63 qua (main25,
+  support4,deletion8,plan22,query4). Chạy5file nối tiếp, exit0 từng lệnh.
+- Main SDK đầu thiếu H1 fixture; lượt kế có snapshot C3 từ dữ liệu cũ. Giữ log
+  lỗi, reset đúng database demo và import fixtureH1 rồi maincuối25/25 qua.
+  Không sửa app/assertion để che lỗi; runner được thêm reset/import và5suite.
+- flutter analyze --no-pub:No issues found,exit0,81,5s.
+- flutter test --no-pub --reporter json:1289/1289 qua,0fail/skip,137492ms,exit0.
+- Node syntax4file sửa/mới,releasecontract1/1,diff-check qua. Không sửa Dart
+  nên không format hoặc buildAPK lại; không chứng nhận Android vật lý/GooglePlay.
+- Deploy only firestore:rules exit0; readback khớp source+candidateSHA
+  52970f1cd1f96944234ce6567d133f57cabbf7982f2ff4c6811c085d15cbaaae,
+  ruleset38076bf8-ba26-4578-a415-0233e508c4aa,11/11/2026 01:38:55UTC+7.
+  Compiler cảnh báo knownNumber chưa dùng; không làm compile/deploy thất bại.
+- Không tạo dữ liệu hỗ trợ/hồ sơ/giao dịch giả production. Emulator task đã
+  dừng sau test, không tác động helper khác. Chưa thử gửi bằng tài khoản thật.
+
+Log chính: build/user-permissions-release-20261111/{rules-main.log,rules-other.log,
+flutter-analyze.log,flutter-unit.jsonl,flutter-unit-summary.json,deploy.log},
+build/user-support-permissions-20261111/{production-backup-regression.log,
+canonical-regression.log},build/user-permissions-sdk-{main-clean,support,deletion,
+plan,query}.log. Báo cáo [user-permissions-2026-11-11.md](user-permissions-2026-11-11.md).
+
+## 11/11/2026 — Thanh dưới: ô4Tập luyện, ô5Tiến độ
+
+- dart format12file sửa: qua. flutter analyze --no-pub cuối:No issues found,
+  exit0,12s; build/navigation-workouts-analyze-final.log.
+- test/navigation_features_test.dart+icon_system_test.dart+core_scope_test.dart:
+  49/49 qua,17s; build/navigation-workouts-focused.log. 320/390px,1/1,5/2x,
+  light/dark,5slot đúng vịtrí,workoutselected,centeradd,profileavatar và hiddenAI.
+- Lượt fullđầu1270pass/19fail đều player: session ở branch bị detail root che.
+  Đã sửa explicit parentNavigatorKeyroot cho session; không đổi/tắt assertions.
+- workout_experience_test.dart hồi quy20/20 qua,7s; gồm timer/exitguard khôngcó
+  tab, xácnhậnthoát khôi phụctab,profile→workout,offline/retry/lưu/accountswitch
+  và 320/390/412px,scale1/2,sáng/tối. Log navigation-workouts-player-regression.log.
+- flutter test --no-pub --reporter json cuối:1289/1289 qua,0fail/skip,exit0,
+  134606ms; build/navigation-workouts-full-test-final.jsonl và
+  navigation-workouts-test-summary-final.json. Giữ log đầuđể đối chiếu.
+- Đã xem build/icon-system/home-light.png: ô4Tập luyện,ô5Tiến độ đúng nhãn/icon.
+  git diff --check qua. Chưa build/càiAPK/deploy hoặc testAndroid vật lý.
+
+Chi tiết: [bottom-navigation-2026-11-11.md](bottom-navigation-2026-11-11.md).
+
+## 11/11/2026 — UI: nhóm nội dung và khung bo nhẹ
+
+- dart format + kiểm tra không đổi: 15 file qua, exit 0.
+- Focused 8 suite Home/dưỡng chất/icon/Progress/profile/filter/workout/timeline:
+  130/130 qua, exit 0, 22s; build/rounded-ui-focused.log.
+- flutter test --no-pub --reporter json: 1289/1289 qua, 0 fail/skip, exit 0,
+  136846 ms; build/rounded-ui-full-test.jsonl và rounded-ui-test-summary.json.
+- flutter analyze --no-pub: sạch; lần cuối 11,8s, exit 0,
+  build/rounded-ui-analyze-final.log. git diff --check phạm vi chỉnh sửa qua.
+- Xem ảnh Home sáng/tối, 320 px/2×, dưỡng chất trang2, bữa ăn/nước uống và
+  Progress. Dùng capture sẵn có, giữ assertion và fixture; không thêm test
+  mô phỏng border hoặc dữ liệu sản phẩm giả. Không build APK/test thiết bị thật.
+
+Chi tiết: [rounded-ui-2026-11-11.md](rounded-ui-2026-11-11.md).
+
+## 11/11/2026 — UI: icon Phosphor và phân cấp hình khối
+
+- Font generator verify qua: 125 glyph không rỗng, 142 aliases/138 tên cũ,
+  regular/fill cmap không trùng, MIT và SHA khớp. Hai rebuild cùng hash;
+  test asset có SHA7172ab346a9dad564b3f9afb7d4f6758e8fd88cdac9961e60683e5f546573335
+  khớp font nguồn cuối. Nguồn 2.1.2/TTF/CSS/giấy phép được ghim hash.
+- Dart format 14 file qua, 0 file cần định dạng lại. Focused 6 suite 94/94
+  qua (23s), gồm điều hướng, selected icon fill, Home, chữ lớn và sáng/tối.
+- Full Flutter cuối 1289/1289 qua, 0 fail/skip, exit 0, 140238 ms.
+  Giữ assertion nghiệp vụ; chỉ đổi kỳ vọng nguồn/icon selected trong test icon.
+- flutter analyze --no-pub sạch, lần đầu 15,6s, lần cuối 16,4s, exit 0;
+  diff-check phạm vi thay đổi qua. Node appearance 5/5 qua;
+  tách nguồn admin vẫn kiểm source/license/hash, alias và màu tính năng.
+- Đã xem ảnh icon sáng/tối, Home, bữa ăn/nước và bố cục nhỏ; cân nặng dùng
+  gauge, protein dùng egg-crack. Không thấy glyph trống/ô vuông. Chưa build
+  APK/deploy web hoặc kiểm thử Android vật lý.
+
+Log: build/phosphor-ui/{focused.log,full-test.jsonl,test-summary.json,
+analyze.log,analyze-final.log,admin-appearance.log}.
+Chi tiết: [phosphor-ui-2026-11-11.md](phosphor-ui-2026-11-11.md).
+
+## 11/11/2026 — Thư viện ExerciseDB và quản trị bài tập
+
+- `node tool/build_exercise_library.cjs --check`: 50 ID duy nhất, nội dung
+  và bundle Dart/web khớp. Đối chiếu trực tiếp 50/50 API endpoint HTTP200,
+  ID/tên đúng và có trường GIF; không tải hàng loạt media. Xem báo cáo nguồn.
+- `dart format --output=none --set-exit-if-changed` trên 15 file Dart liên quan:
+  0 thay đổi cần format. Diff check phạm vi chỉnh sửa qua.
+- `flutter analyze --no-pub`: **No issues found**, exit0, 18s.
+- `flutter test --no-pub --reporter json`: cuối **1317/1317**, 0 fail/skip,
+  exit0, 137133ms. Có kiểm tra merge/tombstone, cache cần xác nhận server,
+  timeout/recovery/cancel listener, API gate/URI/429, hủy HTTP đang chạy,
+  codec GIF hai frame thật/pause/close/background/reduced motion/TickerMode,
+  tìm kiếm/lọc/chi tiết realtime và điều hướng 320px/2×. Assertion cũ giữ nguyên;
+  test điều hướng cũ cuộn tới card trước khi bấm. Finder scroll test mới được
+  giới hạn đúng chiều và pump layout trước tap, có assert đã mở chi tiết.
+- `npm test --prefix admin-web`: **138/138**, 0 fail/skip, 8664ms.
+  `npm run check --prefix admin-web`: qua. DOM kiểm tra thêm/sửa/gỡ/khôi phục,
+  xung đột/lỗi ghi, xác nhận server, bộ lọc, export và media gate local.
+- Firebase emulator, Java Android Studio jbr, project demo:
+  `firebase.cmd emulators:exec --config firebase.admin-emulators.json --only firestore --project demo-healthmate-exercise-rules "node --test rules-tests/exercise-library.rules.test.cjs"`
+  **4/4 qua**, exit0. Một subscription UID người dùng nhận các snapshot server
+  sau admin create→edit→archive→restore→add, không reload; kiểm tra fromCache
+  false/pendingWrites false và cleanup subscription. Ba ca còn lại kiểm quyền,
+  audit nguyên tử, validation, cấm GIF URL và hard-delete. Trước đó cùng Rules
+  đã chạy chung 3 ca bài tập +14 ca admin hiện có: **17/17 qua**.
+- `flutter build web --debug --no-pub -t build/exercise-library-smoke/main.dart --output build/exercise-library-smoke/web`:
+  thành công, 46.6s. Wasm dry-run nhắc mobile_scanner hiện có dùng dart:html;
+  bản JavaScript web debug build thành công. Harness sử dụng widget/service thật.
+  Trình duyệt mở localhost8794, bấm Xem GIF; quan sát ảnh hoạt họa chống đẩy
+  chính thức hiển thị cùng nút Tạm dừng/Đóng GIF. HTML image tránh CORS CanvasKit.
+- Không deploy hoặc ghi dữ liệu thật. Chưa build/ký APK release, chưa kiểm trên
+  Android vật lý và chưa xem từng frame của cả50 GIF. Nguồn API miễn phí có hạn
+  mức và chỉ dùng thử phi thương mại, không bảo đảm sẵn sàng lâu dài.
+
+Log: `build/exercise-library-full-final.jsonl`, `exercise-library-test-summary.json`,
+`exercise-library-analyze-final.log`, `exercise-library-small-screen.log`,
+`exercise-gif-preview-tests.log`, `admin-exercise-tests.log`,
+`exercise-library-smoke/build.log`. Lượt focused cũ thất bại được thay thế bằng
+kết quả full cuối sau khi sửa finder/layout và thêm assert điều hướng.
+
+Chi tiết: [exercise-library-2026-11-11.md](exercise-library-2026-11-11.md).
+
+## 11/11/2026 — Lỗi thông báo khi chọn mục tiêu tăng cân
+
+- `flutter test --no-pub test/personal_nutrition_plan_test.dart test/nutrition_targets_test.dart test/onboarding_journey_test.dart`:
+  **61/61 qua**, exit0,19s; gồm công thức, phạm vi, explicit save, thay thế mục
+  tiêu, giữ lịch sử, lỗi lưu/UID và layout nhiều cỡ màn hình/chữ lớn/sáng tối.
+- `flutter test --no-pub test/nutrition_plan_scope_test.dart`: **4/4 qua**,
+  exit0,4s cuối; tái hiện175cm/55kg/đích64kg, lý do BMI17.96, cùng đích64kg
+  hợp lệ ở cân hiện tại60kg, ngưỡng18.5 và giá trị sát dưới không lọt do rounding,
+  manual mở/nhập không ghi và explicit save mới ghi, hủy giữ55/64, đổi mục tiêu
+  xóa lỗi cũ. Không dùng các số fixture làm đề xuất dinh dưỡng thật.
+- Dart format3file không đổi; diff-check phạm vi code qua.
+- `flutter analyze --no-pub` lần đầu phát hiện1info use_build_context_synchronously
+  tại lối mở form mới. Đã bổ sung mounted guard tường minh. Phân tích cuối có
+  log `build/goal-plan-scope-analyze-final.log`: **No issues found**,3file,
+  exit0,6.3s. Không gọi kết quả này là phân tích toàn repo lần cuối.
+- Không chạy lại toàn bộ suite1317 trong lượt này; kiểm tra tập trung phạm vi
+  thay đổi. Không build/deploy hoặc chạy nghiệm thu Android vật lý, không thay
+  Rules/database/công thức/ngưỡng BMI. Cần chạy lại app local để nhận bản sửa.
+
+Log: `build/goal-plan-scope-regression.log`, `goal-plan-scope-new-tests.log`,
+`goal-plan-scope-analyze.log`, `goal-plan-scope-analyze-final.log`.
+
+## 11/11/2026 — Audit khi lưu full form món ăn
+
+- Regression map cùng giá trị, khác thứ tự key: module validation **8/8 qua**;
+  toàn admin unit **140/140 qua**, npm check qua.
+- Với đúng Rules production trên Auth/Firestore Emulator: realtime SDK
+  **15/15**, SDK hồi quy **9/9** qua. Ca mới kiểm full form, ảnh/extra nutrients
+  không đổi, metadata-only, đổi giá trị thật, audit chính xác, stream phiên khác
+  và audit giả bị từ chối mà không thay dữ liệu.
+- Lần integration đầu thất bại vì fixture giả định emulator luôn đảo thứ tự
+  map ảnh. Đã làm fixture chủ động đổi thứ tự để kiểm đúng lỗi nghiệp vụ; rerun
+  cả suite qua. Không sửa Rules để làm test qua.
+- Chạy ca mới với đúng module gói Hosting phát hành: **1/1 qua**. Chỉ deploy
+  Hosting exit0; 5 URL online HTTP200/bytes/header khớp, Ruleset không đổi.
+- Không ghi dữ liệu kiểm thử production; chưa nghiệm thu lưu bằng tài khoản
+  người dùng trên web thật. Không sửa Dart nên không chạy Flutter suite/build.
+- Báo cáo: docs/admin-food-save-fix-2026-11-11.md; logs trong
+  build/admin-food-save-fix-20261111/.
+
+## 11/11/2026 — Ảnh tùy chỉnh chỉ cần URL
+
+- Admin check qua; **142/142 unit** qua, gồm form ảnh riêng chỉ mode/URL, tự
+  ghi audit, payload không thay dinh dưỡng và không hiện các ô metadata cũ.
+- Auth/Firestore Emulator với đúng Rules chuẩn bị phát hành: **14/14 Rules**,
+  **16/16 realtime SDK** (module candidate), **9/9 SDK hồi quy** qua.
+  Có kiểm URL-only và legacy, giữ credits khi URL cũ, thay URL không gán credits
+  cũ, user thường/URL sai/audit sai vẫn bị chặn, nutrition giữ nguyên.
+- Dart format 3 file qua, analyze 3 file **No issues found**; 3 suite ảnh/detail
+  Flutter **19/19** qua. Không chạy toàn bộ Flutter hoặc build APK.
+- Deploy Rules/Hosting exit0. 6 URL online HTTP200/bytes/security header khớp;
+  Rules production đọc lại đúng hash candidate. Không ghi QA production hoặc
+  nghiệm thu lưu trên phiên người dùng. App đang chạy cần Hot Restart một lần.
+- Chi tiết: docs/admin-photo-url-only-2026-11-11.md và
+  build/admin-photo-url-only-20261111/.
+
+## 11/11/2026 — Đồng bộ nền đen/màu từng bữa và chức năng
+
+- Format các file thay đổi qua; flutter analyze --no-pub toàn repo cuối sạch,
+  exit 0 (11,4 giây). Import trùng phát hiện lượt đầu đã được loại bỏ.
+- 9 suite giao diện/hồi quy đầu 139/139 qua, exit 0; sau thay đổi cuối chạy
+  7 suite liên quan 79/79 qua, exit 0. Các suite lặp không cộng thành ca riêng.
+- Diff-check vùng mã sửa qua. Đã xem ảnh render sáng/tối, test layout có
+  nhiều chiều rộng và text scale đến 2; không thấy overflow ở ảnh đã xem.
+- Logs: build/black-ui-analyze.log, black-ui-tests.log,
+  black-ui-final-tests.log. Ảnh mới ở build/home-reference, journal-timeline,
+  c5-layout. Fixture chỉ ở test, không ghi dữ liệu mẫu production.
+- Không chạy toàn bộ Flutter suite/build release hoặc nghiệm thu thiết bị thật.
+  Ghi nhận hai nhãn ngày sát nhau ở biểu đồ cân nặng, không sửa ngoài phạm vi.
+- Báo cáo đầy đủ: docs/black-ui-meal-colors-2026-11-11.md.
+
+## 11/11/2026 — GIF inline và bỏ primary xanh mint
+
+- Format/diff-check qua; analyze toàn repo cuối sạch, exit 0 (15,6 giây).
+- 10 suite Flutter cuối 89/89 qua, exit 0 (14 giây), có lazy list/inline codec,
+  pause/hủy theo owner, trở lại tab, admin source/ẩn bài, timer và lịch sử.
+- Combined lượt đầu có 15 timeout vì test chung chưa mock nguồn GIF tự tải;
+  bổ sung service disabled cho test không kiểm media, fixture riêng cho test
+  media; toàn bộ 10 suite rerun qua. Không sửa production để che lỗi test.
+- Candidate ghép exercise_library/audit entity vào đúng Rules production:
+  18/18 emulator test qua, gồm realtime CRUD và các ca quyền bị từ chối.
+  JBR21 dùng riêng tiến trình sau lần đầu Java hệ thống cũ không chạy emulator.
+- Deploy firestore:rules exit 0; đọc lại hash khớp candidate. Không deploy
+  Hosting/push Git, không ghi dữ liệu QA production. API+GIF chống đẩy thật
+  HTTP 200, GIF89a 87.535 byte, không lưu vào assets.
+- Logs cuối: build/workout-gif-ui-20261111/{analyze.log,final-tests-rerun.log,
+  rules-tests.log,rules-deploy.log}; manifest ghi ruleset/hash đã xác minh.
+- User dừng Computer Use bằng Esc; không còn UI automation sau đó. Chưa Hot
+  Restart/quan sát GIF thật trên Chrome ở bản inline cuối, chưa Android thật.
+  Ảnh layout GIF 3px mock chỉ là test fixture, không phải hình động tác thật.
+- Báo cáo đầy đủ: docs/workout-gif-ui-fix-2026-11-11.md.
+# Kiểm thử calo vận động — 16/11/2026
+
+Phạm vi Giai đoạn 6, nối tính MET vào timer/nhật ký/ngân sách ngày. Nguồn, file
+và giới hạn đầy đủ: `docs/activity-energy-2026-11-16.md`.
+
+- Format file thay đổi: qua. `flutter analyze --no-pub`: không có lỗi/cảnh báo.
+- `flutter test --no-pub` với `activity_energy_test`, `activity_energy_ui_test`,
+  `workout_session_test`, `workout_experience_test`, `daily_logs_test`,
+  `daily_form_recovery_test`, `wellness_insights_test`, `h7_csv_test`,
+  `report_export_quality_test`, `home_reference_test`, `nutrition_targets_test`,
+  `chatbot_personal_test`: **142/142 qua**. UI kiểm lại cuối **4/4 qua** sau bổ
+  sung trường hợp đổi xác nhận ngân sách phải giữ snapshot cân cũ. Kiểm lại ba
+  suite timer/giao diện cuối sau nhãn phút/giây: **37/37 qua**.
+- Bộ tính kiểm tra độc lập ví dụ 60 kg/30 phút/3,8 MET = 114 kcal tổng và 84
+  kcal thêm; giây lẻ, nghỉ/tạm dừng/bỏ qua, tuổi/weight/input ngoài biên,
+  snapshot bất biến, target đổi, tránh trùng bước và CSV tách khỏi thức ăn.
+- UI kiểm thêm chọn cân trước thời điểm tập (loại cân tương lai), không đủ
+  dữ liệu vẫn lưu phút, legacy, ghi chú giữ lịch sử, sửa/xóa cập nhật ngân sách,
+  đổi thời lượng cần xác nhận lại, retry sau mất phản hồi giữ đúng draft/ID.
+- Emulator candidate: `activity-energy.rules.test.cjs` **3/3**, ca CRUD cũ trong
+  `firestore.rules.test.cjs` **1/1**; hai UID, unverified, field lạ, nhóm/mã/MET
+  không hợp lệ, NaN, tuổi, số cân tương lai, thời lượng và target sai bị chặn.
+- Chrome + Auth/Firestore demo emulators, Firebase SDK thật:
+  `firebase_repository_integration.dart --plain-name 'guided workout save is
+  idempotent, confirms server data and enforces UID privacy'`: **1/1 qua**.
+- Rules deploy thành công, đọc lại khớp candidate đã kiểm thử. Không QA trên
+  dữ liệu người dùng production, không kiểm Android vật lý/build ký phát hành.
+- Log: `build/activity-energy-20261116/`. Các lượt ban đầu phát hiện lỗi vị trí
+  validation rules và lỗi harness quote/stream; đã sửa, chạy lại qua, không dùng
+  những lượt lỗi để tuyên bố thành công. Không có blocker còn lại cho phạm vi này.
+
+
+## 17/11/2026 — Giao diện luồng tập luyện (Giai đoạn 11)
+
+- Format chín file thay đổi: không có khác biệt. Analyze toàn repo sạch.
+- Mười suite liên quan workout/exercise/activity energy: 84 ca qua, một ca
+  chụp tùy chọn skip mặc định. Sau sửa tên dài: ba suite giao diện 20 ca qua,
+  một ca chụp tùy chọn skip. Không đổi test nghiệp vụ để che lỗi.
+- Kiểm tra cả 50 tên bài ở lưới/danh sách 360/390/430/900 px, scale 1/1.2;
+  suite hiện có kiểm tra 320–900 px scale 2 và theme sáng/tối. Filter/search,
+  chuyển tab giữ state, live edit/removal, GIF lazy, pause nền, tổng thời gian,
+  lỗi lưu/retry/UID/idempotency và tính năng lượng hiện có đều qua.
+- Chụp riêng với WORKOUT_CAPTURE=true đạt: tám PNG sáng/tối, widget và font
+  thật; năm GIF đúng ID tải từ ExerciseDB vào ignored build/ làm fixture đọc
+  riêng cho ảnh. Không ghi dữ liệu hay log giả vào Firebase sản phẩm.
+- Build web JavaScript thành công. Chưa nghiệm thu Android vật lý hoặc bản
+  ký phát hành. Giữ giới hạn media kiểm thử phi thương mại hiện hành.
+- Lỗi overflow phần thông báo GIF ở scale 2 phát hiện lần đầu đã được sửa
+  bằng layout tự giãn; bộ kiểm tra đã chạy lại qua. Harness ảnh thật chờ
+  decoder qua runAsync; một lần pumpAndSettle timeout đã được sửa.
+- Báo cáo: docs/workout-flow-ui-2026-11-17.md. Log/ảnh:
+  build/workout-flow-20261117/.
+
+
+## 17/11/2026 — Giai đoạn 11: 30 minh họa nữ RepDB
+
+Phạm vi: thêm nguồn preview miễn phí không cần tài khoản vào thư viện app và
+admin; dữ liệu 84 bài, 34 mẫu nữ; alpha giữ nguyên trên sáng/tối. Không deploy.
+
+- `dart format --output=none --set-exit-if-changed` trên 9 file Dart liên quan:
+  không thay đổi. `node tool/build_exercise_library.cjs --check`: 84 mục,
+  catalog Dart/JS và allowlist RepDB khớp.
+- `flutter test --no-pub --dart-define=REPDB_CAPTURE=true` với
+  repdb_exercise_media, female_exercise_library, exercise_db,
+  exercise_library_sync, exercise_library_ui, exercise_inline_library,
+  exercise_gif_preview, workout_flow_design, workout_ux, workout_experience,
+  workout_session, workout_tutorial: **135 ca qua; 1 ca chụp cũ opt-in bỏ qua**.
+  Ca capture RepDB đã chạy, có ảnh dark/light dùng media thật đã tải về.
+- `node --test test/*.test.mjs` tại admin-web: **152/152 qua**.
+  `npm run check` và `npm run check:exercises`: thành công.
+- `firebase emulators:exec --only firestore --project
+  demo-healthmate-exercise-rules --config
+  build/female-30-research-20261117/firebase.test.json
+  "D:/Database/node.exe --test rules-tests/exercise-library.rules.test.cjs"`:
+  **5/5 qua**, emulator đã dừng. JAVA_HOME chỉ đặt trong tiến trình kiểm thử
+  sang Android Studio JBR 21; Java mặc định cũ gây lỗi ở lần chạy đầu đã được
+  khắc phục bằng runtime có sẵn, không cài package.
+- `flutter build web --debug --no-pub`: **thành công** (`Built build/web`).
+  Wasm dry-run cảnh báo mobile_scanner/dart:html hiện có; không phải lỗi của
+  build JavaScript vừa chạy.
+- Xác minh mạng: 30/30 tệp RepDB trả 200, image/webp, CORS *, 512×512, có alpha,
+  28–150 khung. Đã kiểm khác biệt pixel giữa các thời điểm và xem contact sheet.
+- `git diff --check` trên Rules và file tracked sửa trong phạm vi: không lỗi
+  whitespace; cảnh báo chuẩn hóa LF/CRLF của docs không làm thất bại lệnh.
+
+Báo cáo/log cụ thể tại `build/female-30-research-20261117/`:
+`flutter-tests.log`, `admin-tests.log`, `admin-check.log`, `rules-tests.log`,
+`flutter-build-web.log`, `flutter-analyze-final.log`, `remote-verification.json`,
+`app-detail-dark.png`, `app-detail-light.png`, `female30-verified.jpg`.
+
+Chưa nghiệm thu trên Android thật hoặc performance máy yếu. Chưa phát hành
+Rules/hosting production và chưa push. Admin Firebase thật cần Rules mới trước
+khi ghi sourceProvider=repdb. Cổng media chỉ bật cho thử nghiệm phi thương mại;
+không khẳng định preview được phép dùng cho bản Premium phát hành có doanh thu.
+Chi tiết nguồn/danh sách/file ở `docs/repdb-female-30-2026-11-17.md`.
+
+`flutter analyze --no-pub` cuối sau khi bỏ import thừa trong test mới: **No issues found! (13,0 giây)**.
+
+## 18/11/2026 — ExerciseDB-only (Giai đoạn 11)
+
+Trạng thái hiện tại thay thế bộ RepDB ngày 17/11: 54 bài ExerciseDB, 4 mẫu nữ.
+Chưa xác minh đủ 30 GIF nữ từ cùng nguồn. Chi tiết/file/giới hạn:
+[exercisedb-only-2026-11-18.md](exercisedb-only-2026-11-18.md).
+
+- Format 8 file Dart trong phạm vi: 0 file đổi sau format. Generator --check:
+  catalog Dart/JS khớp 54 mục, ID 7 ký tự, không bundle URL/media.
+- `flutter analyze --no-pub`: No issues found (16,9 giây). Lần đầu quét nhầm
+  backup trong build; đổi đuôi backup .dart.before và chạy lại sạch.
+- `flutter test --no-pub` với exercise_source_policy, female_exercise_library,
+  exercise_db, exercise_library_sync, exercise_library_ui,
+  exercise_inline_library, exercise_gif_preview, workout_flow_design,
+  workout_ux, workout_experience, workout_session, workout_tutorial:
+  **103 ca qua, 1 ca capture opt-in cũ bỏ qua**.
+- `npm run check`, `npm run check:exercises` tại admin-web: qua.
+  `node --test admin-web/test/*.test.mjs`: **152/152 qua** sau khi sửa assertion
+  nút dừng về nhãn ExerciseDB hiện tại; không sửa logic để che lỗi.
+- `firebase emulators:exec --only firestore --project
+  demo-healthmate-exercise-rules --config
+  build/exercisedb-only-20261118/firebase.test.json
+  "D:/Database/node.exe --test rules-tests/exercise-library.rules.test.cjs"`:
+  **5/5 qua** bằng JBR 21, emulator đã dừng. Có kiểm tra chặn sourceProvider
+  repdb/unknown/sai kiểu, admin audit CRUD và user nhận snapshot trực tiếp.
+- `flutter build web --debug --no-pub`: thành công (Built build/web, 77,6 giây). Wasm dry-run còn cảnh báo mobile_scanner/dart:html hiện có; bản JavaScript đã build thành công.
+- Media: 4 GIF HTTP 200/MIME GIF, 180×180, 12–18 khung; Pillow giải mã mọi
+  khung, pixel thay đổi; đã xem contact sheet. 3 ID metadata 200 nhưng GIF
+  404 HTML bị loại. Không tải lại toàn bộ 50 GIF nam cũ trong lượt này.
+- `git diff --check` file tracked trong phạm vi: không lỗi whitespace.
+
+Log nằm trong build/exercisedb-only-20261118/: flutter-analyze-final.log,
+flutter-tests.log, admin-check.log, admin-tests.log, rules-tests.log,
+flutter-build-web.log, female-probe.json và decoded-media.json. Kết quả fail
+ban đầu vẫn giữ trong flutter-analyze.log và admin-tests-initial.log.
+Chưa test Android thật, deploy production hoặc push GitHub.
+
+## 18/11/2026 — Rà soát 1.500 ID và thêm 6 GIF nữ ExerciseDB
+
+- API hiện tại: đủ 60 trang/1.500 ID, không thiếu/lặp, khớp tập ID đã lưu.
+  Kiểm tra toàn bộ URL: 1.324 GIF nhiều khung HTTP 200, 176 URL HTTP 404.
+  Đã xem 14 contact sheet; 10 tệp nữ được chọn giải mã từng khung, kiểm tra
+  chuyển động và hash duy nhất. 60/60 media trong catalog hiện tại tải được.
+- Generator --check: 60 mục Dart/JS đồng nhất. Format ba file Dart: sạch.
+- Flutter 12 suite: exercise_source_policy, female_exercise_library,
+  exercise_db, exercise_library_sync, exercise_library_ui,
+  exercise_inline_library, exercise_gif_preview, workout_flow_design,
+  workout_ux, workout_experience, workout_session, workout_tutorial:
+  **109 ca qua / 1 capture opt-in cũ bỏ qua**. Mười bài nữ đều mở đúng ID.
+- Admin `npm run check`, `npm run check:exercises`: qua.
+  `node --test test/*.test.mjs`: **152/152 qua**.
+- `flutter analyze --no-pub`: **No issues found** (116,3s).
+- `flutter build web --debug --no-pub`: **Built build/web** (113,4s).
+  Wasm dry-run còn cảnh báo mobile_scanner/dart:html có sẵn, không phải lỗi
+  của bản JavaScript vừa build.
+- Bản dữ liệu trước gồm 54 mục giữ nguyên hoàn toàn; chỉ nối thêm sáu mục.
+  Không sửa Rules/schema/backend, không chạy lại emulator ở lượt này.
+- `git diff --check` file tracked trong phạm vi: không lỗi whitespace.
+
+Log/ảnh/manifest: build/exercisedb-wide-review-20261118/. Chưa thử Android
+vật lý/phiên Chrome người dùng đang mở, chưa push GitHub/deploy production.
+Đã xem lượt hai đủ 1.324 khung giữa trên 14 sheet, không xác minh thêm nữ.
+Người dùng giảm mục tiêu xuống 20: hiện 10/20, còn thiếu 10 trong phần OSS
+truy cập được. Chỉ sửa tài liệu/bằng chứng sau các kiểm thử trên, không thay
+đổi code sản phẩm thêm. Chi tiết:
+[exercisedb-full-visual-audit-2026-11-18.md](exercisedb-full-visual-audit-2026-11-18.md).
+
+## 18/11/2026 — 10 GIF nữ: nền đen và bộ lọc viền chung app/admin
+
+Người dùng chốt giữ 10 GIF hiện có. Catalog không thay đổi; 5 ID nữ trong
+bản lưu lịch sử đã bị loại vì mỗi khung RGBA và thời lượng trùng clip cũ.
+
+- Format 5 file Dart: 0 thay đổi. `flutter analyze --no-pub`: sạch (47,7s).
+- `flutter test --no-pub` với exercise_gif_background, exercise_gif_preview,
+  female_exercise_library, exercise_source_policy, exercise_inline_library,
+  exercise_library_ui: **40/40 qua**.
+- Native harness riêng + hai suite nền/preview: **18/18 qua**, có test lặp
+  với lượt trên. Render 30 khung từ 10 GIF qua mã xử lý Dart/Flutter engine
+  thực, kiểm premultiplied RGBA; không phải nghiệm thu Android vật lý.
+- Admin `npm run check`, `npm run check:exercises`: qua.
+  `node --test test/*.test.mjs`: **154/154 qua**, gồm matte dùng chung,
+  phục hồi SVG, theme giữ media, pause/abort/dispose và preview chi tiết.
+- SVG thật xuất từ module admin: render offline 20 khung bằng librsvg,
+  20/20 kiểm góc nền đen đạt; đã xem ảnh. Không gọi đó là screenshot Chrome.
+
+Log/ảnh: build/female-gif-black-20261118/. Chi tiết:
+[female-gif-black-2026-11-18.md](female-gif-black-2026-11-18.md).
+Không build Flutter/emulator mới (không đổi Dart/backend), không deploy.
+Nguồn 180p và một số vùng trắng khép kín/bóng tư thế còn hạn chế.

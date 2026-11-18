@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/widgets/confirmed_save.dart';
@@ -110,7 +111,7 @@ class _MealTemplateEditorState extends ConsumerState<MealTemplateEditor> {
             leading: IconButton(
               tooltip: 'Hủy',
               onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.close),
+              icon: const Icon(AppIcons.x),
             ),
             actions: [
               TextButton(
@@ -144,12 +145,12 @@ class _MealTemplateEditorState extends ConsumerState<MealTemplateEditor> {
                       IconButton(
                         tooltip: 'Sửa lượng món ${e.$1 + 1}',
                         onPressed: () => _edit(e.$1),
-                        icon: const Icon(Icons.edit_outlined),
+                        icon: const Icon(AppIcons.squarePen),
                       ),
                       IconButton(
                         tooltip: 'Bỏ món ${e.$1 + 1}',
                         onPressed: () => setState(() => _items.removeAt(e.$1)),
-                        icon: const Icon(Icons.close),
+                        icon: const Icon(AppIcons.x),
                       ),
                     ],
                   ),
@@ -158,7 +159,7 @@ class _MealTemplateEditorState extends ConsumerState<MealTemplateEditor> {
                 OutlinedButton.icon(
                   key: const ValueKey('add-template-item'),
                   onPressed: _add,
-                  icon: const Icon(Icons.add),
+                  icon: const Icon(AppIcons.plus),
                   label: const Text('Thêm món vào bữa mẫu'),
                 ),
               Text('${_items.length}/5 món; có thể tạo bữa mẫu khác nếu cần.'),

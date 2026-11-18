@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -34,7 +35,7 @@ class SessionScreen extends ConsumerWidget {
               ref.invalidate(profileBootstrapProvider);
               ref.invalidate(userProfileProvider);
             },
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(AppIcons.refreshCw),
             label: const Text('Thử lại'),
           )
         else

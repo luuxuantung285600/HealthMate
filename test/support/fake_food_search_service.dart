@@ -22,8 +22,10 @@ class FakeFoodSearchService extends UnifiedFoodSearchService {
     int limit = 25,
     FoodSearchRequest? request,
     void Function(FoodSearchOutcome)? onProgress,
+    bool Function(FoodCatalogItem)? matches,
   }) async => FoodSearchOutcome(
     searchFoodCatalog(firestoreCatalog, query)
+        .where((food) => matches?.call(food) ?? true)
         .take(limit)
         .map(
           (food) =>

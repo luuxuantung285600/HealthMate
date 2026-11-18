@@ -47,6 +47,7 @@ class ControlledSearch extends FakeFoodSearchService {
     int limit = 25,
     FoodSearchRequest? request,
     void Function(FoodSearchOutcome)? onProgress,
+    bool Function(FoodCatalogItem)? matches,
   }) {
     requests.add(request!);
     final rows = showMetadata
@@ -134,6 +135,86 @@ Future<Finder> openSearch(
 
 void main() {
   for (final library in [false, true]) {
+    testWidgets(
+      'clear button cancels a pending search and ignores its late rows, library=$library',
+      (tester) async {
+        final search = ControlledSearch();
+        final field = await openSearch(tester, search, library);
+        final request = search.requests.single;
+        await tester.tap(find.byKey(const ValueKey('clear-food-search')));
+        await tester.pump();
+        expect(request.isActive, isFalse);
+        expect(tester.widget<TextField>(field).controller!.text, isEmpty);
+        expect(find.byTooltip('Thêm Cơm trắng chín'), findsOneWidget);
+        expect(find.byTooltip('Thêm Trứng gà luộc'), findsOneWidget);
+        search.pending.single.complete(
+          const FoodSearchOutcome([
+            FoodSearchResult(
+              food: metadata,
+              source: FoodResultSource.usdaApi,
+              requiresDetail: true,
+            ),
+          ]),
+        );
+        await tester.pump(const Duration(milliseconds: 500));
+        expect(search.requests, hasLength(1));
+        expect(find.text(metadata.name), findsNothing);
+        expect(
+          find.descendant(
+            of: library
+                ? find.byType(MealFoodSources)
+                : find.byType(MealFormDialog),
+            matching: find.byType(LinearProgressIndicator),
+          ),
+          findsNothing,
+        );
+        expect(find.text('Hiển thị 2/2 món đã tải'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox());
+      },
+    );
+    testWidgets(
+      'keyboard search runs immediately once and dismisses the keyboard, library=$library',
+      (tester) async {
+        final search = ControlledSearch();
+        final field = await openSearch(tester, search, library);
+        await tester.enterText(field, 'trung');
+        await tester.pump();
+        expect(search.requests, hasLength(1));
+        await tester.testTextInput.receiveAction(TextInputAction.search);
+        await tester.pump();
+        expect(search.requests, hasLength(2));
+        expect(search.requests.first.isActive, isFalse);
+        final editable = tester.widget<EditableText>(
+          find.descendant(of: field, matching: find.byType(EditableText)),
+        );
+        expect(editable.focusNode.hasFocus, isFalse);
+        search.pending.last.complete(
+          const FoodSearchOutcome([
+            FoodSearchResult(
+              food: FakeNutritionRepository.egg,
+              source: FoodResultSource.firestore,
+            ),
+          ]),
+        );
+        search.pending.first.complete(
+          const FoodSearchOutcome([
+            FoodSearchResult(
+              food: metadata,
+              source: FoodResultSource.usdaApi,
+              requiresDetail: true,
+            ),
+          ]),
+        );
+        await tester.pump(const Duration(milliseconds: 500));
+        expect(search.requests, hasLength(2));
+        expect(find.byTooltip('Thêm Trứng gà luộc'), findsOneWidget);
+        expect(find.text(metadata.name), findsNothing);
+        expect(find.text('Hiển thị 1/1 món đã tải'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox());
+      },
+    );
     testWidgets(
       'local food stays selectable during online search and failure, library=$library',
       (tester) async {

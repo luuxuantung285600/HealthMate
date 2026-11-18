@@ -26,7 +26,26 @@
         "description": "Apples, raw, with skin (Includes foods for USDA's Food Distribution Program)",
         "nutrientId": 1079,
         "basis": "per_100g",
-        "retrievedOn": "2026-10-19"
+        "retrievedOn": "2026-10-19",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "archiveUrl": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+          "archiveSha256": "b80817294b8850530aaedf2e515c02593b1824f763a0ff356e5c2081643e6fd0",
+          "rows": {
+            "sodium": {
+              "nutrientId": 1093,
+              "foodNutrientId": "1631361"
+            },
+            "sugar": {
+              "nutrientId": 2000,
+              "foodNutrientId": "1631347"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 1,
+        "sugar": 10.39
       }
     },
     {
@@ -54,7 +73,26 @@
         "description": "Bananas, raw",
         "nutrientId": 1079,
         "basis": "per_100g",
-        "retrievedOn": "2026-10-19"
+        "retrievedOn": "2026-10-19",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "archiveUrl": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+          "archiveSha256": "b80817294b8850530aaedf2e515c02593b1824f763a0ff356e5c2081643e6fd0",
+          "rows": {
+            "sodium": {
+              "nutrientId": 1093,
+              "foodNutrientId": "1817940"
+            },
+            "sugar": {
+              "nutrientId": 2000,
+              "foodNutrientId": "1817948"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 1,
+        "sugar": 12.23
       }
     },
     {
@@ -83,7 +121,26 @@
         "description": "Rice, white, long-grain, regular, enriched, cooked",
         "nutrientId": 1079,
         "basis": "per_100g",
-        "retrievedOn": "2026-10-19"
+        "retrievedOn": "2026-10-19",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "archiveUrl": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+          "archiveSha256": "b80817294b8850530aaedf2e515c02593b1824f763a0ff356e5c2081643e6fd0",
+          "rows": {
+            "sodium": {
+              "nutrientId": 1093,
+              "foodNutrientId": "1395797"
+            },
+            "sugar": {
+              "nutrientId": 2000,
+              "foodNutrientId": "1395783"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 1,
+        "sugar": 0.05
       }
     },
     {
@@ -112,7 +169,26 @@
         "description": "Egg, whole, cooked, hard-boiled",
         "nutrientId": 1079,
         "basis": "per_100g",
-        "retrievedOn": "2026-10-19"
+        "retrievedOn": "2026-10-19",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "archiveUrl": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+          "archiveSha256": "b80817294b8850530aaedf2e515c02593b1824f763a0ff356e5c2081643e6fd0",
+          "rows": {
+            "sodium": {
+              "nutrientId": 1093,
+              "foodNutrientId": "1777865"
+            },
+            "sugar": {
+              "nutrientId": 2000,
+              "foodNutrientId": "1777836"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 124,
+        "sugar": 1.12
       }
     }
   ]

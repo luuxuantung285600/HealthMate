@@ -21,8 +21,8 @@ void main() {
   ) async {
     await pumpApp(tester, dashboardNow: now);
 
-    expect(find.text('Hôm nay'), findsNWidgets(2));
-    expect(find.text('Thứ Ba, 13 tháng 10'), findsOneWidget);
+    expect(find.text('Trang chủ'), findsOneWidget);
+    expect(find.text('HÔM NAY, 13 THG 10'), findsOneWidget);
     expect(find.text('Chưa ghi món'), findsNWidgets(4));
     expect(find.byKey(const ValueKey('dashboard-today-card')), findsOneWidget);
     expect(find.textContaining('kcal còn lại'), findsNothing);
@@ -120,7 +120,9 @@ void main() {
         await tester.tap(find.byKey(const ValueKey('nav-journal')));
         await tester.pumpAndSettle();
         expect(find.byKey(const ValueKey('journal-screen')), findsOneWidget);
-        await tester.tap(find.byKey(const ValueKey('nav-profile')));
+        await tester.tap(find.byKey(const ValueKey('nav-dashboard')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('profile-avatar')));
         await tester.pumpAndSettle();
         expect(find.text('Không gian cá nhân'), findsOneWidget);
         await tester.tap(find.byKey(const ValueKey('nav-dashboard')));

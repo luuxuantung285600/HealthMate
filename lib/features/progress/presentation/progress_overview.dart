@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/theme/design_tokens.dart';
+import '../../../core/theme/app_feature_visuals.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../profile/presentation/weight_chart.dart';
 import '../../weekly_reflection/models/weekly_reflection.dart';
@@ -49,7 +50,7 @@ class ProgressOverview extends StatelessWidget {
         trend(
           'Năng lượng',
           'kcal',
-          theme.colorScheme.primary,
+          AppFeatureVisual.nutrition.foreground(theme.brightness),
           (day) => day.mealCount > 0 ? day.nutrition.kcal : null,
           'kcal',
         ),
@@ -112,7 +113,7 @@ class ProgressOverview extends StatelessWidget {
         trend(
           'Chất xơ',
           'g',
-          theme.colorScheme.tertiary,
+          AppFeatureVisual.goals.foreground(theme.brightness),
           (d) => d.mealCount > 0 && d.nutrition.fiberKnown
               ? d.nutrition.fiberG
               : null,
@@ -123,14 +124,14 @@ class ProgressOverview extends StatelessWidget {
         trend(
           'Nước',
           'ml',
-          theme.colorScheme.primary,
+          AppFeatureVisual.water.foreground(theme.brightness),
           (d) => d.waterCount > 0 ? d.waterMl.toDouble() : null,
           'water',
         ),
         trend(
           'Vận động',
           'phút',
-          theme.colorScheme.tertiary,
+          AppFeatureVisual.activity.foreground(theme.brightness),
           (d) => d.activityCount > 0 ? d.activityMinutes.toDouble() : null,
           'activity',
         ),
@@ -236,7 +237,25 @@ class RecordedTrendCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('$title ($unit)', style: theme.textTheme.titleLarge),
+          Row(
+            children: [
+              Container(
+                width: 4,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  '$title ($unit)',
+                  style: theme.textTheme.titleLarge,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 8),
           Text(
             average == null

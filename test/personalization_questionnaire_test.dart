@@ -1,3 +1,4 @@
+import 'support/load_icon_font.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
@@ -13,23 +14,28 @@ import 'support/fake_health_profile_repository.dart';
 import 'support/fake_auth_repository.dart';
 import 'support/test_app.dart';
 import 'onboarding_test.dart'
-    show legacyProfile, currentWeight, tapOnboardingButton;
+    show legacyProfile, currentWeight, tapOnboardingButton, advanceToOnboarding;
 
 Future<void> selectAnswer(WidgetTester tester, String id, String label) async {
-  final finder = find.byKey(ValueKey('survey-$id'));
+  await advanceToOnboarding(tester, 'survey-$id');
+  final finder = find.descendant(
+    of: find.byKey(ValueKey('survey-$id')),
+    matching: find.text(label),
+  );
   await tester.ensureVisible(finder);
   await tester.pumpAndSettle();
   await tester.tap(finder);
-  await tester.pumpAndSettle();
-  await tester.tap(find.text(label).last);
   await tester.pumpAndSettle();
 }
 
 void main() {
   setUpAll(() async {
-    final font = FontLoader('Inter');
+    await loadIconFont();
+    final font = FontLoader('Public Sans');
     for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      font.addFont(rootBundle.load('assets/fonts/inter/Inter-$weight.ttf'));
+      font.addFont(
+        rootBundle.load('assets/fonts/public_sans/PublicSans-$weight.ttf'),
+      );
     }
     await font.load();
     await (FontLoader(
@@ -128,27 +134,25 @@ void main() {
       await tapOnboardingButton(tester, 'open-personalization');
       expect(find.text('Cập nhật cá nhân hóa'), findsOneWidget);
       await selectAnswer(tester, 'formulaSex', 'Nam · hệ số công thức');
-      for (var i = 0; i < 3; i++) {
-        await tapOnboardingButton(tester, 'onboarding-next');
-      }
+      await selectAnswer(tester, 'activity', 'Hoạt động nhẹ');
+      await advanceToOnboarding(tester, 'onboarding-details-step');
       expect(find.byKey(const ValueKey('survey-pace')), findsNothing);
+      await tapOnboardingButton(tester, 'onboarding-add-details');
       await selectAnswer(tester, 'exerciseDays', 'Chưa tập thường xuyên');
       expect(
         find.byKey(const ValueKey('survey-exerciseMinutes')),
         findsNothing,
       );
-      await selectAnswer(tester, 'activity', 'Hoạt động nhẹ');
       await tapOnboardingButton(tester, 'onboarding-next');
       await selectAnswer(tester, 'diet', 'Thuần chay');
+      await advanceToOnboarding(tester, 'survey-avoidFoods-input');
       await tester.enterText(
-        find.byKey(const ValueKey('survey-avoidFoods')),
+        find.byKey(const ValueKey('survey-avoidFoods-input')),
         'Đậu phộng',
       );
       await tapOnboardingButton(tester, 'onboarding-next');
       await selectAnswer(tester, 'priority', 'Giấc ngủ');
-      for (var i = 0; i < 2; i++) {
-        await tapOnboardingButton(tester, 'onboarding-next');
-      }
+      await advanceToOnboarding(tester, 'onboarding-nutrition-step');
       await tapOnboardingButton(tester, 'onboarding-complete');
       expect(repo.currentProfile!.personalization!['diet'], 'vegan');
       expect(repo.currentProfile!.personalization!['avoidFoods'], 'Đậu phộng');
@@ -165,14 +169,15 @@ void main() {
         AppRoutes.profile,
       );
       await tapOnboardingButton(tester, 'open-personalization');
-      for (var i = 0; i < 4; i++) {
-        await tapOnboardingButton(tester, 'onboarding-next');
-      }
+      await advanceToOnboarding(tester, 'onboarding-details-step');
+      await tapOnboardingButton(tester, 'onboarding-add-details');
+      await advanceToOnboarding(tester, 'survey-diet');
       expect(find.text('Thuần chay'), findsOneWidget);
+      await advanceToOnboarding(tester, 'survey-avoidFoods-input');
       expect(
         tester
             .widget<TextFormField>(
-              find.byKey(const ValueKey('survey-avoidFoods')),
+              find.byKey(const ValueKey('survey-avoidFoods-input')),
             )
             .initialValue,
         'Đậu phộng',
@@ -191,13 +196,10 @@ void main() {
         ),
       );
       await pumpApp(tester, profileRepository: repo);
-      for (var i = 0; i < 2; i++) {
-        await tapOnboardingButton(tester, 'onboarding-next');
-      }
+      await selectAnswer(tester, 'formulaSex', 'Nam · hệ số công thức');
+      await selectAnswer(tester, 'activity', 'Chủ yếu ngồi');
       await selectAnswer(tester, 'guidance', 'Có, tôi cần hướng dẫn riêng');
-      for (var i = 0; i < 4; i++) {
-        await tapOnboardingButton(tester, 'onboarding-next');
-      }
+      await advanceToOnboarding(tester, 'onboarding-nutrition-step');
       await tapOnboardingButton(tester, 'onboarding-personalize-nutrition');
       expect(
         find.byKey(const ValueKey('onboarding-nutrition-summary')),

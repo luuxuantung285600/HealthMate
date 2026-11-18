@@ -49,11 +49,6 @@ final dailyEnergyBudgetProvider = Provider.autoDispose
           adjustment.stackTrace ?? StackTrace.current,
         );
       }
-      if (adjustment.value == null) {
-        return AsyncData(
-          resolveEnergyBudget(target.value!, null, hasManualActivity: false),
-        );
-      }
       final activities = ref.watch(activityLogsProvider(day));
       if (activities.isLoading) return const AsyncLoading();
       if (activities.hasError) {
@@ -67,6 +62,7 @@ final dailyEnergyBudgetProvider = Provider.autoDispose
           target.value!,
           adjustment.value,
           hasManualActivity: activities.value!.isNotEmpty,
+          activities: activities.value!,
         ),
       );
     });

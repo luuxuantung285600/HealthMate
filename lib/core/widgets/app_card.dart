@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_spacing.dart';
+import '../theme/app_shapes.dart';
 
 class AppCard extends StatelessWidget {
   const AppCard({
@@ -19,17 +20,13 @@ class AppCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final borderRadius = BorderRadius.circular(AppSpacing.cardRadius);
     return Material(
       color: color ?? scheme.surfaceContainerLowest,
-      shape: RoundedRectangleBorder(
-        borderRadius: borderRadius,
-        side: BorderSide.none,
-      ),
+      shape: AppShapes.surface,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        borderRadius: borderRadius,
+        customBorder: AppShapes.surface,
         child: Padding(padding: padding, child: child),
       ),
     );

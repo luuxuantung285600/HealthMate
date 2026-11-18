@@ -21,6 +21,8 @@ import 'package:healthmate/features/auth/data/firebase_account_data_repository.d
 import 'package:healthmate/features/profile/data/firebase_health_profile_repository.dart';
 import 'package:healthmate/features/profile/models/onboarding_draft.dart';
 import 'package:healthmate/features/profile/models/body_metric.dart';
+import 'package:healthmate/features/profile/models/profile_appearance.dart';
+import 'package:healthmate/features/profile/models/profile_failure.dart';
 import 'package:healthmate/features/weekly_reflection/models/weekly_reflection.dart';
 import 'package:healthmate/features/profile/models/health_goal.dart';
 import 'package:healthmate/features/nutrition/data/firebase_nutrition_repository.dart';
@@ -36,6 +38,8 @@ import 'package:healthmate/features/water/data/firebase_water_repository.dart';
 import 'package:healthmate/features/water/models/water_log.dart';
 import 'package:healthmate/features/activity/data/firebase_activity_repository.dart';
 import 'package:healthmate/features/activity/models/activity_log.dart';
+import 'package:healthmate/features/activity/models/activity_energy.dart';
+import 'package:healthmate/features/journal/models/daily_log_failure.dart';
 import 'package:healthmate/features/goals/data/firebase_goals_repository.dart';
 import 'package:healthmate/features/goals/models/tracking_goal.dart';
 import 'package:healthmate/features/daily_quest/models/daily_quest.dart';
@@ -120,6 +124,8 @@ void main() {
     String id, {
     double kcal = 130,
     bool corrupt = false,
+    Map<String, double> extras = const {},
+    double? fiber,
   }) async {
     // Emulator-only owner token; never use this against a non-demo project/host.
     final fields = <String, dynamic>{
@@ -133,6 +139,16 @@ void main() {
       'proteinGPer100g': {'doubleValue': 2.69},
       'carbsGPer100g': {'doubleValue': 28.17},
       if (!corrupt) 'fatGPer100g': {'doubleValue': .28},
+      if (fiber != null) 'fiberGPer100g': {'doubleValue': fiber},
+      if (extras.isNotEmpty)
+        'extraNutrientsPer100g': {
+          'mapValue': {
+            'fields': {
+              for (final entry in extras.entries)
+                entry.key: {'doubleValue': entry.value},
+            },
+          },
+        },
     };
     final response = await http.patch(
       Uri.parse(
@@ -146,6 +162,289 @@ void main() {
     );
     expect(response.statusCode, 200);
   }
+
+  test(
+    'secondary nutrient markers and catalog snapshots persist with real Firebase repositories',
+    () async {
+      await profiles.ensureProfile(uid: alice, email: aliceEmail);
+      const foodId = 'secondary-sdk-fixture';
+      final key = localDateKey(day), mealId = 'secondary-sdk-$suffix';
+      final targets = FirebaseNutritionTargetRepository(db);
+      try {
+        await seedC3Catalog(
+          foodId,
+          extras: {'sodium': 400, 'sugar': 12},
+          fiber: 3,
+        );
+        final catalog = await nutrition.watchFoodCatalog().firstWhere(
+          (foods) => foods.any((f) => f.id == foodId),
+        );
+        final food = catalog.singleWhere((f) => f.id == foodId);
+        final item = MealItemSnapshot.fromCatalog(food, 200);
+        await nutrition.addMeal(
+          uid: alice,
+          operationId: mealId,
+          draft: MealDraft(
+            type: MealType.lunch,
+            consumedAt: day,
+            items: [item],
+            source: MealSource.manual,
+          ),
+        );
+        final logs = await nutrition
+            .watchMealLogs(alice, day)
+            .firstWhere((logs) => logs.any((m) => m.id == mealId));
+        final recorded = logs.singleWhere((m) => m.id == mealId).totals;
+        expect(recorded.saltEquivalentG, 2);
+        expect(recorded.totalSugarG, 24);
+        expect(recorded.fiberG, 6);
+        expect(recorded.fiberKnown, isTrue);
+        await targets.save(
+          alice,
+          NutritionTarget(
+            effectiveFromDateKey: key,
+            kcalTarget: 2000,
+            saltGLimit: 5,
+            sugarGLimit: 50,
+            fiberGTarget: 30,
+          ),
+        );
+        final saved = (await targets.loadForDay(alice, key))!;
+        expect(saved.saltGLimit, 5);
+        expect(saved.sugarGLimit, 50);
+        expect(saved.fiberGTarget, 30);
+        await targets.save(
+          alice,
+          NutritionTarget(
+            effectiveFromDateKey: key,
+            kcalTarget: 2000,
+            saltGLimit: 0,
+            sugarGLimit: null,
+            fiberGTarget: 25,
+          ),
+        );
+        final updated = (await targets.loadForRange(
+          alice,
+          key,
+          localDateKey(DateTime(day.year, day.month, day.day + 1)),
+        )).single;
+        expect(updated.saltGLimit, 0);
+        expect(updated.sugarGLimit, isNull);
+        expect(updated.fiberGTarget, 25);
+      } finally {
+        await db.doc('users/$alice/meal_logs/$mealId').delete();
+        await db.doc('users/$alice/nutrition_targets/$key').delete();
+        await http.delete(
+          Uri.parse(
+            'http://127.0.0.1:8080/v1/projects/$projectId/databases/(default)/documents/food_catalog/$foodId',
+          ),
+          headers: {'Authorization': 'Bearer owner'},
+        );
+      }
+    },
+  );
+
+  test(
+    'water quick undo is atomic, preserves edits and enforces UID privacy',
+    () async {
+      await profiles.ensureProfile(uid: alice, email: aliceEmail);
+      final draft = WaterLogDraft(amountMl: 350, consumedAt: DateTime.now());
+      final ids = <String>[];
+      final fresh = await water.add(uid: alice, draft: draft);
+      ids.add(fresh);
+      final baseline = await water.add(
+        uid: alice,
+        draft: WaterLogDraft(amountMl: 500, consumedAt: draft.consumedAt),
+      );
+      ids.add(baseline);
+      final path = db.doc('users/$alice/water_logs/$fresh');
+      final created = (await path.get(
+        const GetOptions(source: Source.server),
+      )).data()!;
+      expect(created['createdAt'], created['updatedAt']);
+      await water.undoAdd(uid: alice, logId: fresh, draft: draft);
+      await water.undoAdd(uid: alice, logId: fresh, draft: draft);
+      expect(
+        (await path.get(const GetOptions(source: Source.server))).exists,
+        isFalse,
+      );
+      final remaining = await water.watchLogs(alice, draft.dateKey).first;
+      expect(remaining.any((entry) => entry.id == fresh), isFalse);
+      expect(
+        remaining.singleWhere((entry) => entry.id == baseline).amountMl,
+        500,
+      );
+
+      final edited = await water.add(uid: alice, draft: draft);
+      ids.add(edited);
+      await water.update(
+        uid: alice,
+        logId: edited,
+        draft: WaterLogDraft(amountMl: 750, consumedAt: draft.consumedAt),
+      );
+      final conflict = isA<DailyLogFailure>().having(
+        (error) => error.code,
+        'code',
+        'water-entry-changed',
+      );
+      await expectLater(
+        water.undoAdd(uid: alice, logId: edited, draft: draft),
+        throwsA(conflict),
+      );
+      final editedPath = db.doc('users/$alice/water_logs/$edited');
+      expect(
+        (await editedPath.get(
+          const GetOptions(source: Source.server),
+        )).data()!['amountMl'],
+        750,
+      );
+      // An edit back to the original values must still be protected.
+      await water.update(uid: alice, logId: edited, draft: draft);
+      await expectLater(
+        water.undoAdd(uid: alice, logId: edited, draft: draft),
+        throwsA(conflict),
+      );
+      expect(
+        (await editedPath.get(const GetOptions(source: Source.server))).exists,
+        isTrue,
+      );
+
+      await authentication.signOut();
+      final otherEmail = 'water-undo-bob-$suffix@example.com';
+      await authentication.register(email: otherEmail, password: password);
+      await verifyEmulatorEmail(auth, projectId: projectId, host: '127.0.0.1');
+      final other = auth.currentUser!.uid;
+      await profiles.ensureProfile(uid: other, email: otherEmail);
+      try {
+        await expectLater(
+          water.undoAdd(uid: alice, logId: edited, draft: draft),
+          throwsA(isA<DailyLogFailure>()),
+        );
+        final own = await water.add(uid: other, draft: draft);
+        await water.undoAdd(uid: other, logId: own, draft: draft);
+        expect(
+          (await db
+                  .doc('users/$other/water_logs/$own')
+                  .get(const GetOptions(source: Source.server)))
+              .exists,
+          isFalse,
+        );
+      } finally {
+        await authentication.signOut();
+        await authentication.signIn(email: aliceEmail, password: password);
+        expect(
+          (await editedPath.get(
+            const GetOptions(source: Source.server),
+          )).exists,
+          isTrue,
+        );
+        for (final id in ids) {
+          await water.delete(uid: alice, logId: id);
+        }
+      }
+    },
+  );
+
+  test(
+    'guided workout save is idempotent, confirms server data and enforces UID privacy',
+    () async {
+      await profiles.ensureProfile(uid: alice, email: aliceEmail);
+      final at = DateTime.now();
+      final draft = ActivityLogDraft(
+        type: ActivityType.strength,
+        durationMinutes: 6,
+        performedAt: at,
+        note: 'Guided workout emulator fixture',
+        energyEstimate: ActivityEnergyEstimate(
+          metCode: '02022',
+          weightKg: 60,
+          weightMeasuredAt: at.subtract(const Duration(days: 1)),
+          ageYears: 26,
+          durationSeconds: 377,
+        ),
+      );
+      final operation = 'workout-emulator-$suffix';
+      final ids = await Future.wait([
+        activities.add(uid: alice, draft: draft, operationId: operation),
+        activities.add(uid: alice, draft: draft, operationId: operation),
+      ]);
+      expect(ids.toSet(), {operation});
+      final path = db.doc('users/$alice/activity_logs/$operation');
+      final first = (await path.get(
+        const GetOptions(source: Source.server),
+      )).data()!;
+      expect(first['durationMinutes'], 6);
+      await activities.add(uid: alice, draft: draft, operationId: operation);
+      final retried = (await path.get(
+        const GetOptions(source: Source.server),
+      )).data()!;
+      expect(retried['createdAt'], first['createdAt']);
+      expect(retried['updatedAt'], first['updatedAt']);
+      final logs = await activities.watchLogs(alice, draft.dateKey).first;
+      expect(logs.where((log) => log.id == operation).length, 1);
+      final savedEnergy = logs
+          .singleWhere((log) => log.id == operation)
+          .energyEstimate!;
+      expect(savedEnergy.toData(), draft.energyEstimate!.toData());
+      expect(savedEnergy.activeKcal, closeTo(17.593333333333, .000001));
+      await expectLater(
+        activities.add(
+          uid: alice,
+          operationId: operation,
+          draft: ActivityLogDraft(
+            type: ActivityType.strength,
+            durationMinutes: 9,
+            performedAt: at,
+          ),
+        ),
+        throwsA(isA<DailyLogFailure>()),
+      );
+      expect(
+        (await path.get(
+          const GetOptions(source: Source.server),
+        )).data()!['durationMinutes'],
+        6,
+      );
+      await expectLater(
+        activities.add(uid: alice, operationId: 'unsafe/path', draft: draft),
+        throwsA(isA<DailyLogFailure>()),
+      );
+      await authentication.signOut();
+      await authentication.register(
+        email: 'workout-bob-$suffix@example.com',
+        password: password,
+      );
+      await verifyEmulatorEmail(auth, projectId: projectId, host: '127.0.0.1');
+      final other = auth.currentUser!.uid;
+      await profiles.ensureProfile(
+        uid: other,
+        email: 'workout-bob-$suffix@example.com',
+      );
+      try {
+        await expectLater(
+          path.get(const GetOptions(source: Source.server)),
+          throwsA(isA<FirebaseException>()),
+        );
+        await expectLater(
+          activities.add(uid: alice, draft: draft, operationId: operation),
+          throwsA(isA<DailyLogFailure>()),
+        );
+        await activities.add(uid: other, draft: draft, operationId: operation);
+        expect(
+          (await db
+                  .doc('users/$other/activity_logs/$operation')
+                  .get(const GetOptions(source: Source.server)))
+              .data()!['durationMinutes'],
+          6,
+        );
+        await activities.delete(uid: other, logId: operation);
+      } finally {
+        await authentication.signOut();
+        await authentication.signIn(email: aliceEmail, password: password);
+        await activities.delete(uid: alice, logId: operation);
+      }
+    },
+  );
 
   test(
     'H1 repository reads real catalog portions and snapshots fractional servings',
@@ -2004,6 +2303,148 @@ void main() {
           now,
         )).any((s) => s.id == 'insight-range'),
         true,
+      );
+    },
+  );
+  test(
+    'profile identity saves real thumbnails, preserves health fields and enforces UID privacy',
+    () async {
+      await authentication.signIn(email: aliceEmail, password: password);
+      await profiles.ensureProfile(uid: alice, email: aliceEmail);
+      await profiles.updateProfile(
+        uid: alice,
+        displayName: 'Hồ sơ kiểm thử SDK',
+        heightCm: 175,
+        birthDate: DateTime(1998, 1, 1),
+        healthGoal: 'maintain_weight',
+        targetWeightKg: null,
+      );
+      final reference = db.doc('users/$alice');
+      final before = (await reference.get(
+        const GetOptions(source: Source.server),
+      )).data()!;
+      final photo = ProfileImage.tryDecode(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl6VSEAAAAASUVORK5CYII=',
+      )!;
+      final appearance = ProfileAppearance(
+        avatar: photo,
+        cover: photo,
+        background: photo,
+      );
+      final liveUpdate = profiles
+          .watchProfile(alice)
+          .firstWhere(
+            (profile) =>
+                profile?.displayName == 'Nguyễn An' &&
+                profile?.appearance.cover != null,
+          );
+      await profiles.updateIdentity(
+        uid: alice,
+        draft: ProfileIdentityDraft(
+          displayName: '  Nguyễn An  ',
+          appearance: appearance,
+        ),
+      );
+      final live = await liveUpdate.timeout(const Duration(seconds: 10));
+      expect(live!.appearance.sameAs(appearance), isTrue);
+      final saved = (await reference.get(
+        const GetOptions(source: Source.server),
+      )).data()!;
+      expect(saved['displayName'], 'Nguyễn An');
+      expect(saved['profileAppearance'], appearance.toMap());
+      for (final field in [
+        'email',
+        'heightCm',
+        'birthDate',
+        'healthGoal',
+        'targetWeightKg',
+        'onboardingCompletedAt',
+        'createdAt',
+        'schemaVersion',
+      ]) {
+        expect(
+          saved[field],
+          before[field],
+          reason: 'Identity preserves $field',
+        );
+      }
+      expect(saved['updatedAt'], isA<Timestamp>());
+      await profiles.updateProfile(
+        uid: alice,
+        displayName: 'Nguyễn An',
+        heightCm: 176,
+        birthDate: DateTime(1998, 1, 1),
+        healthGoal: 'maintain_weight',
+        targetWeightKg: null,
+      );
+      expect(
+        (await profiles.watchProfile(alice).first)!.appearance.sameAs(
+          appearance,
+        ),
+        isTrue,
+      );
+      final withoutCover = appearance.replace(ProfileImageSlot.cover, null);
+      await profiles.updateIdentity(
+        uid: alice,
+        draft: ProfileIdentityDraft(
+          displayName: 'Nguyễn An',
+          appearance: withoutCover,
+        ),
+      );
+      await authentication.signOut();
+      await authentication.signIn(email: aliceEmail, password: password);
+      expect(
+        (await profiles.watchProfile(alice).first)!.appearance.sameAs(
+          withoutCover,
+        ),
+        isTrue,
+      );
+
+      await authentication.register(
+        email: 'identity-other-$suffix@example.com',
+        password: password,
+      );
+      await verifyEmulatorEmail(auth, projectId: projectId, host: '127.0.0.1');
+      await expectLater(
+        reference.get(const GetOptions(source: Source.server)),
+        throwsA(
+          isA<FirebaseException>().having(
+            (e) => e.code,
+            'code',
+            'permission-denied',
+          ),
+        ),
+      );
+      await expectLater(
+        profiles.updateIdentity(
+          uid: alice,
+          draft: ProfileIdentityDraft(
+            displayName: 'Không được sửa',
+            appearance: const ProfileAppearance(),
+          ),
+        ),
+        throwsA(isA<ProfileFailure>()),
+      );
+      await authentication.deleteCurrentUser();
+      await authentication.signIn(email: aliceEmail, password: password);
+      expect(
+        (await profiles.watchProfile(alice).first)!.appearance.sameAs(
+          withoutCover,
+        ),
+        isTrue,
+      );
+      await profiles.updateIdentity(
+        uid: alice,
+        draft: const ProfileIdentityDraft(
+          displayName: 'Hồ sơ kiểm thử SDK',
+          appearance: ProfileAppearance(),
+        ),
+      );
+      expect(
+        (await reference.get(
+          const GetOptions(source: Source.server),
+        )).data()!['profileAppearance'],
+        const ProfileAppearance().toMap(),
       );
     },
   );

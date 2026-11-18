@@ -8,6 +8,7 @@ import 'package:healthmate/core/router/app_router.dart';
 import 'package:healthmate/core/router/app_routes.dart';
 import 'package:healthmate/core/utils/local_date_key.dart';
 import 'package:healthmate/features/auth/providers/auth_providers.dart';
+import 'package:healthmate/features/journal/providers/journal_date_provider.dart';
 import 'package:healthmate/features/nutrition/data/bundled_vietnamese_foods.dart';
 import 'package:healthmate/features/nutrition/data/unified_food_search_service.dart';
 import 'package:healthmate/features/food_library/models/favorite_food.dart';
@@ -101,6 +102,7 @@ class DietPendingSearch extends FakeFoodSearchService {
     int limit = 25,
     FoodSearchRequest? request,
     void Function(FoodSearchOutcome)? onProgress,
+    bool Function(FoodCatalogItem)? matches,
   }) {
     catalogs.add(firestoreCatalog);
     final gate = Completer<List<FoodSearchResult>>();
@@ -124,9 +126,14 @@ Future<void> openDietJournal(
     foodSearchService: search,
     favoriteRepository: favorites,
   );
+  // A 07:00 entry on today is disabled when this suite runs before 07:00.
+  // Exercise the same real journal action on a completed day at every hour.
+  container
+      .read(journalDateProvider.notifier)
+      .select(DateTime.now().subtract(const Duration(days: 1)));
   container.read(appRouterProvider).go(AppRoutes.journal);
   await tester.pumpAndSettle();
-  final add = find.byKey(const ValueKey('add-meal-breakfast'));
+  final add = find.byKey(const ValueKey('add-meal-hour-7'));
   await tester.ensureVisible(add);
   await tester.pumpAndSettle();
   await tester.tap(add);
@@ -193,16 +200,16 @@ void main() {
       );
       for (final broken in ['', '{invalid', '{"foods":[{"id":null}]}']) {
         final foods = decodeBundledFoodCatalog([original, broken]);
-        expect(foods, hasLength(162));
+        expect(foods, hasLength(354));
         expect(foods.every((food) => food.hasNutritionData), isTrue);
         expect(
-          foods.every((food) => food.dietaryClass == FoodDietClass.unknown),
-          isTrue,
+          foods.where((food) => food.dietaryClass == FoodDietClass.unknown),
+          hasLength(283), // Processed foods retain unknown ingredient metadata.
         );
       }
       expect(
         await loadBundledVietnameseFoods(bundle: MissingSupplementBundle()),
-        hasLength(162),
+        hasLength(354),
       );
     },
   );
@@ -211,7 +218,7 @@ void main() {
     'expanded asset has unique IDs, complete sourced nutrition and real portions',
     () async {
       final foods = await loadBundledVietnameseFoods();
-      expect(foods, hasLength(11169));
+      expect(foods, hasLength(11361));
       expect(foods.map((f) => f.id).toSet(), hasLength(foods.length));
       expect(foods.where((f) => f.hasValidServing).length, greaterThan(7100));
       expect(
@@ -569,11 +576,18 @@ void main() {
         expect(find.byTooltip('Thêm Món đậu'), findsOneWidget);
         await selectDiet(tester, 'Tất cả chế độ');
         await tester.scrollUntilVisible(
-          find.byTooltip('Thêm Món chưa rõ'),
+          find.byTooltip('Thêm Món thịt'),
           300,
           scrollable: find.byType(Scrollable).first,
         );
         expect(find.byTooltip('Thêm Món thịt'), findsOneWidget);
+        // Discovery now sorts the catalog. Verify both rows independently;
+        // lazy layout need not build every restored result at the same time.
+        await tester.scrollUntilVisible(
+          find.byTooltip('Thêm Món chưa rõ'),
+          -300,
+          scrollable: find.byType(Scrollable).first,
+        );
         expect(find.byTooltip('Thêm Món chưa rõ'), findsOneWidget);
         expect(tester.takeException(), isNull);
       },

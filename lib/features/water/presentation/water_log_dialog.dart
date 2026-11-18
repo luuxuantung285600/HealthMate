@@ -1,4 +1,6 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../../core/widgets/confirmed_save.dart';
 
 import '../models/water_log.dart';
@@ -69,6 +71,7 @@ class _WaterLogDialogState extends State<WaterLogDialog>
     );
     if (value == null || !mounted) return;
     setState(() {
+      _timeError = null;
       _consumedAt = DateTime(
         _consumedAt.year,
         _consumedAt.month,
@@ -110,6 +113,25 @@ class _WaterLogDialogState extends State<WaterLogDialog>
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 saveFeedback(),
+                Text(
+                  'Ngày ghi: ${DateFormat('dd/MM/yyyy', 'vi').format(_consumedAt)}',
+                  key: const ValueKey('water-entry-date'),
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final amount in const [100, 250, 350, 500, 750])
+                      ChoiceChip(
+                        key: ValueKey('water-preset-$amount'),
+                        label: Text('$amount ml'),
+                        selected: int.tryParse(_amount.text.trim()) == amount,
+                        onSelected: (_) => _amount.text = '$amount',
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 12),
                 TextFormField(
                   key: const ValueKey('water-amount'),
                   controller: _amount,
@@ -124,7 +146,7 @@ class _WaterLogDialogState extends State<WaterLogDialog>
                 const SizedBox(height: 16),
                 OutlinedButton.icon(
                   onPressed: _pickTime,
-                  icon: const Icon(Icons.schedule_outlined),
+                  icon: const Icon(AppIcons.clock3),
                   label: Text(
                     locale.formatTimeOfDay(TimeOfDay.fromDateTime(_consumedAt)),
                   ),

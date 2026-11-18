@@ -1,0 +1,430 @@
+{
+  "version": "admin-lucide-source-1.70.0",
+  "note": "Pinned admin icon source, independent of Flutter font releases. Preserve Lucide attribution locally.",
+  "upstream": {
+    "name": "lucide-static",
+    "version": "1.70.0",
+    "url": "https://www.npmjs.com/package/lucide-static/v/1.70.0",
+    "tarball": "https://registry.npmjs.org/lucide-static/-/lucide-static-1.70.0.tgz",
+    "sourceFontSha256": "a17478dfd261662eae3f64fd71c1a05465c70018b46a5d852af6a23459921d15",
+    "license": "ISC; includes Feather-derived glyphs under MIT"
+  },
+  "icons": {
+    "activity": {
+      "lucide": "activity"
+    },
+    "arrowLeft": {
+      "lucide": "arrow-left"
+    },
+    "arrowLeftRight": {
+      "lucide": "arrow-left-right"
+    },
+    "arrowRight": {
+      "lucide": "arrow-right"
+    },
+    "arrowUpRight": {
+      "lucide": "arrow-up-right"
+    },
+    "atSign": {
+      "lucide": "at-sign"
+    },
+    "bellOff": {
+      "lucide": "bell-off"
+    },
+    "bookmarkMinus": {
+      "lucide": "bookmark-minus"
+    },
+    "bookmarkPlus": {
+      "lucide": "bookmark-plus"
+    },
+    "botMessageSquare": {
+      "lucide": "bot-message-square"
+    },
+    "brand": {
+      "lucide": "leaf"
+    },
+    "bug": {
+      "lucide": "bug"
+    },
+    "cake": {
+      "lucide": "cake"
+    },
+    "calculator": {
+      "lucide": "calculator"
+    },
+    "calendar": {
+      "lucide": "calendar"
+    },
+    "calendarDays": {
+      "lucide": "calendar-days"
+    },
+    "calendarRange": {
+      "lucide": "calendar-range"
+    },
+    "calories": {
+      "lucide": "flame"
+    },
+    "camera": {
+      "lucide": "camera"
+    },
+    "cameraOff": {
+      "lucide": "camera-off"
+    },
+    "carbs": {
+      "lucide": "wheat"
+    },
+    "chartColumnIncreasing": {
+      "lucide": "chart-column-increasing"
+    },
+    "chartNoAxesCombined": {
+      "lucide": "chart-no-axes-combined"
+    },
+    "chartPie": {
+      "lucide": "chart-pie"
+    },
+    "chatbot": {
+      "lucide": "bot-message-square"
+    },
+    "check": {
+      "lucide": "check"
+    },
+    "chevronDown": {
+      "lucide": "chevron-down"
+    },
+    "chevronLeft": {
+      "lucide": "chevron-left"
+    },
+    "chevronRight": {
+      "lucide": "chevron-right"
+    },
+    "chevronUp": {
+      "lucide": "chevron-up"
+    },
+    "circle": {
+      "lucide": "circle"
+    },
+    "circleAlert": {
+      "lucide": "circle-alert"
+    },
+    "circleCheck": {
+      "lucide": "circle-check"
+    },
+    "circleMinus": {
+      "lucide": "circle-minus"
+    },
+    "circlePlay": {
+      "lucide": "circle-play"
+    },
+    "circlePlus": {
+      "lucide": "circle-plus"
+    },
+    "circleStop": {
+      "lucide": "circle-stop"
+    },
+    "clipboardCheck": {
+      "lucide": "clipboard-check"
+    },
+    "clock3": {
+      "lucide": "clock-3"
+    },
+    "cloudAlert": {
+      "lucide": "cloud-alert"
+    },
+    "cloudCheck": {
+      "lucide": "cloud-check"
+    },
+    "coffee": {
+      "lucide": "coffee"
+    },
+    "compass": {
+      "lucide": "compass"
+    },
+    "contactRound": {
+      "lucide": "contact-round"
+    },
+    "cookie": {
+      "lucide": "cookie"
+    },
+    "cookingPot": {
+      "lucide": "cooking-pot"
+    },
+    "crown": {
+      "lucide": "crown"
+    },
+    "download": {
+      "lucide": "download"
+    },
+    "droplet": {
+      "lucide": "droplet"
+    },
+    "dumbbell": {
+      "lucide": "dumbbell"
+    },
+    "ellipsis": {
+      "lucide": "ellipsis"
+    },
+    "externalLink": {
+      "lucide": "external-link"
+    },
+    "eye": {
+      "lucide": "eye"
+    },
+    "eyeOff": {
+      "lucide": "eye-off"
+    },
+    "fat": {
+      "lucide": "droplet"
+    },
+    "filePenLine": {
+      "lucide": "file-pen-line"
+    },
+    "fileText": {
+      "lucide": "file-text"
+    },
+    "flag": {
+      "lucide": "flag"
+    },
+    "flame": {
+      "lucide": "flame"
+    },
+    "footprints": {
+      "lucide": "footprints"
+    },
+    "goals": {
+      "lucide": "goal"
+    },
+    "headset": {
+      "lucide": "headset"
+    },
+    "heartPulse": {
+      "lucide": "heart-pulse"
+    },
+    "history": {
+      "lucide": "history"
+    },
+    "home": {
+      "lucide": "house"
+    },
+    "house": {
+      "lucide": "house"
+    },
+    "image": {
+      "lucide": "image"
+    },
+    "images": {
+      "lucide": "images"
+    },
+    "info": {
+      "lucide": "info"
+    },
+    "journal": {
+      "lucide": "notebook-tabs"
+    },
+    "keyRound": {
+      "lucide": "key-round"
+    },
+    "layoutGrid": {
+      "lucide": "layout-grid"
+    },
+    "leaf": {
+      "lucide": "leaf"
+    },
+    "lightbulb": {
+      "lucide": "lightbulb"
+    },
+    "lockKeyhole": {
+      "lucide": "lock-keyhole"
+    },
+    "logOut": {
+      "lucide": "log-out"
+    },
+    "mail": {
+      "lucide": "mail"
+    },
+    "messageCirclePlus": {
+      "lucide": "message-circle-plus"
+    },
+    "moon": {
+      "lucide": "moon"
+    },
+    "moveRight": {
+      "lucide": "move-right"
+    },
+    "notebookPen": {
+      "lucide": "notebook-pen"
+    },
+    "notebookTabs": {
+      "lucide": "notebook-tabs"
+    },
+    "notepadText": {
+      "lucide": "notepad-text"
+    },
+    "nutrition": {
+      "lucide": "utensils"
+    },
+    "pause": {
+      "lucide": "pause"
+    },
+    "play": {
+      "lucide": "play"
+    },
+    "plus": {
+      "lucide": "plus"
+    },
+    "premium": {
+      "lucide": "crown"
+    },
+    "profile": {
+      "lucide": "user-round"
+    },
+    "progress": {
+      "lucide": "chart-no-axes-combined"
+    },
+    "protein": {
+      "lucide": "beef"
+    },
+    "qrCode": {
+      "lucide": "qr-code"
+    },
+    "quest": {
+      "lucide": "list-checks"
+    },
+    "recipes": {
+      "lucide": "cooking-pot"
+    },
+    "refreshCw": {
+      "lucide": "refresh-cw"
+    },
+    "report": {
+      "lucide": "file-chart-column"
+    },
+    "rows3": {
+      "lucide": "rows-3"
+    },
+    "ruler": {
+      "lucide": "ruler"
+    },
+    "sandwich": {
+      "lucide": "sandwich"
+    },
+    "scale": {
+      "lucide": "weight"
+    },
+    "scanBarcode": {
+      "lucide": "scan-barcode"
+    },
+    "scanSearch": {
+      "lucide": "scan-search"
+    },
+    "scanner": {
+      "lucide": "scan-search"
+    },
+    "search": {
+      "lucide": "search"
+    },
+    "searchX": {
+      "lucide": "search-x"
+    },
+    "send": {
+      "lucide": "send"
+    },
+    "settings2": {
+      "lucide": "settings-2"
+    },
+    "shieldCheck": {
+      "lucide": "shield-check"
+    },
+    "shoppingBag": {
+      "lucide": "shopping-bag"
+    },
+    "skipForward": {
+      "lucide": "skip-forward"
+    },
+    "sleep": {
+      "lucide": "moon-star"
+    },
+    "slidersHorizontal": {
+      "lucide": "sliders-horizontal"
+    },
+    "smartphone": {
+      "lucide": "smartphone"
+    },
+    "sparkles": {
+      "lucide": "sparkles"
+    },
+    "squarePen": {
+      "lucide": "square-pen"
+    },
+    "steps": {
+      "lucide": "footprints"
+    },
+    "sun": {
+      "lucide": "sun"
+    },
+    "support": {
+      "lucide": "headset"
+    },
+    "switchCamera": {
+      "lucide": "switch-camera"
+    },
+    "timer": {
+      "lucide": "timer"
+    },
+    "trash2": {
+      "lucide": "trash-2"
+    },
+    "trendingDown": {
+      "lucide": "trending-down"
+    },
+    "trendingUp": {
+      "lucide": "trending-up"
+    },
+    "triangleAlert": {
+      "lucide": "triangle-alert"
+    },
+    "userRound": {
+      "lucide": "user-round"
+    },
+    "userRoundCog": {
+      "lucide": "user-round-cog"
+    },
+    "utensils": {
+      "lucide": "utensils"
+    },
+    "vibrate": {
+      "lucide": "vibrate"
+    },
+    "video": {
+      "lucide": "video"
+    },
+    "water": {
+      "lucide": "droplet"
+    },
+    "weight": {
+      "lucide": "weight"
+    },
+    "wellness": {
+      "lucide": "heart-pulse"
+    },
+    "wheat": {
+      "lucide": "wheat"
+    },
+    "workout": {
+      "lucide": "dumbbell"
+    },
+    "wrench": {
+      "lucide": "wrench"
+    },
+    "x": {
+      "lucide": "x"
+    },
+    "zap": {
+      "lucide": "zap"
+    },
+    "zapOff": {
+      "lucide": "zap-off"
+    }
+  },
+  "licenseFile": "lucide.txt",
+  "licenseSha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57"
+}

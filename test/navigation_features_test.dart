@@ -54,8 +54,8 @@ void main() {
             'nav-dashboard',
             'nav-journal',
             'quick-add-menu',
+            'nav-workouts',
             'nav-progress',
-            'nav-profile',
           ];
           final rects = [
             for (final key in keys) tester.getRect(find.byKey(ValueKey(key))),
@@ -71,15 +71,11 @@ void main() {
           expect(rects[2].center.dx, closeTo(width / 2, 1));
           for (final entry in [
             ('nav-journal', AppRoutes.journal),
+            ('nav-workouts', AppRoutes.workouts),
             ('nav-progress', AppRoutes.progress),
-            ('nav-profile', AppRoutes.profile),
             ('nav-dashboard', AppRoutes.dashboard),
           ]) {
-            if (entry.$1 == 'nav-profile') {
-              await openProfileFromShell(tester);
-            } else {
-              await tester.tap(find.byKey(ValueKey(entry.$1)));
-            }
+            await tester.tap(find.byKey(ValueKey(entry.$1)));
             await tester.pumpAndSettle();
             expect(
               container
@@ -90,7 +86,22 @@ void main() {
                   .path,
               entry.$2,
             );
+            for (final key in keys) {
+              expect(find.byKey(ValueKey(key)), findsOneWidget);
+            }
           }
+          expect(find.byKey(const ValueKey('nav-profile')), findsNothing);
+          await tester.tap(find.byKey(const ValueKey('profile-avatar')));
+          await tester.pumpAndSettle();
+          expect(
+            container
+                .read(appRouterProvider)
+                .routeInformationProvider
+                .value
+                .uri
+                .path,
+            AppRoutes.profile,
+          );
           // Browsing tabs must not create an AI service or scanner session.
           expect(container.exists(chatControllerProvider), isFalse);
           expect(container.exists(foodScannerServiceProvider), isFalse);
@@ -133,7 +144,7 @@ void main() {
 
   for (final fromMenu in [false, true]) {
     testWidgets(
-      'goals and chat are reachable from ${fromMenu ? 'avatar' : 'profile tab'}',
+      'goals and chat are reachable from ${fromMenu ? 'home avatar' : 'profile route'}',
       (tester) async {
         final ai = FakeKnowledgeService();
         final container = await pumpApp(
@@ -151,7 +162,8 @@ void main() {
             await tester.tap(find.byKey(const ValueKey('profile-avatar')));
             await tester.pumpAndSettle();
           } else {
-            await openProfileFromShell(tester);
+            container.read(appRouterProvider).go(AppRoutes.profile);
+            await tester.pumpAndSettle();
           }
           await tapVisible(tester, find.byKey(ValueKey(destination.$2)));
           expect(

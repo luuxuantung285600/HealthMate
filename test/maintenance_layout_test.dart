@@ -1,3 +1,4 @@
+import 'support/load_icon_font.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
@@ -11,9 +12,12 @@ import 'package:healthmate/features/journal/presentation/daily_summary_card.dart
 
 void main() {
   setUpAll(() async {
-    final loader = FontLoader('Inter');
+    await loadIconFont();
+    final loader = FontLoader('Public Sans');
     for (final name in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      loader.addFont(rootBundle.load('assets/fonts/inter/Inter-$name.ttf'));
+      loader.addFont(
+        rootBundle.load('assets/fonts/public_sans/PublicSans-$name.ttf'),
+      );
     }
     await loader.load();
     await (FontLoader(

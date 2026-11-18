@@ -55,13 +55,23 @@
   "addedFoods": 3563,
   "retainedFoods": 7606,
   "bundledTotal": 11169,
-  "assetBytes": 4424501,
-  "assetSha256": "e17c072a00beb47499b89280b3a736d08277bc4d0cb51c893b619d46290d9d20",
+  "assetBytes": 4424772,
+  "assetSha256": "e4658ddc2e9590bfda6c55f150f4fe9dba77984dd0fea7e5299470c3f5304230",
   "energyPolicy": "Foundation 2048 > 2047 > 1008; FNDDS 1008; only kcal units accepted",
   "notes": [
     "Dataset release is not food measurement date.",
     "FNDDS values can be compiled from older reference compositions and recipes.",
     "Historical IDs and meal snapshots are unchanged.",
     "Survey ingredients and dietary class remain unknown; no allergy certification."
-  ]
+  ],
+  "browseMetadata": {
+    "reviewedOn": "2026-11-10",
+    "manifest": "fruit-drink-browse.json",
+    "groups": {
+      "fruits": 100,
+      "drinks": 100
+    },
+    "nutritionUnchanged": true,
+    "sourcePortionsReviewed": 63
+  }
 }

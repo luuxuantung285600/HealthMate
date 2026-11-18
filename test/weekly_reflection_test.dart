@@ -305,7 +305,7 @@ void main() {
       ); // Selected day and previous-day meal reuse.
       expect(w.activeDayListeners, 1);
       expect(a.activeDayListeners, 1);
-      await tester.tap(find.byKey(const ValueKey('nav-profile')));
+      await tester.tap(find.byKey(const ValueKey('profile-avatar')));
       await tester.pumpAndSettle();
       // Profile manages the account and goals, without duplicate daily journals.
       expect(n.activeDayListeners, 0);

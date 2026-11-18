@@ -1,5 +1,6 @@
 import {registerHooks,createRequire} from 'node:module';import {pathToFileURL} from 'node:url';
 import test from 'node:test';import assert from 'node:assert/strict';
+import {foodPayload,entityVersion} from '../dist/validation.mjs';
 const require=createRequire(new URL('../../rules-tests/package.json',import.meta.url));
 const hooks=registerHooks({resolve(specifier,context,next){const match=/^https:\/\/www\.gstatic\.com\/firebasejs\/13\.0\.0\/firebase-(app|auth|firestore|app-check)\.js$/.exec(specifier);return match?{url:pathToFileURL(require.resolve(`firebase/${match[1]}`)).href,shortCircuit:true}:next(specifier,context);}});
 const store=new Map();globalThis.window={sessionStorage:{setItem:(k,v)=>store.set(k,v),getItem:k=>store.get(k)??null,removeItem:k=>store.delete(k)}};globalThis.location={hostname:'127.0.0.1',protocol:'http:'};
@@ -12,6 +13,23 @@ async function write(path,fields){const response=await fetch(`${base}/${path}`,{
 function stream(attach){let latest,fail;const stop=attach(value=>{latest=value;},error=>{if(!/Đang kết nối lại/.test(error.message))fail=error;});return{stop,get value(){return latest;},get error(){return fail;},async until(matches){const end=Date.now()+15000;while(Date.now()<end){if(fail)throw fail;if(latest!==undefined&&matches(latest))return latest;await pauses(40);}throw Error('Live SDK timeout; last emulator snapshot: '+JSON.stringify(latest));}};}
 test.before(async()=>{await api.login('admin@healthmate.local','LocalHealthMate!2026');const gate=stream((next,error)=>api.role(user.uid,next,error));await gate.until(value=>value===true);stopRole=gate.stop;});
 test.after(async()=>{api.stopAll();stopRole?.();const {disableNetwork,terminate,getFirestore}=require('firebase/firestore');await disableNetwork(getFirestore());await api.logout();stopAuth();await terminate(getFirestore());hooks.deregister();const {deleteApp,getApps}=require('firebase/app');await Promise.all(getApps().map(deleteApp));});
+
+test('catalog filter source observes every result beyond page 25, photo changes and cleanup',async()=>{
+  const prefix=`rt-full-food-${Date.now()}-`;
+  const ids=Array.from({length:27},(_,i)=>prefix+String(i).padStart(2,'0'));
+  const live=stream((next,error)=>api.watchFoodCatalog({idFrom:prefix,idTo:prefix+'z'},next,error));
+  try {
+    await live.until(rows=>rows.length===0);
+    await Promise.all(ids.map((id,i)=>write(`food_catalog/${id}`,{name:{stringValue:`Fixture ${i}`},category:{stringValue:'Hải sản'},isActive:{booleanValue:true}})));
+    const all=await live.until(rows=>rows.length===27);
+    assert.equal(all.at(-1).id,ids.at(-1));
+    await write(`food_catalog/${ids[26]}`,{name:{stringValue:'Ảnh thay đổi trực tiếp'},photo:{mapValue:{fields:{mode:{stringValue:'hidden'}}}},isActive:{booleanValue:false}});
+    await live.until(rows=>rows[26]?.photo?.mode==='hidden'&&rows[26]?.isActive===false);
+    live.stop();const last=live.value;
+    await write(`food_catalog/${ids[26]}`,null);await pauses(100);
+    assert.equal(live.value,last,'Disposed complete catalog listener cannot receive changes');
+  } finally {live.stop();await Promise.all(ids.map(id=>write(`food_catalog/${id}`,null)));}
+});
 
 test('Spark operational totals update without Cloud Functions, exclude orphan locks and stop after disposal',async()=>{
   const {createLiveData}=await import('../dist/live-data.mjs');
@@ -45,6 +63,111 @@ test('real web page listener receives create, edit, archive, restore and delete 
     await write(`food_catalog/${id}`,{name:{stringValue:'Restored'},isActive:{booleanValue:true}});await live.until(page=>page.rows[0]?.name==='Restored');
     await write(`food_catalog/${id}`,null);await live.until(page=>page.rows.length===0);
   }finally{live.stop();await write(`food_catalog/${id}`,null);}
+});
+
+test('audited admin photo saves stream to other clients and retain conflict protection',async()=>{
+  const id=`rt-photo-${Date.now()}`;
+  const live=stream((next,error)=>api.watchPage('food_catalog',{idFrom:id,idTo:id},next,error));
+  const payload=foodPayload({name:'Phở kiểm thử emulator',category:'Fixture',kcalPer100g:100,
+    proteinGPer100g:10,carbsGPer100g:12,fatGPer100g:2,fiberGPer100g:'',
+    sourceLabel:'Fixture local',sourceUrl:'https://example.com/food',isActive:true,isEstimated:true,
+    photoMode:'custom','photo-url':'https://example.com/pho.webp','photo-title':'Phở fixture',
+    'photo-author':'Fixture owner','photo-sourceUrl':'https://example.com/pho',
+    'photo-license':'CC0','photo-licenseUrl':'https://creativecommons.org/publicdomain/zero/1.0/'});
+  try {
+    await live.until(page=>page.rows.length===0);
+    await api.save('food_catalog',id,payload,'Thêm ảnh fixture local',null);
+    let row=(await live.until(page=>page.rows[0]?.photo?.mode==='custom')).rows[0];
+    assert.equal(row.photo.url,payload.photo.url);
+    const stale=entityVersion(row);
+    await api.save('food_catalog',id,{photo:{mode:'hidden'}},'Gỡ ảnh fixture local',stale);
+    row=(await live.until(page=>page.rows[0]?.photo?.mode==='hidden')).rows[0];
+    await assert.rejects(()=>api.save('food_catalog',id,{photo:payload.photo},'Bản cũ',stale),/đã được thay đổi/);
+    const {getDocFromServer,doc,getFirestore}=require('firebase/firestore');
+    const audit=await getDocFromServer(doc(getFirestore(),'admin_audit',row.lastAdminOperationId));
+    assert.ok(audit.data().changedFields.includes('photo'));
+    await api.save('food_catalog',id,{photo:{mode:'default'}},'Khôi phục ảnh mặc định',entityVersion(row));
+    await live.until(page=>page.rows[0]?.photo?.mode==='default');
+  } finally { live.stop();await write(`food_catalog/${id}`,null); }
+});
+
+test('full food form saves unchanged nutrient and photo maps with an exact audit and realtime update',async()=>{
+  const id=`rt-full-form-${Date.now()}`;
+  const live=stream((next,error)=>api.watchPage('food_catalog',{idFrom:id,idTo:id},next,error));
+  const {getDocFromServer,doc,getFirestore}=require('firebase/firestore');
+  const fields={name:'Món kiểm thử form đầy đủ',category:'Fixture',kcalPer100g:100,
+    proteinGPer100g:10,carbsGPer100g:12,fatGPer100g:2,fiberGPer100g:'',
+    sourceLabel:'Fixture local',sourceUrl:'https://example.com/nutrition',isActive:true,isEstimated:true,
+    sugarGPer100g:3,sodiumMgPer100g:400,
+    photoMode:'custom','photo-url':'https://example.com/food.webp','photo-title':'Món fixture',
+    'photo-author':'Fixture owner','photo-sourceUrl':'https://example.com/food',
+    'photo-license':'CC0','photo-licenseUrl':'https://creativecommons.org/publicdomain/zero/1.0/'};
+  const readAudit=async row=>(await getDocFromServer(doc(getFirestore(),'admin_audit',row.lastAdminOperationId))).data();
+  const read=async()=>(await getDocFromServer(doc(getFirestore(),'food_catalog',id))).data();
+  try {
+    await live.until(page=>page.rows.length===0);
+    const payload=foodPayload(fields,{extraNutrientsPer100g:{calcium:50,potassium:120}});
+    await api.save('food_catalog',id,payload,'Tạo fixture form local',null);
+    let row=await read();
+    // Map order can differ between a stored record and the form. Force a
+    // different insertion order because the emulator may echo the write order.
+    // The old JSON.stringify comparison denied this equivalent payload.
+    const edited=foodPayload({...fields,name:'Tên đã chỉnh sửa'},row);
+    edited.extraNutrientsPer100g=Object.fromEntries(Object.entries(row.extraNutrientsPer100g).reverse());
+    edited.photo=Object.fromEntries(Object.entries(row.photo).reverse());
+    assert.notEqual(JSON.stringify(row.extraNutrientsPer100g),JSON.stringify(edited.extraNutrientsPer100g));
+    assert.notEqual(JSON.stringify(row.photo),JSON.stringify(edited.photo));
+    await api.save('food_catalog',id,edited,'Chỉ sửa tên, giữ ảnh và dinh dưỡng',entityVersion(row));
+    await live.until(page=>page.rows[0]?.name===edited.name);
+    row=await read();
+    assert.deepEqual(row.photo,payload.photo);assert.deepEqual(row.extraNutrientsPer100g,payload.extraNutrientsPer100g);
+    assert.deepEqual((await readAudit(row)).changedFields.sort(),['lastAdminOperationId','name','updatedAt'].sort());
+    const beforeNoop=row;
+    await api.save('food_catalog',id,foodPayload({...fields,name:row.name},row),'Giữ nguyên dữ liệu món',entityVersion(row));
+    row=await read();assert.notEqual(row.lastAdminOperationId,beforeNoop.lastAdminOperationId);
+    assert.deepEqual((await readAudit(row)).changedFields.sort(),['lastAdminOperationId','updatedAt'].sort());
+    const changed=foodPayload({...fields,name:row.name,sugarGPer100g:0,'photo-url':'https://example.com/new.webp'},row);
+    await api.save('food_catalog',id,changed,'Thay ảnh và đường thật sự',entityVersion(row));
+    await live.until(page=>page.rows[0]?.photo?.url===changed.photo.url&&page.rows[0]?.extraNutrientsPer100g?.sugar===0);
+    row=await read();assert.deepEqual((await readAudit(row)).changedFields.sort(),['extraNutrientsPer100g','photo','lastAdminOperationId','updatedAt'].sort());
+    const beforeForged=row,{writeBatch,serverTimestamp}=require('firebase/firestore'),auditId=`forged-${Date.now()}`;
+    const batch=writeBatch(getFirestore());
+    batch.set(doc(getFirestore(),'food_catalog',id),{...row,updatedAt:serverTimestamp(),lastAdminOperationId:auditId});
+    batch.set(doc(getFirestore(),'admin_audit',auditId),{actorUid:user.uid,entityType:'food_catalog',entityId:id,at:serverTimestamp(),changedFields:['extraNutrientsPer100g','lastAdminOperationId','updatedAt'],reason:'Audit sai phải bị từ chối'});
+    await assert.rejects(batch.commit(),error=>error.code==='permission-denied');
+    assert.equal((await read()).lastAdminOperationId,beforeForged.lastAdminOperationId,'Rejected audit leaves the saved food unchanged');
+  } finally {live.stop();await write(`food_catalog/${id}`,null);}
+});
+
+test('URL-only photo updates keep nutrition unchanged, stream to another client and preserve legacy credits until URL changes',async()=>{
+  const id=`rt-url-photo-${Date.now()}`;
+  const {photoPayload}=await import('../dist/food-photos.mjs');
+  const {getDocFromServer,doc,getFirestore}=require('firebase/firestore');
+  const live=stream((next,error)=>api.watchPage('food_catalog',{idFrom:id,idTo:id},next,error));
+  const basePayload=foodPayload({name:'Ảnh chỉ URL fixture',category:'Fixture',kcalPer100g:100,
+    proteinGPer100g:10,carbsGPer100g:12,fatGPer100g:2,fiberGPer100g:'',
+    sourceLabel:'Fixture local',sourceUrl:'https://example.com/nutrition',isActive:true,isEstimated:true});
+  const legacy={mode:'custom',url:'https://example.com/old.webp',title:'Ảnh cũ fixture',author:'Fixture owner',
+    sourceUrl:'https://example.com/source',license:'CC0',licenseUrl:'https://creativecommons.org/publicdomain/zero/1.0/'};
+  const read=async()=>(await getDocFromServer(doc(getFirestore(),'food_catalog',id))).data();
+  try {
+    await live.until(page=>page.rows.length===0);
+    await api.save('food_catalog',id,{...basePayload,photo:legacy},'Tạo fixture ảnh có nguồn',null);
+    let row=await read();
+    const kept=photoPayload({photoMode:'custom','photo-url':legacy.url},row.photo);
+    assert.deepEqual(kept,legacy);
+    await api.save('food_catalog',id,{photo:kept},'Giữ ảnh hiện tại',entityVersion(row));
+    row=await read();assert.deepEqual(row.photo,legacy);
+    const replacement=photoPayload({photoMode:'custom','photo-url':'https://example.com/apple.jpg'},row.photo);
+    assert.deepEqual(replacement,{mode:'custom',url:'https://example.com/apple.jpg'});
+    await api.save('food_catalog',id,{photo:replacement},'Cập nhật ảnh món ăn',entityVersion(row));
+    await live.until(page=>page.rows[0]?.photo?.url===replacement.url);
+    row=await read();assert.deepEqual(row.photo,replacement);
+    for(const [key,value]of Object.entries(basePayload))if(key!=='photo')assert.deepEqual(row[key],value,`Photo-only edit must preserve ${key}`);
+    const audit=(await getDocFromServer(doc(getFirestore(),'admin_audit',row.lastAdminOperationId))).data();
+    assert.equal(audit.reason,'Cập nhật ảnh món ăn');
+    assert.deepEqual(audit.changedFields.sort(),['photo','updatedAt','lastAdminOperationId'].sort());
+  } finally {live.stop();await write(`food_catalog/${id}`,null);}
 });
 
 test('directory page also listens to role/control changes even when the directory document stays unchanged',async()=>{

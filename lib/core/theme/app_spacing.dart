@@ -21,6 +21,7 @@ abstract final class AppSpacing {
   static const double cardRadius = DesignTokens.cardRadius; // 20px (was 24px)
   static const double controlRadius =
       DesignTokens.buttonRadius; // 16px (was 18px)
+  static const double groupRadius = DesignTokens.radiusSm; // 12px
   static const double navigationRadius =
       DesignTokens.radiusXl; // 24px (was 30px)
 

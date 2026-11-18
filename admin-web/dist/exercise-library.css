@@ -1,0 +1,66 @@
+.exercise-toolbar{flex-wrap:wrap;justify-content:flex-start;gap:10px}
+#healthmate-admin-exercise-background-defs{position:absolute;width:0;height:0;pointer-events:none}
+.exercise-toolbar .search{flex:1 1 220px;max-width:none}
+.exercise-toolbar select{flex:0 1 auto}
+.exercise-overview{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 20px}
+.exercise-overview span{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-raised);font-size:12px;color:var(--muted)}
+.exercise-overview strong{font-size:15px;color:var(--text)}
+.exercise-table td{vertical-align:middle}
+.exercise-name{display:flex;align-items:center;gap:14px;min-width:250px}
+.exercise-name strong{display:block;font-size:13px;line-height:1.6}
+.exercise-name small{display:block;margin-top:5px}
+.exercise-group{display:grid;gap:6px;min-width:140px;line-height:1.5}
+.exercise-status{display:inline-block;white-space:nowrap;padding:5px 9px;border-radius:7px;font-size:11px;background:var(--success-bg);color:var(--success-text)}
+.exercise-status.off{background:var(--surface-raised);color:var(--muted)}
+.exercise-table .row-actions{min-width:170px;white-space:normal}
+.exercise-table .row-actions button{margin:3px}
+.exercise-media{max-width:100%;width:240px;display:grid;gap:8px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--input);color:var(--text)}
+.exercise-media-frame{height:180px;display:grid;place-items:center;overflow:hidden;border-radius:8px;background:#fff;color:#666}
+.exercise-media-frame img{display:block;width:auto;height:100%;max-width:100%;aspect-ratio:1;object-fit:contain}
+:root[data-theme="dark"] .exercise-media-frame{background:#000;color:var(--muted)}
+:root[data-theme="dark"] .exercise-media-frame img[src^="https://static.exercisedb.dev/media/"]{filter:url(#healthmate-admin-exercise-background-v4);image-rendering:auto}
+.exercise-detail-image{display:block;object-fit:contain;width:100%;max-width:320px;height:auto;aspect-ratio:1}
+:root[data-theme="dark"] .exercise-detail-image[src^="https://static.exercisedb.dev/media/"]{background:#000;filter:url(#healthmate-admin-exercise-background-v4);image-rendering:auto}
+.exercise-media-placeholder{font-size:12px;letter-spacing:1px;font-weight:600}
+.exercise-media-status{font-size:11px;color:var(--muted);line-height:1.5;overflow-wrap:anywhere}
+.exercise-media.compact{flex:0 0 112px;width:112px;padding:5px;gap:4px}
+.exercise-media.compact .exercise-media-frame{height:88px}
+.exercise-media-control{justify-content:center;min-height:36px;white-space:normal}
+.exercise-media.compact .exercise-media-control{padding:5px;font-size:11px}
+.exercise-media.compact .exercise-media-status{font-size:10px}
+.exercise-source-note{margin-bottom:16px}
+#editor.exercise-source-dialog{width:min(1100px,96vw);max-width:1100px}
+.exercise-source-browser{display:grid;gap:14px}
+.exercise-source-toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:0}
+.exercise-source-toolbar .search{flex:1 1 260px;max-width:none}
+.exercise-source-toolbar select{flex:1 1 180px;min-width:0}
+.exercise-source-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-height:360px;overflow:auto}
+.exercise-source-row{display:grid;grid-template-columns:104px minmax(0,1fr);align-items:start;gap:10px 14px;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--input)}
+.exercise-source-info{min-width:0;overflow-wrap:anywhere}
+.exercise-source-row h3{font-size:14px;line-height:1.5;margin:0 0 8px;overflow-wrap:anywhere}
+.exercise-source-row p{font-size:12px;margin:0 0 6px}
+.exercise-source-row small{display:block;color:var(--muted)}
+.exercise-source-row button{font-size:12px;white-space:normal}
+.exercise-source-action{grid-column:2;justify-self:start;min-height:36px}
+.exercise-source-thumbnail{grid-row:span 2;display:grid;gap:6px;min-width:0;text-align:center}
+.exercise-source-row .exercise-source-thumb-frame{display:grid;place-items:center;width:104px;height:104px;overflow:hidden;padding:0;border:1px solid var(--line);border-radius:8px;background:#fff;color:#666}
+.exercise-source-thumb-image{display:block;width:100%;height:100%;object-fit:contain}
+.exercise-source-thumb-label{font-size:10px;line-height:1.4;color:var(--muted)}
+.exercise-source-thumbnail button[hidden]{display:none}
+:root[data-theme="dark"] .exercise-source-thumb-frame{background:#000;color:var(--muted)}
+:root[data-theme="dark"] .exercise-source-thumb-image{filter:url(#healthmate-admin-exercise-background-v4);image-rendering:auto}
+.exercise-source-badge{display:inline-block;margin-top:8px;padding:4px 8px;border:1px solid var(--line);border-radius:6px;font-size:11px;color:var(--muted)}
+.exercise-source-pager,.exercise-source-detail-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.exercise-source-detail{border-top:1px solid var(--line);padding-top:18px}
+.exercise-source-detail[hidden]{display:none}
+.exercise-source-detail-head h3{font-size:17px;line-height:1.5}
+.exercise-source-detail-body{display:grid;grid-template-columns:240px minmax(0,1fr);align-items:start;gap:22px;margin:14px 0}
+.exercise-source-detail li,.exercise-source-reference li{line-height:1.7;margin-bottom:8px;overflow-wrap:anywhere}
+.exercise-source-reference{padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--input)}
+.exercise-source-reference h3{font-size:16px;margin-top:0}
+.exercise-source-reference summary{cursor:pointer;font-weight:600;line-height:1.5}
+@media(max-width:740px){.exercise-source-results{grid-template-columns:1fr;max-height:280px}.exercise-source-detail-body{grid-template-columns:1fr}.exercise-source-detail-body .exercise-media{width:240px;justify-self:center}.exercise-source-pager{flex-wrap:wrap}.exercise-source-detail-head{align-items:flex-start}}
+/* Keep the image above 90px so the backdrop filter's morphology kernel does
+   not round down to zero at the smallest supported viewport. */
+@media(max-width:440px){.exercise-source-row{grid-template-columns:96px minmax(0,1fr);gap:8px 10px;padding:10px}.exercise-source-row .exercise-source-thumb-frame{width:96px;height:96px}.exercise-source-row h3{font-size:13px}.exercise-source-action{padding:7px 9px;text-align:left}}
+@media(max-width:660px){.exercise-toolbar .search,.exercise-toolbar select{flex-basis:100%;width:100%}.exercise-overview{gap:8px}.exercise-overview span{padding:8px}.exercise-name{min-width:210px;gap:10px}}

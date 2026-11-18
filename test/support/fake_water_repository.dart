@@ -3,6 +3,7 @@ import 'package:healthmate/core/utils/local_date_key.dart';
 
 import 'package:healthmate/features/water/data/water_repository.dart';
 import 'package:healthmate/features/water/models/water_log.dart';
+import 'package:healthmate/features/journal/models/daily_log_failure.dart';
 
 class FakeWaterRepository implements WaterRepository {
   FakeWaterRepository({List<WaterLog>? logs}) : _logs = [...?logs];
@@ -12,6 +13,8 @@ class FakeWaterRepository implements WaterRepository {
   int addCalls = 0;
   int updateCalls = 0;
   int deleteCalls = 0;
+  int undoCalls = 0;
+  final _editedIds = <String>{};
   int rangeCalls = 0;
   Object? rangeError;
   int activeDayListeners = 0;
@@ -62,12 +65,37 @@ class FakeWaterRepository implements WaterRepository {
   }
 
   @override
+  Future<void> undoAdd({
+    required String uid,
+    required String logId,
+    required WaterLogDraft draft,
+  }) async {
+    undoCalls++;
+    final index = _logs.indexWhere((log) => log.id == logId);
+    if (index < 0) return;
+    final log = _logs[index];
+    if (_editedIds.contains(logId) ||
+        log.amountMl != draft.amountMl ||
+        log.consumedAt != draft.consumedAt ||
+        log.dateKey != draft.dateKey ||
+        log.timezoneOffsetMinutes != draft.timezoneOffsetMinutes) {
+      throw const DailyLogFailure(
+        'Lần ghi này đã được chỉnh sửa. Hãy kiểm tra trong nhật ký để sửa hoặc xóa.',
+        code: 'water-entry-changed',
+      );
+    }
+    _logs.removeAt(index);
+    _changes.add(null);
+  }
+
+  @override
   Future<void> update({
     required String uid,
     required String logId,
     required WaterLogDraft draft,
   }) async {
     updateCalls++;
+    _editedIds.add(logId);
     final index = _logs.indexWhere((log) => log.id == logId);
     if (index >= 0) _logs[index] = _toLog(logId, draft);
     _changes.add(null);

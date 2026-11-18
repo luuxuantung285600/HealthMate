@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -5,13 +6,93 @@ import 'package:intl/intl.dart';
 import '../../../core/utils/local_date_key.dart';
 import '../../../core/widgets/confirmed_save.dart';
 import '../../../shared/providers/local_clock_provider.dart';
+import '../../../core/theme/home_palette.dart';
+import '../../../core/theme/app_feature_visuals.dart';
 import '../../nutrition/models/nutrition_models.dart';
 import '../../food_library/presentation/food_nutrition_text.dart';
 import '../../nutrition_targets/models/nutrition_target.dart';
 import '../../nutrition_targets/providers/nutrition_target_providers.dart';
 import '../../nutrition_targets/presentation/nutrition_target_form.dart';
 import '../../wellness/providers/energy_providers.dart';
-import '../../nutrition/presentation/macro_distribution.dart';
+
+class _DiaryProgressGrid extends StatelessWidget {
+  const _DiaryProgressGrid({required this.metrics});
+  final List<(String, double?, double?, IconData, Color)> metrics;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final scale = MediaQuery.textScalerOf(context).scale(1);
+      final columns = scale > 1.7
+          ? 1
+          : constraints.maxWidth >= 260 && scale <= 1.1
+          ? 4
+          : 2;
+      String amount(double? value) =>
+          value == null ? '—' : NumberFormat('0.#', 'vi').format(value);
+      Widget metric((String, double?, double?, IconData, Color) entry) {
+        final (label, value, goal, icon, color) = entry;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: color, size: 20),
+            const SizedBox(height: 6),
+            Text(
+              '${amount(value)} / ${amount(goal)}',
+              key: label == 'kcal'
+                  ? const ValueKey('nutrition-daily-totals')
+                  : ValueKey('journal-progress-$label'),
+              semanticsLabel:
+                  '${amount(value)} ${label == 'kcal' ? 'kcal' : 'g'} / ${amount(goal)} ${label == 'kcal' ? 'kcal' : 'g'}',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            Text(
+              label == 'kcal' ? 'kcal' : '$label (g)',
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
+            const Spacer(),
+            const SizedBox(height: 8),
+            Semantics(
+              label: '$label ${amount(value)} trên mục tiêu ${amount(goal)}',
+              child: LinearProgressIndicator(
+                minHeight: 5,
+                borderRadius: BorderRadius.circular(8),
+                color: color,
+                value: value == null || goal == null || goal <= 0
+                    ? 0
+                    : (value / goal).clamp(0, 1),
+              ),
+            ),
+          ],
+        );
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var start = 0; start < metrics.length; start += columns) ...[
+            if (start > 0) const SizedBox(height: 14),
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (
+                    var index = start;
+                    index < start + columns && index < metrics.length;
+                    index++
+                  ) ...[
+                    if (index > start) const SizedBox(width: 12),
+                    Expanded(child: metric(metrics[index])),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ],
+      );
+    },
+  );
+}
 
 /// The diary and its applicable target share one overview, with independent
 /// loading/errors. Never turn stale AsyncValue data into a confirmed total.
@@ -79,34 +160,41 @@ class JournalNutritionOverview extends ConsumerWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: totals == null
-                                ? '—'
-                                : NumberFormat(
-                                    '#,##0.#',
-                                    'vi',
-                                  ).format(totals.kcal),
-                            style: const TextStyle(fontSize: 31),
+                    child: _DiaryProgressGrid(
+                      metrics: [
+                        (
+                          'kcal',
+                          totals?.kcal,
+                          budget?.kcalTarget,
+                          AppIcons.flame,
+                          AppFeatureVisual.nutrition.foreground(
+                            theme.brightness,
                           ),
-                          TextSpan(
-                            text:
-                                '  / ${budget == null ? '—' : NumberFormat('#,##0.#', 'vi').format(budget.kcalTarget)} kcal đã ghi',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                      ),
-                      semanticsLabel:
-                          '${amount(totals?.kcal)} kcal / ${goal(budget?.kcalTarget)} kcal',
-                      key: const ValueKey('nutrition-daily-totals'),
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w400,
-                      ),
+                        ),
+                        (
+                          'Đạm',
+                          totals?.proteinKnown == false
+                              ? null
+                              : totals?.proteinG,
+                          target?.proteinGTarget,
+                          AppIcons.zap,
+                          HomePalette.protein,
+                        ),
+                        (
+                          'Carb',
+                          totals?.carbsKnown == false ? null : totals?.carbsG,
+                          target?.carbsGTarget,
+                          AppIcons.wheat,
+                          HomePalette.carbs,
+                        ),
+                        (
+                          'Chất béo',
+                          totals?.fatKnown == false ? null : totals?.fatG,
+                          target?.fatGTarget,
+                          AppIcons.droplet,
+                          HomePalette.fat,
+                        ),
+                      ],
                     ),
                   ),
                   IconButton(
@@ -137,7 +225,7 @@ class JournalNutritionOverview extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    icon: const Icon(Icons.more_horiz),
+                    icon: const Icon(AppIcons.ellipsis),
                   ),
                 ],
               ),
@@ -159,7 +247,7 @@ class JournalNutritionOverview extends ConsumerWidget {
                       tooltip: 'Thử tải lại mục tiêu',
                       onPressed: () =>
                           ref.invalidate(nutritionTargetProvider(key)),
-                      icon: const Icon(Icons.refresh),
+                      icon: const Icon(AppIcons.refreshCw),
                     ),
                   ],
                 ),
@@ -172,7 +260,7 @@ class JournalNutritionOverview extends ConsumerWidget {
                 Text(budget!.explanation),
               if (budget != null && budget.adjustmentKcal > 0)
                 Text(
-                  'Gốc ${amount(target?.kcalTarget)} + bước đã xác nhận ${amount(budget.adjustmentKcal)} kcal · ước tính',
+                  'Gốc ${amount(target?.kcalTarget)} + vận động đã xác nhận ${amount(budget.adjustmentKcal)} kcal · ước tính',
                 ),
               if (targetReady && target == null)
                 TextButton(
@@ -180,8 +268,6 @@ class JournalNutritionOverview extends ConsumerWidget {
                   onPressed: () => openNutritionTargetForm(context, ref, null),
                   child: const Text('Chưa đặt mục tiêu'),
                 ),
-              const SizedBox(height: 8),
-              MacroDistribution(totals: totals),
             ],
           ),
         ),
@@ -206,7 +292,7 @@ class JournalNutritionOverview extends ConsumerWidget {
               Text(comparison(totals.kcal, budget.kcalTarget, 'kcal')),
             if (budget != null && budget.adjustmentKcal > 0)
               Text(
-                'Gốc ${amount(target?.kcalTarget)} + bước đã xác nhận ${amount(budget.adjustmentKcal)} kcal · ước tính',
+                'Gốc ${amount(target?.kcalTarget)} + vận động đã xác nhận ${amount(budget.adjustmentKcal)} kcal · ước tính',
               ),
             if (budget?.hasUnappliedAdjustment == true)
               Text(budget!.explanation),
@@ -328,7 +414,7 @@ class JournalNutritionOverview extends ConsumerWidget {
                       ref,
                       key == today ? target : null,
                     ),
-                    icon: const Icon(Icons.edit_outlined, size: 18),
+                    icon: const Icon(AppIcons.squarePen, size: 18),
                     label: Text(
                       key != today
                           ? 'Thiết lập từ hôm nay'

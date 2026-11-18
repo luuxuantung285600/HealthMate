@@ -1,3 +1,4 @@
+import 'support/load_icon_font.dart';
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -81,9 +82,12 @@ Future<void> _capture(GlobalKey key, WidgetTester tester, String name) async {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async {
-    final font = FontLoader('Inter');
+    await loadIconFont();
+    final font = FontLoader('Public Sans');
     for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      font.addFont(rootBundle.load('assets/fonts/inter/Inter-$weight.ttf'));
+      font.addFont(
+        rootBundle.load('assets/fonts/public_sans/PublicSans-$weight.ttf'),
+      );
     }
     await font.load();
     await (FontLoader(
@@ -271,10 +275,8 @@ void main() {
         );
         container.read(appRouterProvider).go(AppRoutes.journal);
         await tester.pumpAndSettle();
-        await tester.tap(find.byKey(const ValueKey('journal-add-meal')));
-        await tester.pumpAndSettle();
-        await tester.tap(find.byKey(const ValueKey('meal-entry-photo')));
-        await tester.pumpAndSettle();
+        await _tap(tester, find.byKey(const ValueKey('journal-add-meal')));
+        await _tap(tester, find.byKey(const ValueKey('meal-entry-photo')));
         expect(find.textContaining('Chưa cấp quyền camera.'), findsOneWidget);
         expect(find.byKey(const ValueKey('camera-gallery')), findsOneWidget);
         denied = false;

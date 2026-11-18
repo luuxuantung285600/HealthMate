@@ -20,8 +20,18 @@ class IconChip extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     width: size,
     height: size,
-    decoration: BoxDecoration(color: backgroundColor, shape: BoxShape.circle),
+    decoration: ShapeDecoration(
+      color: backgroundColor,
+      shape: ContinuousRectangleBorder(
+        borderRadius: BorderRadius.circular(size * .65),
+      ),
+    ),
     alignment: Alignment.center,
-    child: Icon(icon, color: foregroundColor, size: size * 0.5),
+    child: Icon(
+      icon,
+      color: foregroundColor,
+      size: size * .59,
+      applyTextScaling: false,
+    ),
   );
 }

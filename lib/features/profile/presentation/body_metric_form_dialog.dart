@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../core/widgets/confirmed_save.dart';
@@ -164,7 +165,7 @@ class _BodyMetricFormDialogState extends State<BodyMetricFormDialog>
                       labelText: 'Cân nặng (kg)',
                       helperText: 'Từ 20 đến 500 kg; có thể nhập dấu phẩy.',
                       helperMaxLines: 3,
-                      prefixIcon: Icon(Icons.monitor_weight_outlined),
+                      prefixIcon: Icon(AppIcons.weight),
                     ),
                     validator: ProfileValidation.weight,
                   ),
@@ -172,14 +173,14 @@ class _BodyMetricFormDialogState extends State<BodyMetricFormDialog>
                   OutlinedButton.icon(
                     key: const ValueKey('metric-date'),
                     onPressed: _pickDate,
-                    icon: const Icon(Icons.calendar_today_outlined),
+                    icon: const Icon(AppIcons.calendar),
                     label: Text(DateFormat('dd/MM/yyyy').format(_measuredAt)),
                   ),
                   const SizedBox(height: 8),
                   OutlinedButton.icon(
                     key: const ValueKey('metric-time'),
                     onPressed: _pickTime,
-                    icon: const Icon(Icons.schedule_outlined),
+                    icon: const Icon(AppIcons.clock3),
                     label: Text(
                       locale.formatTimeOfDay(
                         TimeOfDay.fromDateTime(_measuredAt),
@@ -206,7 +207,7 @@ class _BodyMetricFormDialogState extends State<BodyMetricFormDialog>
                     decoration: const InputDecoration(
                       labelText: 'Ghi chú (không bắt buộc)',
                       alignLabelWithHint: true,
-                      prefixIcon: Icon(Icons.notes_rounded),
+                      prefixIcon: Icon(AppIcons.notepadText),
                     ),
                     validator: ProfileValidation.note,
                   ),

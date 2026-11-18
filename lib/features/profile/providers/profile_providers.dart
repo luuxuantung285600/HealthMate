@@ -10,6 +10,7 @@ import '../models/body_metric.dart';
 import '../models/onboarding_draft.dart';
 import '../models/profile_failure.dart';
 import '../models/user_profile.dart';
+import '../models/profile_appearance.dart';
 
 const profileBootstrapTimeout = Duration(seconds: 12);
 
@@ -136,6 +137,12 @@ class ProfileController extends Notifier<AsyncValue<void>> {
               : null,
         );
   });
+
+  Future<bool> updateIdentity(ProfileIdentityDraft draft) => _perform(
+    (user) => ref
+        .read(healthProfileRepositoryProvider)
+        .updateIdentity(uid: user.uid, draft: draft),
+  );
 
   Future<bool> completeOnboarding(OnboardingDraft draft) => _perform((user) {
     return ref

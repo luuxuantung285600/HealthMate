@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/utils/local_date_key.dart';
 import '../../../core/widgets/app_card.dart';
-import '../../../core/widgets/design_illustration.dart';
+import '../../../core/theme/app_feature_visuals.dart';
+import '../../../core/widgets/feature_icon_badge.dart';
 import '../../../core/widgets/feature_page.dart';
 import '../../../core/widgets/tracking_page.dart';
 import '../../../core/widgets/reference_shortcuts.dart';
@@ -97,7 +98,7 @@ class WellnessHub extends ConsumerWidget {
                   .map((s) => s.duration.inMinutes / 60)
                   .toList() ??
               [],
-          color: const Color(0xFF9D94FF),
+          color: Theme.of(context).colorScheme.primary,
           bars: true,
         ),
       ),
@@ -197,6 +198,12 @@ class WellnessHub extends ConsumerWidget {
         ReferenceShortcuts(
           entries: [
             (
+              label: 'Tập luyện',
+              art: 'activity',
+              key: const ValueKey('hub-open-workouts'),
+              onTap: () => context.push(AppRoutes.workouts),
+            ),
+            (
               label: 'Nhắc bữa',
               art: 'sun',
               key: const ValueKey('hub-open-0'),
@@ -261,16 +268,7 @@ class HabitMetricCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  shape: BoxShape.circle,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: DesignIllustration(art, size: 26),
-                ),
-              ),
+              FeatureIconBadge(AppFeatureVisual.fromArtwork(art)),
               const SizedBox(width: 9),
               Expanded(
                 child: Text(
@@ -284,7 +282,7 @@ class HabitMetricCard extends StatelessWidget {
           Text(
             value,
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontSize: 29,
+              fontSize: 27,
               height: 1.2,
               fontWeight: FontWeight.w400,
             ),

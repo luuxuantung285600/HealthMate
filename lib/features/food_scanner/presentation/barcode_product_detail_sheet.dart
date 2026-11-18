@@ -1,3 +1,5 @@
+import '../../../core/theme/app_icons.dart';
+import '../../../core/theme/reference_palette.dart';
 import 'package:flutter/material.dart';
 import '../../nutrition/models/nutrition_models.dart';
 import '../../nutrition/models/nutrition_validation.dart';
@@ -135,7 +137,7 @@ class _BarcodeProductDetailSheetState extends State<BarcodeProductDetailSheet> {
                   height: 4,
                   margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: theme.colorScheme.outlineVariant,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -169,7 +171,7 @@ class _BarcodeProductDetailSheetState extends State<BarcodeProductDetailSheet> {
                 Text(
                   widget.product.brand!,
                   style: theme.textTheme.titleMedium?.copyWith(
-                    color: Colors.grey[600],
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
               const SizedBox(height: 8),
@@ -179,12 +181,12 @@ class _BarcodeProductDetailSheetState extends State<BarcodeProductDetailSheet> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _ProductMetadata(
-                    icon: Icons.qr_code,
+                    icon: AppIcons.qrCode,
                     text: widget.product.barcode,
                   ),
                   const SizedBox(height: 8),
                   _ProductMetadata(
-                    icon: Icons.source,
+                    icon: AppIcons.fileText,
                     text: widget.product.source,
                   ),
                 ],
@@ -262,7 +264,7 @@ class _BarcodeProductDetailSheetState extends State<BarcodeProductDetailSheet> {
                 _NutritionRow(
                   label: 'Năng lượng',
                   value: '${nutrition.kcal.toStringAsFixed(0)} kcal',
-                  color: Colors.orange,
+                  color: theme.colorScheme.primary,
                 ),
                 _NutritionRow(
                   label: 'Protein',
@@ -270,42 +272,45 @@ class _BarcodeProductDetailSheetState extends State<BarcodeProductDetailSheet> {
                     nutrition.proteinG,
                     nutrition.proteinKnown,
                   ),
-                  color: Colors.blue,
+                  color: ReferencePalette.protein,
                 ),
                 _NutritionRow(
                   label: 'Carbs',
                   value: macroAmount(nutrition.carbsG, nutrition.carbsKnown),
-                  color: Colors.green,
+                  color: ReferencePalette.carb,
                 ),
                 _NutritionRow(
                   label: 'Chất béo',
                   value: macroAmount(nutrition.fatG, nutrition.fatKnown),
-                  color: Colors.red,
+                  color: ReferencePalette.fat,
                 ),
                 _NutritionRow(
                   label: 'Chất xơ',
                   value: macroAmount(nutrition.fiberG, nutrition.fiberKnown),
-                  color: Colors.green,
+                  color: theme.colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Tính cho ${foodNumber(_quantity!)} $_unit · Dữ liệu tham khảo, hãy kiểm tra nhãn sản phẩm.',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
               ] else if (widget.product.nutrition == null)
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.orange[50],
+                    color: theme.colorScheme.surfaceContainerHigh,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Row(
+                  child: Row(
                     children: [
-                      Icon(Icons.warning_amber, color: Colors.orange),
-                      SizedBox(width: 12),
-                      Expanded(
+                      Icon(
+                        AppIcons.triangleAlert,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                      const SizedBox(width: 12),
+                      const Expanded(
                         child: Text(
                           'Sản phẩm này thiếu thông tin dinh dưỡng.\n'
                           'Bạn có thể nhập thủ công sau.',

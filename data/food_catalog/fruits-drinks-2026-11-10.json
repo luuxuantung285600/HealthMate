@@ -1,0 +1,2705 @@
+{
+  "sourceTitle": "Viện Dinh dưỡng, Bảng thành phần thực phẩm Việt Nam (2007)",
+  "sourceUrl": "https://www.fao.org/fileadmin/templates/food_composition/documents/pdf/VTN_FCT_2007.pdf",
+  "basis": "100 g phần ăn được, không tính vỏ/hạt bỏ đi; không quy đổi ml thành g",
+  "reviewedOn": "2026-11-10",
+  "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+  "limitations": [
+    "Giá trị tham khảo, không phải phép đo của quả/đồ uống cụ thể.",
+    "Không coi cellulose là tổng chất xơ; không thay ô thiếu bằng 0.",
+    "Chưa thêm cóc (5043), thanh long (5044), vú sữa (5054): bảng thiếu lipid."
+  ],
+  "withheldNutrients": [
+    {
+      "id": "vn2007-5010",
+      "nutrient": "sugar",
+      "reason": "source_sugar_exceeds_total_carbohydrate",
+      "cells": {
+        "Energy": {
+          "valueCell": "18",
+          "referenceCell": "",
+          "unit": "kcal"
+        },
+        "Protein": {
+          "valueCell": "0.5",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Lipid": {
+          "valueCell": "0.2",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Glucid": {
+          "valueCell": "3.6",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Sugar": {
+          "valueCell": "7.89",
+          "referenceCell": "3",
+          "unit": "g"
+        },
+        "Sodium": {
+          "valueCell": "0",
+          "referenceCell": "1",
+          "unit": "mg"
+        }
+      }
+    },
+    {
+      "id": "vn2007-5012",
+      "nutrient": "sugar",
+      "reason": "source_sugar_exceeds_total_carbohydrate",
+      "cells": {
+        "Energy": {
+          "valueCell": "17",
+          "referenceCell": "",
+          "unit": "kcal"
+        },
+        "Protein": {
+          "valueCell": "0.3",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Lipid": {
+          "valueCell": "0.1",
+          "referenceCell": "3",
+          "unit": "g"
+        },
+        "Glucid": {
+          "valueCell": "3.7",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Sugar": {
+          "valueCell": "8.12",
+          "referenceCell": "3",
+          "unit": "g"
+        },
+        "Sodium": {
+          "valueCell": "18",
+          "referenceCell": "3",
+          "unit": "mg"
+        }
+      }
+    },
+    {
+      "id": "vn2007-5016",
+      "nutrient": "sugar",
+      "reason": "source_sugar_exceeds_total_carbohydrate",
+      "cells": {
+        "Energy": {
+          "valueCell": "31",
+          "referenceCell": "",
+          "unit": "kcal"
+        },
+        "Protein": {
+          "valueCell": "0.9",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Lipid": {
+          "valueCell": "0.2",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Glucid": {
+          "valueCell": "6.3",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Sugar": {
+          "valueCell": "8.39",
+          "referenceCell": "3",
+          "unit": "g"
+        },
+        "Sodium": {
+          "valueCell": "0",
+          "referenceCell": "3",
+          "unit": "mg"
+        }
+      }
+    },
+    {
+      "id": "vn2007-5020",
+      "nutrient": "sugar",
+      "reason": "source_sugar_exceeds_total_carbohydrate",
+      "cells": {
+        "Energy": {
+          "valueCell": "29",
+          "referenceCell": "",
+          "unit": "kcal"
+        },
+        "Protein": {
+          "valueCell": "0.7",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Lipid": {
+          "valueCell": "0.2",
+          "referenceCell": "3",
+          "unit": "g"
+        },
+        "Glucid": {
+          "valueCell": "6.0",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Sugar": {
+          "valueCell": "12.53",
+          "referenceCell": "3",
+          "unit": "g"
+        },
+        "Sodium": {
+          "valueCell": "4",
+          "referenceCell": "1",
+          "unit": "mg"
+        }
+      }
+    },
+    {
+      "id": "vn2007-5024",
+      "nutrient": "sugar",
+      "reason": "source_sugar_exceeds_total_carbohydrate",
+      "cells": {
+        "Energy": {
+          "valueCell": "70",
+          "referenceCell": "",
+          "unit": "kcal"
+        },
+        "Protein": {
+          "valueCell": "0.6",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Lipid": {
+          "valueCell": "0.3",
+          "referenceCell": "3",
+          "unit": "g"
+        },
+        "Glucid": {
+          "valueCell": "16.2",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Sugar": {
+          "valueCell": "16.57",
+          "referenceCell": "3",
+          "unit": "g"
+        },
+        "Sodium": {
+          "valueCell": "3",
+          "referenceCell": "3",
+          "unit": "mg"
+        }
+      }
+    },
+    {
+      "id": "vn2007-5027",
+      "nutrient": "sugar",
+      "reason": "source_sugar_exceeds_total_carbohydrate",
+      "cells": {
+        "Energy": {
+          "valueCell": "20",
+          "referenceCell": "",
+          "unit": "kcal"
+        },
+        "Protein": {
+          "valueCell": "0.6",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Lipid": {
+          "valueCell": "0.2",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Glucid": {
+          "valueCell": "3.9",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Sugar": {
+          "valueCell": "9.92",
+          "referenceCell": "3",
+          "unit": "g"
+        },
+        "Sodium": {
+          "valueCell": "0",
+          "referenceCell": "3",
+          "unit": "mg"
+        }
+      }
+    },
+    {
+      "id": "vn2007-5053",
+      "nutrient": "sugar",
+      "reason": "source_sugar_exceeds_total_carbohydrate",
+      "cells": {
+        "Energy": {
+          "valueCell": "260",
+          "referenceCell": "",
+          "unit": "kcal"
+        },
+        "Protein": {
+          "valueCell": "3.0",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Lipid": {
+          "valueCell": "1.9",
+          "referenceCell": "3",
+          "unit": "g"
+        },
+        "Glucid": {
+          "valueCell": "57.6",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Sugar": {
+          "valueCell": "66.1",
+          "referenceCell": "3",
+          "unit": "g"
+        },
+        "Sodium": {
+          "valueCell": "3",
+          "referenceCell": "3",
+          "unit": "mg"
+        }
+      }
+    },
+    {
+      "id": "vn2007-14009",
+      "nutrient": "sugar",
+      "reason": "source_sugar_exceeds_total_carbohydrate",
+      "cells": {
+        "Energy": {
+          "valueCell": "24",
+          "referenceCell": "",
+          "unit": "kcal"
+        },
+        "Protein": {
+          "valueCell": "0.4",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Lipid": {
+          "valueCell": "0.2",
+          "referenceCell": "3",
+          "unit": "g"
+        },
+        "Glucid": {
+          "valueCell": "5.1",
+          "referenceCell": "1",
+          "unit": "g"
+        },
+        "Sugar": {
+          "valueCell": "5.39",
+          "referenceCell": "3",
+          "unit": "g"
+        },
+        "Sodium": {
+          "valueCell": "1",
+          "referenceCell": "3",
+          "unit": "mg"
+        }
+      }
+    }
+  ],
+  "foods": [
+    {
+      "id": "vn2007-5003",
+      "name": "Chanh (tươi)",
+      "alternateNames": [
+        "chanh",
+        "lemon"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Chanh (tươi)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5003",
+      "sourcePdfPage": 233,
+      "per100g": {
+        "kcal": 24.0,
+        "proteinG": 0.9,
+        "carbsG": 4.5,
+        "fatG": 0.3
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "24",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.9",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.3",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "4.5",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "3",
+            "referenceCell": "1",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 3.0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "24",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.9",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.3",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "4.5",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "3",
+            "referenceCell": "1",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5005",
+      "name": "Chuối khô",
+      "alternateNames": [
+        "chuối sấy",
+        "dried banana"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Chuối khô"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5005",
+      "sourcePdfPage": 235,
+      "per100g": {
+        "kcal": 292.0,
+        "proteinG": 5.0,
+        "carbsG": 68.0,
+        "fatG": 0.0
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "292",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "5.0",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.0",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "68.0",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5006",
+      "name": "Chuối tây (tươi)",
+      "alternateNames": [
+        "chuối tây"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Chuối tây (tươi)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5006",
+      "sourcePdfPage": 236,
+      "per100g": {
+        "kcal": 56.0,
+        "proteinG": 0.9,
+        "carbsG": 12.4,
+        "fatG": 0.3
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "56",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.9",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.3",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "12.4",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "12.23",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "17",
+            "referenceCell": "1",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 17.0,
+        "sugar": 12.23
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "56",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.9",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.3",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "12.4",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "12.23",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "17",
+            "referenceCell": "1",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5007",
+      "name": "Chuối tiêu (tươi)",
+      "alternateNames": [
+        "chuối tiêu"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Chuối tiêu (tươi)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5007",
+      "sourcePdfPage": 237,
+      "per100g": {
+        "kcal": 97.0,
+        "proteinG": 1.5,
+        "carbsG": 22.2,
+        "fatG": 0.2
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "97",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "1.5",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "22.2",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "19",
+            "referenceCell": "1",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 19.0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "97",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "1.5",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "22.2",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "19",
+            "referenceCell": "1",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5010",
+      "name": "Dưa bở (tươi)",
+      "alternateNames": [
+        "dưa bở"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Dưa bở (tươi)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5010",
+      "sourcePdfPage": 240,
+      "per100g": {
+        "kcal": 18.0,
+        "proteinG": 0.5,
+        "carbsG": 3.6,
+        "fatG": 0.2
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "18",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.5",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "3.6",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "7.89",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "0",
+            "referenceCell": "1",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 0.0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "18",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.5",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "3.6",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "7.89",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "0",
+            "referenceCell": "1",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5012",
+      "name": "Dưa hồng (tươi)",
+      "alternateNames": [
+        "dưa hồng"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Dưa hồng (tươi)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5012",
+      "sourcePdfPage": 242,
+      "per100g": {
+        "kcal": 17.0,
+        "proteinG": 0.3,
+        "carbsG": 3.7,
+        "fatG": 0.1
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "17",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.3",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.1",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "3.7",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "8.12",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "18",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 18.0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "17",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.3",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.1",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "3.7",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "8.12",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "18",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5013",
+      "name": "Dưa lê (tươi)",
+      "alternateNames": [
+        "dưa lê"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Dưa lê (tươi)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5013",
+      "sourcePdfPage": 243,
+      "per100g": {
+        "kcal": 18.0,
+        "proteinG": 0.4,
+        "carbsG": 4.2,
+        "fatG": 0.0
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "18",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.4",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.0",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "4.2",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5016",
+      "name": "Đào (tươi)",
+      "alternateNames": [
+        "đào",
+        "peach"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Đào (tươi)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5016",
+      "sourcePdfPage": 246,
+      "per100g": {
+        "kcal": 31.0,
+        "proteinG": 0.9,
+        "carbsG": 6.3,
+        "fatG": 0.2
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "31",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.9",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "6.3",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "8.39",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "0",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 0.0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "31",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.9",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "6.3",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "8.39",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "0",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5020",
+      "name": "Hồng đỏ (tươi)",
+      "alternateNames": [
+        "hồng đỏ",
+        "persimmon"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Hồng đỏ (tươi)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5020",
+      "sourcePdfPage": 250,
+      "per100g": {
+        "kcal": 29.0,
+        "proteinG": 0.7,
+        "carbsG": 6.0,
+        "fatG": 0.2
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "29",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.7",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "6.0",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "12.53",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "4",
+            "referenceCell": "1",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 4.0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "29",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.7",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "6.0",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "12.53",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "4",
+            "referenceCell": "1",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5022",
+      "name": "Hồng xiêm (tươi)",
+      "alternateNames": [
+        "hồng xiêm",
+        "sa pô chê",
+        "sapoche",
+        "sapodilla"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Hồng xiêm (tươi)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5022",
+      "sourcePdfPage": 252,
+      "per100g": {
+        "kcal": 48.0,
+        "proteinG": 0.5,
+        "carbsG": 10.0,
+        "fatG": 0.7
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "48",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.5",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.7",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "10.0",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "12",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 12.0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "48",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.5",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.7",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "10.0",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "12",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5024",
+      "name": "Lựu (tươi)",
+      "alternateNames": [
+        "lựu",
+        "pomegranate"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Lựu (tươi)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5024",
+      "sourcePdfPage": 254,
+      "per100g": {
+        "kcal": 70.0,
+        "proteinG": 0.6,
+        "carbsG": 16.2,
+        "fatG": 0.3
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "70",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.6",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.3",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "16.2",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "16.57",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "3",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 3.0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "70",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.6",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.3",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "16.2",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "16.57",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "3",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5027",
+      "name": "Mận miền Bắc (tươi)",
+      "alternateNames": [
+        "mận bắc",
+        "mận hậu",
+        "plum"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Mận miền Bắc (tươi)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5027",
+      "sourcePdfPage": 257,
+      "per100g": {
+        "kcal": 20.0,
+        "proteinG": 0.6,
+        "carbsG": 3.9,
+        "fatG": 0.2
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "20",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.6",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "3.9",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "9.92",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "0",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 0.0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "20",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.6",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "3.9",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "9.92",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "0",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5031",
+      "name": "Mơ (tươi)",
+      "alternateNames": [
+        "mơ",
+        "apricot"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Mơ (tươi)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5031",
+      "sourcePdfPage": 261,
+      "per100g": {
+        "kcal": 48.0,
+        "proteinG": 0.9,
+        "carbsG": 10.1,
+        "fatG": 0.4
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "48",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.9",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.4",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "10.1",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "9.24",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "1",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 1.0,
+        "sugar": 9.24
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "48",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.9",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.4",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "10.1",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "9.24",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "1",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5032",
+      "name": "Mơ khô",
+      "alternateNames": [
+        "mơ sấy",
+        "dried apricot"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Mơ khô"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5032",
+      "sourcePdfPage": 262,
+      "per100g": {
+        "kcal": 273.0,
+        "proteinG": 3.0,
+        "carbsG": 62.8,
+        "fatG": 1.1
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "273",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "3.0",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "1.1",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "62.8",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "53.44",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "10",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 10.0,
+        "sugar": 53.44
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "273",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "3.0",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "1.1",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "62.8",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "53.44",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "10",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5033",
+      "name": "Muỗm / quéo (xanh)",
+      "alternateNames": [
+        "muỗm",
+        "quéo"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Muỗm / quéo (xanh)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5033",
+      "sourcePdfPage": 263,
+      "per100g": {
+        "kcal": 67.0,
+        "proteinG": 0.6,
+        "carbsG": 15.3,
+        "fatG": 0.4
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "67",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.6",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.4",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "15.3",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5036",
+      "name": "Nhãn khô",
+      "alternateNames": [
+        "long nhãn",
+        "dried longan"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Nhãn khô"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5036",
+      "sourcePdfPage": 266,
+      "per100g": {
+        "kcal": 285.0,
+        "proteinG": 4.3,
+        "carbsG": 65.9,
+        "fatG": 0.5
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "285",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "4.3",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.5",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "65.9",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "48",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 48.0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "285",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "4.3",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.5",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "65.9",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "48",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5041",
+      "name": "Bơ vỏ tím (tươi)",
+      "alternateNames": [
+        "bơ tím",
+        "avocado"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Bơ vỏ tím (tươi)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5041",
+      "sourcePdfPage": 271,
+      "per100g": {
+        "kcal": 74.0,
+        "proteinG": 1.8,
+        "carbsG": 2.8,
+        "fatG": 6.2
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "74",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "1.8",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "6.2",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "2.8",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5045",
+      "name": "Quả trứng gà (lê ki ma)",
+      "alternateNames": [
+        "lê ki ma",
+        "lekima",
+        "canistel"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Quả trứng gà (lê ki ma)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5045",
+      "sourcePdfPage": 275,
+      "per100g": {
+        "kcal": 106.0,
+        "proteinG": 4.3,
+        "carbsG": 21.3,
+        "fatG": 0.4
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "106",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "4.3",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.4",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "21.3",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5050",
+      "name": "Táo ta (tươi)",
+      "alternateNames": [
+        "táo ta",
+        "jujube"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Táo ta (tươi)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5050",
+      "sourcePdfPage": 280,
+      "per100g": {
+        "kcal": 38.0,
+        "proteinG": 0.8,
+        "carbsG": 8.3,
+        "fatG": 0.2
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "38",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.8",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "8.3",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "3",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 3.0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "38",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.8",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "8.3",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "3",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5051",
+      "name": "Táo tây (tươi, VDD 2007)",
+      "alternateNames": [
+        "táo tây",
+        "apple"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Táo tây (tươi, VDD 2007)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5051",
+      "sourcePdfPage": 281,
+      "per100g": {
+        "kcal": 48.0,
+        "proteinG": 0.5,
+        "carbsG": 11.0,
+        "fatG": 0.2
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "48",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.5",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "11.0",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "10.39",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "15",
+            "referenceCell": "1",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 15.0,
+        "sugar": 10.39
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "48",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.5",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "11.0",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "10.39",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "15",
+            "referenceCell": "1",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5053",
+      "name": "Vải khô",
+      "alternateNames": [
+        "vải sấy",
+        "dried lychee"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Vải khô"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5053",
+      "sourcePdfPage": 283,
+      "per100g": {
+        "kcal": 260.0,
+        "proteinG": 3.0,
+        "carbsG": 57.6,
+        "fatG": 1.9
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "260",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "3.0",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "1.9",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "57.6",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "66.1",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "3",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 3.0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "260",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "3.0",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "1.9",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "57.6",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "66.1",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "3",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-5056",
+      "name": "Kiwi (tươi, VDD 2007)",
+      "alternateNames": [
+        "kiwi",
+        "kiwifruit"
+      ],
+      "category": "Trái cây",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Kiwi (tươi, VDD 2007)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "5056",
+      "sourcePdfPage": 286,
+      "per100g": {
+        "kcal": 56.0,
+        "proteinG": 1.1,
+        "carbsG": 11.7,
+        "fatG": 0.5
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "56",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "1.1",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.5",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "11.7",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "8.99",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "3",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 3.0,
+        "sugar": 8.99
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "56",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "1.1",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.5",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "11.7",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "8.99",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "3",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-14005",
+      "name": "Nước cam tươi (VDD 2007)",
+      "alternateNames": [
+        "nước cam",
+        "nước ép cam",
+        "orange juice"
+      ],
+      "category": "Đồ uống",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Nước cam tươi (VDD 2007)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "14005",
+      "sourcePdfPage": 555,
+      "per100g": {
+        "kcal": 23.0,
+        "proteinG": 0.7,
+        "carbsG": 4.5,
+        "fatG": 0.2
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "23",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.7",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "4.5",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "3.96",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "1",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 1.0,
+        "sugar": 3.96
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "23",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.7",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "4.5",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "3.96",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "1",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-14006",
+      "name": "Nước dứa (VDD 2007)",
+      "alternateNames": [
+        "nước thơm",
+        "nước ép dứa",
+        "pineapple juice"
+      ],
+      "category": "Đồ uống",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Nước dứa (VDD 2007)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "14006",
+      "sourcePdfPage": 556,
+      "per100g": {
+        "kcal": 21.0,
+        "proteinG": 0.4,
+        "carbsG": 4.8,
+        "fatG": 0.0
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "21",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.4",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.0",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "4.8",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-14007",
+      "name": "Nước ép cà chua (VDD 2007)",
+      "alternateNames": [
+        "nước cà chua",
+        "tomato juice"
+      ],
+      "category": "Đồ uống",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Nước ép cà chua (VDD 2007)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "14007",
+      "sourcePdfPage": 557,
+      "per100g": {
+        "kcal": 19.0,
+        "proteinG": 0.8,
+        "carbsG": 2.6,
+        "fatG": 0.6
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "19",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.8",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.6",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "2.6",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "269",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 269.0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "19",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.8",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.6",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "2.6",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "269",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-14008",
+      "name": "Nước khoáng (VDD 2007)",
+      "alternateNames": [
+        "nước lọc",
+        "mineral water"
+      ],
+      "category": "Đồ uống",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Nước khoáng (VDD 2007)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "14008",
+      "sourcePdfPage": 558,
+      "per100g": {
+        "kcal": 0.0,
+        "proteinG": 0.0,
+        "carbsG": 0.0,
+        "fatG": 0.0
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "0",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.0",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.0",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "0.0",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "0",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sugar": 0.0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "0",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.0",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.0",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "0.0",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "0",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "-",
+            "referenceCell": "",
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "id": "vn2007-14009",
+      "name": "Nước quýt tươi (VDD 2007)",
+      "alternateNames": [
+        "nước quýt",
+        "nước ép quýt",
+        "tangerine juice"
+      ],
+      "category": "Đồ uống",
+      "dietaryClass": "vegan",
+      "ingredientNames": [
+        "Nước quýt tươi (VDD 2007)"
+      ],
+      "ingredientsKnown": true,
+      "sourceFoodCode": "14009",
+      "sourcePdfPage": 559,
+      "per100g": {
+        "kcal": 24.0,
+        "proteinG": 0.4,
+        "carbsG": 5.1,
+        "fatG": 0.2
+      },
+      "compositionEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "24",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.4",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "5.1",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "5.39",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "1",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 1.0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "cells": {
+          "Energy": {
+            "valueCell": "24",
+            "referenceCell": "",
+            "unit": "kcal"
+          },
+          "Protein": {
+            "valueCell": "0.4",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Lipid": {
+            "valueCell": "0.2",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Glucid": {
+            "valueCell": "5.1",
+            "referenceCell": "1",
+            "unit": "g"
+          },
+          "Sugar": {
+            "valueCell": "5.39",
+            "referenceCell": "3",
+            "unit": "g"
+          },
+          "Sodium": {
+            "valueCell": "1",
+            "referenceCell": "3",
+            "unit": "mg"
+          }
+        }
+      }
+    }
+  ]
+}

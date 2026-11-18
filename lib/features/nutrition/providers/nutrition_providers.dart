@@ -60,9 +60,11 @@ final vietnameseFoodsPreloadProvider = FutureProvider.autoDispose<void>((
 final foodCatalogProvider = StreamProvider.autoDispose<List<FoodCatalogItem>>((
   ref,
 ) {
+  final visibility =
+      ref.watch(foodVisibilityProvider).value ?? const FoodVisibility();
   return subscriptionStream(
     ref.watch(nutritionRepositoryProvider).watchFoodCatalog(),
-  );
+  ).map((foods) => foods.where(visibility.allows).toList(growable: false));
 });
 
 final mealLogsProvider = StreamProvider.autoDispose

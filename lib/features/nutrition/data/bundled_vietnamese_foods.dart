@@ -73,14 +73,21 @@ List<FoodCatalogItem> decodeBundledFoodCatalog(List<String> sources) {
       }
     }
   }
+  final referenceCatalog = <String, FoodCatalogItem>{
+    for (final raw in json['foods'] as List)
+      raw['id'] as String: readCatalogFood(
+        raw['id'] as String,
+        Map<String, dynamic>.from(raw as Map),
+      ),
+  };
   return [
     for (final raw in json['foods'] as List)
       readCatalogFood((raw as Map)['id'] as String, {
         ...Map<String, dynamic>.from(raw),
-        'dietaryClass': dietary[raw['id']],
+        'dietaryClass': dietary[raw['id']] ?? raw['dietaryClass'],
         if (ingredients[raw['id']] is Map)
           ...Map<String, dynamic>.from(ingredients[raw['id']] as Map),
-      }),
+      }, ingredientCatalog: referenceCatalog),
     ...supplement,
     ...current,
   ]..sort(compareCatalogFoods);

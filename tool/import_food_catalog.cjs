@@ -6,6 +6,8 @@ const {execSync} = require('node:child_process');
 
 const root = path.resolve(__dirname, '..');
 const source = JSON.parse(fs.readFileSync(path.join(root, 'data/food_catalog/ingredients.json'), 'utf8'));
+const fruitDrinks = JSON.parse(fs.readFileSync(path.join(root, 'data/food_catalog/fruits-drinks-2026-11-10.json'), 'utf8'));
+const expansion = JSON.parse(fs.readFileSync(path.join(root, 'data/food_catalog/expanded-vietnamese-2026-11-10.json'), 'utf8'));
 const recipes = JSON.parse(fs.readFileSync(path.join(root, 'data/food_catalog/recipes.json'), 'utf8'));
 const packaged = JSON.parse(fs.readFileSync(path.join(root, 'data/food_catalog/packaged.json'), 'utf8'));
 const legacy = JSON.parse(fs.readFileSync(path.join(root,'data/food_catalog/legacy_usda.json'),'utf8'));
@@ -30,6 +32,15 @@ function validateFood(food) {
     }
   }
   if (food.proteinGPer100g + food.carbsGPer100g + food.fatGPer100g > 101) throw Error(`Macros exceed mass: ${food.id}`);
+  if (food.extraNutrientsPer100g != null) {
+    const extras = food.extraNutrientsPer100g;
+    if (!extras || typeof extras !== 'object' || Array.isArray(extras) ||
+        Object.entries(extras).some(([key, value]) => !['sodium','sugar'].includes(key) ||
+          !Number.isFinite(value) || value < 0 || value > (key === 'sodium' ? 100000 : 100))) {
+      throw Error(`Invalid sourced extra nutrient: ${food.id}`);
+    }
+    if (!food.sourceDetails?.additionalNutrientEvidence) throw Error(`Missing extra nutrient evidence: ${food.id}`);
+  }
   if(food.fiberGPer100g!=null && (!Number.isFinite(food.fiberGPer100g)||food.fiberGPer100g<0||food.fiberGPer100g>100||!/^https:\/\/fdc\.nal\.usda\.gov\/food-details\/\d+\/nutrients$/.test(food.fiberSourceUrl||''))) throw Error(`Invalid sourced fiber: ${food.id}`);
   if (food.servingLabel != null || food.servingGrams != null) {
     if (typeof food.servingLabel !== 'string' || !food.servingLabel.trim() || food.servingLabel.length > 60 ||
@@ -42,7 +53,7 @@ function validateFood(food) {
 
 function buildCatalog() {
   const definitions = new Map();
-  for (const item of [...source.foods, ...recipes.recipes]) {
+  for (const item of [...source.foods, ...fruitDrinks.foods, ...expansion.foods, ...recipes.recipes]) {
     if (definitions.has(item.id)) throw Error(`Duplicate id: ${item.id}`);
     definitions.set(item.id, item);
   }
@@ -83,28 +94,55 @@ function buildCatalog() {
     return validateFood({
       id: item.id, name: item.name, alternateNames: item.alternateNames || [],
       category: item.category, servingBasis: 'per_100g', unit: 'g',
+      ...(item.dietaryClass ? {dietaryClass: item.dietaryClass, ingredientNames: item.ingredientNames, ingredientsKnown: item.ingredientsKnown} : {}),
       kcalPer100g: +values.kcal.toFixed(2), proteinGPer100g: +values.proteinG.toFixed(2),
       carbsGPer100g: +values.carbsG.toFixed(2), fatGPer100g: +values.fatG.toFixed(2),
+      ...(item.extraNutrientsPer100g ? {extraNutrientsPer100g: item.extraNutrientsPer100g} : {}),
       isEstimated: true,
       sourceLabel: item.per100g
         ? `Viện Dinh dưỡng 2007 · mã ${item.sourceFoodCode} · Ước tính`
         : 'HealthMate · Công thức tham khảo từ VDD 2007 · Ước tính',
       sourceUrl: source.sourceUrl,
-      catalogVersion: recipes.version,
+      catalogVersion: item.catalogVersion || recipes.version,
+      ...(item.packageLabel ? {packageLabel: item.packageLabel} : {}),
       ...(item.per100g ? {} : {
         servingLabel: 'phần công thức tham khảo', servingGrams: item.yieldGrams,
         portionSource: 'Khối lượng thành phẩm giả định của công thức; không phải khẩu phần tiêu chuẩn.',
       }),
       sourceDetails: item.per100g
-        ? {method: 'reference_table', foodCode: item.sourceFoodCode, pdfPage: item.sourcePdfPage, basis: source.basis}
+        ? {method: 'reference_table', foodCode: item.sourceFoodCode, pdfPage: item.sourcePdfPage, basis: source.basis,
+            ...(item.compositionEvidence ? {compositionEvidence: item.compositionEvidence} : {}),
+            ...(item.additionalNutrientEvidence ? {additionalNutrientEvidence: item.additionalNutrientEvidence} : {})}
         : {method: 'recipe_estimate', yieldGrams: item.yieldGrams,
             ingredients: item.ingredients.map(([reference, grams]) => ({reference, grams})),
             note: recipes.method + ' ' + recipes.limitation},
     });
   });
   for (const food of packaged.foods) {
-    if (!/^https:\/\/([\w-]+\.)?thmilk\.vn\//.test(food.sourceUrl) || food.sourceDetails?.method !== 'manufacturer_label') {
+    if (!/^https:\/\/(?:www\.)?(?:thmilk\.vn|acecookvietnam\.vn)\//.test(food.sourceUrl) || food.sourceDetails?.method !== 'manufacturer_label') {
       throw Error(`Missing manufacturer source: ${food.id}`);
+    }
+    if (food.sourceDetails.basis === 'per_package') {
+      const {netWeightGrams, nutrientsPerPackage, packageImageUrl, variantIndex} = food.sourceDetails;
+      if (food.brand !== 'Acecook' || !Number.isFinite(netWeightGrams) || netWeightGrams <= 0 ||
+          food.servingGrams !== netWeightGrams || !Number.isInteger(variantIndex) || variantIndex < 0 ||
+          !/^https:\/\/acecookvietnam\.vn\//.test(packageImageUrl || '')) {
+        throw Error(`Invalid manufacturer package basis: ${food.id}`);
+      }
+      for (const metric of metrics) {
+        const value = nutrientsPerPackage?.[metric];
+        if (!Number.isFinite(value) || value < 0 || Math.abs(food[metric + 'Per100g'] - value * 100 / netWeightGrams) > .00001) {
+          throw Error(`Invalid package normalization: ${food.id}/${metric}`);
+        }
+      }
+      for (const [key, metric] of [['sodium','sodiumMg'],['sugar','sugarG']]) {
+        const perPackage = nutrientsPerPackage?.[metric];
+        const per100g = food.extraNutrientsPer100g?.[key];
+        if ((perPackage == null) !== (per100g == null) || (perPackage != null &&
+            (!Number.isFinite(perPackage) || perPackage < 0 || Math.abs(per100g - perPackage * 100 / netWeightGrams) > .00001))) {
+          throw Error(`Invalid extra nutrient package normalization: ${food.id}/${key}`);
+        }
+      }
     }
     if (computed.some(item => item.id === food.id || normalize(item.name) === normalize(food.name))) throw Error('Duplicate packaged food');
     computed.push(validateFood(food));
@@ -115,6 +153,15 @@ function buildCatalog() {
     computed.push(validateFood(food));
   }
   return computed;
+}
+
+function selectCatalogIds(catalog, ids) {
+  if (!Array.isArray(ids) || !ids.length || new Set(ids).size !== ids.length ||
+      ids.some(id => typeof id !== 'string' || !catalog.some(food => food.id === id))) {
+    throw Error('Catalog selection must contain distinct, existing catalog IDs.');
+  }
+  const selected = new Set(ids);
+  return catalog.filter(food => selected.has(food.id));
 }
 
 function decode(fields = {}) {
@@ -184,7 +231,12 @@ async function main(args) {
   const projectIndex = args.indexOf('--project');
   const project = projectIndex >= 0 ? args[projectIndex + 1] : null;
   if (!project) throw Error('Pass --project <project-id>. Default is dry run; add --apply to create new catalog entries.');
-  const catalog = buildCatalog();
+  let catalog = buildCatalog();
+  const idsIndex = args.indexOf('--ids-file');
+  if (idsIndex >= 0) {
+    if (!args[idsIndex + 1]) throw Error('Pass --ids-file <reviewed-json-array>.');
+    catalog = selectCatalogIds(catalog, JSON.parse(fs.readFileSync(args[idsIndex + 1], 'utf8')));
+  }
   createWrites(project, []); // Validate before authentication/network requests.
   // Fixed command only: no project, file paths or user text interpolated in shell.
   const globalModules = execSync('npm root -g', {encoding: 'utf8', windowsHide: true}).trim();
@@ -228,5 +280,5 @@ async function main(args) {
   console.log(`Created ${writes.length} catalog entries atomically. Existing entries and users/* were not modified.`);
 }
 
-module.exports = {buildCatalog, validateFood, planAdditions, createWrites, planCatalogChanges, decode};
+module.exports = {buildCatalog, selectCatalogIds, validateFood, planAdditions, createWrites, planCatalogChanges, decode};
 if (require.main === module) main(process.argv.slice(2)).catch(error => {console.error(error.message); process.exitCode = 1;});

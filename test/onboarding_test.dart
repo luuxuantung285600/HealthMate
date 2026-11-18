@@ -51,8 +51,16 @@ Future<void> tapOnboardingButton(WidgetTester tester, String key) async {
 }
 
 Future<void> reachGoalStep(WidgetTester tester) async {
-  await tapOnboardingButton(tester, 'onboarding-next');
+  await advanceToOnboarding(tester, 'onboarding-goal-step');
   expect(find.byKey(const ValueKey('onboarding-goal-step')), findsOneWidget);
+}
+
+Future<void> advanceToOnboarding(WidgetTester tester, String key) async {
+  for (var i = 0; i < 30; i++) {
+    if (find.byKey(ValueKey(key)).evaluate().isNotEmpty) return;
+    await tapOnboardingButton(tester, 'onboarding-next');
+  }
+  fail('Could not reach onboarding screen $key');
 }
 
 Future<void> reachReviewForWeightLoss(WidgetTester tester) async {
@@ -65,15 +73,11 @@ Future<void> reachReviewForWeightLoss(WidgetTester tester) async {
     '62.5',
   );
   await tapOnboardingButton(tester, 'onboarding-next');
-  for (var i = 0; i < 3; i++) {
-    await tapOnboardingButton(tester, 'onboarding-next');
-  }
+  await advanceToOnboarding(tester, 'onboarding-nutrition-step');
   expect(
     find.byKey(const ValueKey('onboarding-nutrition-step')),
     findsOneWidget,
   );
-  await tapOnboardingButton(tester, 'onboarding-next');
-  expect(find.byKey(const ValueKey('onboarding-review-step')), findsOneWidget);
 }
 
 void main() {
@@ -126,7 +130,7 @@ void main() {
     'legacy profile missing onboarding data is guided to complete it',
     (tester) async {
       final repository = FakeHealthProfileRepository(
-        profile: legacyProfile(),
+        profile: legacyProfile(birthDate: DateTime(2000, 1, 15)),
         metrics: [currentWeight(70)],
       );
       await pumpApp(tester, profileRepository: repository);
@@ -141,6 +145,7 @@ void main() {
             .text,
         'Nguyễn An',
       );
+      await advanceToOnboarding(tester, 'onboarding-weight-step');
       expect(
         tester
             .widget<TextFormField>(
@@ -163,10 +168,30 @@ void main() {
 
     await tapOnboardingButton(tester, 'onboarding-next');
     expect(find.text('Tên hiển thị cần ít nhất 2 ký tự.'), findsOneWidget);
+    await tester.enterText(
+      find.byKey(const ValueKey('onboarding-name')),
+      'Nguyễn An',
+    );
+    await advanceToOnboarding(tester, 'onboarding-birthDate-step');
+    await tapOnboardingButton(tester, 'onboarding-next');
     expect(find.text('Vui lòng chọn ngày sinh.'), findsOneWidget);
+    await tapOnboardingButton(tester, 'onboarding-birth-date');
+    await tester.tap(find.text('Chọn'));
+    await tester.pumpAndSettle();
+    await tapOnboardingButton(tester, 'onboarding-next');
+    await tapOnboardingButton(tester, 'onboarding-next');
     expect(find.text('Vui lòng nhập chiều cao.'), findsOneWidget);
+    await tester.enterText(
+      find.byKey(const ValueKey('onboarding-height')),
+      '170',
+    );
+    await tapOnboardingButton(tester, 'onboarding-next');
+    await tapOnboardingButton(tester, 'onboarding-next');
     expect(find.text('Cân nặng phải là một số hợp lệ.'), findsOneWidget);
-    expect(find.byKey(const ValueKey('onboarding-body-step')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('onboarding-weight-step')),
+      findsOneWidget,
+    );
     expect(repository.completeOnboardingCalls, 0);
   });
 
@@ -180,8 +205,10 @@ void main() {
     await pumpApp(tester, profileRepository: repository);
 
     await reachGoalStep(tester);
-    await tapOnboardingButton(tester, 'onboarding-back');
-    expect(find.byKey(const ValueKey('onboarding-body-step')), findsOneWidget);
+    for (var i = 0; i < 5; i++) {
+      await tapOnboardingButton(tester, 'onboarding-back');
+    }
+    expect(find.byKey(const ValueKey('onboarding-name-step')), findsOneWidget);
     expect(
       tester
           .widget<TextFormField>(find.byKey(const ValueKey('onboarding-name')))
@@ -201,7 +228,7 @@ void main() {
     final container = await pumpApp(tester, profileRepository: repository);
 
     await reachReviewForWeightLoss(tester);
-    expect(find.text('Giảm cân'), findsOneWidget);
+    expect(find.text('Mục tiêu của bạn: Giảm cân'), findsOneWidget);
     expect(find.text('62.5 kg'), findsOneWidget);
     await tapOnboardingButton(tester, 'onboarding-complete');
 
@@ -241,7 +268,7 @@ void main() {
     await tapOnboardingButton(tester, 'onboarding-complete');
     expect(find.text('Không thể lưu thử nghiệm.'), findsOneWidget);
     expect(
-      find.byKey(const ValueKey('onboarding-review-step')),
+      find.byKey(const ValueKey('onboarding-nutrition-step')),
       findsOneWidget,
     );
     expect(repository.completeOnboardingCalls, 1);

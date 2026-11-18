@@ -1,11 +1,18 @@
 import '../models/body_metric.dart';
 import '../models/onboarding_draft.dart';
 import '../models/user_profile.dart';
+import '../models/profile_appearance.dart';
 
 abstract interface class HealthProfileRepository {
   Future<void> ensureProfile({required String uid, required String email});
 
   Stream<UserProfile?> watchProfile(String uid);
+
+  /// Atomically changes identity without rewriting health measurements or goals.
+  Future<void> updateIdentity({
+    required String uid,
+    required ProfileIdentityDraft draft,
+  });
 
   Future<void> updateProfile({
     required String uid,
@@ -33,7 +40,11 @@ abstract interface class HealthProfileRepository {
   /// One first-ever record for goal baseline, independently of history pages.
   Stream<List<BodyMetric>> watchFirstBodyMetric(String uid);
 
-  Stream<List<BodyMetric>> watchLatestBodyMetric(String uid, DateTime day);
+  Stream<List<BodyMetric>> watchLatestBodyMetric(
+    String uid,
+    DateTime day, {
+    bool atOrBefore = false,
+  });
 
   Future<List<BodyMetric>> loadBodyMetricsRange(
     String uid,

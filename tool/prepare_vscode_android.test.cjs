@@ -78,10 +78,21 @@ test('the debug file cannot be written into the repository', windowsOnly, () => 
 
 test('VS Code launch wires the private define file and the matching prepare task', () => {
   const launch = fs.readFileSync(path.join(__dirname, '../.vscode/launch.json'), 'utf8');
+  const configurations = JSON.parse(launch.replace(/^\s*\/\/.*$/gm, '')).configurations;
   const tasks = JSON.parse(fs.readFileSync(path.join(__dirname, '../.vscode/tasks.json'), 'utf8'));
   assert.ok(launch.includes('"preLaunchTask": "HealthMate: prepare Android debug"'));
   assert.ok(launch.includes('--dart-define-from-file=${env:LOCALAPPDATA}/HealthMate/vscode-android-debug.json'));
   const task = tasks.tasks.find(item => item.label === 'HealthMate: prepare Android debug');
   assert.ok(task.args.includes('${workspaceFolder}/tool/prepare_vscode_android.ps1'));
   assert.ok(!launch.includes(fakeToken));
+  // Selecting a browser must never invoke the Android token preparation that
+  // blocked web startup when the old generic Flutter launch was selected.
+  for (const device of ['chrome', 'edge']) {
+    const web = configurations.find(item => item.type === 'dart' && item.deviceId === device);
+    assert.ok(web, `missing Flutter web launcher for ${device}`);
+    assert.equal(web.preLaunchTask, undefined);
+    assert.ok(web.toolArgs.includes('--dart-define-from-file=${workspaceFolder}/config/admin-runtime.json'));
+    assert.ok(web.toolArgs.includes('--dart-define-from-file=${workspaceFolder}/config/chat-api.json'));
+    assert.ok(!web.toolArgs.some(argument => /android|APP_CHECK_DEBUG_TOKEN/i.test(argument)));
+  }
 });

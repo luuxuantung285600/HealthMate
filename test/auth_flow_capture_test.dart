@@ -1,3 +1,4 @@
+import 'support/load_icon_font.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -17,11 +18,14 @@ const authCaptureDark = bool.fromEnvironment('AUTH_CAPTURE_DARK');
 
 void main() {
   setUpAll(() async {
-    final fonts = FontLoader('Inter');
+    final fonts = FontLoader('Public Sans');
     for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      fonts.addFont(rootBundle.load('assets/fonts/inter/Inter-$weight.ttf'));
+      fonts.addFont(
+        rootBundle.load('assets/fonts/public_sans/PublicSans-$weight.ttf'),
+      );
     }
     await fonts.load();
+    await loadIconFont();
     await (FontLoader(
       'MaterialIcons',
     )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();

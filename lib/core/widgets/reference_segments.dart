@@ -11,27 +11,31 @@ class ReferenceSegments extends StatelessWidget {
       final large = MediaQuery.textScalerOf(context).scale(1) > 1.3;
       final children = [
         for (final item in items)
-          Container(
-            decoration: BoxDecoration(
-              color: item.selected
-                  ? theme.colorScheme.surface
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(24),
-            ),
+          Semantics(
+            selected: item.selected,
             child: TextButton(
               key: item.key,
               onPressed: item.onTap,
               style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 2),
-                minimumSize: const Size(0, 34),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                textStyle: theme.textTheme.bodySmall?.copyWith(fontSize: 11),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                minimumSize: const Size(48, 48),
+                backgroundColor: item.selected
+                    ? theme.colorScheme.surface
+                    : Colors.transparent,
+                side: BorderSide(
+                  color: item.selected
+                      ? theme.colorScheme.primary
+                      : Colors.transparent,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
               child: Text(
                 item.label,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  fontSize: 11,
+                  fontSize: 12,
                   color: item.selected
                       ? theme.colorScheme.primary
                       : theme.colorScheme.onSurface,
@@ -40,20 +44,11 @@ class ReferenceSegments extends StatelessWidget {
             ),
           ),
       ];
-      return Container(
-        padding: const EdgeInsets.all(3),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface.withValues(alpha: .45),
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: large
-            ? Wrap(spacing: 6, children: children)
-            : Row(
-                children: [
-                  for (final child in children) Expanded(child: child),
-                ],
-              ),
-      );
+      return large
+          ? Wrap(spacing: 6, runSpacing: 6, children: children)
+          : Row(
+              children: [for (final child in children) Expanded(child: child)],
+            );
     },
   );
 }

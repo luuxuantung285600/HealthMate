@@ -1,6 +1,7 @@
 import 'health_goal.dart';
 import 'profile_validation.dart';
 import 'personalization_answers.dart';
+import 'profile_appearance.dart';
 
 class UserProfile {
   const UserProfile({
@@ -16,6 +17,7 @@ class UserProfile {
     required this.updatedAt,
     required this.schemaVersion,
     this.personalization,
+    this.appearance = const ProfileAppearance(),
   });
 
   final String uid;
@@ -30,6 +32,7 @@ class UserProfile {
   final DateTime? updatedAt;
   final int schemaVersion;
   final PersonalizationAnswers? personalization;
+  final ProfileAppearance appearance;
 
   bool get hasRequiredOnboardingData =>
       hasRequiredOnboardingDataAt(DateTime.now());

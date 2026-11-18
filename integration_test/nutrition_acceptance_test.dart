@@ -285,7 +285,7 @@ void main() {
       await checkpoint('02-confirmed-target');
 
       await ui.tap(tester, ui.keyed('nav-journal'));
-      await ui.tap(tester, ui.keyed('add-meal-lunch'));
+      await ui.tap(tester, ui.keyed('journal-add-meal'));
       await ui.tap(tester, ui.keyed('meal-more-tools'));
       await ui.tap(tester, ui.keyed('meal-diet-options'));
       await ui.waitFor(tester, ui.keyed('food-diet-filter'));

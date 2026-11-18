@@ -1,3 +1,4 @@
+import 'support/load_icon_font.dart';
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -100,6 +101,10 @@ Future<ProviderContainer> sources(
   GlobalKey? capture,
   bool dark = false,
 }) async {
+  // A new container owns each fixture. Flush the prior consumers before
+  // replacing an UncontrolledProviderScope with another container.
+  await tester.pumpWidget(const SizedBox.shrink());
+  await tester.pump();
   final n = nutrition ?? FakeNutritionRepository();
   final f = favorites ?? FakeFavoriteFoodRepository();
   final a = auth ?? FakeAuthRepository(user: FakeAuthRepository.testUser);
@@ -111,6 +116,9 @@ Future<ProviderContainer> sources(
     ],
   );
   addTearDown(() async {
+    // Unmount consumers while their container can still schedule disposal.
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
     container.dispose();
     await n.dispose();
     await f.dispose();
@@ -149,9 +157,12 @@ Future<ProviderContainer> sources(
 
 void main() {
   setUpAll(() async {
-    final fonts = FontLoader('Inter');
+    await loadIconFont();
+    final fonts = FontLoader('Public Sans');
     for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      fonts.addFont(rootBundle.load('assets/fonts/inter/Inter-$weight.ttf'));
+      fonts.addFont(
+        rootBundle.load('assets/fonts/public_sans/PublicSans-$weight.ttf'),
+      );
     }
     await fonts.load();
     await (FontLoader(
@@ -258,9 +269,9 @@ void main() {
     container.read(appRouterProvider).go(AppRoutes.journal);
     container.read(journalDateProvider.notifier).select(DateTime(2026, 10, 15));
     await tester.pumpAndSettle();
-    await tapVisible(tester, find.byKey(const ValueKey('add-meal-dinner')));
+    await tapVisible(tester, find.byKey(const ValueKey('add-meal-hour-18')));
     final form = tester.widget<MealFormDialog>(find.byType(MealFormDialog));
-    expect(form.initialType, MealType.dinner);
+    expect(form.initialConsumedAt!.hour, 18);
     expect(form.initialConsumedAt!.day, 15);
     await tester.tap(find.byTooltip('Đóng'));
     await tester.pumpAndSettle();
@@ -586,7 +597,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
   testWidgets(
-    'copied draft edits date, time, type and grams without touching source',
+    'copied draft edits date, time and grams and preserves its stored type',
     (tester) async {
       final original = meal('source');
       MealDraft? saved;
@@ -620,12 +631,7 @@ void main() {
         tester.element(find.byType(TimePickerDialog)),
       ).pop(const TimeOfDay(hour: 18, minute: 45));
       await tester.pumpAndSettle();
-      tester
-          .widget<DropdownButtonFormField<MealType>>(
-            find.byKey(const ValueKey('meal-type')),
-          )
-          .onChanged!(MealType.dinner);
-      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('meal-type')), findsNothing);
       await tester.scrollUntilVisible(
         find.byTooltip('Sửa khẩu phần'),
         180,
@@ -642,7 +648,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('save-meal')));
       await tester.pumpAndSettle();
-      expect(saved!.type, MealType.dinner);
+      expect(saved!.type, original.type);
       expect(saved!.consumedAt, DateTime(2026, 10, 15, 18, 45));
       expect(saved!.dateKey, '2026-10-15');
       expect(saved!.source, MealSource.aiAssisted);
@@ -674,8 +680,10 @@ void main() {
         draft: meal('edited', type: MealType.dinner, grams: 50).toDraft(),
       );
       await tester.pumpAndSettle();
-      expect(find.text('130 kcal'), findsOneWidget);
-      expect(find.text('65 kcal'), findsOneWidget);
+      // Meal type no longer splits the timeline: both records share their hour.
+      expect(find.text('195 kcal'), findsOneWidget);
+      expect(find.textContaining('100 g · 130 kcal'), findsOneWidget);
+      expect(find.textContaining('50 g · 65 kcal'), findsOneWidget);
       expect(
         tester
             .widget<Text>(find.byKey(const ValueKey('nutrition-daily-totals')))

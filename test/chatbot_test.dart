@@ -626,7 +626,7 @@ void main() {
         knowledgeService: ai,
         dashboardNow: today,
       );
-      await tester.tap(find.byKey(const ValueKey('nav-profile')));
+      await tester.tap(find.byKey(const ValueKey('profile-avatar')));
       await tester.pumpAndSettle();
       final entry = find.byKey(const ValueKey('open-chat'));
       await tester.ensureVisible(entry);

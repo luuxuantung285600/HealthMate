@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -110,7 +111,7 @@ class _JournalExportDialogState extends ConsumerState<JournalExportDialog> {
           title: const Text('Xuất nhật ký CSV'),
           leading: IconButton(
             onPressed: _busy ? null : () => Navigator.pop(context),
-            icon: const Icon(Icons.close),
+            icon: const Icon(AppIcons.x),
           ),
         ),
         body: ListView(
@@ -181,7 +182,7 @@ class _JournalExportDialogState extends ConsumerState<JournalExportDialog> {
                         });
                       }
                     },
-              icon: const Icon(Icons.date_range),
+              icon: const Icon(AppIcons.calendarRange),
               label: const Text('Chọn khoảng hoặc số ngày'),
             ),
             OutlinedButton.icon(
@@ -197,7 +198,7 @@ class _JournalExportDialogState extends ConsumerState<JournalExportDialog> {
                       _end = range.lastDay;
                       _message = null;
                     }),
-              icon: const Icon(Icons.calendar_month),
+              icon: const Icon(AppIcons.calendarDays),
               label: const Text('Chọn năm nay'),
             ),
             OutlinedButton(
@@ -256,7 +257,7 @@ class _JournalExportDialogState extends ConsumerState<JournalExportDialog> {
             FilledButton.icon(
               key: const ValueKey('export-csv'),
               onPressed: _busy || !_consent ? null : _export,
-              icon: const Icon(Icons.save_alt),
+              icon: const Icon(AppIcons.download),
               label: Text(_busy ? 'Đang xuất…' : 'Chọn nơi lưu CSV'),
             ),
           ],

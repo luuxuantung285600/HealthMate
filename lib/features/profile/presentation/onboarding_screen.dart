@@ -1,10 +1,10 @@
+import '../../../core/theme/app_icons.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/feature_page.dart';
 import '../../../core/widgets/confirmed_save.dart';
 import '../../auth/models/account_action_failure.dart';
@@ -16,7 +16,8 @@ import '../../../shared/providers/local_clock_provider.dart';
 import '../../nutrition_targets/models/nutrition_target.dart';
 import '../../nutrition_targets/models/personal_nutrition_plan.dart';
 import '../models/personalization_answers.dart';
-import 'personalization_questions.dart';
+import '../models/onboarding_journey.dart';
+import 'onboarding_widgets.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/router/app_routes.dart';
 import '../../nutrition_targets/providers/nutrition_target_providers.dart';
@@ -108,15 +109,18 @@ class _OnboardingForm extends ConsumerStatefulWidget {
 }
 
 class _OnboardingFormState extends ConsumerState<_OnboardingForm> {
-  final _bodyFormKey = GlobalKey<FormState>();
-  final _targetFormKey = GlobalKey<FormState>();
+  final _questionFormKey = GlobalKey<FormState>();
   late final TextEditingController _name;
   late final TextEditingController _height;
   late final TextEditingController _weight;
   late final TextEditingController _targetWeight;
   late DateTime? _birthDate;
   late HealthGoal? _goal;
-  int _step = 0;
+  OnboardingStep _step = OnboardingStep.name;
+  bool _includeDetails = false;
+  bool _applyPlan = true;
+  PersonalNutritionPlan? _calculatedPlan;
+  String? _planError;
   late PersonalizationAnswers _answers;
   String? _birthDateError;
   String? _goalError;
@@ -132,7 +136,7 @@ class _OnboardingFormState extends ConsumerState<_OnboardingForm> {
   String? _draftError;
   String? _lastDraft;
   late String _initialDraft;
-  int? _calculatorReturn;
+  OnboardingStep? _calculatorReturn;
 
   @override
   void initState() {
@@ -153,6 +157,9 @@ class _OnboardingFormState extends ConsumerState<_OnboardingForm> {
     _initialDraft = jsonEncode(_progress.toJson());
     for (final controller in [_name, _height, _weight, _targetWeight]) {
       controller.addListener(() {
+        _nutritionDraft = null;
+        _calculatedPlan = null;
+        _nutritionSaved = false;
         _scheduleDraft();
         if (mounted && _draftRestored) setState(() {});
       });
@@ -164,7 +171,9 @@ class _OnboardingFormState extends ConsumerState<_OnboardingForm> {
       mounted && ref.read(authSessionProvider).value?.uid == widget.profile.uid;
 
   OnboardingProgress get _progress => OnboardingProgress(
-    step: _step,
+    step: _step.legacySection,
+    screen: _step,
+    includeDetails: _includeDetails,
     name: _name.text,
     height: _height.text,
     weight: _weight.text,
@@ -191,19 +200,22 @@ class _OnboardingFormState extends ConsumerState<_OnboardingForm> {
         _targetWeight.text = draft.targetWeight;
         _birthDate = draft.birthDate;
         _goal = draft.goal;
-        // An incomplete draft cannot jump into sections requiring a goal.
-        _step = draft.goal == null && draft.step >= 2 ? 1 : draft.step;
         _answers = draft.answers;
-        if (ProfileValidation.displayName(_name.text) != null ||
-            ProfileValidation.birthDate(_birthDate) != null ||
-            ProfileValidation.requiredHeight(_height.text) != null ||
-            ProfileValidation.weight(_weight.text) != null) {
-          _step = 0;
+        _includeDetails = draft.includeDetails;
+        _step = draft.screen ?? OnboardingStep.fromLegacy(draft.step);
+        if (!_journey.contains(_step)) {
+          _step = _step == OnboardingStep.targetWeight
+              ? OnboardingStep.guidance
+              : OnboardingStep.details;
         }
-        if (_step >= 3 &&
-            ProfileValidation.targetWeight(_targetWeight.text, _goal) != null) {
-          _step = 2;
+        for (final entry in _requiredErrors.entries) {
+          if (entry.value != null &&
+              _journey.indexOf(entry.key) < _journey.indexOf(_step)) {
+            _step = entry.key;
+            break;
+          }
         }
+        if (_step == OnboardingStep.plan) _preparePlan();
       }
       _initialDraft = jsonEncode(_progress.toJson());
       _lastDraft = jsonEncode(_progress.toJson());
@@ -319,112 +331,122 @@ class _OnboardingFormState extends ConsumerState<_OnboardingForm> {
     super.dispose();
   }
 
-  bool _validateBody() {
-    final birthDateError = ProfileValidation.birthDate(_birthDate);
-    setState(() => _birthDateError = birthDateError);
-    return _bodyFormKey.currentState!.validate() && birthDateError == null;
-  }
+  List<OnboardingStep> get _journey => onboardingJourney(
+    goal: _goal,
+    answers: _answers,
+    includeDetails: _includeDetails,
+  );
 
-  bool _validateGoal() {
-    if (_goal != null) return true;
-    setState(() => _goalError = 'Vui lòng chọn một mục tiêu.');
-    return false;
-  }
+  Map<OnboardingStep, String?> get _requiredErrors => {
+    OnboardingStep.name: ProfileValidation.displayName(_name.text),
+    OnboardingStep.birthDate: ProfileValidation.birthDate(
+      _birthDate,
+      today: ref.read(currentLocalTimeProvider)(),
+    ),
+    OnboardingStep.height: ProfileValidation.requiredHeight(_height.text),
+    OnboardingStep.weight: ProfileValidation.weight(_weight.text),
+    OnboardingStep.goal: _goal == null ? 'Vui lòng chọn một mục tiêu.' : null,
+    if (_goal?.needsTargetWeight == true)
+      OnboardingStep.targetWeight: ProfileValidation.targetWeight(
+        _targetWeight.text,
+        _goal,
+      ),
+  };
 
-  bool _validateTarget() => _targetFormKey.currentState!.validate();
+  void _goTo(OnboardingStep step) {
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _step = step;
+      _completionError = null;
+      if (step == OnboardingStep.plan) _preparePlan();
+    });
+  }
 
   void _next() {
-    final valid = switch (_step) {
-      0 => _validateBody(),
-      1 => _validateGoal(),
-      2 => _validateTarget(),
-      _ => true,
-    };
-    if (valid) {
-      setState(
-        () =>
-            _step = _calculatorReturn != null ? _calculatorReturn! : _step + 1,
-      );
-    }
-    if (valid) _calculatorReturn = null;
+    final validForm = _questionFormKey.currentState?.validate() ?? true;
+    final error = _requiredErrors[_step];
+    setState(() {
+      _birthDateError = _step == OnboardingStep.birthDate ? error : null;
+      _goalError = _step == OnboardingStep.goal ? error : null;
+    });
+    if (!validForm || error != null) return;
+    final journey = _journey;
+    final next = _calculatorReturn ?? journey[journey.indexOf(_step) + 1];
+    _calculatorReturn = null;
+    _goTo(next);
   }
 
   void _previous() {
-    if (_step > 0) {
-      setState(() {
-        if (_step == 6) _nutritionDraft = null;
-        _step--;
-      });
-    }
+    final index = _journey.indexOf(_step);
+    if (index > 0) _goTo(_journey[index - 1]);
   }
 
   void _changeAnswers(PersonalizationAnswers answers) => setState(() {
     _answers = answers.normalized(_goal);
     _nutritionDraft = null;
+    _calculatedPlan = null;
     _nutritionSaved = false;
     _completionError = null;
   });
 
-  void _personalize() {
-    if (_answers['guidance'] != null && !_answers.eligible) {
-      setState(
-        () => _completionError =
-            'Đề xuất tự động chưa phù hợp với lựa chọn của bạn. Bạn vẫn có thể thiết lập kcal sau.',
-      );
-      return;
+  OnboardingStep? get _missingPlanStep {
+    if (_answers['guidance'] != null && !_answers.eligible) return null;
+    if (_answers.formulaSex == null) return OnboardingStep.formulaSex;
+    if (_answers.activity == null) return OnboardingStep.activity;
+    if (_answers['guidance'] == null) return OnboardingStep.guidance;
+    if (_goal?.needsTargetWeight == true && _answers['pace'] == null) {
+      return OnboardingStep.pace;
     }
-    int? missingStep;
-    if (_birthDate == null ||
-        _height.text.isEmpty ||
-        _weight.text.isEmpty ||
-        _answers.formulaSex == null) {
-      missingStep = 0;
-    } else if (_goal == null) {
-      missingStep = 1;
-    } else if ((_goal!.needsTargetWeight && _answers['pace'] == null) ||
-        _answers['guidance'] == null) {
-      missingStep = 2;
-    } else if (_answers.activity == null) {
-      missingStep = 3;
-    }
-    if (missingStep != null) {
-      setState(() {
-        _calculatorReturn = 6;
-        _step = missingStep!;
-        _completionError =
-            'Bổ sung thông tin để tính kcal, rồi quay lại đề xuất.';
-      });
+    return null;
+  }
+
+  PersonalNutritionPlan _calculatePlan() => PersonalNutritionInput(
+    age: _birthDate == null
+        ? null
+        : ageOnDate(_birthDate!, ref.read(currentLocalTimeProvider)()),
+    heightCm: ProfileValidation.parseDecimal(_height.text),
+    weightKg: ProfileValidation.parseDecimal(_weight.text),
+    sex: _answers.formulaSex,
+    activity: _answers.activity,
+    goal: _goal,
+    targetWeightKg: _goal?.needsTargetWeight == true
+        ? ProfileValidation.parseDecimal(_targetWeight.text)
+        : null,
+    pace: _answers.pace,
+    macros: _goal == HealthGoal.gainMuscle
+        ? PlanMacroSplit.proteinFocus
+        : PlanMacroSplit.balanced,
+    eligible: _answers.eligible,
+  ).calculate();
+
+  void _preparePlan() {
+    _nutritionDraft = null;
+    _calculatedPlan = null;
+    _nutritionSaved = false;
+    _applyPlan = true;
+    _planError = null;
+    if (_missingPlanStep != null) {
+      _planError =
+          'Bạn có thể bổ sung thông tin để nhận đề xuất, hoặc hoàn tất và thiết lập calo sau.';
       return;
     }
     try {
-      if (_goal!.needsTargetWeight && _answers['pace'] == null) {
-        throw const FormatException('Hãy chọn nhịp điều chỉnh năng lượng.');
-      }
-      final plan = PersonalNutritionInput(
-        age: ageOnDate(_birthDate!, ref.read(currentLocalTimeProvider)()),
-        heightCm: ProfileValidation.parseDecimal(_height.text),
-        weightKg: ProfileValidation.parseDecimal(_weight.text),
-        sex: _answers.formulaSex,
-        activity: _answers.activity,
-        goal: _goal,
-        targetWeightKg: _goal!.needsTargetWeight
-            ? ProfileValidation.parseDecimal(_targetWeight.text)
-            : null,
-        pace: _answers.pace,
-        eligible: _answers.eligible,
-      ).calculate();
-      setState(() {
-        _nutritionDraft = plan.toTarget(
-          localDateKey(ref.read(currentLocalTimeProvider)()),
-        );
-        _nutritionSaved = false;
-        _completionError = null;
-      });
-    } on FormatException catch (error) {
-      setState(
-        () => _completionError =
-            '${error.message} Bạn vẫn có thể thiết lập kcal sau.',
+      _calculatedPlan = _calculatePlan();
+      _nutritionDraft = _calculatedPlan!.toTarget(
+        localDateKey(ref.read(currentLocalTimeProvider)()),
       );
+    } on FormatException catch (error) {
+      _planError = '${error.message} Bạn vẫn có thể thiết lập kcal sau.';
+    }
+  }
+
+  void _personalize() {
+    final missing = _missingPlanStep;
+    if (missing != null) {
+      _calculatorReturn = OnboardingStep.plan;
+      _goTo(missing);
+    } else {
+      setState(_preparePlan);
     }
   }
 
@@ -462,15 +484,17 @@ class _OnboardingFormState extends ConsumerState<_OnboardingForm> {
         ProfileValidation.requiredHeight(_height.text) ??
         ProfileValidation.weight(_weight.text);
     if (bodyError != null) {
-      setState(() => _step = 0);
+      _goTo(
+        _requiredErrors.entries.firstWhere((entry) => entry.value != null).key,
+      );
       return;
     }
     if (_goal == null) {
-      setState(() => _step = 1);
+      _goTo(OnboardingStep.goal);
       return;
     }
     if (ProfileValidation.targetWeight(_targetWeight.text, _goal) != null) {
-      setState(() => _step = 2);
+      _goTo(OnboardingStep.targetWeight);
       return;
     }
     FocusScope.of(context).unfocus();
@@ -484,12 +508,12 @@ class _OnboardingFormState extends ConsumerState<_OnboardingForm> {
       _completionError = null;
     });
     try {
-      final target = _nutritionDraft;
+      final target = _applyPlan ? _nutritionDraft : null;
       if (target != null) {
         final today = localDateKey(ref.read(currentLocalTimeProvider)());
         if (target.effectiveFromDateKey != today) {
           setState(() {
-            _step = 6;
+            _step = OnboardingStep.plan;
             _nutritionDraft = null;
             _completionError =
                 'Đã sang ngày mới. Hãy tạo lại đề xuất hoặc chọn thiết lập sau.';
@@ -502,7 +526,9 @@ class _OnboardingFormState extends ConsumerState<_OnboardingForm> {
             .timeout(const Duration(seconds: 15));
         if (!current()) return;
         if (!mounted) return;
-        if (existing != null && !sameNutritionTarget(existing, target)) {
+        final retainedTarget = target.withMarkersFrom(existing);
+        if (existing != null &&
+            !sameNutritionTarget(existing, retainedTarget)) {
           final replace = await showDialog<bool>(
             context: context,
             builder: (_) => AccountBoundDialog(
@@ -527,16 +553,16 @@ class _OnboardingFormState extends ConsumerState<_OnboardingForm> {
           if (!current()) return;
           if (replace != true) {
             setState(() {
-              _nutritionDraft = null;
-              _step = 6;
+              _applyPlan = false;
+              _step = OnboardingStep.plan;
             });
             return;
           }
         }
-        if (!sameNutritionTarget(existing, target)) {
+        if (!sameNutritionTarget(existing, retainedTarget)) {
           final saved = await ref
               .read(nutritionTargetControllerProvider.notifier)
-              .save(target);
+              .save(retainedTarget);
           if (!current()) return;
           if (!saved) {
             setState(
@@ -663,635 +689,578 @@ class _OnboardingFormState extends ConsumerState<_OnboardingForm> {
       );
     }
     _scheduleDraft();
-    final dirty = _initialDraft != jsonEncode(_progress.toJson());
+    final journey = _journey;
+    final index = journey.indexOf(_step);
+    final isLast = _step == OnboardingStep.plan;
+    final theme = Theme.of(context);
     return PopScope(
-      canPop: !busy && (!dirty || _draftSaved),
-      onPopInvokedWithResult: (didPop, result) async {
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
         if (didPop || busy) return;
-        if (ref.read(mealDraftStoreProvider).local.supported) {
-          if (await _saveDraft() && context.mounted) {
-            _exitTo(widget.isEditing ? AppRoutes.profile : AppRoutes.journal);
-          }
-          return;
+        if (index > 0) {
+          _previous();
+        } else {
+          _leave(widget.isEditing ? AppRoutes.profile : AppRoutes.journal);
         }
-        final leave = await showDialog<bool>(
-          context: context,
-          builder: (dialogContext) => AlertDialog(
-            title: const Text('Thoát và bỏ nháp?'),
-            content: const Text(
-              'Nền tảng này chưa lưu nháp thiết lập. Thông tin chưa lưu sẽ mất khi thoát.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(dialogContext, false),
-                child: const Text('Nhập tiếp'),
+      },
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 640),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      key: const ValueKey('onboarding-back'),
+                      tooltip: 'Quay lại',
+                      onPressed: busy
+                          ? null
+                          : () => index > 0
+                                ? _previous()
+                                : _leave(
+                                    widget.isEditing
+                                        ? AppRoutes.profile
+                                        : AppRoutes.journal,
+                                  ),
+                      icon: const Icon(AppIcons.arrowLeft),
+                    ),
+                    Expanded(
+                      child: Text(
+                        widget.isEditing
+                            ? 'Cập nhật cá nhân hóa'
+                            : 'Thiết lập sức khỏe ban đầu',
+                        style: theme.textTheme.titleSmall,
+                      ),
+                    ),
+                    PopupMenuButton<String>(
+                      tooltip: 'Tùy chọn tài khoản',
+                      enabled: !busy,
+                      onSelected: (value) async {
+                        switch (value) {
+                          case 'privacy':
+                            showPrivacyInformation(context);
+                          case 'logout':
+                            if (ref
+                                    .read(mealDraftStoreProvider)
+                                    .local
+                                    .supported &&
+                                !await _saveDraft()) {
+                              return;
+                            }
+                            if (_current) {
+                              await ref
+                                  .read(authControllerProvider.notifier)
+                                  .signOut();
+                            }
+                          case 'delete':
+                            await _deleteAccount();
+                        }
+                      },
+                      itemBuilder: (_) => const [
+                        PopupMenuItem(
+                          value: 'privacy',
+                          child: Text('Quyền riêng tư'),
+                        ),
+                        PopupMenuItem(
+                          value: 'logout',
+                          child: Text('Đăng xuất và thiết lập sau'),
+                        ),
+                        PopupMenuItem(
+                          key: ValueKey('onboarding-delete-account'),
+                          value: 'delete',
+                          child: Text('Xóa tài khoản và dữ liệu'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              TextButton(
-                onPressed: () => Navigator.pop(dialogContext, true),
-                child: const Text('Thoát và bỏ nháp'),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 12, 24, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    LinearProgressIndicator(
+                      key: const ValueKey('onboarding-progress'),
+                      value: (index + 1) / journey.length,
+                      semanticsLabel:
+                          'Bước ${index + 1} trên ${journey.length}',
+                      borderRadius: BorderRadius.circular(12),
+                      minHeight: 6,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Bước ${index + 1}/${journey.length} · ${_stepTitle(_step)}',
+                      style: theme.textTheme.labelMedium,
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  key: ValueKey('onboarding-scroll-${_step.name}'),
+                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+                  child: Form(
+                    key: _questionFormKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _questionContent(busy),
+                        if (_draftError != null) ...[
+                          Text(
+                            _draftError!,
+                            style: TextStyle(color: theme.colorScheme.error),
+                          ),
+                          TextButton(
+                            onPressed: _saveDraft,
+                            child: const Text('Thử lưu nháp'),
+                          ),
+                        ],
+                        if (_completionError != null)
+                          Semantics(
+                            liveRegion: true,
+                            child: Text(
+                              _completionError!,
+                              key: const ValueKey('onboarding-nutrition-error'),
+                              style: TextStyle(color: theme.colorScheme.error),
+                            ),
+                          ),
+                        if (_nutritionSaved && action.hasError)
+                          const Text(
+                            'Mục tiêu dinh dưỡng đã được lưu. Hồ sơ chưa hoàn tất; thử lại không tạo bản trùng.',
+                          ),
+                        if (action.error case final Object error)
+                          Semantics(
+                            liveRegion: true,
+                            child: Text(
+                              _messageFor(error),
+                              key: const ValueKey('onboarding-save-error'),
+                              style: TextStyle(color: theme.colorScheme.error),
+                            ),
+                          ),
+                        if (accountAction.error case final Object error)
+                          Text(switch (error) {
+                            AuthFailure failure => failure.message,
+                            AccountActionFailure failure => failure.message,
+                            _ =>
+                              'Chưa thể hoàn tất thao tác. Vui lòng thử lại.',
+                          }, style: TextStyle(color: theme.colorScheme.error)),
+                        if (_draftSaved) ...[
+                          const SizedBox(height: 16),
+                          const Text('Đã giữ nháp riêng tư trên thiết bị'),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    FilledButton(
+                      key: ValueKey(
+                        isLast ? 'onboarding-complete' : 'onboarding-next',
+                      ),
+                      onPressed: busy
+                          ? null
+                          : isLast
+                          ? _complete
+                          : _step == OnboardingStep.details
+                          ? () {
+                              setState(() => _includeDetails = false);
+                              _goTo(OnboardingStep.review);
+                            }
+                          : _next,
+                      child: busy && isLast
+                          ? const SizedBox.square(
+                              dimension: 22,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 6),
+                              child: Text(
+                                isLast
+                                    ? (_applyPlan && _nutritionDraft != null
+                                          ? 'Hoàn tất và áp dụng kế hoạch'
+                                          : 'Hoàn tất hồ sơ')
+                                    : _calculatorReturn != null
+                                    ? 'Xem lại kế hoạch'
+                                    : _step == OnboardingStep.details
+                                    ? 'Xem tổng kết của tôi'
+                                    : _step == OnboardingStep.review
+                                    ? 'Xem kế hoạch calo'
+                                    : 'Tiếp tục',
+                              ),
+                            ),
+                    ),
+                    if (!widget.isEditing)
+                      TextButton(
+                        key: const ValueKey('onboarding-skip-all'),
+                        onPressed: busy ? null : _skipPersonalization,
+                        child: const Text('Cá nhân hóa sau'),
+                      )
+                    else
+                      TextButton(
+                        onPressed: busy
+                            ? null
+                            : () => _leave(AppRoutes.profile),
+                        child: const Text('Hủy, giữ thông tin đã lưu'),
+                      ),
+                  ],
+                ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _questionContent(bool busy) {
+    final title = switch (_step) {
+      OnboardingStep.name => 'Mình nên gọi bạn là gì?',
+      OnboardingStep.formulaSex => 'Chọn hệ số dùng để ước tính năng lượng',
+      OnboardingStep.birthDate => 'Bạn sinh ngày nào?',
+      OnboardingStep.height => 'Chiều cao của bạn là bao nhiêu?',
+      OnboardingStep.weight => 'Cân nặng hiện tại của bạn?',
+      OnboardingStep.goal => 'Bạn muốn hướng tới mục tiêu nào?',
+      OnboardingStep.targetWeight => 'Bạn muốn hướng tới cân nặng bao nhiêu?',
+      OnboardingStep.activity => 'Một ngày bình thường bạn vận động thế nào?',
+      OnboardingStep.guidance => 'Bạn có cần hướng dẫn dinh dưỡng riêng không?',
+      OnboardingStep.pace => 'Bạn muốn bắt đầu với nhịp nào?',
+      OnboardingStep.details => 'Bạn có muốn cá nhân hóa thêm không?',
+      OnboardingStep.review => 'Cùng xem lại thông tin của bạn nhé',
+      OnboardingStep.plan => 'Kế hoạch dành cho bạn',
+      _ => personalizationQuestions.firstWhere((q) => q.id == _step.name).title,
+    };
+    final description = switch (_step) {
+      OnboardingStep.name => 'Tên này sẽ xuất hiện trong hồ sơ của bạn.',
+      OnboardingStep.formulaSex =>
+        'Đây là hệ số sinh lý của công thức, không phải câu hỏi về bản dạng giới. Có thể để sau nếu bạn không muốn trả lời.',
+      OnboardingStep.birthDate =>
+        'Dùng để tính tuổi. HealthMate hiện dành cho người từ 18 tuổi.',
+      OnboardingStep.height || OnboardingStep.weight =>
+        'Nhập số đo bạn biết; có thể cập nhật lại trong hồ sơ.',
+      OnboardingStep.goal =>
+        'Bạn chủ động chọn mục tiêu và có thể thay đổi sau.',
+      OnboardingStep.targetWeight =>
+        'Đây là mong muốn của bạn, không phải mức cân nặng app yêu cầu phải đạt.',
+      OnboardingStep.activity =>
+        'Tính cả sinh hoạt và tập luyện thường lệ. Không cộng calo tập luyện thêm lần nữa.',
+      OnboardingStep.guidance =>
+        'Phạm vi tự động: 18–65 tuổi, không mang thai/cho con bú, không có chế độ ăn điều trị, rối loạn ăn uống hoặc nhu cầu thể thao chuyên nghiệp. Ngoài phạm vi vẫn dùng app và đặt mục tiêu được tư vấn riêng.',
+      OnboardingStep.pace =>
+        'Thay đổi lựa chọn để xem mức calo khởi đầu. Đây không phải cam kết tăng/giảm một số kg mỗi tuần.',
+      OnboardingStep.details =>
+        'Các câu về vận động, ăn uống và giấc ngủ là tùy chọn. Bạn có thể trả lời sau trong Cá nhân.',
+      OnboardingStep.avoidFoods =>
+        'Ngăn cách bằng dấu ; hoặc dấu phẩy. Bộ lọc từ khóa không kiểm tra được nhiễm chéo; luôn kiểm tra nguyên liệu thực tế.',
+      OnboardingStep.review =>
+        'Chạm quay lại nếu cần sửa. Chưa có thay đổi nào được lưu vào hồ sơ.',
+      OnboardingStep.plan =>
+        'Xem mục tiêu, cách tính và dưỡng chất trước khi xác nhận.',
+      _ =>
+        'Có thể để sau. Câu trả lời giúp mô tả thói quen, không dùng để chẩn đoán hay tự cộng/trừ calo.',
+    };
+    final children = <Widget>[
+      if (_step != OnboardingStep.plan)
+        OnboardingPrompt(title: title, message: description),
+    ];
+    switch (_step) {
+      case OnboardingStep.name:
+        children.add(
+          TextFormField(
+            key: const ValueKey('onboarding-name'),
+            controller: _name,
+            enabled: !busy,
+            textCapitalization: TextCapitalization.words,
+            decoration: const InputDecoration(
+              labelText: 'Tên hiển thị',
+              prefixIcon: Icon(AppIcons.contactRound),
+            ),
+            validator: ProfileValidation.displayName,
+          ),
         );
-        if (leave == true && context.mounted) {
-          _exitTo(widget.isEditing ? AppRoutes.profile : AppRoutes.journal);
-        }
-      },
-      child: FeaturePage(
-        title: widget.isEditing
-            ? 'Cập nhật cá nhân hóa'
-            : 'Thiết lập sức khỏe ban đầu',
-        subtitle:
-            'Cá nhân hóa là tùy chọn. Bạn có thể ghi bữa ngay, chưa cần mục tiêu kcal.',
-        children: [
-          if (!widget.isEditing)
-            FilledButton.icon(
-              key: const ValueKey('onboarding-skip-all'),
-              onPressed: busy || !_draftRestored ? null : _skipPersonalization,
-              icon: const Icon(Icons.restaurant_outlined),
-              label: const Text('Cá nhân hóa sau'),
-            ),
-          TextButton(
-            onPressed: () => showPrivacyInformation(context),
-            child: const Text('Quyền riêng tư'),
-          ),
-          if (!_draftRestored) const LinearProgressIndicator(),
-          if (_draftError != null) ...[
-            Text(_draftError!),
-            TextButton(
-              onPressed: _saveDraft,
-              child: const Text('Thử lưu nháp'),
-            ),
-          ] else if (_draftSaved)
-            const Text('Đã giữ nháp riêng tư trên thiết bị'),
-          if (!ref.read(mealDraftStoreProvider).local.supported)
-            const Text(
-              'Nền tảng này chưa giữ nháp khi đóng màn. Chưa có dữ liệu nào được lưu vào hồ sơ.',
-            ),
-          if (widget.isEditing)
-            TextButton.icon(
-              onPressed: busy ? null : () => _leave(AppRoutes.profile),
-              icon: const Icon(Icons.close),
-              label: const Text('Hủy, giữ thông tin đã lưu'),
-            ),
-          LinearProgressIndicator(
-            key: const ValueKey('onboarding-progress'),
-            value: (_step + 1) / 8,
-            semanticsLabel: 'Bước ${_step + 1} trên 8',
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            'Cá nhân hóa · phần ${_step + 1}/8 · ${_stepTitle(_step)}',
-            style: Theme.of(context).textTheme.labelLarge,
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Card(
+      case OnboardingStep.birthDate:
+        children.add(
+          OutlinedButton(
+            key: const ValueKey('onboarding-birth-date'),
+            onPressed: busy ? null : _pickBirthDate,
             child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 180),
-                child: switch (_step) {
-                  0 => _BodyStep(
-                    key: const ValueKey('onboarding-body-step'),
-                    formKey: _bodyFormKey,
-                    name: _name,
-                    height: _height,
-                    weight: _weight,
-                    birthDate: _birthDate,
-                    birthDateError: _birthDateError,
-                    onPickBirthDate: _pickBirthDate,
-                    answers: _answers,
-                    onAnswersChanged: _changeAnswers,
+              padding: const EdgeInsets.all(12),
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 12,
+                runSpacing: 8,
+                children: [
+                  const Icon(AppIcons.cake),
+                  Text(
+                    _birthDate == null
+                        ? 'Chọn ngày sinh'
+                        : DateFormat('dd/MM/yyyy').format(_birthDate!),
                   ),
-                  1 => _GoalStep(
-                    key: const ValueKey('onboarding-goal-step'),
-                    selected: _goal,
-                    error: _goalError,
-                    onSelected: (goal) => setState(() {
+                ],
+              ),
+            ),
+          ),
+        );
+        if (_birthDateError != null) {
+          children.add(
+            Text(
+              _birthDateError!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          );
+        }
+      case OnboardingStep.height ||
+          OnboardingStep.weight ||
+          OnboardingStep.targetWeight:
+        final height = _step == OnboardingStep.height;
+        final target = _step == OnboardingStep.targetWeight;
+        children.add(
+          OnboardingMeasurement(
+            controller: height
+                ? _height
+                : target
+                ? _targetWeight
+                : _weight,
+            fieldKey: height
+                ? 'onboarding-height'
+                : target
+                ? 'onboarding-target-weight'
+                : 'onboarding-weight',
+            label: height
+                ? 'Chiều cao'
+                : target
+                ? 'Cân nặng mục tiêu'
+                : 'Cân nặng hiện tại',
+            unit: height ? 'cm' : 'kg',
+            min: height ? 80 : 20,
+            max: height ? 250 : 500,
+            validator: height
+                ? ProfileValidation.requiredHeight
+                : ProfileValidation.weight,
+            enabled: !busy,
+          ),
+        );
+        if (!height) {
+          children.add(
+            OnboardingBmi(
+              heightCm: ProfileValidation.parseDecimal(_height.text),
+              weightKg: ProfileValidation.parseDecimal(
+                target ? _targetWeight.text : _weight.text,
+              ),
+              isTarget: target,
+            ),
+          );
+        }
+      case OnboardingStep.goal:
+        for (final goal in HealthGoal.values) {
+          children.add(
+            OnboardingChoice(
+              key: ValueKey('onboarding-goal-${goal.value}'),
+              label: goal.label,
+              description: switch (goal) {
+                HealthGoal.loseWeight =>
+                  'Giảm năng lượng vừa phải và theo dõi tiến độ.',
+                HealthGoal.maintainWeight =>
+                  'Bắt đầu ở mức năng lượng duy trì.',
+                HealthGoal.gainWeightOrMuscle =>
+                  'Tăng năng lượng từng bước theo lựa chọn của bạn.',
+                HealthGoal.gainMuscle =>
+                  'Bắt đầu ở mức duy trì, ưu tiên đạm và thói quen tập sức mạnh.',
+                HealthGoal.healthierHabits =>
+                  'Ưu tiên ăn uống, vận động hoặc giấc ngủ; không bắt buộc theo dõi calo.',
+              },
+              icon: switch (goal) {
+                HealthGoal.loseWeight => AppIcons.trendingDown,
+                HealthGoal.maintainWeight => AppIcons.moveRight,
+                HealthGoal.gainWeightOrMuscle => AppIcons.trendingUp,
+                HealthGoal.gainMuscle => AppIcons.workout,
+                HealthGoal.healthierHabits => AppIcons.leaf,
+              },
+              selected: _goal == goal,
+              onTap: busy
+                  ? null
+                  : () => setState(() {
                       _goal = goal;
                       _goalError = null;
                       _answers = _answers.normalized(goal);
                       _nutritionDraft = null;
+                      _calculatedPlan = null;
                     }),
-                  ),
-                  2 => Column(
-                    children: [
-                      _TargetStep(
-                        key: const ValueKey('onboarding-target-step'),
-                        formKey: _targetFormKey,
-                        goal: _goal!,
-                        targetWeight: _targetWeight,
-                      ),
-                      const SizedBox(height: 20),
-                      PersonalizationQuestions(
-                        numbers: _goal!.needsTargetWeight
-                            ? const [7, 8]
-                            : const [8],
-                        answers: _answers,
-                        onChanged: _changeAnswers,
-                      ),
-                    ],
-                  ),
-                  3 => PersonalizationQuestions(
-                    key: const ValueKey('onboarding-activity-step'),
-                    numbers: const [9, 10, 11, 12],
-                    answers: _answers,
-                    onChanged: _changeAnswers,
-                  ),
-                  4 => PersonalizationQuestions(
-                    key: const ValueKey('onboarding-food-step'),
-                    numbers: const [13, 14, 15, 16],
-                    answers: _answers,
-                    onChanged: _changeAnswers,
-                  ),
-                  5 => PersonalizationQuestions(
-                    key: const ValueKey('onboarding-sleep-step'),
-                    numbers: const [17, 18, 19, 20],
-                    answers: _answers,
-                    onChanged: _changeAnswers,
-                  ),
-                  6 => Column(
-                    key: const ValueKey('onboarding-nutrition-step'),
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        'Kế hoạch kcal mỗi ngày',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'Bổ sung thông tin cần thiết để ước tính kcal, rồi xem lại trước khi lưu.',
-                      ),
-                      if (_nutritionDraft case final plan?) ...[
-                        const SizedBox(height: 12),
-                        Text(
-                          'Đề xuất: ${plan.kcalTarget.toStringAsFixed(0)} kcal/ngày',
-                          key: const ValueKey('onboarding-nutrition-summary'),
-                        ),
-                        Text(
-                          'Đạm ${plan.proteinGTarget} g · Carb ${plan.carbsGTarget} g · Béo ${plan.fatGTarget} g',
-                        ),
-                        const Text(
-                          'Ước tính · Chưa lưu. Không tự cộng thêm calo từ bước chân.',
-                        ),
-                        TextButton(
-                          onPressed: busy
-                              ? null
-                              : () => setState(() => _nutritionDraft = null),
-                          child: const Text('Bỏ đề xuất, thiết lập sau'),
-                        ),
-                      ],
-                      FilledButton.icon(
-                        key: const ValueKey('onboarding-personalize-nutrition'),
-                        onPressed: busy ? null : _personalize,
-                        icon: const Icon(Icons.calculate_outlined),
-                        label: Text(
-                          _nutritionDraft == null
-                              ? 'Tạo đề xuất kcal của tôi'
-                              : 'Tính lại đề xuất',
-                        ),
-                      ),
-                      const Text(
-                        'Bạn có thể thiết lập sau hoặc dùng mục tiêu được tư vấn riêng. Mục tiêu đã có không tự bị thay thế.',
-                      ),
-                    ],
-                  ),
-                  _ => _ReviewStep(
-                    key: const ValueKey('onboarding-review-step'),
-                    name: _name.text.trim(),
-                    birthDate: _birthDate!,
-                    heightCm: ProfileValidation.parseDecimal(_height.text)!,
-                    weightKg: ProfileValidation.parseDecimal(_weight.text)!,
-                    goal: _goal!,
-                    targetWeightKg: _goal!.needsTargetWeight
-                        ? ProfileValidation.parseDecimal(_targetWeight.text)
-                        : null,
-                  ),
-                },
-              ),
             ),
-          ),
-          if (_step == 7) ...[
+          );
+        }
+        if (_goalError != null) {
+          children.add(
             Text(
-              'Đặc điểm bạn đã chọn: ${_answers.segmentLabels.isEmpty ? 'Chưa trả lời phần bổ sung' : _answers.segmentLabels.join(' · ')}',
-            ),
-            Text(_answers.firstAction),
-            const SizedBox(height: 12),
-            ExpansionTile(
-              title: const Text('Xem lại câu trả lời bổ sung'),
-              children: [
-                for (final q in personalizationQuestions)
-                  ListTile(
-                    title: Text('${q.number}. ${q.title}'),
-                    subtitle: Text(
-                      _answers.label(q.id) ?? 'Để sau / chưa trả lời',
-                    ),
-                  ),
-              ],
-            ),
-            TextButton(
-              onPressed: () => showDialog<void>(
-                context: context,
-                builder: (dialogContext) => AlertDialog(
-                  title: const Text('Nguồn tham khảo'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(dialogContext),
-                      child: const Text('Đóng'),
-                    ),
-                  ],
-                  content: const Text(
-                    'WHO STEPS/GPAQ: vận động; NCI/NIH DSQ: ăn uống; CDC BRFSS: thời lượng ngủ. Câu hỏi đã rút gọn và điều chỉnh cho HealthMate, không phải thang đo WHO đã kiểm định. Không dùng để chẩn đoán hoặc tính kcal từ giờ ngủ.',
-                  ),
-                ),
-              ),
-              child: const Text('Nguồn và cách dùng câu trả lời'),
-            ),
-          ],
-          if (_step == 7 && _nutritionDraft != null)
-            Text(
-              'Kế hoạch đã chọn: ${_nutritionDraft!.kcalTarget.toStringAsFixed(0)} kcal/ngày. Bấm hoàn tất để xác nhận lưu từ hôm nay.',
-            ),
-          if (_completionError != null)
-            Text(
-              _completionError!,
-              key: const ValueKey('onboarding-nutrition-error'),
+              _goalError!,
               style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
-          if (_nutritionSaved && action.hasError)
-            const Text(
-              'Mục tiêu dinh dưỡng đã được lưu. Hồ sơ chưa hoàn tất; thử lại sẽ dùng cùng mục tiêu, không tạo bản trùng.',
-            ),
-          if (action.error case final Object error) ...[
-            const SizedBox(height: AppSpacing.md),
-            Semantics(
-              liveRegion: true,
-              child: Text(
-                _messageFor(error),
-                key: const ValueKey('onboarding-save-error'),
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-              ),
-            ),
-          ],
-          const SizedBox(height: AppSpacing.lg),
-          Row(
-            children: [
-              if (_step > 0)
-                Expanded(
-                  child: OutlinedButton(
-                    key: const ValueKey('onboarding-back'),
-                    onPressed: busy ? null : _previous,
-                    child: const Text('Quay lại'),
-                  ),
-                ),
-              if (_step > 0) const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: FilledButton(
-                  key: ValueKey(
-                    _step == 7 ? 'onboarding-complete' : 'onboarding-next',
-                  ),
-                  onPressed: busy ? null : (_step == 7 ? _complete : _next),
-                  child: busy && _step == 7
-                      ? const SizedBox.square(
-                          dimension: 22,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(
-                          _step == 7
-                              ? 'Hoàn tất thiết lập'
-                              : _step == 6 && _nutritionDraft == null
-                              ? 'Thiết lập kcal sau'
-                              : _calculatorReturn != null
-                              ? 'Quay lại đề xuất kcal'
-                              : 'Tiếp tục',
-                        ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          TextButton.icon(
-            onPressed: busy
+          );
+        }
+      case OnboardingStep.details:
+        children.add(
+          OnboardingChoice(
+            key: const ValueKey('onboarding-add-details'),
+            label: 'Trả lời thêm về thói quen',
+            description:
+                'Có thể bỏ qua từng câu; không làm thay đổi calo chỉ từ giấc ngủ.',
+            icon: AppIcons.slidersHorizontal,
+            selected: _includeDetails,
+            onTap: busy
                 ? null
-                : () async {
-                    if (ref.read(mealDraftStoreProvider).local.supported &&
-                        !await _saveDraft()) {
-                      return;
-                    }
-                    if (!_current) return;
-                    await ref.read(authControllerProvider.notifier).signOut();
+                : () {
+                    setState(() => _includeDetails = true);
+                    _next();
                   },
-            icon: const Icon(Icons.logout_rounded),
-            label: const Text('Đăng xuất và thiết lập sau'),
           ),
-          TextButton.icon(
-            key: const ValueKey('onboarding-delete-account'),
-            onPressed: busy ? null : _deleteAccount,
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.error,
-            ),
-            icon: const Icon(Icons.delete_forever_outlined),
-            label: const Text('Xóa tài khoản và dữ liệu'),
+        );
+      case OnboardingStep.review:
+        children.addAll([
+          _summaryRow('Tên hiển thị', _name.text.trim()),
+          _summaryRow(
+            'Ngày sinh',
+            DateFormat('dd/MM/yyyy').format(_birthDate!),
           ),
-          if (accountAction.error case final Object error)
-            Semantics(
-              liveRegion: true,
-              child: Text(
-                switch (error) {
-                  AuthFailure failure => failure.message,
-                  AccountActionFailure failure => failure.message,
-                  _ => 'Chưa thể hoàn tất thao tác. Vui lòng thử lại.',
-                },
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-                textAlign: TextAlign.center,
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BodyStep extends StatelessWidget {
-  const _BodyStep({
-    required this.formKey,
-    required this.name,
-    required this.height,
-    required this.weight,
-    required this.birthDate,
-    required this.birthDateError,
-    required this.onPickBirthDate,
-    required this.answers,
-    required this.onAnswersChanged,
-    super.key,
-  });
-
-  final GlobalKey<FormState> formKey;
-  final TextEditingController name;
-  final TextEditingController height;
-  final TextEditingController weight;
-  final DateTime? birthDate;
-  final String? birthDateError;
-  final VoidCallback onPickBirthDate;
-  final PersonalizationAnswers answers;
-  final ValueChanged<PersonalizationAnswers> onAnswersChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'Thông tin cơ bản',
-            style: Theme.of(context).textTheme.titleLarge,
+          _summaryRow('Chiều cao', '${_height.text} cm'),
+          _summaryRow('Cân nặng hiện tại', '${_weight.text} kg'),
+          _summaryRow('Mục tiêu', _goal!.label),
+          if (_goal!.needsTargetWeight)
+            _summaryRow('Cân nặng mục tiêu', '${_targetWeight.text} kg'),
+          _summaryRow('Vận động', _answers.activity?.label ?? 'Chưa trả lời'),
+          OnboardingBmi(
+            heightCm: ProfileValidation.parseDecimal(_height.text),
+            weightKg: ProfileValidation.parseDecimal(_weight.text),
           ),
-          const SizedBox(height: AppSpacing.sm),
-          const Text(
-            'Các số liệu này giúp hiển thị chỉ số và mục tiêu phù hợp.',
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          TextFormField(
-            key: const ValueKey('onboarding-name'),
-            controller: name,
-            textInputAction: TextInputAction.next,
-            textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-              labelText: 'Tên hiển thị',
-              prefixIcon: Icon(Icons.badge_outlined),
-            ),
-            validator: ProfileValidation.displayName,
-          ),
-          const SizedBox(height: AppSpacing.md),
-          OutlinedButton.icon(
-            key: const ValueKey('onboarding-birth-date'),
-            onPressed: onPickBirthDate,
-            icon: const Icon(Icons.cake_outlined),
-            label: Text(
-              birthDate == null
-                  ? 'Ngày sinh · dd/MM/yyyy'
-                  : 'Ngày sinh · ${DateFormat('dd/MM/yyyy').format(birthDate!)}',
-            ),
-          ),
-          if (birthDateError != null) ...[
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              birthDateError!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
+          if (_answers.segmentLabels.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Text('Đặc điểm đã chọn: ${_answers.segmentLabels.join(' · ')}'),
           ],
-          const SizedBox(height: AppSpacing.md),
-          PersonalizationQuestions(
-            numbers: const [2],
-            answers: answers,
-            onChanged: onAnswersChanged,
+          const SizedBox(height: 12),
+          Text(_answers.firstAction),
+          TextButton(
+            key: const ValueKey('onboarding-edit-answers'),
+            onPressed: busy ? null : () => _goTo(OnboardingStep.name),
+            child: const Text('Chỉnh sửa câu trả lời'),
           ),
-          TextFormField(
-            key: const ValueKey('onboarding-height'),
-            controller: height,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            textInputAction: TextInputAction.next,
-            decoration: const InputDecoration(
-              labelText: 'Chiều cao (cm)',
-              prefixIcon: Icon(Icons.height_rounded),
+        ]);
+      case OnboardingStep.plan:
+        if (_goal!.needsTargetWeight) {
+          children.add(
+            _summaryRow(
+              'Cân nặng mục tiêu',
+              '${ProfileValidation.parseDecimal(_targetWeight.text)!.toStringAsFixed(1)} kg',
             ),
-            validator: ProfileValidation.requiredHeight,
-          ),
-          const SizedBox(height: AppSpacing.md),
-          TextFormField(
-            key: const ValueKey('onboarding-weight'),
-            controller: weight,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            textInputAction: TextInputAction.done,
-            decoration: const InputDecoration(
-              labelText: 'Cân nặng hiện tại (kg)',
-              prefixIcon: Icon(Icons.monitor_weight_outlined),
+          );
+        }
+        if (_calculatedPlan != null) {
+          children.add(
+            OnboardingPlanSummary(
+              plan: _calculatedPlan!,
+              name: _name.text.trim(),
             ),
-            validator: ProfileValidation.weight,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _GoalStep extends StatelessWidget {
-  const _GoalStep({
-    required this.selected,
-    required this.error,
-    required this.onSelected,
-    super.key,
-  });
-
-  final HealthGoal? selected;
-  final String? error;
-  final ValueChanged<HealthGoal> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text('Mục tiêu của bạn', style: Theme.of(context).textTheme.titleLarge),
-        const SizedBox(height: AppSpacing.sm),
-        const Text('Bạn có thể thay đổi lựa chọn này trong trang Cá nhân.'),
-        const SizedBox(height: AppSpacing.md),
-        for (final goal in HealthGoal.values)
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-            child: ChoiceChip(
-              key: ValueKey('onboarding-goal-${goal.value}'),
-              label: SizedBox(width: double.infinity, child: Text(goal.label)),
-              selected: selected == goal,
-              onSelected: (_) => onSelected(goal),
-              showCheckmark: true,
+          );
+          children.add(
+            CheckboxListTile(
+              key: const ValueKey('onboarding-apply-plan'),
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Áp dụng mục tiêu calo này từ hôm nay'),
+              subtitle: const Text(
+                'Bỏ chọn nếu bạn muốn thiết lập calo sau hoặc giữ mục tiêu đang có.',
+              ),
+              value: _applyPlan,
+              onChanged: busy
+                  ? null
+                  : (value) => setState(() => _applyPlan = value == true),
             ),
-          ),
-        if (error != null)
-          Text(
-            error!,
-            style: TextStyle(color: Theme.of(context).colorScheme.error),
-          ),
-      ],
-    );
-  }
-}
-
-class _TargetStep extends StatelessWidget {
-  const _TargetStep({
-    required this.formKey,
-    required this.goal,
-    required this.targetWeight,
-    super.key,
-  });
-
-  final GlobalKey<FormState> formKey;
-  final HealthGoal goal;
-  final TextEditingController targetWeight;
-
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'Thông tin mục tiêu',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          if (goal.needsTargetWeight) ...[
+          );
+        } else {
+          children.addAll([
             Text(
-              'Nhập cân nặng bạn muốn hướng tới cho mục tiêu “${goal.label}”.',
+              'Mục tiêu của bạn: ${_goal!.label}',
+              style: Theme.of(context).textTheme.titleLarge,
             ),
-            const SizedBox(height: AppSpacing.lg),
-            TextFormField(
-              key: const ValueKey('onboarding-target-weight'),
-              controller: targetWeight,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
+            const SizedBox(height: 12),
+            Text(
+              _planError ?? 'Bạn có thể hoàn tất hồ sơ và thiết lập calo sau.',
+            ),
+          ]);
+        }
+        children.add(
+          TextButton.icon(
+            key: const ValueKey('onboarding-personalize-nutrition'),
+            onPressed: busy ? null : _personalize,
+            icon: const Icon(AppIcons.calculator),
+            label: Text(
+              _missingPlanStep == null
+                  ? 'Tính lại đề xuất'
+                  : 'Bổ sung thông tin để tính calo',
+            ),
+          ),
+        );
+        children.add(
+          const Text(
+            'Thông tin chỉ hỗ trợ theo dõi thói quen, không thay thế tư vấn y tế.',
+          ),
+        );
+      default:
+        children.add(
+          OnboardingSurvey(
+            id: _step.name,
+            goal: _goal,
+            answers: _answers,
+            onChanged: _changeAnswers,
+            enabled: !busy,
+          ),
+        );
+        if (_step == OnboardingStep.pace && _answers['pace'] != null) {
+          try {
+            final estimate = _calculatePlan();
+            children.add(
+              Text(
+                'Mức khởi đầu: ${estimate.kcal.toStringAsFixed(0)} kcal/ngày',
+                key: const ValueKey('onboarding-pace-preview'),
+                style: Theme.of(context).textTheme.titleLarge,
               ),
-              textInputAction: TextInputAction.done,
-              decoration: const InputDecoration(
-                labelText: 'Cân nặng mục tiêu (kg)',
-                prefixIcon: Icon(Icons.flag_outlined),
-              ),
-              validator: (value) => ProfileValidation.targetWeight(value, goal),
-            ),
-          ] else
-            const Text(
-              'Mục tiêu này chưa cần thêm số liệu. HealthMate sẽ dựa trên nhật ký bạn tự ghi nhận.',
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ReviewStep extends StatelessWidget {
-  const _ReviewStep({
-    required this.name,
-    required this.birthDate,
-    required this.heightCm,
-    required this.weightKg,
-    required this.goal,
-    required this.targetWeightKg,
-    super.key,
-  });
-
-  final String name;
-  final DateTime birthDate;
-  final double heightCm;
-  final double weightKg;
-  final HealthGoal goal;
-  final double? targetWeightKg;
-
-  @override
-  Widget build(BuildContext context) {
+            );
+          } on FormatException catch (error) {
+            children.add(Text(error.message));
+          }
+        }
+    }
     return Column(
+      key: ValueKey(switch (_step) {
+        OnboardingStep.name => 'onboarding-name-step',
+        OnboardingStep.goal => 'onboarding-goal-step',
+        OnboardingStep.targetWeight => 'onboarding-target-step',
+        OnboardingStep.review => 'onboarding-review-step',
+        OnboardingStep.plan => 'onboarding-nutrition-step',
+        _ => 'onboarding-${_step.name}-step',
+      }),
       crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: children,
+    );
+  }
+
+  Widget _summaryRow(String label, String value) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 10),
+    child: Wrap(
+      spacing: 16,
+      runSpacing: 4,
       children: [
-        Text(
-          'Xem lại thông tin',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        const SizedBox(height: AppSpacing.md),
-        _ReviewRow(label: 'Tên hiển thị', value: name),
-        _ReviewRow(
-          label: 'Ngày sinh',
-          value: DateFormat('dd/MM/yyyy').format(birthDate),
-        ),
-        _ReviewRow(
-          label: 'Chiều cao',
-          value: '${heightCm.toStringAsFixed(1)} cm',
-        ),
-        _ReviewRow(
-          label: 'Cân nặng hiện tại',
-          value: '${weightKg.toStringAsFixed(1)} kg',
-        ),
-        _ReviewRow(label: 'Mục tiêu', value: goal.label),
-        if (targetWeightKg != null)
-          _ReviewRow(
-            label: 'Cân nặng mục tiêu',
-            value: '${targetWeightKg!.toStringAsFixed(1)} kg',
-          ),
-        const SizedBox(height: AppSpacing.sm),
-        const Text(
-          'Bạn có thể cập nhật các thông tin này sau trong trang Cá nhân.',
-        ),
+        Text(label),
+        Text(value, style: Theme.of(context).textTheme.titleMedium),
       ],
-    );
-  }
-}
-
-class _ReviewRow extends StatelessWidget {
-  const _ReviewRow({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(child: Text(label)),
-          const SizedBox(width: AppSpacing.md),
-          Flexible(
-            child: Text(
-              value,
-              textAlign: TextAlign.end,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+    ),
+  );
 }
 
 class _OnboardingStatus extends StatelessWidget {
@@ -1316,7 +1285,7 @@ class _OnboardingStatus extends StatelessWidget {
         else
           FilledButton.icon(
             onPressed: onRetry,
-            icon: const Icon(Icons.refresh_rounded),
+            icon: const Icon(AppIcons.refreshCw),
             label: const Text('Thử lại'),
           ),
       ],
@@ -1324,17 +1293,22 @@ class _OnboardingStatus extends StatelessWidget {
   }
 }
 
-String _stepTitle(int step) => switch (step) {
-  0 => 'Thể trạng',
-  1 => 'Mục tiêu',
-  2 => 'Mục tiêu và phạm vi áp dụng',
-  3 => 'Vận động · câu 9–12',
-  4 => 'Ăn uống · câu 13–16',
-  5 => 'Giấc ngủ và thói quen · câu 17–20',
-  6 => 'Kế hoạch dinh dưỡng',
-  _ => 'Xác nhận',
+String _stepTitle(OnboardingStep step) => switch (step) {
+  OnboardingStep.name => 'Tên hiển thị',
+  OnboardingStep.formulaSex => 'Hệ số sinh lý',
+  OnboardingStep.birthDate => 'Ngày sinh',
+  OnboardingStep.height => 'Chiều cao',
+  OnboardingStep.weight => 'Cân nặng',
+  OnboardingStep.goal => 'Mục tiêu',
+  OnboardingStep.targetWeight => 'Cân nặng mong muốn',
+  OnboardingStep.activity => 'Vận động thường ngày',
+  OnboardingStep.guidance => 'Phạm vi đề xuất',
+  OnboardingStep.pace => 'Nhịp điều chỉnh',
+  OnboardingStep.details => 'Cá nhân hóa thêm',
+  OnboardingStep.review => 'Tổng kết',
+  OnboardingStep.plan => 'Kế hoạch của bạn',
+  _ => 'Thói quen · tùy chọn',
 };
-
 String _messageFor(Object error) => switch (error) {
   ProfileFailure failure => failure.message,
   _ => 'Chưa thể tải dữ liệu. Vui lòng thử lại.',

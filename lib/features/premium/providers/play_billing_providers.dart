@@ -3,10 +3,13 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/utils/subscription_stream.dart';
+import '../../../shared/providers/local_clock_provider.dart';
 import '../../auth/providers/auth_providers.dart';
 import '../data/play_billing_repository.dart';
 import '../data/play_store.dart';
@@ -32,6 +35,11 @@ final playBillingRepositoryProvider = Provider<PlayBillingRepository>(
 final playStoreProvider = Provider<PlayStore>(
   (ref) => GooglePlayStore(InAppPurchase.instance),
 );
+
+final openPlaySubscriptionsProvider = Provider<Future<bool> Function(Uri)>(
+  (ref) =>
+      (uri) => launchUrl(uri, mode: LaunchMode.externalApplication),
+);
 final playBillingControllerProvider = Provider<PlayBillingController?>((ref) {
   final user = ref.watch(authSessionProvider).value;
   if (!ref.watch(playBillingEnabledProvider) ||
@@ -46,9 +54,18 @@ final playBillingControllerProvider = Provider<PlayBillingController?>((ref) {
     ref.watch(playStoreProvider),
     isCurrent: () =>
         !disposed && ref.read(authSessionProvider).value?.uid == uid,
+    now: ref.watch(currentLocalTimeProvider),
   );
+  ref.listen(verifiedMembershipProvider, (_, next) {
+    if (!next.hasError && !next.isLoading) {
+      controller.acceptMembership(next.value);
+    }
+  });
+  final observer = _PlayBillingResumeObserver(controller);
+  WidgetsBinding.instance.addObserver(observer);
   ref.onDispose(() {
     disposed = true;
+    WidgetsBinding.instance.removeObserver(observer);
     controller.dispose();
   });
   // Lifetime belongs to the signed-in app session, including checkout returns
@@ -56,6 +73,17 @@ final playBillingControllerProvider = Provider<PlayBillingController?>((ref) {
   unawaited(controller.start());
   return controller;
 });
+
+class _PlayBillingResumeObserver extends WidgetsBindingObserver {
+  _PlayBillingResumeObserver(this.controller);
+  final PlayBillingController controller;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) unawaited(controller.onResume());
+  }
+}
+
 final verifiedMembershipProvider =
     StreamProvider.autoDispose<VerifiedMembership?>((ref) {
       final user = ref.watch(authSessionProvider).value;

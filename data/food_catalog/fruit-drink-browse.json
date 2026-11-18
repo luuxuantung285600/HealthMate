@@ -1,0 +1,2253 @@
+{
+  "reviewedOn": "2026-11-10",
+  "note": "100 mục mỗi nhóm, gồm trạng thái/giống/chế biến riêng; không có nghĩa là 100 loài quả hay nhãn đồ uống Việt Nam. Giữ nguyên dinh dưỡng và mô tả nguồn. USDA là tham khảo theo phiên bản nguồn, không thay thế nhãn sản phẩm hiện hành.",
+  "groups": {
+    "fruits": [
+      {
+        "id": "vn2007-5001",
+        "name": "Bưởi"
+      },
+      {
+        "id": "vn2007-5002",
+        "name": "Cam"
+      },
+      {
+        "id": "vn2007-5004",
+        "name": "Chôm chôm"
+      },
+      {
+        "id": "vn2007-5009",
+        "name": "Dâu tây"
+      },
+      {
+        "id": "vn2007-5011",
+        "name": "Dưa hấu"
+      },
+      {
+        "id": "vn2007-5015",
+        "name": "Thơm (dứa)"
+      },
+      {
+        "id": "vn2007-5017",
+        "name": "Đu đủ chín"
+      },
+      {
+        "id": "vn2007-5018",
+        "name": "Mận miền Nam (roi)"
+      },
+      {
+        "id": "vn2007-5023",
+        "name": "Lê"
+      },
+      {
+        "id": "vn2007-5025",
+        "name": "Mãng cầu xiêm"
+      },
+      {
+        "id": "vn2007-5028",
+        "name": "Mít chín"
+      },
+      {
+        "id": "vn2007-5034",
+        "name": "Na (mãng cầu ta)"
+      },
+      {
+        "id": "vn2007-5035",
+        "name": "Nhãn"
+      },
+      {
+        "id": "vn2007-5037",
+        "name": "Nho"
+      },
+      {
+        "id": "vn2007-5040",
+        "name": "Ổi"
+      },
+      {
+        "id": "vn2007-5042",
+        "name": "Bơ xanh"
+      },
+      {
+        "id": "vn2007-5047",
+        "name": "Quýt"
+      },
+      {
+        "id": "vn2007-5048",
+        "name": "Sầu riêng"
+      },
+      {
+        "id": "vn2007-5052",
+        "name": "Vải"
+      },
+      {
+        "id": "vn2007-5055",
+        "name": "Xoài chín"
+      },
+      {
+        "id": "vn2007-5003",
+        "name": "Chanh (tươi)"
+      },
+      {
+        "id": "vn2007-5005",
+        "name": "Chuối khô"
+      },
+      {
+        "id": "vn2007-5006",
+        "name": "Chuối tây (tươi)"
+      },
+      {
+        "id": "vn2007-5007",
+        "name": "Chuối tiêu (tươi)"
+      },
+      {
+        "id": "vn2007-5010",
+        "name": "Dưa bở (tươi)"
+      },
+      {
+        "id": "vn2007-5012",
+        "name": "Dưa hồng (tươi)"
+      },
+      {
+        "id": "vn2007-5013",
+        "name": "Dưa lê (tươi)"
+      },
+      {
+        "id": "vn2007-5016",
+        "name": "Đào (tươi)"
+      },
+      {
+        "id": "vn2007-5020",
+        "name": "Hồng đỏ (tươi)"
+      },
+      {
+        "id": "vn2007-5022",
+        "name": "Hồng xiêm (tươi)"
+      },
+      {
+        "id": "vn2007-5024",
+        "name": "Lựu (tươi)"
+      },
+      {
+        "id": "vn2007-5027",
+        "name": "Mận miền Bắc (tươi)"
+      },
+      {
+        "id": "vn2007-5031",
+        "name": "Mơ (tươi)"
+      },
+      {
+        "id": "vn2007-5032",
+        "name": "Mơ khô"
+      },
+      {
+        "id": "vn2007-5033",
+        "name": "Muỗm / quéo (xanh)"
+      },
+      {
+        "id": "vn2007-5036",
+        "name": "Nhãn khô"
+      },
+      {
+        "id": "vn2007-5041",
+        "name": "Bơ vỏ tím (tươi)"
+      },
+      {
+        "id": "vn2007-5045",
+        "name": "Quả trứng gà (lê ki ma)"
+      },
+      {
+        "id": "vn2007-5050",
+        "name": "Táo ta (tươi)"
+      },
+      {
+        "id": "vn2007-5051",
+        "name": "Táo tây (tươi, VDD 2007)"
+      },
+      {
+        "id": "vn2007-5053",
+        "name": "Vải khô"
+      },
+      {
+        "id": "vn2007-5056",
+        "name": "Kiwi (tươi, VDD 2007)"
+      },
+      {
+        "id": "apple-raw-skin",
+        "name": "Táo tươi có vỏ"
+      },
+      {
+        "id": "banana-raw",
+        "name": "Chuối tươi"
+      },
+      {
+        "id": "usda-sr-167755",
+        "name": "Mâm xôi đỏ (tươi)",
+        "category": "Trái cây",
+        "originalName": "Raspberries, raw",
+        "alternateNames": [
+          "Mâm xôi đỏ"
+        ]
+      },
+      {
+        "id": "usda-sr-173946",
+        "name": "Mâm xôi đen (tươi)",
+        "category": "Trái cây",
+        "originalName": "Blackberries, raw",
+        "alternateNames": [
+          "Mâm xôi đen"
+        ]
+      },
+      {
+        "id": "usda-sr-171711",
+        "name": "Việt quất (tươi)",
+        "category": "Trái cây",
+        "originalName": "Blueberries, raw",
+        "alternateNames": [
+          "Việt quất"
+        ]
+      },
+      {
+        "id": "usda-sr-171722",
+        "name": "Nam việt quất (tươi)",
+        "category": "Trái cây",
+        "originalName": "Cranberries, raw",
+        "alternateNames": [
+          "Nam việt quất"
+        ]
+      },
+      {
+        "id": "usda-sr-173021",
+        "name": "Sung ngọt (tươi)",
+        "category": "Trái cây",
+        "originalName": "Figs, raw",
+        "alternateNames": [
+          "Sung ngọt"
+        ]
+      },
+      {
+        "id": "usda-sr-168191",
+        "name": "Chà là Medjool",
+        "category": "Trái cây",
+        "originalName": "Dates, medjool",
+        "alternateNames": [
+          "Chà là Medjool"
+        ]
+      },
+      {
+        "id": "usda-sr-171726",
+        "name": "Chà là Deglet Noor",
+        "category": "Trái cây",
+        "originalName": "Dates, deglet noor",
+        "alternateNames": [
+          "Chà là Deglet Noor"
+        ]
+      },
+      {
+        "id": "usda-sr-168211",
+        "name": "Kiwi vàng Zespri SunGold (tươi)",
+        "category": "Trái cây",
+        "originalName": "Kiwifruit, ZESPRI SunGold, raw",
+        "alternateNames": [
+          "Kiwi vàng Zespri SunGold"
+        ]
+      },
+      {
+        "id": "usda-sr-168195",
+        "name": "Quýt Clementine (tươi)",
+        "category": "Trái cây",
+        "originalName": "Clementines, raw",
+        "alternateNames": [
+          "Quýt Clementine"
+        ]
+      },
+      {
+        "id": "usda-sr-168154",
+        "name": "Quất / tắc (tươi)",
+        "category": "Trái cây",
+        "originalName": "Kumquats, raw",
+        "alternateNames": [
+          "Quất / tắc"
+        ]
+      },
+      {
+        "id": "usda-sr-168155",
+        "name": "Chanh xanh (tươi)",
+        "category": "Trái cây",
+        "originalName": "Limes, raw",
+        "alternateNames": [
+          "Chanh xanh"
+        ]
+      },
+      {
+        "id": "usda-sr-171715",
+        "name": "Khế (tươi)",
+        "category": "Trái cây",
+        "originalName": "Carambola, (starfruit), raw",
+        "alternateNames": [
+          "Khế"
+        ]
+      },
+      {
+        "id": "usda-sr-167763",
+        "name": "Me (phần thịt quả)",
+        "category": "Trái cây",
+        "originalName": "Tamarinds, raw",
+        "alternateNames": [
+          "Me"
+        ]
+      },
+      {
+        "id": "usda-sr-169108",
+        "name": "Chanh dây tím (phần ăn được)",
+        "category": "Trái cây",
+        "originalName": "Passion-fruit, (granadilla), purple, raw",
+        "alternateNames": [
+          "Chanh dây tím"
+        ]
+      },
+      {
+        "id": "usda-sr-169908",
+        "name": "Nhót tây / tỳ bà (tươi)",
+        "category": "Trái cây",
+        "originalName": "Loquats, raw",
+        "alternateNames": [
+          "Nhót tây / tỳ bà"
+        ]
+      },
+      {
+        "id": "usda-sr-171686",
+        "name": "Sơ ri (tươi)",
+        "category": "Trái cây",
+        "originalName": "Acerola, (west indian cherry), raw",
+        "alternateNames": [
+          "Sơ ri"
+        ]
+      },
+      {
+        "id": "usda-sr-169913",
+        "name": "Dâu tằm (tươi)",
+        "category": "Trái cây",
+        "originalName": "Mulberries, raw",
+        "alternateNames": [
+          "Dâu tằm"
+        ]
+      },
+      {
+        "id": "usda-sr-173032",
+        "name": "Kỷ tử khô",
+        "category": "Trái cây",
+        "originalName": "Goji berries, dried",
+        "alternateNames": [
+          "Kỷ tử khô"
+        ]
+      },
+      {
+        "id": "usda-sr-173043",
+        "name": "Tầm bóp / thù lù (tươi)",
+        "category": "Trái cây",
+        "originalName": "Groundcherries, (cape-gooseberries or poha), raw",
+        "alternateNames": [
+          "Tầm bóp / thù lù"
+        ]
+      },
+      {
+        "id": "usda-sr-173030",
+        "name": "Lý gai (tươi)",
+        "category": "Trái cây",
+        "originalName": "Gooseberries, raw",
+        "alternateNames": [
+          "Lý gai"
+        ]
+      },
+      {
+        "id": "usda-sr-173963",
+        "name": "Lý chua đen (tươi)",
+        "category": "Trái cây",
+        "originalName": "Currants, european black, raw",
+        "alternateNames": [
+          "Lý chua đen"
+        ]
+      },
+      {
+        "id": "usda-sr-173964",
+        "name": "Lý chua đỏ / trắng (tươi)",
+        "category": "Trái cây",
+        "originalName": "Currants, red and white, raw",
+        "alternateNames": [
+          "Lý chua đỏ / trắng"
+        ]
+      },
+      {
+        "id": "usda-sr-168176",
+        "name": "Ổi dứa Feijoa (tươi)",
+        "category": "Trái cây",
+        "originalName": "Feijoa, raw",
+        "alternateNames": [
+          "Ổi dứa Feijoa"
+        ]
+      },
+      {
+        "id": "usda-sr-173953",
+        "name": "Na Cherimoya (tươi)",
+        "category": "Trái cây",
+        "originalName": "Cherimoya, raw",
+        "alternateNames": [
+          "Na Cherimoya"
+        ]
+      },
+      {
+        "id": "usda-sr-171725",
+        "name": "Bình bát / mãng cầu tim bò (tươi)",
+        "category": "Trái cây",
+        "originalName": "Custard-apple, (bullock's-heart), raw",
+        "alternateNames": [
+          "Bình bát / mãng cầu tim bò"
+        ]
+      },
+      {
+        "id": "usda-sr-167760",
+        "name": "Hồng xiêm Mamey (tươi)",
+        "category": "Trái cây",
+        "originalName": "Sapote, mamey, raw",
+        "alternateNames": [
+          "Hồng xiêm Mamey"
+        ]
+      },
+      {
+        "id": "usda-sr-168150",
+        "name": "Trâm / jamun (tươi)",
+        "category": "Trái cây",
+        "originalName": "Java-plum, (jambolan), raw",
+        "alternateNames": [
+          "Trâm / jamun"
+        ]
+      },
+      {
+        "id": "usda-sr-169130",
+        "name": "Chuối plantain vàng (sống)",
+        "category": "Trái cây",
+        "originalName": "Plantains, yellow, raw",
+        "alternateNames": [
+          "Chuối plantain vàng"
+        ]
+      },
+      {
+        "id": "usda-sr-168216",
+        "name": "Chuối plantain xanh (luộc)",
+        "category": "Trái cây",
+        "originalName": "Plantains, green, boiled",
+        "alternateNames": [
+          "Chuối plantain xanh"
+        ]
+      },
+      {
+        "id": "usda-sr-169092",
+        "name": "Dưa lưới Cantaloupe (tươi)",
+        "category": "Trái cây",
+        "originalName": "Melons, cantaloupe, raw",
+        "alternateNames": [
+          "Dưa lưới Cantaloupe"
+        ]
+      },
+      {
+        "id": "usda-sr-169911",
+        "name": "Dưa lê Honeydew (tươi)",
+        "category": "Trái cây",
+        "originalName": "Melons, honeydew, raw",
+        "alternateNames": [
+          "Dưa lê Honeydew"
+        ]
+      },
+      {
+        "id": "usda-sr-169093",
+        "name": "Dưa Casaba (tươi)",
+        "category": "Trái cây",
+        "originalName": "Melons, casaba, raw",
+        "alternateNames": [
+          "Dưa Casaba"
+        ]
+      },
+      {
+        "id": "usda-sr-169914",
+        "name": "Đào trơn nectarine (tươi)",
+        "category": "Trái cây",
+        "originalName": "Nectarines, raw",
+        "alternateNames": [
+          "Đào trơn nectarine"
+        ]
+      },
+      {
+        "id": "usda-sr-173033",
+        "name": "Bưởi chùm hồng / đỏ / trắng (tươi)",
+        "category": "Trái cây",
+        "originalName": "Grapefruit, raw, pink and red and white, all areas",
+        "alternateNames": [
+          "Bưởi chùm hồng / đỏ / trắng"
+        ]
+      },
+      {
+        "id": "usda-sr-173034",
+        "name": "Bưởi chùm trắng Florida (tươi)",
+        "category": "Trái cây",
+        "originalName": "Grapefruit, raw, white, Florida",
+        "alternateNames": [
+          "Bưởi chùm trắng Florida"
+        ]
+      },
+      {
+        "id": "usda-sr-168165",
+        "name": "Nho khô đen không hạt",
+        "category": "Trái cây",
+        "originalName": "Raisins, dark, seedless (Includes foods for USDA's Food Distribution Program)",
+        "alternateNames": [
+          "Nho khô đen không hạt"
+        ]
+      },
+      {
+        "id": "usda-sr-168164",
+        "name": "Nho khô vàng không hạt",
+        "category": "Trái cây",
+        "originalName": "Raisins, golden, seedless",
+        "alternateNames": [
+          "Nho khô vàng không hạt"
+        ]
+      },
+      {
+        "id": "usda-sr-174665",
+        "name": "Sung ngọt khô",
+        "category": "Trái cây",
+        "originalName": "Figs, dried, uncooked",
+        "alternateNames": [
+          "Sung ngọt khô"
+        ]
+      },
+      {
+        "id": "usda-sr-169091",
+        "name": "Xoài sấy có đường",
+        "category": "Trái cây",
+        "originalName": "Mango, dried, sweetened",
+        "alternateNames": [
+          "Xoài sấy có đường"
+        ]
+      },
+      {
+        "id": "usda-sr-171691",
+        "name": "Táo sấy có xử lý sulfite",
+        "category": "Trái cây",
+        "originalName": "Apples, dried, sulfured, uncooked",
+        "alternateNames": [
+          "Táo sấy có xử lý sulfite"
+        ]
+      },
+      {
+        "id": "usda-sr-169121",
+        "name": "Lê sấy có xử lý sulfite",
+        "category": "Trái cây",
+        "originalName": "Pears, dried, sulfured, uncooked",
+        "alternateNames": [
+          "Lê sấy có xử lý sulfite"
+        ]
+      },
+      {
+        "id": "usda-sr-169934",
+        "name": "Đào sấy có xử lý sulfite",
+        "category": "Trái cây",
+        "originalName": "Peaches, dried, sulfured, uncooked",
+        "alternateNames": [
+          "Đào sấy có xử lý sulfite"
+        ]
+      },
+      {
+        "id": "usda-sr-168158",
+        "name": "Việt quất sấy có đường",
+        "category": "Trái cây",
+        "originalName": "Blueberries, dried, sweetened",
+        "alternateNames": [
+          "Việt quất sấy có đường"
+        ]
+      },
+      {
+        "id": "usda-sr-171723",
+        "name": "Nam việt quất sấy có đường",
+        "category": "Trái cây",
+        "originalName": "Cranberries, dried, sweetened (Includes foods for USDA's Food Distribution Program)",
+        "alternateNames": [
+          "Nam việt quất sấy có đường"
+        ]
+      },
+      {
+        "id": "usda-sr-169942",
+        "name": "Hồng Nhật khô",
+        "category": "Trái cây",
+        "originalName": "Persimmons, japanese, dried",
+        "alternateNames": [
+          "Hồng Nhật khô"
+        ]
+      },
+      {
+        "id": "usda-sr-168162",
+        "name": "Mận khô (prune, chưa nấu)",
+        "category": "Trái cây",
+        "originalName": "Plums, dried (prunes), uncooked",
+        "alternateNames": [
+          "Mận khô"
+        ]
+      },
+      {
+        "id": "usda-sr-169090",
+        "name": "Măng cụt đóng hộp ngâm siro",
+        "category": "Trái cây",
+        "originalName": "Mangosteen, canned, syrup pack",
+        "alternateNames": [
+          "Măng cụt đóng hộp ngâm siro"
+        ]
+      },
+      {
+        "id": "usda-sr-168167",
+        "name": "Chôm chôm đóng hộp ngâm siro",
+        "category": "Trái cây",
+        "originalName": "Rambutan, canned, syrup pack",
+        "alternateNames": [
+          "Chôm chôm đóng hộp ngâm siro"
+        ]
+      },
+      {
+        "id": "usda-sr-168190",
+        "name": "Mít đóng hộp ngâm siro",
+        "category": "Trái cây",
+        "originalName": "Jackfruit, canned, syrup pack",
+        "alternateNames": [
+          "Mít đóng hộp ngâm siro"
+        ]
+      },
+      {
+        "id": "usda-sr-168181",
+        "name": "Đào đóng hộp siro đậm (để ráo)",
+        "category": "Trái cây",
+        "originalName": "Peaches, canned, heavy syrup, drained",
+        "alternateNames": [
+          "Đào đóng hộp siro đậm"
+        ]
+      },
+      {
+        "id": "usda-sr-168182",
+        "name": "Lê đóng hộp siro đậm (để ráo)",
+        "category": "Trái cây",
+        "originalName": "Pears, canned, heavy syrup, drained",
+        "alternateNames": [
+          "Lê đóng hộp siro đậm"
+        ]
+      },
+      {
+        "id": "usda-sr-167767",
+        "name": "Dứa đóng hộp nước quả (để ráo)",
+        "category": "Trái cây",
+        "originalName": "Pineapple, canned, juice pack, drained",
+        "alternateNames": [
+          "Dứa đóng hộp nước quả"
+        ]
+      },
+      {
+        "id": "usda-sr-168184",
+        "name": "Quýt đóng hộp nước quả (để ráo)",
+        "category": "Trái cây",
+        "originalName": "Tangerines, (mandarin oranges), canned, juice pack, drained",
+        "alternateNames": [
+          "Quýt đóng hộp nước quả"
+        ]
+      },
+      {
+        "id": "usda-sr-168173",
+        "name": "Dâu tây đông lạnh không thêm đường",
+        "category": "Trái cây",
+        "originalName": "Strawberries, frozen, unsweetened (Includes foods for USDA's Food Distribution Program)",
+        "alternateNames": [
+          "Dâu tây đông lạnh không thêm đường"
+        ]
+      },
+      {
+        "id": "usda-sr-173950",
+        "name": "Việt quất đông lạnh không thêm đường",
+        "category": "Trái cây",
+        "originalName": "Blueberries, frozen, unsweetened (Includes foods for USDA's Food Distribution Program)",
+        "alternateNames": [
+          "Việt quất đông lạnh không thêm đường"
+        ]
+      },
+      {
+        "id": "usda-sr-168209",
+        "name": "Mâm xôi đỏ đông lạnh không thêm đường",
+        "category": "Trái cây",
+        "originalName": "Raspberries, frozen, red, unsweetened",
+        "alternateNames": [
+          "Mâm xôi đỏ đông lạnh không thêm đường"
+        ]
+      }
+    ],
+    "drinks": [
+      {
+        "id": "vn2007-3032",
+        "name": "Sữa đậu nành không đường"
+      },
+      {
+        "id": "vn2007-14005",
+        "name": "Nước cam tươi (VDD 2007)"
+      },
+      {
+        "id": "vn2007-14006",
+        "name": "Nước dứa (VDD 2007)"
+      },
+      {
+        "id": "vn2007-14007",
+        "name": "Nước ép cà chua (VDD 2007)"
+      },
+      {
+        "id": "vn2007-14008",
+        "name": "Nước khoáng (VDD 2007)"
+      },
+      {
+        "id": "vn2007-14009",
+        "name": "Nước quýt tươi (VDD 2007)"
+      },
+      {
+        "id": "usda-sr-170174",
+        "name": "Nước dừa tươi",
+        "category": "Đồ uống",
+        "originalName": "Nuts, coconut water (liquid from coconuts)",
+        "alternateNames": [
+          "Nước dừa tươi"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 240.0,
+          "defaultServingGrams": 240.0,
+          "portionSource": {
+            "foodPortionId": 86173,
+            "amount": 1.0,
+            "gramWeight": 240.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-174831",
+        "name": "Nước dừa đóng hộp không thêm đường",
+        "category": "Đồ uống",
+        "originalName": "Beverages, Coconut water, ready-to-drink, unsweetened",
+        "alternateNames": [
+          "Nước dừa đóng hộp không thêm đường"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 245.0,
+          "defaultServingGrams": 245.0,
+          "portionSource": {
+            "foodPortionId": 94966,
+            "amount": 1.0,
+            "gramWeight": 245.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-171890",
+        "name": "Cà phê đen pha nước",
+        "category": "Đồ uống",
+        "originalName": "Beverages, coffee, brewed, prepared with tap water",
+        "alternateNames": [
+          "Cà phê đen pha nước"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA (8 fl oz USDA)",
+          "servingGrams": 237.0,
+          "defaultServingGrams": 237.0,
+          "portionSource": {
+            "foodPortionId": 89520,
+            "amount": 1.0,
+            "gramWeight": 237.0,
+            "description": "cup (8 fl oz)"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-171889",
+        "name": "Cà phê đen khử caffeine",
+        "category": "Đồ uống",
+        "originalName": "Beverages, coffee, brewed, prepared with tap water, decaffeinated",
+        "alternateNames": [
+          "Cà phê đen khử caffeine"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA (8 fl oz USDA)",
+          "servingGrams": 237.0,
+          "defaultServingGrams": 237.0,
+          "portionSource": {
+            "foodPortionId": 89517,
+            "amount": 1.0,
+            "gramWeight": 237.0,
+            "description": "cup (8 fl oz)"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-171891",
+        "name": "Cà phê espresso",
+        "category": "Đồ uống",
+        "originalName": "Beverages, coffee, brewed, espresso, restaurant-prepared",
+        "alternateNames": [
+          "Cà phê espresso"
+        ]
+      },
+      {
+        "id": "usda-sr-174125",
+        "name": "Cà phê espresso khử caffeine",
+        "category": "Đồ uống",
+        "originalName": "Beverages, coffee, brewed, espresso, restaurant-prepared, decaffeinated",
+        "alternateNames": [
+          "Cà phê espresso khử caffeine"
+        ]
+      },
+      {
+        "id": "usda-sr-174130",
+        "name": "Cà phê hòa tan đã pha nước",
+        "category": "Đồ uống",
+        "originalName": "Beverages, coffee, instant, regular, prepared with water",
+        "alternateNames": [
+          "Cà phê hòa tan đã pha nước"
+        ]
+      },
+      {
+        "id": "usda-sr-171894",
+        "name": "Cà phê hòa tan khử caffeine đã pha",
+        "category": "Đồ uống",
+        "originalName": "Beverages, coffee, instant, decaffeinated, prepared with water",
+        "alternateNames": [
+          "Cà phê hòa tan khử caffeine đã pha"
+        ]
+      },
+      {
+        "id": "usda-sr-174119",
+        "name": "Cà phê mocha sữa uống lạnh",
+        "category": "Đồ uống",
+        "originalName": "Beverages, coffee, ready to drink, iced, mocha, milk based",
+        "alternateNames": [
+          "Cà phê mocha sữa uống lạnh"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 265.0,
+          "defaultServingGrams": 265.0,
+          "portionSource": {
+            "foodPortionId": 93793,
+            "amount": 1.0,
+            "gramWeight": 265.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-171880",
+        "name": "Cà phê sữa pha sẵn có đường",
+        "category": "Đồ uống",
+        "originalName": "Beverages, coffee, ready to drink, milk based, sweetened",
+        "alternateNames": [
+          "Cà phê sữa pha sẵn có đường"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 262.0,
+          "defaultServingGrams": 262.0,
+          "portionSource": {
+            "foodPortionId": 89504,
+            "amount": 1.0,
+            "gramWeight": 262.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-171877",
+        "name": "Cà phê sữa vani giảm năng lượng, có đường",
+        "category": "Đồ uống",
+        "originalName": "Beverages, coffee, ready to drink, vanilla, light, milk based, sweetened",
+        "alternateNames": [
+          "Cà phê sữa vani giảm năng lượng, có đường"
+        ]
+      },
+      {
+        "id": "usda-sr-173227",
+        "name": "Trà đen pha nước",
+        "category": "Đồ uống",
+        "originalName": "Beverages, tea, black, brewed, prepared with tap water",
+        "alternateNames": [
+          "Trà đen pha nước"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA (8 fl oz USDA)",
+          "servingGrams": 237.0,
+          "defaultServingGrams": 237.0,
+          "portionSource": {
+            "foodPortionId": 92147,
+            "amount": 1.0,
+            "gramWeight": 237.0,
+            "description": "cup (8 fl oz)"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-171917",
+        "name": "Trà xanh pha nước",
+        "category": "Đồ uống",
+        "originalName": "Beverages, tea, green, brewed, regular",
+        "alternateNames": [
+          "Trà xanh pha nước"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 245.0,
+          "defaultServingGrams": 245.0,
+          "portionSource": {
+            "foodPortionId": 89558,
+            "amount": 1.0,
+            "gramWeight": 245.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-174120",
+        "name": "Trà ô long pha nước",
+        "category": "Đồ uống",
+        "originalName": "Beverages, tea, Oolong, brewed",
+        "alternateNames": [
+          "Trà ô long pha nước"
+        ]
+      },
+      {
+        "id": "usda-sr-174156",
+        "name": "Trà hoa cúc pha nước",
+        "category": "Đồ uống",
+        "originalName": "Beverages, tea, herb, brewed, chamomile",
+        "alternateNames": [
+          "Trà hoa cúc pha nước"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA (8 fl oz USDA)",
+          "servingGrams": 237.0,
+          "defaultServingGrams": 237.0,
+          "portionSource": {
+            "foodPortionId": 93843,
+            "amount": 1.0,
+            "gramWeight": 237.0,
+            "description": "cup (8 fl oz)"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-171946",
+        "name": "Trà atiso đỏ / hibiscus pha nước",
+        "category": "Đồ uống",
+        "originalName": "Beverages, tea, hibiscus, brewed",
+        "alternateNames": [
+          "Trà atiso đỏ / hibiscus pha nước"
+        ]
+      },
+      {
+        "id": "usda-sr-173232",
+        "name": "Trà thảo mộc đã pha (không phải hoa cúc)",
+        "category": "Đồ uống",
+        "originalName": "Beverages, tea, herb, other than chamomile, brewed",
+        "alternateNames": [
+          "Trà thảo mộc đã pha"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA (8 fl oz USDA)",
+          "servingGrams": 237.0,
+          "defaultServingGrams": 237.0,
+          "portionSource": {
+            "foodPortionId": 92157,
+            "amount": 1.0,
+            "gramWeight": 237.0,
+            "description": "cup (8 fl oz)"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-174871",
+        "name": "Trà đen khử caffeine đã pha",
+        "category": "Đồ uống",
+        "originalName": "Beverages, tea, black, brewed, prepared with tap water, decaffeinated",
+        "alternateNames": [
+          "Trà đen khử caffeine đã pha"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA (8 fl oz USDA)",
+          "servingGrams": 237.0,
+          "defaultServingGrams": 237.0,
+          "portionSource": {
+            "foodPortionId": 95053,
+            "amount": 1.0,
+            "gramWeight": 237.0,
+            "description": "cup (8 fl oz)"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-171910",
+        "name": "Trà xanh khử caffeine đã pha",
+        "category": "Đồ uống",
+        "originalName": "Beverages, tea, green, brewed, decaffeinated",
+        "alternateNames": [
+          "Trà xanh khử caffeine đã pha"
+        ]
+      },
+      {
+        "id": "usda-sr-171911",
+        "name": "Trà xanh đóng chai không đường",
+        "category": "Đồ uống",
+        "originalName": "Beverages, tea, green, ready to drink, unsweetened",
+        "alternateNames": [
+          "Trà xanh đóng chai không đường"
+        ]
+      },
+      {
+        "id": "usda-sr-174128",
+        "name": "Trà xanh đóng chai có đường",
+        "category": "Đồ uống",
+        "originalName": "Beverages, tea, green, ready-to-drink, sweetened",
+        "alternateNames": [
+          "Trà xanh đóng chai có đường"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 270.0,
+          "defaultServingGrams": 270.0,
+          "portionSource": {
+            "foodPortionId": 93803,
+            "amount": 1.0,
+            "gramWeight": 270.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-174144",
+        "name": "Trà đen pha sẵn",
+        "category": "Đồ uống",
+        "originalName": "Beverages, tea, black, ready to drink",
+        "alternateNames": [
+          "Trà đen pha sẵn"
+        ]
+      },
+      {
+        "id": "usda-sr-171888",
+        "name": "Trà đen vị chanh có đường",
+        "category": "Đồ uống",
+        "originalName": "Beverages, tea, black, ready-to-drink, lemon, sweetened",
+        "alternateNames": [
+          "Trà đen vị chanh có đường"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 271.0,
+          "defaultServingGrams": 271.0,
+          "portionSource": {
+            "foodPortionId": 89514,
+            "amount": 1.0,
+            "gramWeight": 271.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-171892",
+        "name": "Trà đen vị chanh loại diet",
+        "category": "Đồ uống",
+        "originalName": "Beverages, tea, black, ready-to-drink, lemon, diet",
+        "alternateNames": [
+          "Trà đen vị chanh loại diet"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 265.0,
+          "defaultServingGrams": 265.0,
+          "portionSource": {
+            "foodPortionId": 89522,
+            "amount": 1.0,
+            "gramWeight": 265.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-171883",
+        "name": "Trà xanh nhân sâm mật ong có đường",
+        "category": "Đồ uống",
+        "originalName": "Beverages, tea, green, ready to drink, ginseng and honey, sweetened",
+        "alternateNames": [
+          "Trà xanh nhân sâm mật ong có đường"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 260.0,
+          "defaultServingGrams": 260.0,
+          "portionSource": {
+            "foodPortionId": 89508,
+            "amount": 1.0,
+            "gramWeight": 260.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-foundation-746782",
+        "name": "Sữa nguyên kem 3,25% béo có vitamin D",
+        "category": "Đồ uống",
+        "originalName": "Milk, whole, 3.25% milkfat, with added vitamin D",
+        "alternateNames": [
+          "Sữa nguyên kem 3,25% béo có vitamin D"
+        ]
+      },
+      {
+        "id": "usda-foundation-746778",
+        "name": "Sữa ít béo 2% có vitamin A/D",
+        "category": "Đồ uống",
+        "originalName": "Milk, reduced fat, fluid, 2% milkfat, with added vitamin A and vitamin D",
+        "alternateNames": [
+          "Sữa ít béo 2% có vitamin A/D"
+        ]
+      },
+      {
+        "id": "usda-sr-170872",
+        "name": "Sữa ít béo 1% có vitamin A/D",
+        "category": "Đồ uống",
+        "originalName": "Milk, lowfat, fluid, 1% milkfat, with added vitamin A and vitamin D",
+        "alternateNames": [
+          "Sữa ít béo 1% có vitamin A/D"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 244.0,
+          "defaultServingGrams": 244.0,
+          "portionSource": {
+            "foodPortionId": 87459,
+            "amount": 1.0,
+            "gramWeight": 244.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-171269",
+        "name": "Sữa tách béo có vitamin A/D",
+        "category": "Đồ uống",
+        "originalName": "Milk, nonfat, fluid, with added vitamin A and vitamin D (fat free or skim)",
+        "alternateNames": [
+          "Sữa tách béo có vitamin A/D"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 245.0,
+          "defaultServingGrams": 245.0,
+          "portionSource": {
+            "foodPortionId": 88325,
+            "amount": 1.0,
+            "gramWeight": 245.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-171278",
+        "name": "Sữa dê dạng lỏng có vitamin D",
+        "category": "Đồ uống",
+        "originalName": "Milk, goat, fluid, with added vitamin D",
+        "alternateNames": [
+          "Sữa dê dạng lỏng có vitamin D"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 244.0,
+          "defaultServingGrams": 244.0,
+          "portionSource": {
+            "foodPortionId": 88350,
+            "amount": 1.0,
+            "gramWeight": 244.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-170882",
+        "name": "Sữa cừu dạng lỏng",
+        "category": "Đồ uống",
+        "originalName": "Milk, sheep, fluid",
+        "alternateNames": [
+          "Sữa cừu dạng lỏng"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 245.0,
+          "defaultServingGrams": 245.0,
+          "portionSource": {
+            "foodPortionId": 87486,
+            "amount": 1.0,
+            "gramWeight": 245.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-171280",
+        "name": "Sữa trâu dạng lỏng",
+        "category": "Đồ uống",
+        "originalName": "Milk, indian buffalo, fluid",
+        "alternateNames": [
+          "Sữa trâu dạng lỏng"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 244.0,
+          "defaultServingGrams": 244.0,
+          "portionSource": {
+            "foodPortionId": 88354,
+            "amount": 1.0,
+            "gramWeight": 244.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-170879",
+        "name": "Sữa chocolate nguyên kem có vitamin A/D",
+        "category": "Đồ uống",
+        "originalName": "Milk, chocolate, fluid, commercial, whole, with added vitamin A and vitamin D",
+        "alternateNames": [
+          "Sữa chocolate nguyên kem có vitamin A/D"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 250.0,
+          "defaultServingGrams": 250.0,
+          "portionSource": {
+            "foodPortionId": 87478,
+            "amount": 1.0,
+            "gramWeight": 250.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-170880",
+        "name": "Sữa chocolate giảm béo có vitamin A/D",
+        "category": "Đồ uống",
+        "originalName": "Milk, chocolate, fluid, commercial, reduced fat, with added vitamin A and vitamin D",
+        "alternateNames": [
+          "Sữa chocolate giảm béo có vitamin A/D"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 250.0,
+          "defaultServingGrams": 250.0,
+          "portionSource": {
+            "foodPortionId": 87481,
+            "amount": 1.0,
+            "gramWeight": 250.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-170881",
+        "name": "Sữa chocolate ít béo có vitamin A/D",
+        "category": "Đồ uống",
+        "originalName": "Milk, chocolate, lowfat, with added vitamin A and vitamin D",
+        "alternateNames": [
+          "Sữa chocolate ít béo có vitamin A/D"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 250.0,
+          "defaultServingGrams": 250.0,
+          "portionSource": {
+            "foodPortionId": 87484,
+            "amount": 1.0,
+            "gramWeight": 250.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-171303",
+        "name": "Sữa chocolate tách béo có vitamin A/D",
+        "category": "Đồ uống",
+        "originalName": "Milk, chocolate, fat free, with added vitamin A and vitamin D",
+        "alternateNames": [
+          "Sữa chocolate tách béo có vitamin A/D"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 250.0,
+          "defaultServingGrams": 250.0,
+          "portionSource": {
+            "foodPortionId": 88414,
+            "amount": 1.0,
+            "gramWeight": 250.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-171277",
+        "name": "Cacao nóng pha sữa, công thức tại nhà",
+        "category": "Đồ uống",
+        "originalName": "Milk, chocolate beverage, hot cocoa, homemade",
+        "alternateNames": [
+          "Cacao nóng pha sữa, công thức tại nhà"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 250.0,
+          "defaultServingGrams": 250.0,
+          "portionSource": {
+            "foodPortionId": 88347,
+            "amount": 1.0,
+            "gramWeight": 250.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-170883",
+        "name": "Sữa lắc chocolate đặc",
+        "category": "Đồ uống",
+        "originalName": "Milk shakes, thick chocolate",
+        "alternateNames": [
+          "Sữa lắc chocolate đặc"
+        ]
+      },
+      {
+        "id": "usda-sr-170884",
+        "name": "Sữa lắc vani đặc",
+        "category": "Đồ uống",
+        "originalName": "Milk shakes, thick vanilla",
+        "alternateNames": [
+          "Sữa lắc vani đặc"
+        ]
+      },
+      {
+        "id": "usda-sr-175102",
+        "name": "Sữa lắc dâu (cửa hàng thức ăn nhanh)",
+        "category": "Đồ uống",
+        "originalName": "Beverages, shake, fast food, strawberry",
+        "alternateNames": [
+          "Sữa lắc dâu"
+        ]
+      },
+      {
+        "id": "usda-sr-172446",
+        "name": "Sữa đậu nành nguyên bản/vani chưa tăng cường vi chất",
+        "category": "Đồ uống",
+        "originalName": "Soymilk, original and vanilla, unfortified",
+        "alternateNames": [
+          "Sữa đậu nành nguyên bản/vani chưa tăng cường vi chất"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 243.0,
+          "defaultServingGrams": 243.0,
+          "portionSource": {
+            "foodPortionId": 90635,
+            "amount": 1.0,
+            "gramWeight": 243.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-172456",
+        "name": "Sữa đậu nành nguyên bản/vani có canxi, vitamin A/D",
+        "category": "Đồ uống",
+        "originalName": "Soymilk, original and vanilla, with added calcium, vitamins A and D",
+        "alternateNames": [
+          "Sữa đậu nành nguyên bản/vani có canxi, vitamin A/D"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 243.0,
+          "defaultServingGrams": 243.0,
+          "portionSource": {
+            "foodPortionId": 90654,
+            "amount": 1.0,
+            "gramWeight": 243.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-175215",
+        "name": "Sữa đậu nành không đường có canxi, vitamin A/D",
+        "category": "Đồ uống",
+        "originalName": "Soymilk (all flavors), unsweetened, with added calcium, vitamins A and D",
+        "alternateNames": [
+          "Sữa đậu nành không đường có canxi, vitamin A/D"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 243.0,
+          "defaultServingGrams": 243.0,
+          "portionSource": {
+            "foodPortionId": 95857,
+            "amount": 1.0,
+            "gramWeight": 243.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-173768",
+        "name": "Sữa đậu nành nhẹ không đường có canxi, vitamin A/D",
+        "category": "Đồ uống",
+        "originalName": "Soymilk, original and vanilla, light, unsweetened, with added calcium, vitamins A and D",
+        "alternateNames": [
+          "Sữa đậu nành nhẹ không đường có canxi, vitamin A/D"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 243.0,
+          "defaultServingGrams": 243.0,
+          "portionSource": {
+            "foodPortionId": 93238,
+            "amount": 1.0,
+            "gramWeight": 243.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-174293",
+        "name": "Sữa đậu nành chocolate chưa tăng cường vi chất",
+        "category": "Đồ uống",
+        "originalName": "Soymilk, chocolate, unfortified",
+        "alternateNames": [
+          "Sữa đậu nành chocolate chưa tăng cường vi chất"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 243.0,
+          "defaultServingGrams": 243.0,
+          "portionSource": {
+            "foodPortionId": 94091,
+            "amount": 1.0,
+            "gramWeight": 243.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-174295",
+        "name": "Sữa đậu nành chocolate có canxi, vitamin A/D",
+        "category": "Đồ uống",
+        "originalName": "Soymilk, chocolate, with added calcium, vitamins A and D",
+        "alternateNames": [
+          "Sữa đậu nành chocolate có canxi, vitamin A/D"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 243.0,
+          "defaultServingGrams": 243.0,
+          "portionSource": {
+            "foodPortionId": 94095,
+            "amount": 1.0,
+            "gramWeight": 243.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-174832",
+        "name": "Sữa hạnh nhân không đường",
+        "category": "Đồ uống",
+        "originalName": "Beverages, almond milk, unsweetened, shelf stable",
+        "alternateNames": [
+          "Sữa hạnh nhân không đường"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 262.0,
+          "defaultServingGrams": 262.0,
+          "portionSource": {
+            "foodPortionId": 94967,
+            "amount": 1.0,
+            "gramWeight": 262.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-168751",
+        "name": "Sữa hạnh nhân vani có đường",
+        "category": "Đồ uống",
+        "originalName": "Beverages, almond milk, sweetened, vanilla flavor, ready-to-drink",
+        "alternateNames": [
+          "Sữa hạnh nhân vani có đường"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 240.0,
+          "defaultServingGrams": 240.0,
+          "portionSource": {
+            "foodPortionId": 83697,
+            "amount": 1.0,
+            "gramWeight": 240.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-174820",
+        "name": "Sữa hạnh nhân chocolate",
+        "category": "Đồ uống",
+        "originalName": "Beverages, almond milk, chocolate, ready-to-drink",
+        "alternateNames": [
+          "Sữa hạnh nhân chocolate"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 240.0,
+          "defaultServingGrams": 240.0,
+          "portionSource": {
+            "foodPortionId": 94955,
+            "amount": 1.0,
+            "gramWeight": 240.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-173187",
+        "name": "Sữa hạnh nhân chocolate không đường có vitamin D2/E",
+        "category": "Đồ uống",
+        "originalName": "Beverages, chocolate almond milk, unsweetened, shelf-stable, fortified with vitamin D2 and E",
+        "alternateNames": [
+          "Sữa hạnh nhân chocolate không đường có vitamin D2/E"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 240.0,
+          "defaultServingGrams": 240.0,
+          "portionSource": {
+            "foodPortionId": 92063,
+            "amount": 1.0,
+            "gramWeight": 240.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-171942",
+        "name": "Sữa gạo không đường",
+        "category": "Đồ uống",
+        "originalName": "Beverages, rice milk, unsweetened",
+        "alternateNames": [
+          "Sữa gạo không đường"
+        ]
+      },
+      {
+        "id": "usda-foundation-2257046",
+        "name": "Sữa yến mạch không đường, bảo quản lạnh",
+        "category": "Đồ uống",
+        "originalName": "Oat milk, unsweetened, plain, refrigerated",
+        "alternateNames": [
+          "Sữa yến mạch không đường, bảo quản lạnh"
+        ]
+      },
+      {
+        "id": "usda-sr-169098",
+        "name": "Nước cam nguyên chất",
+        "category": "Đồ uống",
+        "originalName": "Orange juice, raw (Includes foods for USDA's Food Distribution Program)",
+        "alternateNames": [
+          "Nước cam nguyên chất"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 248.0,
+          "defaultServingGrams": 248.0,
+          "portionSource": {
+            "foodPortionId": 84231,
+            "amount": 1.0,
+            "gramWeight": 248.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-173933",
+        "name": "Nước táo đóng hộp không thêm đường, chưa thêm vitamin C",
+        "category": "Đồ uống",
+        "originalName": "Apple juice, canned or bottled, unsweetened, without added ascorbic acid",
+        "alternateNames": [
+          "Nước táo đóng hộp không thêm đường, chưa thêm vitamin C"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 248.0,
+          "defaultServingGrams": 248.0,
+          "portionSource": {
+            "foodPortionId": 93494,
+            "amount": 1.0,
+            "gramWeight": 248.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-173042",
+        "name": "Nước nho đóng hộp không thêm đường, chưa thêm vitamin C",
+        "category": "Đồ uống",
+        "originalName": "Grape juice, canned or bottled, unsweetened, without added ascorbic acid",
+        "alternateNames": [
+          "Nước nho đóng hộp không thêm đường, chưa thêm vitamin C"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 253.0,
+          "defaultServingGrams": 253.0,
+          "portionSource": {
+            "foodPortionId": 91855,
+            "amount": 1.0,
+            "gramWeight": 253.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-169947",
+        "name": "Nước dứa đóng hộp không thêm đường, chưa thêm vitamin C",
+        "category": "Đồ uống",
+        "originalName": "Pineapple juice, canned or bottled, unsweetened, without added ascorbic acid",
+        "alternateNames": [
+          "Nước dứa đóng hộp không thêm đường, chưa thêm vitamin C"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 250.0,
+          "defaultServingGrams": 250.0,
+          "portionSource": {
+            "foodPortionId": 85731,
+            "amount": 1.0,
+            "gramWeight": 250.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-173039",
+        "name": "Nước bưởi chùm trắng nguyên chất",
+        "category": "Đồ uống",
+        "originalName": "Grapefruit juice, white, raw",
+        "alternateNames": [
+          "Nước bưởi chùm trắng nguyên chất"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 247.0,
+          "defaultServingGrams": 247.0,
+          "portionSource": {
+            "foodPortionId": 91849,
+            "amount": 1.0,
+            "gramWeight": 247.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-167747",
+        "name": "Nước cốt chanh vàng nguyên chất",
+        "category": "Đồ uống",
+        "originalName": "Lemon juice, raw",
+        "alternateNames": [
+          "Nước cốt chanh vàng nguyên chất"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 244.0,
+          "defaultServingGrams": 244.0,
+          "portionSource": {
+            "foodPortionId": 81887,
+            "amount": 1.0,
+            "gramWeight": 244.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-168156",
+        "name": "Nước cốt chanh xanh nguyên chất",
+        "category": "Đồ uống",
+        "originalName": "Lime juice, raw",
+        "alternateNames": [
+          "Nước cốt chanh xanh nguyên chất"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 242.0,
+          "defaultServingGrams": 242.0,
+          "portionSource": {
+            "foodPortionId": 82572,
+            "amount": 1.0,
+            "gramWeight": 242.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-169109",
+        "name": "Nước chanh dây tím nguyên chất",
+        "category": "Đồ uống",
+        "originalName": "Passion-fruit juice, purple, raw",
+        "alternateNames": [
+          "Nước chanh dây tím nguyên chất"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 247.0,
+          "defaultServingGrams": 247.0,
+          "portionSource": {
+            "foodPortionId": 84257,
+            "amount": 1.0,
+            "gramWeight": 247.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-169110",
+        "name": "Nước chanh dây vàng nguyên chất",
+        "category": "Đồ uống",
+        "originalName": "Passion-fruit juice, yellow, raw",
+        "alternateNames": [
+          "Nước chanh dây vàng nguyên chất"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 247.0,
+          "defaultServingGrams": 247.0,
+          "portionSource": {
+            "foodPortionId": 84259,
+            "amount": 1.0,
+            "gramWeight": 247.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-169925",
+        "name": "Nước quýt nguyên chất",
+        "category": "Đồ uống",
+        "originalName": "Tangerine juice, raw",
+        "alternateNames": [
+          "Nước quýt nguyên chất"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 247.0,
+          "defaultServingGrams": 247.0,
+          "portionSource": {
+            "foodPortionId": 85690,
+            "amount": 1.0,
+            "gramWeight": 247.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-167787",
+        "name": "Nước lựu đóng chai",
+        "category": "Đồ uống",
+        "originalName": "Pomegranate juice, bottled",
+        "alternateNames": [
+          "Nước lựu đóng chai"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 249.0,
+          "defaultServingGrams": 249.0,
+          "portionSource": {
+            "foodPortionId": 81977,
+            "amount": 1.0,
+            "gramWeight": 249.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-168117",
+        "name": "Nước nam việt quất không đường",
+        "category": "Đồ uống",
+        "originalName": "Cranberry juice, unsweetened",
+        "alternateNames": [
+          "Nước nam việt quất không đường"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 253.0,
+          "defaultServingGrams": 253.0,
+          "portionSource": {
+            "foodPortionId": 82495,
+            "amount": 1.0,
+            "gramWeight": 253.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-167807",
+        "name": "Nước cherry chua",
+        "category": "Đồ uống",
+        "originalName": "Cherry juice, tart",
+        "alternateNames": [
+          "Nước cherry chua"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 269.0,
+          "defaultServingGrams": 269.0,
+          "portionSource": {
+            "foodPortionId": 82006,
+            "amount": 1.0,
+            "gramWeight": 269.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-173947",
+        "name": "Nước mâm xôi đen đóng hộp",
+        "category": "Đồ uống",
+        "originalName": "Blackberry juice, canned",
+        "alternateNames": [
+          "Nước mâm xôi đen đóng hộp"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 250.0,
+          "defaultServingGrams": 250.0,
+          "portionSource": {
+            "foodPortionId": 93522,
+            "amount": 1.0,
+            "gramWeight": 250.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-170491",
+        "name": "Nước cà rốt đóng hộp",
+        "category": "Đồ uống",
+        "originalName": "Carrot juice, canned",
+        "alternateNames": [
+          "Nước cà rốt đóng hộp"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 236.0,
+          "defaultServingGrams": 236.0,
+          "portionSource": {
+            "foodPortionId": 86753,
+            "amount": 1.0,
+            "gramWeight": 236.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-170458",
+        "name": "Nước cà chua đóng hộp có thêm muối",
+        "category": "Đồ uống",
+        "originalName": "Tomato juice, canned, with salt added",
+        "alternateNames": [
+          "Nước cà chua đóng hộp có thêm muối"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 243.0,
+          "defaultServingGrams": 243.0,
+          "portionSource": {
+            "foodPortionId": 86694,
+            "amount": 1.0,
+            "gramWeight": 243.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-170545",
+        "name": "Nước cà chua đóng hộp không thêm muối",
+        "category": "Đồ uống",
+        "originalName": "Tomato juice, canned, without salt added",
+        "alternateNames": [
+          "Nước cà chua đóng hộp không thêm muối"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 243.0,
+          "defaultServingGrams": 243.0,
+          "portionSource": {
+            "foodPortionId": 86828,
+            "amount": 1.0,
+            "gramWeight": 243.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-167708",
+        "name": "Nước ép cà chua và rau củ ít natri",
+        "category": "Đồ uống",
+        "originalName": "Tomato and vegetable juice, low sodium",
+        "alternateNames": [
+          "Nước ép cà chua và rau củ ít natri"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 242.0,
+          "defaultServingGrams": 242.0,
+          "portionSource": {
+            "foodPortionId": 81801,
+            "amount": 1.0,
+            "gramWeight": 242.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-167784",
+        "name": "Nectar ổi đóng hộp có vitamin C",
+        "category": "Đồ uống",
+        "originalName": "Guava nectar, canned, with added ascorbic acid",
+        "alternateNames": [
+          "Nectar ổi đóng hộp có vitamin C"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 251.0,
+          "defaultServingGrams": 251.0,
+          "portionSource": {
+            "foodPortionId": 81974,
+            "amount": 1.0,
+            "gramWeight": 251.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-167785",
+        "name": "Nectar xoài đóng hộp",
+        "category": "Đồ uống",
+        "originalName": "Mango nectar, canned",
+        "alternateNames": [
+          "Nectar xoài đóng hộp"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 251.0,
+          "defaultServingGrams": 251.0,
+          "portionSource": {
+            "foodPortionId": 81975,
+            "amount": 1.0,
+            "gramWeight": 251.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-168196",
+        "name": "Nectar mãng cầu xiêm đóng hộp",
+        "category": "Đồ uống",
+        "originalName": "Guanabana nectar, canned",
+        "alternateNames": [
+          "Nectar mãng cầu xiêm đóng hộp"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 251.0,
+          "defaultServingGrams": 251.0,
+          "portionSource": {
+            "foodPortionId": 82646,
+            "amount": 1.0,
+            "gramWeight": 251.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-169107",
+        "name": "Nectar đu đủ đóng hộp",
+        "category": "Đồ uống",
+        "originalName": "Papaya nectar, canned",
+        "alternateNames": [
+          "Nectar đu đủ đóng hộp"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 250.0,
+          "defaultServingGrams": 250.0,
+          "portionSource": {
+            "foodPortionId": 84253,
+            "amount": 1.0,
+            "gramWeight": 250.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-168185",
+        "name": "Nectar đào đóng hộp có vitamin C",
+        "category": "Đồ uống",
+        "originalName": "Peach nectar, canned, with added ascorbic acid",
+        "alternateNames": [
+          "Nectar đào đóng hộp có vitamin C"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 220.0,
+          "defaultServingGrams": 220.0,
+          "portionSource": {
+            "foodPortionId": 82625,
+            "amount": 1.0,
+            "gramWeight": 220.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-169940",
+        "name": "Nectar lê đóng hộp chưa thêm vitamin C",
+        "category": "Đồ uống",
+        "originalName": "Pear nectar, canned, without added ascorbic acid",
+        "alternateNames": [
+          "Nectar lê đóng hộp chưa thêm vitamin C"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 250.0,
+          "defaultServingGrams": 250.0,
+          "portionSource": {
+            "foodPortionId": 85722,
+            "amount": 1.0,
+            "gramWeight": 250.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-171704",
+        "name": "Nectar mơ đóng hộp có vitamin C",
+        "category": "Đồ uống",
+        "originalName": "Apricot nectar, canned, with added ascorbic acid",
+        "alternateNames": [
+          "Nectar mơ đóng hộp có vitamin C"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 266.0,
+          "defaultServingGrams": 266.0,
+          "portionSource": {
+            "foodPortionId": 89221,
+            "amount": 1.0,
+            "gramWeight": 266.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-167786",
+        "name": "Nectar me đóng hộp",
+        "category": "Đồ uống",
+        "originalName": "Tamarind nectar, canned",
+        "alternateNames": [
+          "Nectar me đóng hộp"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 251.0,
+          "defaultServingGrams": 251.0,
+          "portionSource": {
+            "foodPortionId": 81976,
+            "amount": 1.0,
+            "gramWeight": 251.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-169104",
+        "name": "Nước cam và bưởi chùm đóng hộp không thêm đường",
+        "category": "Đồ uống",
+        "originalName": "Orange-grapefruit juice, canned or bottled, unsweetened",
+        "alternateNames": [
+          "Nước cam và bưởi chùm đóng hộp không thêm đường"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA",
+          "servingGrams": 247.0,
+          "defaultServingGrams": 247.0,
+          "portionSource": {
+            "foodPortionId": 84245,
+            "amount": 1.0,
+            "gramWeight": 247.0,
+            "description": "cup"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-167792",
+        "name": "Nước cam và dứa phối trộn",
+        "category": "Đồ uống",
+        "originalName": "Orange Pineapple Juice Blend",
+        "alternateNames": [
+          "Nước cam và dứa phối trộn"
+        ]
+      },
+      {
+        "id": "usda-sr-168197",
+        "name": "Nước táo và nho phối trộn có vitamin C",
+        "category": "Đồ uống",
+        "originalName": "Juice, apple and grape blend, with added ascorbic acid",
+        "alternateNames": [
+          "Nước táo và nho phối trộn có vitamin C"
+        ]
+      },
+      {
+        "id": "usda-sr-173225",
+        "name": "Đồ uống nước dứa và cam đóng hộp",
+        "category": "Đồ uống",
+        "originalName": "Beverages, pineapple and orange juice drink, canned",
+        "alternateNames": [
+          "Đồ uống nước dứa và cam đóng hộp"
+        ],
+        "sourceServing": {
+          "servingLabel": "cốc USDA (8 fl oz USDA)",
+          "servingGrams": 250.0,
+          "defaultServingGrams": 250.0,
+          "portionSource": {
+            "foodPortionId": 92138,
+            "amount": 1.0,
+            "gramWeight": 250.0,
+            "description": "cup (8 fl oz)"
+          }
+        }
+      },
+      {
+        "id": "usda-sr-174131",
+        "name": "Đồ uống nha đam có vitamin C",
+        "category": "Đồ uống",
+        "originalName": "Beverages, aloe vera juice drink, fortified with Vitamin C",
+        "alternateNames": [
+          "Đồ uống nha đam có vitamin C"
+        ]
+      },
+      {
+        "id": "usda-sr-174842",
+        "name": "Soda không hương (club soda)",
+        "category": "Đồ uống",
+        "originalName": "Beverages, carbonated, club soda",
+        "alternateNames": [
+          "Soda không hương"
+        ]
+      },
+      {
+        "id": "usda-sr-174852",
+        "name": "Nước ngọt cola thông thường",
+        "category": "Đồ uống",
+        "originalName": "Beverages, carbonated, cola, regular",
+        "alternateNames": [
+          "Nước ngọt cola thông thường"
+        ]
+      },
+      {
+        "id": "usda-sr-174851",
+        "name": "Nước ngọt cola không caffeine",
+        "category": "Đồ uống",
+        "originalName": "Beverages, carbonated, cola, without caffeine",
+        "alternateNames": [
+          "Nước ngọt cola không caffeine"
+        ]
+      },
+      {
+        "id": "usda-sr-175099",
+        "name": "Nước ngọt cola/pepper ít năng lượng, aspartame, có caffeine",
+        "category": "Đồ uống",
+        "originalName": "Beverages, carbonated, low calorie, cola or pepper-type, with aspartame, contains caffeine",
+        "alternateNames": [
+          "Nước ngọt cola/pepper ít năng lượng, aspartame, có caffeine"
+        ]
+      },
+      {
+        "id": "usda-sr-174854",
+        "name": "Nước ngọt có ga vị cam",
+        "category": "Đồ uống",
+        "originalName": "Beverages, carbonated, orange",
+        "alternateNames": [
+          "Nước ngọt có ga vị cam"
+        ]
+      },
+      {
+        "id": "usda-sr-173205",
+        "name": "Nước ngọt có ga chanh xanh/vàng không caffeine",
+        "category": "Đồ uống",
+        "originalName": "Beverages, carbonated, lemon-lime soda, no caffeine",
+        "alternateNames": [
+          "Nước ngọt có ga chanh xanh/vàng không caffeine"
+        ]
+      },
+      {
+        "id": "usda-sr-173203",
+        "name": "Nước ngọt có ga vị nho",
+        "category": "Đồ uống",
+        "originalName": "Beverages, carbonated, grape soda",
+        "alternateNames": [
+          "Nước ngọt có ga vị nho"
+        ]
+      },
+      {
+        "id": "usda-sr-174846",
+        "name": "Nước ngọt có ga vị gừng (ginger ale)",
+        "category": "Đồ uống",
+        "originalName": "Beverages, carbonated, ginger ale",
+        "alternateNames": [
+          "Nước ngọt có ga vị gừng"
+        ]
+      },
+      {
+        "id": "usda-sr-171869",
+        "name": "Nước tonic có ga",
+        "category": "Đồ uống",
+        "originalName": "Beverages, carbonated, tonic water",
+        "alternateNames": [
+          "Nước tonic có ga"
+        ]
+      },
+      {
+        "id": "usda-sr-175108",
+        "name": "Nước thể thao POWERADE vị chanh (USDA tham khảo)",
+        "category": "Đồ uống",
+        "originalName": "Beverages, COCA-COLA, POWERADE, lemon-lime flavored, ready-to-drink",
+        "alternateNames": [
+          "Nước thể thao POWERADE vị chanh"
+        ]
+      },
+      {
+        "id": "usda-sr-173210",
+        "name": "Nước tăng lực RED BULL (USDA tham khảo)",
+        "category": "Đồ uống",
+        "originalName": "Beverages, Energy drink, RED BULL",
+        "alternateNames": [
+          "Nước tăng lực RED BULL"
+        ]
+      }
+    ]
+  }
+}

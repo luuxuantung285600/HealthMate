@@ -1,3 +1,4 @@
+import 'support/load_icon_font.dart';
 import 'support/fake_health_profile_repository.dart';
 import 'package:healthmate/features/profile/models/body_metric.dart';
 import 'dart:async';
@@ -64,9 +65,12 @@ class PendingDay extends FakeNutritionRepository {
 
 void main() {
   setUpAll(() async {
-    final font = FontLoader('Inter');
+    await loadIconFont();
+    final font = FontLoader('Public Sans');
     for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      font.addFont(rootBundle.load('assets/fonts/inter/Inter-$weight.ttf'));
+      font.addFont(
+        rootBundle.load('assets/fonts/public_sans/PublicSans-$weight.ttf'),
+      );
     }
     await font.load();
     await (FontLoader(
@@ -149,7 +153,7 @@ void main() {
           130,
         );
         expect(find.byType(MfpMealCard), findsNWidgets(4));
-        expect(find.text('Hôm nay'), findsNWidgets(2));
+        expect(find.text('Trang chủ'), findsOneWidget);
         expect(find.text('Go Premium'), findsNothing);
         expect(find.text('Còn 2.420 kcal'), findsNothing);
         await capture(tester, key, 'today-${mode.name}-$scale');
@@ -265,7 +269,7 @@ void main() {
         ),
       );
       expect(find.text('1.870'), findsOneWidget);
-      expect(find.text('kcal còn lại'), findsOneWidget);
+      expect(find.text('Calo còn lại'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );

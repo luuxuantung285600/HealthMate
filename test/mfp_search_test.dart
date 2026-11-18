@@ -18,6 +18,7 @@ class PendingSearch extends FakeFoodSearchService {
     int limit = 25,
     FoodSearchRequest? request,
     void Function(FoodSearchOutcome)? onProgress,
+    bool Function(FoodCatalogItem)? matches,
   }) => pending
       .putIfAbsent(query, Completer<List<FoodSearchResult>>.new)
       .future
@@ -87,8 +88,13 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.byTooltip('Thêm Trứng gà luộc'), findsOneWidget);
         expect(find.byTooltip('Thêm Cơm trắng chín'), findsNothing);
-        await tester.enterText(field, '');
+        await tester.ensureVisible(
+          find.byKey(const ValueKey('clear-food-search')),
+        );
+        await tester.tap(find.byKey(const ValueKey('clear-food-search')));
         await tester.pumpAndSettle();
+        expect(tester.widget<TextField>(field).controller!.text, isEmpty);
+        expect(find.byKey(const ValueKey('clear-food-search')), findsNothing);
         expect(find.byTooltip('Thêm Cơm trắng chín'), findsOneWidget);
         expect(find.byTooltip('Thêm Trứng gà luộc'), findsOneWidget);
         expect(search.pending.keys, ['com', 'trung']);

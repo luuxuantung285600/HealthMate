@@ -62,6 +62,9 @@ class FirebaseNutritionTargetRepository implements NutritionTargetRepository {
       proteinGTarget: (d['proteinGTarget'] as num?)?.toDouble(),
       carbsGTarget: (d['carbsGTarget'] as num?)?.toDouble(),
       fatGTarget: (d['fatGTarget'] as num?)?.toDouble(),
+      saltGLimit: (d['saltGLimit'] as num?)?.toDouble(),
+      sugarGLimit: (d['sugarGLimit'] as num?)?.toDouble(),
+      fiberGTarget: (d['fiberGTarget'] as num?)?.toDouble(),
     );
     if (target.validate() != null) throw const FormatException();
     return target;
@@ -123,6 +126,9 @@ class FirebaseNutritionTargetRepository implements NutritionTargetRepository {
           'proteinGTarget': target.proteinGTarget,
           'carbsGTarget': target.carbsGTarget,
           'fatGTarget': target.fatGTarget,
+          'saltGLimit': target.saltGLimit,
+          'sugarGLimit': target.sugarGLimit,
+          'fiberGTarget': target.fiberGTarget,
           'source': 'user_manual',
           'schemaVersion': 1,
           'updatedAt': FieldValue.serverTimestamp(),
@@ -149,7 +155,10 @@ class FirebaseNutritionTargetRepository implements NutritionTargetRepository {
           data?['kcalTarget'] != target.kcalTarget ||
           data?['proteinGTarget'] != target.proteinGTarget ||
           data?['carbsGTarget'] != target.carbsGTarget ||
-          data?['fatGTarget'] != target.fatGTarget) {
+          data?['fatGTarget'] != target.fatGTarget ||
+          data?['saltGLimit'] != target.saltGLimit ||
+          data?['sugarGLimit'] != target.sugarGLimit ||
+          data?['fiberGTarget'] != target.fiberGTarget) {
         throw const NutritionTargetFailure(
           'Chưa xác nhận được đúng nội dung mục tiêu trên máy chủ. Bản nháp được giữ để thử lại.',
         );

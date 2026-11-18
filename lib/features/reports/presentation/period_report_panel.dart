@@ -1,3 +1,5 @@
+import '../../../core/theme/app_icons.dart';
+import '../../../core/theme/app_feature_visuals.dart';
 import 'dart:math' as math;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -20,11 +22,15 @@ class PeriodReportPanel extends ConsumerStatefulWidget {
     required this.days,
     required this.today,
     this.selectedRange,
+    this.initialOffset = 0,
+    this.onOffsetChanged,
     super.key,
   });
   final int days;
   final DateTime today;
   final ReportRange? selectedRange;
+  final int initialOffset;
+  final ValueChanged<int>? onOffsetChanged;
   @override
   ConsumerState<PeriodReportPanel> createState() => _PeriodReportPanelState();
 }
@@ -33,11 +39,26 @@ class _PeriodReportPanelState extends ConsumerState<PeriodReportPanel> {
   int _offset = 0;
   int _detailsPage = 0;
   @override
+  void initState() {
+    super.initState();
+    _offset = widget.initialOffset;
+  }
+
+  void _changePeriod(int delta) {
+    setState(() {
+      _offset += delta;
+      _detailsPage = 0;
+    });
+    widget.onOffsetChanged?.call(_offset);
+  }
+
+  @override
   void didUpdateWidget(covariant PeriodReportPanel oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.days != widget.days ||
-        oldWidget.selectedRange != widget.selectedRange) {
-      _offset = 0;
+        oldWidget.selectedRange != widget.selectedRange ||
+        oldWidget.initialOffset != widget.initialOffset) {
+      _offset = widget.initialOffset;
       _detailsPage = 0;
     }
   }
@@ -100,7 +121,7 @@ class _PeriodReportPanelState extends ConsumerState<PeriodReportPanel> {
             ref.invalidate(periodTargetsProvider(range));
             ref.invalidate(dayReviewsProvider(range));
           },
-          icon: const Icon(Icons.refresh),
+          icon: const Icon(AppIcons.refreshCw),
           label: const Text('Tải lại khoảng đã chọn'),
         ),
         Row(
@@ -109,11 +130,8 @@ class _PeriodReportPanelState extends ConsumerState<PeriodReportPanel> {
               IconButton(
                 key: const ValueKey('previous-period'),
                 tooltip: 'Khoảng trước',
-                onPressed: () => setState(() {
-                  _offset--;
-                  _detailsPage = 0;
-                }),
-                icon: const Icon(Icons.chevron_left),
+                onPressed: () => _changePeriod(-1),
+                icon: const Icon(AppIcons.chevronLeft),
               ),
             Expanded(
               child: Text(
@@ -126,13 +144,8 @@ class _PeriodReportPanelState extends ConsumerState<PeriodReportPanel> {
               IconButton(
                 key: const ValueKey('next-period'),
                 tooltip: 'Khoảng sau',
-                onPressed: _offset < 0
-                    ? () => setState(() {
-                        _offset++;
-                        _detailsPage = 0;
-                      })
-                    : null,
-                icon: const Icon(Icons.chevron_right),
+                onPressed: _offset < 0 ? () => _changePeriod(1) : null,
+                icon: const Icon(AppIcons.chevronRight),
               ),
           ],
         ),
@@ -283,7 +296,7 @@ class _PeriodReportPanelState extends ConsumerState<PeriodReportPanel> {
                           onPressed: _detailsPage > 0
                               ? () => setState(() => _detailsPage--)
                               : null,
-                          icon: const Icon(Icons.chevron_left),
+                          icon: const Icon(AppIcons.chevronLeft),
                         ),
                         Expanded(
                           child: Text(
@@ -298,7 +311,7 @@ class _PeriodReportPanelState extends ConsumerState<PeriodReportPanel> {
                               (_detailsPage + 1) * 31 < coverage.dates.length
                               ? () => setState(() => _detailsPage++)
                               : null,
-                          icon: const Icon(Icons.chevron_right),
+                          icon: const Icon(AppIcons.chevronRight),
                         ),
                       ],
                     ),
@@ -318,7 +331,7 @@ class _PeriodReportPanelState extends ConsumerState<PeriodReportPanel> {
                       trailing: IconButton(
                         tooltip: 'Kiểm tra và xác nhận ngày',
                         onPressed: () => openDayReview(context, day),
-                        icon: const Icon(Icons.fact_check_outlined),
+                        icon: const Icon(AppIcons.clipboardCheck),
                       ),
                     ),
                 ],
@@ -469,7 +482,9 @@ class _EnergyChart extends StatelessWidget {
               LineChartBarData(
                 spots: actual,
                 isCurved: false,
-                color: Theme.of(context).colorScheme.primary,
+                color: AppFeatureVisual.nutrition.foreground(
+                  Theme.of(context).brightness,
+                ),
                 barWidth: 2,
                 dotData: const FlDotData(show: true),
               ),

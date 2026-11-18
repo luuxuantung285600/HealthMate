@@ -1,4 +1,16 @@
 # Mở rộng Food Catalog — 16/10/2026
+## Cập nhật 10/11/2026 — natri và đường có nguồn
+
+Đã bổ sung từ Acecook, bảng Việt Nam 2007 và bốn mục USDA cũ: 106 mục có natri,
+74 mục có đường tổng trong nhóm 213 mục Việt Nam/đồ gói. Chất xơ tổng vẫn 4 mục;
+không đánh đồng Celluloza hoặc trường nguồn bỏ trống với chất xơ tổng/số 0.
+Các phần mô tả thiếu vi chất bên dưới ghi nhận trạng thái lịch sử tại 16/10.
+Đã phát hành version `verified-nutrients-2026-11-10-v1` lên catalog online:
+110 cập nhật + 110 audit, đọc lại xác minh đủ; không đổi snapshot nhật ký cũ.
+Web admin có dòng đường/natri/muối trong chi tiết món.
+[Báo cáo phát hành](verified-nutrients-release-2026-11-10.md).
+[Báo cáo nguồn, đơn vị và kiểm thử](vietnamese-nutrients-2026-11-10.md).
+
 
 ## Phạm vi và dữ liệu đã nạp
 
@@ -124,3 +136,48 @@ tests xác minh giao diện chọn món với dữ liệu giả. Mở lại **Th
 Xem thêm món. Nhập thử `pho bo`, `com tam`, `dau phu`.
 
 Phạm vi này đã xong; không chuyển sang tính năng hoặc giai đoạn khác.
+
+## Cập nhật 10/11/2026 — món Việt, đồ gói và ảnh
+
+Đã thêm 29 công thức món Việt và 22 sản phẩm Acecook có nguồn riêng từng vị;
+asset Việt hiện có 213 mục, tổng ba asset là 11.220. Danh mục Firebase chung
+đã thêm đúng 51 mục mới và đạt 209 document; đọc lại xác nhận 158 document cũ
+giữ nguyên. Có 47 ảnh 512×512 đã xem/cắt loại người và món ngoài lề.
+Chi tiết nguồn, phép quy đổi nhãn gói khô, lệnh nạp có giới hạn ID, kiểm thử
+và giới hạn ảnh: [báo cáo 10/11](vietnamese-food-expansion-2026-11-10.md).
+
+
+## Cập nhật giao diện chọn món và ảnh nguyên liệu — 10/11/2026
+
+Bản giao diện tiếp theo có **51 ảnh 512×512** (thêm tỏi, hành tây sống,
+dưa leo sống và tôm bóc vỏ sống), chi tiết món, biểu đồ theo khẩu phần,
+bảng dinh dưỡng và nguyên liệu tham khảo từ sourceDetails/công thức riêng.
+Không đổi số món hoặc giá trị dinh dưỡng. Không ghi catalog Firebase trong
+lượt giao diện này. Bỏ dropdown loại bữa ở màn thêm món; model và dữ liệu
+lịch sử giữ tương thích. Dưỡng chất chưa có nguồn không được tự điền.
+Xem [báo cáo giao diện](food-selection-detail-2026-11-10.md).
+# Bổ sung 10/11/2026 — 100 mục trái cây, 100 mục đồ uống
+
+Danh sách chuẩn hóa tại `data/food_catalog/fruit-drink-browse.json` có 100
+mục mỗi nhóm, gồm các trạng thái/giống khác nhau. App có bộ lọc và ưu tiên
+các mục này; các tham chiếu cũ vẫn tìm được. 27 dòng VDD mới đưa catalog
+cơ sở lên 240 và toàn offline lên 11.247; không đổi dinh dưỡng USDA hiện có.
+63 đồ uống có cốc quy đổi bằng gram weight nguồn; không tự coi1ml=1g.
+Firebase đã thêm177 mục/audit tương ứng, giữ209 mục cũ, tổng386. Cần APK
+mới để có UI nhóm. Nguồn, giới hạn, kiểm thử và quy trình phát hành:
+[fruit-drink-catalog-2026-11-10.md](fruit-drink-catalog-2026-11-10.md).
+
+
+## Bổ sung 10/11/2026 — danh mục chung 500 mục
+
+Phát hành114 mục VDD2007 mới bằng tool/publish_catalog_500.cjs (create-only),
+đọc lại xác minh386 document cũ nguyên vẹn và114 audit mới. Tổng food_catalog
+là500; core asset354; toàn offline11.361 ID tham khảo. Có17 mục đồ hộp/mứt
+mới, không gán brand/barcode/khối lượng lon khi nguồn không có. Dinh dưỡng
+thiếu giữ thiếu; cellulose không được dùng làm tổng chất xơ.
+
+Thêm35 ảnh miễn phí có giấy phép, tổng86 ảnh, đều thuộc500 mục chung.414
+mục còn thiếu ảnh giữ giao diện chữ; chưa hoàn thành ảnh toàn danh mục.
+Ảnh gói Hảo Hảo75g khớpbarcode8934563138165, không dùng cho vị khác.
+Nguồn, giới hạn, kiểm thử, readback và APK:
+[catalog-500-2026-11-10.md](catalog-500-2026-11-10.md).

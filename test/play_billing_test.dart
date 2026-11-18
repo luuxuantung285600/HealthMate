@@ -467,6 +467,10 @@ void main() {
     await tester.pump();
     expect(find.textContaining('Premium chưa mở bán'), findsOneWidget);
     expect(find.textContaining('20.000'), findsNothing);
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('buy-play-premium')),
+      250,
+    );
     expect(
       tester
           .widget<FilledButton>(find.byKey(const ValueKey('buy-play-premium')))
@@ -501,7 +505,10 @@ void main() {
       );
       await tester.pump();
       expect(find.text('29.000 ₫ / tháng'), findsOneWidget);
-      expect(find.text('Khôi phục giao dịch'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('buy-play-premium')),
+        250,
+      );
       expect(
         tester
             .widget<FilledButton>(
@@ -510,6 +517,12 @@ void main() {
             .onPressed,
         isNotNull,
       );
+      final restore = find.byKey(const ValueKey('restore-play-premium'));
+      await tester.scrollUntilVisible(restore, 200);
+      await tester.pumpAndSettle();
+      expect(restore.hitTestable(), findsOneWidget);
+      expect(find.text('Khôi phục giao dịch'), findsOneWidget);
+      expect(tester.widget<OutlinedButton>(restore).onPressed, isNotNull);
       await tester.pumpWidget(const SizedBox());
       controller.dispose();
       await store.events.close();

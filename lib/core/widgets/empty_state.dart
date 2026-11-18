@@ -1,3 +1,4 @@
+import '../theme/app_icons.dart';
 import 'package:flutter/material.dart';
 
 import '../theme/app_spacing.dart';
@@ -56,7 +57,7 @@ class EmptyState extends StatelessWidget {
             const SizedBox(height: AppSpacing.lg),
             FilledButton.icon(
               onPressed: onAction,
-              icon: const Icon(Icons.arrow_forward_rounded),
+              icon: const Icon(AppIcons.arrowRight),
               label: Text(actionLabel!),
             ),
           ],

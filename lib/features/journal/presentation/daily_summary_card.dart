@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -62,7 +63,7 @@ class DailySummaryCard extends StatelessWidget {
                   children: [
                     _SummaryValue(
                       key: const ValueKey('summary-kcal'),
-                      icon: Icons.local_fire_department_outlined,
+                      icon: AppIcons.flame,
                       label: 'Năng lượng',
                       value: nutrition == null
                           ? '—'
@@ -70,7 +71,7 @@ class DailySummaryCard extends StatelessWidget {
                     ),
                     _SummaryValue(
                       key: const ValueKey('summary-macros'),
-                      icon: Icons.pie_chart_outline_rounded,
+                      icon: AppIcons.chartPie,
                       label: 'P · C · F',
                       value: nutrition == null
                           ? '—'
@@ -82,7 +83,7 @@ class DailySummaryCard extends StatelessWidget {
                     ),
                     _SummaryValue(
                       key: const ValueKey('summary-water'),
-                      icon: Icons.water_drop_outlined,
+                      icon: AppIcons.water,
                       label: 'Nước',
                       value: water == null
                           ? '—'
@@ -90,7 +91,7 @@ class DailySummaryCard extends StatelessWidget {
                     ),
                     _SummaryValue(
                       key: const ValueKey('summary-activity'),
-                      icon: Icons.directions_walk_outlined,
+                      icon: AppIcons.footprints,
                       label: 'Vận động',
                       value: activities == null
                           ? '—'

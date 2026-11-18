@@ -35,6 +35,20 @@ export function createLiveData(db, session, {statisticsMode = 'server'} = {}) {
     stopAll() { for (const stop of [...subscriptions]) stop(); },
     watchConfig: (receive,error,options) => watchDocument(['app_config','runtime'],receive,error,options),
     watchRegisteredAccounts: (receive,error,options) => watchDocument(['admin_statistics','accounts'],receive,error,options),
+    watchExerciseLibrary(receive,error,options) {
+      return watch(options,error,({listen})=>listen(query(collection(db,'exercise_library'),limit(501)),snapshot=>{
+        if(snapshot.size>500)throw Error('Thư viện vượt 500 bài tập. Cần phân trang đồng bộ trước khi quản lý.');
+        receive(snapshot.docs.map(s=>({...s.data(),id:s.id})));
+      }));
+    },
+    watchFoodCatalog(range, receive, error, options) {
+      const scope=pageScope('food_catalog',range);
+      return watch(options,error,({listen}) => listen(query(collection(db,'food_catalog'),
+        ...pageConstraints(scope,null,{where,orderBy,documentId,startAfter,Timestamp}),limit(5001)),snapshot=>{
+        if(snapshot.size>5000)throw Error('Danh mục vượt 5.000 món trong phạm vi này. Hãy tra cứu theo mã hoặc đầu tên món để lọc đầy đủ.');
+        receive(snapshot.docs.map(s=>({...s.data(),id:s.id})));
+      }));
+    },
     watchCounts: (receive,error,options) => statisticsMode === 'firestore' ? watch(options,error,({listen}) => {
       // Spark has no trusted aggregate worker. For a small catalog, observe the
       // complete bounded sets; never label one page as the collection total.

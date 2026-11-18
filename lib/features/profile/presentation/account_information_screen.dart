@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -65,7 +66,7 @@ class AccountInformationScreen extends StatelessWidget {
               context.go(AppRoutes.profile);
             }
           },
-          icon: const Icon(Icons.arrow_back_rounded),
+          icon: const Icon(AppIcons.arrowLeft),
           label: const Text('Quay lại'),
         ),
       ],
@@ -115,6 +116,10 @@ class AccountInformationScreen extends StatelessWidget {
       _InformationSection(
         'Hội thoại',
         'Câu hỏi và câu trả lời được lưu riêng theo tài khoản trong Cloud Firestore. Tra cứu nhật ký được tính tại ứng dụng, không gửi nhật ký, hồ sơ, nội dung tự nhập hoặc lịch sử hội thoại đến AI. Khi bạn chọn một chủ đề kiến thức chung, chỉ câu hỏi định sẵn được gửi đến dịch vụ AI của Google. Dịch vụ miễn phí có thể dùng câu hỏi/câu trả lời để cải thiện sản phẩm, có thể có người đánh giá nội dung. Mỗi chủ đề là một yêu cầu độc lập. Xóa tài khoản sẽ xóa cả hội thoại HealthMate; việc này không xóa dữ liệu đã được dịch vụ AI xử lý trước đó.',
+      ),
+      _InformationSection(
+        'Video tập luyện',
+        'Ảnh xem trước và video hướng dẫn được tải từ YouTube. Video chỉ tải khi bạn bấm xem, cần Internet và có thể có quảng cáo. YouTube nhận dữ liệu kết nối và sử dụng trình phát theo chính sách của họ; HealthMate không gửi UID, hồ sơ hay nhật ký sức khỏe cho trình phát. Hướng dẫn chữ vẫn dùng được khi mất mạng.',
       ),
       _InformationSection(
         'Xóa dữ liệu',

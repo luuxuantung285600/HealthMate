@@ -1,5 +1,6 @@
 import '../../../core/utils/local_date_key.dart';
 import '../../nutrition_targets/models/nutrition_target.dart';
+import '../../activity/models/activity_log.dart';
 
 class WellnessPreferences {
   const WellnessPreferences({
@@ -127,11 +128,14 @@ class DailyEnergyBudget {
     this.adjustmentKcal,
     this.explanation, {
     this.hasUnappliedAdjustment = false,
+    this.activityAdjustmentKcal = 0,
   });
   final NutritionTarget baseTarget;
   final double adjustmentKcal;
   final String explanation;
   final bool hasUnappliedAdjustment;
+  final double activityAdjustmentKcal;
+  double get stepAdjustmentKcal => adjustmentKcal - activityAdjustmentKcal;
   double get kcalTarget => baseTarget.kcalTarget + adjustmentKcal;
   double remaining(double recordedKcal) => kcalTarget - recordedKcal;
 }
@@ -140,12 +144,38 @@ DailyEnergyBudget resolveEnergyBudget(
   NutritionTarget target,
   EnergyAdjustment? adjustment, {
   required bool hasManualActivity,
+  Iterable<ActivityLog> activities = const [],
 }) {
+  var activityKcal = 0.0;
+  var unapplied = false;
+  for (final log in activities) {
+    final e = log.energyEstimate;
+    if (e == null || !e.includedInBudget) continue;
+    if (e.validFor(
+          type: log.type.name,
+          minutes: log.durationMinutes,
+          performedAt: log.performedAt,
+          dateKey: log.dateKey,
+        ) &&
+        e.budgetTargetFromDateKey == target.effectiveFromDateKey &&
+        (e.budgetBaseKcal! - target.kcalTarget).abs() <= .001) {
+      activityKcal += e.activeKcal;
+    } else {
+      unapplied = true;
+    }
+  }
+  if (activities.isNotEmpty) hasManualActivity = true;
   if (adjustment == null) {
     return DailyEnergyBudget(
       target,
-      0,
-      'Mục tiêu gốc · chưa áp dụng điều chỉnh bước chân.',
+      activityKcal,
+      unapplied
+          ? 'Mục tiêu đã đổi; cần xác nhận lại phần vận động chưa áp dụng.'
+          : activityKcal > 0
+          ? 'Đã cộng vận động ngoài mức thường ngày bạn xác nhận · ước tính; macro giữ nguyên.'
+          : 'Mục tiêu gốc · chưa áp dụng điều chỉnh vận động.',
+      activityAdjustmentKcal: activityKcal,
+      hasUnappliedAdjustment: unapplied,
     );
   }
   if (adjustment.validate() != null) {
@@ -155,17 +185,19 @@ DailyEnergyBudget resolveEnergyBudget(
       (target.kcalTarget - adjustment.baseKcalTarget).abs() > .001) {
     return DailyEnergyBudget(
       target,
-      0,
+      activityKcal,
       'Mục tiêu gốc đã đổi; cần xác nhận lại điều chỉnh.',
       hasUnappliedAdjustment: true,
+      activityAdjustmentKcal: activityKcal,
     );
   }
   if (hasManualActivity) {
     return DailyEnergyBudget(
       target,
-      0,
-      'Có vận động nhập tay; tạm không cộng bước để tránh tính trùng.',
+      activityKcal,
+      'Có vận động nhập tay hoặc buổi tập; tạm không cộng bước để tránh tính trùng. Chỉ cộng calo buổi tập đã xác nhận ngoài mức thường ngày.',
       hasUnappliedAdjustment: true,
+      activityAdjustmentKcal: activityKcal,
     );
   }
   return DailyEnergyBudget(

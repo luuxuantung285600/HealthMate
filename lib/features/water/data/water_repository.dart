@@ -7,6 +7,14 @@ abstract interface class WaterRepository {
 
   Future<String> add({required String uid, required WaterLogDraft draft});
 
+  /// Undo a newly added entry only if it has not been edited since creation.
+  /// An already absent entry is a successful, idempotent undo.
+  Future<void> undoAdd({
+    required String uid,
+    required String logId,
+    required WaterLogDraft draft,
+  });
+
   Future<void> update({
     required String uid,
     required String logId,

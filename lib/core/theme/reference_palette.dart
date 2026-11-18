@@ -2,30 +2,25 @@ import 'package:flutter/material.dart';
 
 /// Shared brand and nutrition colors. Labels always accompany metric colors.
 abstract final class ReferencePalette {
-  static const brand = Color(0xFF167553);
+  static const brand = Color(0xFF262626);
   // Retained for existing feature widgets using the original token name.
   static const blue = brand;
-  static const ink = Color(0xFF171818);
-  static const muted = Color(0xFF5F6269);
-  static const carb = Color(0xFF67CAD3);
-  static const protein = Color(0xFF76C87A);
-  static const fat = Color(0xFFFFCB48);
+  static const ink = Color(0xFF171717);
+  static const muted = Color(0xFF606060);
+  static const carb = Color(0xFF79A8F2);
+  static const protein = Color(0xFFF18B88);
+  static const fat = Color(0xFFEEC45A);
   static const lightGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     stops: [0, .27, .58, 1],
-    colors: [
-      Color(0xFFF5F7F6),
-      Color(0xFFF5F7F6),
-      Color(0xFFF5F7F6),
-      Color(0xFFF5F7F6),
-    ],
+    colors: [Colors.white, Colors.white, Colors.white, Colors.white],
   );
   static const darkGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     stops: [0, .55, 1],
-    colors: [Color(0xFF141C19), Color(0xFF141C19), Color(0xFF141C19)],
+    colors: [Colors.black, Colors.black, Colors.black],
   );
 }
 

@@ -14,12 +14,27 @@ class NutritionTarget {
     this.proteinGTarget,
     this.carbsGTarget,
     this.fatGTarget,
+    this.saltGLimit,
+    this.sugarGLimit,
+    this.fiberGTarget,
   });
   final String effectiveFromDateKey;
   final double kcalTarget;
   final double? proteinGTarget;
   final double? carbsGTarget;
   final double? fatGTarget;
+  // Optional user-defined daily markers; no automatic medical recommendation.
+  final double? saltGLimit, sugarGLimit, fiberGTarget;
+  NutritionTarget withMarkersFrom(NutritionTarget? previous) => NutritionTarget(
+    effectiveFromDateKey: effectiveFromDateKey,
+    kcalTarget: kcalTarget,
+    proteinGTarget: proteinGTarget,
+    carbsGTarget: carbsGTarget,
+    fatGTarget: fatGTarget,
+    saltGLimit: previous?.saltGLimit,
+    sugarGLimit: previous?.sugarGLimit,
+    fiberGTarget: previous?.fiberGTarget,
+  );
   bool get hasMacros =>
       proteinGTarget != null && carbsGTarget != null && fatGTarget != null;
   double? get macroKcal => hasMacros
@@ -45,6 +60,16 @@ class NutritionTarget {
     }
     if (macros.any((v) => v != null && (!v.isFinite || v < 0 || v > 5000))) {
       return 'Mỗi mục tiêu chất phải là số từ 0 đến 5.000 g.';
+    }
+    for (final entry in [
+      ('muối', saltGLimit, 50),
+      ('đường tổng', sugarGLimit, 500),
+      ('chất xơ', fiberGTarget, 200),
+    ]) {
+      final value = entry.$2;
+      if (value != null && (!value.isFinite || value < 0 || value > entry.$3)) {
+        return 'Mốc ${entry.$1}: nhập từ 0 đến ${entry.$3} g/ngày hoặc để trống.';
+      }
     }
     return null;
   }

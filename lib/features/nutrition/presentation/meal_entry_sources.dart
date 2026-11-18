@@ -1,11 +1,16 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 
 import '../../food_library/presentation/meal_food_sources.dart';
 import '../data/unified_food_search_service.dart';
 import '../models/food_avoidance.dart';
 import '../models/food_diet.dart';
+import '../models/food_browse_group.dart';
 import '../models/nutrition_models.dart';
+import 'food_browse_filter.dart';
 import 'meal_search_controller.dart';
+import 'food_selection_card.dart';
+import 'food_search_widgets.dart';
 
 /// Catalog UI renders search state; the controller owns requests and deadlines.
 class MealCatalogSource {
@@ -16,6 +21,8 @@ class MealCatalogSource {
     required this.onCustom,
     required this.onSelect,
     required this.onMore,
+    required this.group,
+    required this.onGroupChanged,
   });
   final MealSearchState state;
   final TextEditingController searchController;
@@ -23,24 +30,21 @@ class MealCatalogSource {
   final VoidCallback onCustom;
   final ValueChanged<FoodSearchResult> onSelect;
   final VoidCallback onMore;
+  final FoodBrowseGroup group;
+  final ValueChanged<FoodBrowseGroup> onGroupChanged;
 
   // Keep rows as direct ListView children so paging retains lazy layout/reveal.
   List<Widget> buildChildren(BuildContext context) {
     final theme = Theme.of(context);
     return [
-      TextField(
-        key: const ValueKey('food-search'),
-        controller: searchController,
-        decoration: const InputDecoration(
-          hintText: 'Ví dụ: phở bò, com tam, trứng…',
-          prefixIcon: Icon(Icons.search_rounded),
-        ),
-      ),
+      FoodSearchField(controller: searchController, onSearch: onRetry),
+      const SizedBox(height: 8),
+      FoodBrowseFilter(value: group, onChanged: onGroupChanged),
       const SizedBox(height: 8),
       TextButton.icon(
         key: const ValueKey('add-custom-food'),
         onPressed: onCustom,
-        icon: const Icon(Icons.edit_note_rounded),
+        icon: const Icon(AppIcons.notebookPen),
         label: const Text('Tự nhập món'),
       ),
       const SizedBox(height: 8),
@@ -66,56 +70,79 @@ class MealCatalogSource {
               const SizedBox(height: 8),
               TextButton.icon(
                 onPressed: onRetry,
-                icon: const Icon(Icons.refresh),
+                icon: const Icon(AppIcons.refreshCw),
                 label: const Text('Thử lại'),
               ),
             ],
           ),
         ),
       ] else if (state.results.isEmpty) ...[
-        const Padding(
+        Padding(
           padding: EdgeInsets.symmetric(vertical: 12),
-          child: Text('Không tìm thấy món phù hợp trong tất cả nguồn dữ liệu.'),
+          child: Text(
+            'Chưa tìm thấy thực phẩm phù hợp trong nhóm ${group.label.toLowerCase()}. Thử từ khóa khác hoặc đổi nhóm.',
+          ),
         ),
       ] else ...[
         if (state.error != null) ...[
           Text(state.error!),
           TextButton(onPressed: onRetry, child: const Text('Thử lại')),
         ],
+        if (searchController.text.trim().isEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(group.guidance, style: theme.textTheme.bodySmall),
+          ),
+        FoodSearchResultsSummary(
+          visibleCount: state.visibleCount,
+          totalCount: state.results.length,
+        ),
         for (final result in state.results.take(state.visibleCount))
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(result.food.name),
-            subtitle: Text(
-              result.food.hasNutritionData
-                  ? '${result.food.nutritionPer100g.kcal.toStringAsFixed(0)} kcal / 100 g${result.food.isEstimated ? ' · Ước tính' : ''}'
-                  : result.requiresDetail
-                  ? 'USDA · Chọn để tải dinh dưỡng'
-                  : 'Món thiếu dữ liệu dinh dưỡng; chưa thể thêm vào bữa.',
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            trailing: IconButton.filledTonal(
-              onPressed:
-                  state.pendingDetailId == null &&
-                      (result.food.hasNutritionData || result.requiresDetail)
-                  ? () => onSelect(result)
-                  : null,
-              tooltip: 'Thêm ${result.food.name}',
-              icon: state.pendingDetailId == result.food.id
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.add_rounded),
-            ),
+          FoodSelectionCard(
+            key: ValueKey('meal-catalog-food-${result.food.id}'),
+            foodId: result.food.id,
+            name: result.food.name,
+            quantityLabel: '100 g',
+            isEstimated: result.food.isEstimated,
+            textOnlySummary: result.food.hasNutritionData
+                ? '${result.food.nutritionPer100g.kcal.toStringAsFixed(0)} kcal / 100 g${result.food.isEstimated ? ' · Ước tính' : ''}'
+                : null,
+            nutrition: result.food.hasNutritionData
+                ? result.food.nutritionPer100g
+                : null,
+            status: result.food.hasNutritionData
+                ? null
+                : result.requiresDetail
+                ? 'USDA · Chọn để tải dinh dưỡng'
+                : 'Món thiếu dữ liệu dinh dưỡng; chưa thể thêm vào bữa.',
+            onSelect:
+                state.pendingDetailId == null &&
+                    (result.food.hasNutritionData || result.requiresDetail)
+                ? () => onSelect(result)
+                : null,
+            actions: [
+              IconButton.filledTonal(
+                onPressed:
+                    state.pendingDetailId == null &&
+                        (result.food.hasNutritionData || result.requiresDetail)
+                    ? () => onSelect(result)
+                    : null,
+                tooltip: 'Thêm ${result.food.name}',
+                icon: state.pendingDetailId == result.food.id
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(AppIcons.plus),
+              ),
+            ],
           ),
         if (state.results.length > state.visibleCount)
           TextButton.icon(
             key: const ValueKey('more-catalog-foods'),
             onPressed: onMore,
-            icon: const Icon(Icons.expand_more_rounded),
+            icon: const Icon(AppIcons.chevronDown),
             label: const Text('Xem thêm món'),
           ),
       ],

@@ -348,8 +348,10 @@ test('audit: unknown paths, collection-group access and privilege injection cann
 
 before(async () => {
   const [emulatorHost, emulatorPort] = (process.env.FIRESTORE_EMULATOR_HOST || '127.0.0.1:8080').split(':');
+  const projectId=process.env.HEALTHMATE_RULES_TEST_PROJECT||'demo-healthmate-rules';
+  if(!/^demo-[a-z0-9-]+$/.test(projectId))throw Error('Rules tests require an isolated demo project.');
   environment = await initializeTestEnvironment({
-    projectId: 'demo-healthmate-rules',
+    projectId,
     firestore: {
       host: emulatorHost,
       port: Number(emulatorPort),
@@ -906,6 +908,18 @@ const targetData = (key = '2026-10-17') => ({
   effectiveFromDateKey: key, kcalTarget: 1800, proteinGTarget: null,
   carbsGTarget: null, fatGTarget: null, source: 'user_manual', schemaVersion: 1,
   createdAt: serverTimestamp(), updatedAt: serverTimestamp(),
+});
+test('optional salt, total sugar and fiber targets are owner-only, bounded and nullable',async()=>{
+  const a=verifiedContext('alice').firestore();
+  const ref=doc(a,'users/alice/nutrition_targets/2026-10-17');
+  await assertSucceeds(setDoc(ref,{...targetData(),saltGLimit:5,sugarGLimit:50,fiberGTarget:30}));
+  await assertSucceeds(updateDoc(ref,{saltGLimit:0,sugarGLimit:null,fiberGTarget:null,updatedAt:serverTimestamp()}));
+  for(const patch of [{saltGLimit:-1},{saltGLimit:51},{sugarGLimit:501},{fiberGTarget:201},{sugarGLimit:'50'},{fiberGTarget:NaN}]) {
+    await assertFails(updateDoc(ref,{...patch,updatedAt:serverTimestamp()}));
+  }
+  const b=verifiedContext('bob').firestore();
+  await assertFails(getDoc(doc(b,'users/alice/nutrition_targets/2026-10-17')));
+  await assertFails(updateDoc(doc(b,'users/alice/nutrition_targets/2026-10-17'),{saltGLimit:4,updatedAt:serverTimestamp()}));
 });
 
 test('nutrition targets owner create/update/read/query use stable date ID and immutable createdAt', async () => {

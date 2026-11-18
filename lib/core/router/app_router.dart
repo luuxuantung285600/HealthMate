@@ -1,8 +1,13 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart' show GlobalKey, NavigatorState;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/auth_screen.dart';
+import '../../features/activity/models/guided_workout.dart';
+import '../../features/activity/presentation/workouts_screen.dart';
+import '../../features/activity/presentation/exercise_library_screen.dart';
+import '../../features/activity/presentation/workout_session_screen.dart';
 import '../../features/auth/presentation/email_verification_screen.dart';
 import '../../features/auth/presentation/session_screen.dart';
 import '../../features/auth/providers/auth_providers.dart';
@@ -27,6 +32,7 @@ import 'app_routes.dart';
 import 'auth_redirect.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
+  final rootNavigatorKey = GlobalKey<NavigatorState>();
   final refresh = _AuthRouterRefresh();
   ref.listen(authSessionProvider, (previous, next) => refresh.refresh());
   ref.listen(userProfileProvider, (previous, next) => refresh.refresh());
@@ -37,6 +43,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     (previous, next) => refresh.refresh(),
   );
   final router = GoRouter(
+    navigatorKey: rootNavigatorKey,
     initialLocation: AppRoutes.dashboard,
     refreshListenable: refresh,
     redirect: (context, state) {
@@ -170,6 +177,65 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                       int.tryParse(state.uri.queryParameters['tab'] ?? '') ??
                       -1,
                 ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.workouts,
+                builder: (context, state) => const WorkoutsScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'exercises',
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (context, state) => const ExerciseLibraryScreen(),
+                  ),
+                  GoRoute(
+                    path: ':workoutId',
+                    // Keep details and the guarded timer full-screen, as before.
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (context, state) {
+                      final workout = GuidedWorkouts.all
+                          .where(
+                            (w) => w.id == state.pathParameters['workoutId'],
+                          )
+                          .firstOrNull;
+                      return workout == null
+                          ? const RouteErrorScreen()
+                          : WorkoutDetailScreen(workout: workout);
+                    },
+                    routes: [
+                      GoRoute(
+                        path: 'session',
+                        parentNavigatorKey: rootNavigatorKey,
+                        builder: (context, state) {
+                          final workout = GuidedWorkouts.all
+                              .where(
+                                (w) =>
+                                    w.id == state.pathParameters['workoutId'],
+                              )
+                              .firstOrNull;
+                          final pace =
+                              WorkoutPace.values
+                                  .where(
+                                    (p) =>
+                                        p.name ==
+                                        state.uri.queryParameters['pace'],
+                                  )
+                                  .firstOrNull ??
+                              WorkoutPace.standard;
+                          return workout == null
+                              ? const RouteErrorScreen()
+                              : WorkoutSessionScreen(
+                                  workout: workout,
+                                  pace: pace,
+                                );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),

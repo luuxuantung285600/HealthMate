@@ -14,4 +14,13 @@ function run(command,args,options={}) {
 }
 const rules=fs.readdirSync(path.join(root,'rules-tests')).filter(name=>name.endsWith('.rules.test.cjs'));
 run(process.execPath,['--test',...rules],{cwd:path.join(root,'rules-tests'),env:{...process.env,HEALTHMATE_RULES_FILE:path.resolve(release,'firestore.rules')}});
-run(process.env.ComSpec||'cmd.exe',['/d','/s','/c','D:\\Flutter\\flutter\\bin\\flutter.bat test --no-pub --concurrency=1 --platform chrome --dart-define=HEALTHMATE_EMULATOR_TESTS=true test/support_repository_integration.dart test/account_deletion_repository_integration.dart']);
+run(process.execPath,['tool/reset_operations_emulator.cjs']);
+run(process.execPath,['tool/test_h1_catalog_import.cjs']);
+// Exercise all current user repositories against the release, including target
+// fields and collection queries. Support/deletion alone miss schema drift.
+const repositories=['firebase_repository_integration','support_repository_integration',
+  'account_deletion_repository_integration','plan_meal_repository_integration','query_repository_integration'];
+// Web tests ignore --concurrency; run files separately so their demo data
+// resets cannot erase another repository suite's in-flight transactions.
+for(const name of repositories)run(process.env.ComSpec||'cmd.exe',['/d','/s','/c',
+  'D:\\Flutter\\flutter\\bin\\flutter.bat test --no-pub --platform chrome --dart-define=HEALTHMATE_EMULATOR_TESTS=true test/'+name+'.dart']);

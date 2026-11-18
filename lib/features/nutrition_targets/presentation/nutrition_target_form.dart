@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import '../../../core/widgets/help_details.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,7 +49,7 @@ class NutritionTargetForm extends ConsumerStatefulWidget {
 
 class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
     with ConfirmedSave<NutritionTarget, NutritionTargetForm> {
-  final _fields = List.generate(4, (_) => TextEditingController());
+  final _fields = List.generate(7, (_) => TextEditingController());
   late final List<String> _openedValues;
   late List<String> _loadedNumbers;
   late DateTime _day;
@@ -84,14 +85,19 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
     _openedValues = _values;
   }
 
-  void _fill(NutritionTarget? value) {
+  void _fill(NutritionTarget? value, {bool includeMarkers = true}) {
     final numbers = [
       value?.kcalTarget,
       value?.proteinGTarget,
       value?.carbsGTarget,
       value?.fatGTarget,
+      if (includeMarkers) ...[
+        value?.saltGLimit,
+        value?.sugarGLimit,
+        value?.fiberGTarget,
+      ],
     ];
-    for (var i = 0; i < _fields.length; i++) {
+    for (var i = 0; i < numbers.length; i++) {
       _fields[i].text = numbers[i]?.toString() ?? '';
     }
   }
@@ -198,6 +204,9 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
       proteinGTarget: _number(1),
       carbsGTarget: _number(2),
       fatGTarget: _number(3),
+      saltGLimit: _number(4),
+      sugarGLimit: _number(5),
+      fiberGTarget: _number(6),
     );
     final error = target.validate(earliestDateKey: localDateKey(_today));
     setState(() {
@@ -254,7 +263,7 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
             leading: IconButton(
               tooltip: 'Đóng',
               onPressed: busy ? null : requestClose,
-              icon: const Icon(Icons.close),
+              icon: const Icon(AppIcons.x),
             ),
           ),
           body: AbsorbPointer(
@@ -268,7 +277,7 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
                   OutlinedButton.icon(
                     key: const ValueKey('target-date'),
                     onPressed: _pickDate,
-                    icon: const Icon(Icons.calendar_month),
+                    icon: const Icon(AppIcons.calendarDays),
                     label: Text(
                       'Áp dụng từ ${DateFormat('dd/MM/yyyy').format(_day)}',
                     ),
@@ -287,7 +296,7 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
                     ),
                   ],
                   const SizedBox(height: 16),
-                  for (var i = 0; i < 4; i++)
+                  for (var i = 0; i < 7; i++)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16),
                       child: TextField(
@@ -297,6 +306,9 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
                             'target-protein',
                             'target-carbs',
                             'target-fat',
+                            'target-salt',
+                            'target-sugar',
+                            'target-fiber',
                           ][i],
                         ),
                         controller: _fields[i],
@@ -313,12 +325,21 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
                             'Đạm (g/ngày)',
                             'Carb (g/ngày)',
                             'Chất béo (g/ngày)',
+                            'Giới hạn muối quy đổi (g/ngày) · Tùy chọn',
+                            'Mốc đường tổng (g/ngày) · Tùy chọn',
+                            'Mục tiêu chất xơ (g/ngày) · Tùy chọn',
                           ][i],
+                          helperText: i == 4
+                              ? 'Muối quy đổi từ natri, không chỉ là muối thêm khi nấu.'
+                              : i == 5
+                              ? 'Đường tổng gồm cả đường tự nhiên; khác đường tự do/đường thêm.'
+                              : null,
+                          helperMaxLines: 3,
                         ),
                       ),
                     ),
                   const Text(
-                    'Ba mục tiêu chất có thể cùng để trống hoặc cùng được nhập. Số 0 được nhập có chủ ý vẫn được giữ.',
+                    'Đạm, carb và béo có thể cùng để trống hoặc cùng được nhập. Muối, đường và chất xơ được đặt riêng; để trống nếu chưa có mốc phù hợp. Đây là mốc bạn tự thiết lập, không phải chỉ định y tế. Số 0 được nhập có chủ ý vẫn được giữ.',
                   ),
                 ],
               ),
@@ -346,7 +367,7 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
                       ),
                       TextButton.icon(
                         key: const ValueKey('personalize-target-form'),
-                        icon: const Icon(Icons.auto_awesome_outlined),
+                        icon: const Icon(AppIcons.sparkles),
                         label: const Text('Cá nhân hóa kcal và ba chất'),
                         onPressed: () async {
                           final result = await openPersonalNutritionPlanner(
@@ -355,14 +376,14 @@ class _NutritionTargetFormState extends ConsumerState<NutritionTargetForm>
                           );
                           if (!_current || result == null) return;
                           setState(() {
-                            _fill(result);
+                            _fill(result, includeMarkers: false);
                             _error = null;
                           });
                         },
                       ),
                       TextButton.icon(
                         key: const ValueKey('open-energy-estimate'),
-                        icon: const Icon(Icons.calculate_outlined),
+                        icon: const Icon(AppIcons.calculator),
                         label: const Text('Tham khảo mức duy trì (tùy chọn)'),
                         onPressed: () async {
                           final result = await showDialog<double>(

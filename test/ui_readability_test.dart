@@ -1,3 +1,6 @@
+import 'package:healthmate/features/nutrition/providers/nutrition_providers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'support/load_icon_font.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
@@ -44,9 +47,11 @@ Future<void> capture(
 
 void main() {
   setUpAll(() async {
-    await (FontLoader(
-      'Inter',
-    )..addFont(rootBundle.load('assets/fonts/inter/Inter-Regular.ttf'))).load();
+    await loadIconFont();
+    await (FontLoader('Public Sans')..addFont(
+          rootBundle.load('assets/fonts/public_sans/PublicSans-Regular.ttf'),
+        ))
+        .load();
   });
 
   for (final width in [320.0, 360.0, 412.0]) {
@@ -61,26 +66,33 @@ void main() {
           double? saved;
           final boundary = GlobalKey();
           await tester.pumpWidget(
-            MaterialApp(
-              theme: scale == 2 ? AppTheme.dark : AppTheme.light,
-              builder: (context, child) => MediaQuery(
-                data: MediaQuery.of(context).copyWith(
-                  textScaler: TextScaler.linear(scale),
-                  viewInsets: const EdgeInsets.only(bottom: 260),
+            ProviderScope(
+              overrides: [
+                foodCatalogProvider.overrideWith(
+                  (ref) => Stream.value(const []),
                 ),
-                child: RepaintBoundary(key: boundary, child: child!),
-              ),
-              home: Builder(
-                builder: (context) => Scaffold(
-                  body: TextButton(
-                    child: const Text('Chọn món'),
-                    onPressed: () async {
-                      saved = await askFoodGrams(
-                        context,
-                        food: food,
-                        initial: 150,
-                      );
-                    },
+              ],
+              child: MaterialApp(
+                theme: scale == 2 ? AppTheme.dark : AppTheme.light,
+                builder: (context, child) => MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    textScaler: TextScaler.linear(scale),
+                    viewInsets: const EdgeInsets.only(bottom: 260),
+                  ),
+                  child: RepaintBoundary(key: boundary, child: child!),
+                ),
+                home: Builder(
+                  builder: (context) => Scaffold(
+                    body: TextButton(
+                      child: const Text('Chọn món'),
+                      onPressed: () async {
+                        saved = await askFoodGrams(
+                          context,
+                          food: food,
+                          initial: 150,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),

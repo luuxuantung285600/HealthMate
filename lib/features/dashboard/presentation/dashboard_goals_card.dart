@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -140,7 +141,7 @@ class DashboardGoalsCard extends ConsumerWidget {
           OutlinedButton.icon(
             key: const ValueKey('dashboard-open-goals'),
             onPressed: () => context.go(AppRoutes.quest),
-            icon: const Icon(Icons.flag_outlined),
+            icon: const Icon(AppIcons.goals),
             label: const Text('Mở mục tiêu và nhiệm vụ'),
           ),
         ],

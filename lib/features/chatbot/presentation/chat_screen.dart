@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -218,7 +219,7 @@ class _ChatBodyState extends ConsumerState<_ChatBody> {
                 key: const ValueKey('chat-new'),
                 tooltip: 'Cuộc trò chuyện mới',
                 onPressed: chat.busy ? null : controller.newSession,
-                icon: const Icon(Icons.add_comment_outlined),
+                icon: const Icon(AppIcons.messageCirclePlus),
               ),
               PopupMenuButton<String>(
                 key: const ValueKey('chat-history'),
@@ -244,7 +245,7 @@ class _ChatBodyState extends ConsumerState<_ChatBody> {
                       ),
                     ),
                 ],
-                icon: const Icon(Icons.history_rounded),
+                icon: const Icon(AppIcons.history),
               ),
             ],
           ),
@@ -261,7 +262,7 @@ class _ChatBodyState extends ConsumerState<_ChatBody> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Icon(
-                            Icons.chat_bubble_outline_rounded,
+                            AppIcons.chatbot,
                             color: Theme.of(context).colorScheme.primary,
                           ),
                           const SizedBox(height: 12),
@@ -300,7 +301,7 @@ class _ChatBodyState extends ConsumerState<_ChatBody> {
                     OutlinedButton.icon(
                       key: const ValueKey('chat-date'),
                       onPressed: chat.busy ? null : _chooseDate,
-                      icon: const Icon(Icons.calendar_month_outlined),
+                      icon: const Icon(AppIcons.calendarDays),
                       label: Text(DateFormat('dd/MM/yyyy').format(_date)),
                     ),
                     for (final question in const [
@@ -356,7 +357,7 @@ class _ChatBodyState extends ConsumerState<_ChatBody> {
                             onPressed: enabled
                                 ? () => _send(topic: topic)
                                 : null,
-                            icon: const Icon(Icons.auto_awesome_outlined),
+                            icon: const Icon(AppIcons.sparkles),
                             label: Text(topic.label),
                           ),
                         ),
@@ -375,7 +376,7 @@ class _ChatBodyState extends ConsumerState<_ChatBody> {
                                 onPressed: enabled
                                     ? () => _send(topic: topic)
                                     : null,
-                                icon: const Icon(Icons.auto_awesome_outlined),
+                                icon: const Icon(AppIcons.sparkles),
                                 label: Text(topic.label),
                               ),
                             ),
@@ -446,7 +447,7 @@ class _ChatBodyState extends ConsumerState<_ChatBody> {
               child: TextButton.icon(
                 key: const ValueKey('chat-cancel'),
                 onPressed: controller.cancel,
-                icon: const Icon(Icons.stop_circle_outlined),
+                icon: const Icon(AppIcons.circleStop),
                 label: const Text('Dừng nhận'),
               ),
             ),
@@ -476,7 +477,7 @@ class _ChatBodyState extends ConsumerState<_ChatBody> {
                   key: const ValueKey('chat-send'),
                   tooltip: 'Gửi tin nhắn',
                   onPressed: enabled ? () => _send() : null,
-                  icon: const Icon(Icons.send_rounded),
+                  icon: const Icon(AppIcons.send),
                 ),
               ],
             ),

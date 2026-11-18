@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import '../../../core/widgets/help_details.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -112,7 +113,7 @@ class NutritionTargetCard extends ConsumerWidget {
                 ),
               if (budget != null && budget.adjustmentKcal > 0)
                 Text(
-                  'Gốc ${number.format(value.kcalTarget)} + bước đã xác nhận ${number.format(budget.adjustmentKcal)} kcal · ước tính; macro giữ nguyên.',
+                  'Gốc ${number.format(value.kcalTarget)} + vận động đã xác nhận ${number.format(budget.adjustmentKcal)} kcal · ước tính; macro giữ nguyên.',
                 ),
               if (budget?.hasUnappliedAdjustment == true)
                 Text(budget!.explanation),
@@ -147,6 +148,15 @@ class NutritionTargetCard extends ConsumerWidget {
                 ],
               ] else
                 const Text('Chưa đặt mục tiêu cho ba chất'),
+              for (final marker in [
+                ('Muối quy đổi', value.saltGLimit),
+                ('Đường tổng', value.sugarGLimit),
+                ('Chất xơ', value.fiberGTarget),
+              ])
+                if (marker.$2 != null)
+                  Text(
+                    '${marker.$1}: mốc tự đặt ${number.format(marker.$2)} g/ngày',
+                  ),
               HelpDetails(
                 title: 'Thông tin mục tiêu',
                 children: [
@@ -163,7 +173,7 @@ class NutritionTargetCard extends ConsumerWidget {
               TextButton.icon(
                 key: const ValueKey('personalize-nutrition-target'),
                 onPressed: () => openPersonalNutritionPlanner(context),
-                icon: const Icon(Icons.calculate_outlined),
+                icon: const Icon(AppIcons.calculator),
                 label: Text(
                   value == null ? 'Gợi ý mục tiêu' : 'Tính lại mục tiêu',
                 ),
@@ -176,7 +186,7 @@ class NutritionTargetCard extends ConsumerWidget {
                   ref,
                   localDateKey(today) == key ? value : null,
                 ),
-                icon: const Icon(Icons.edit_outlined),
+                icon: const Icon(AppIcons.squarePen),
                 label: Text(
                   localDateKey(today) == key
                       ? (value == null

@@ -1,3 +1,5 @@
+import 'package:healthmate/features/nutrition/providers/nutrition_providers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:healthmate/features/nutrition/models/catalog_food_reader.dart';
@@ -115,29 +117,36 @@ void main() {
           addTearDown(tester.view.resetDevicePixelRatio);
           double? result;
           await tester.pumpWidget(
-            MaterialApp(
-              theme: ThemeData(
-                brightness: dark ? Brightness.dark : Brightness.light,
-              ),
-              builder: (_, child) => MediaQuery(
-                data: MediaQueryData(
-                  size: const Size(360, 800),
-                  textScaler: TextScaler.linear(scale),
-                  viewInsets: const EdgeInsets.only(bottom: 200),
+            ProviderScope(
+              overrides: [
+                foodCatalogProvider.overrideWith(
+                  (ref) => Stream.value(const []),
                 ),
-                child: child!,
-              ),
-              home: Builder(
-                builder: (context) => Scaffold(
-                  body: TextButton(
-                    onPressed: () async {
-                      result = await askFoodGrams(
-                        context,
-                        initial: 200,
-                        food: readCatalogFood('portion', data()),
-                      );
-                    },
-                    child: const Text('Open'),
+              ],
+              child: MaterialApp(
+                theme: ThemeData(
+                  brightness: dark ? Brightness.dark : Brightness.light,
+                ),
+                builder: (_, child) => MediaQuery(
+                  data: MediaQueryData(
+                    size: const Size(360, 800),
+                    textScaler: TextScaler.linear(scale),
+                    viewInsets: const EdgeInsets.only(bottom: 200),
+                  ),
+                  child: child!,
+                ),
+                home: Builder(
+                  builder: (context) => Scaffold(
+                    body: TextButton(
+                      onPressed: () async {
+                        result = await askFoodGrams(
+                          context,
+                          initial: 200,
+                          food: readCatalogFood('portion', data()),
+                        );
+                      },
+                      child: const Text('Open'),
+                    ),
                   ),
                 ),
               ),

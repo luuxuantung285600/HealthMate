@@ -1,3 +1,5 @@
+import '../../../core/theme/app_icons.dart';
+import '../../../core/theme/app_feature_visuals.dart';
 import 'dart:math' as math;
 
 import 'package:fl_chart/fl_chart.dart';
@@ -24,6 +26,11 @@ enum _ChartMetric {
 
   const _ChartMetric(this.label, this.unit);
   final String label, unit;
+  AppFeatureVisual get visual => switch (this) {
+    kcal => AppFeatureVisual.nutrition,
+    water => AppFeatureVisual.water,
+    activity => AppFeatureVisual.activity,
+  };
   double value(DayReflection day) => switch (this) {
     kcal => day.nutrition.kcal,
     water => day.waterMl.toDouble(),
@@ -41,10 +48,12 @@ class WeeklyReflectionCard extends ConsumerStatefulWidget {
     required this.today,
     this.progressMode = false,
     this.initialWeekOffset = 0,
+    this.onWeekOffsetChanged,
     super.key,
   });
   final bool progressMode;
   final int initialWeekOffset;
+  final ValueChanged<int>? onWeekOffsetChanged;
   final DateTime today;
   @override
   ConsumerState<WeeklyReflectionCard> createState() =>
@@ -67,6 +76,19 @@ class _WeeklyReflectionCardState extends ConsumerState<WeeklyReflectionCard> {
     if (widget.progressMode) {
       ref.invalidate(weeklyNutritionTargetsProvider(start));
     }
+  }
+
+  @override
+  void didUpdateWidget(covariant WeeklyReflectionCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialWeekOffset != widget.initialWeekOffset) {
+      _offset = widget.initialWeekOffset;
+    }
+  }
+
+  void _changeWeek(int delta) {
+    setState(() => _offset += delta);
+    widget.onWeekOffsetChanged?.call(_offset);
   }
 
   @override
@@ -104,7 +126,7 @@ class _WeeklyReflectionCardState extends ConsumerState<WeeklyReflectionCard> {
                 padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
                 child: Row(
                   children: [
-                    const Icon(Icons.insights_outlined),
+                    const Icon(AppIcons.chartNoAxesCombined),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
@@ -113,7 +135,9 @@ class _WeeklyReflectionCardState extends ConsumerState<WeeklyReflectionCard> {
                       ),
                     ),
                     if (!widget.progressMode)
-                      Icon(_expanded ? Icons.expand_less : Icons.expand_more),
+                      Icon(
+                        _expanded ? AppIcons.chevronUp : AppIcons.chevronDown,
+                      ),
                   ],
                 ),
               ),
@@ -127,8 +151,8 @@ class _WeeklyReflectionCardState extends ConsumerState<WeeklyReflectionCard> {
                 IconButton(
                   key: const ValueKey('previous-week'),
                   tooltip: 'Tuần trước',
-                  onPressed: () => setState(() => _offset--),
-                  icon: const Icon(Icons.chevron_left),
+                  onPressed: () => _changeWeek(-1),
+                  icon: const Icon(AppIcons.chevronLeft),
                 ),
                 Expanded(
                   child: Text(
@@ -140,10 +164,8 @@ class _WeeklyReflectionCardState extends ConsumerState<WeeklyReflectionCard> {
                 IconButton(
                   key: const ValueKey('next-week'),
                   tooltip: 'Tuần sau',
-                  onPressed: _offset < 0
-                      ? () => setState(() => _offset++)
-                      : null,
-                  icon: const Icon(Icons.chevron_right),
+                  onPressed: _offset < 0 ? () => _changeWeek(1) : null,
+                  icon: const Icon(AppIcons.chevronRight),
                 ),
               ],
             ),
@@ -194,6 +216,16 @@ class _WeeklyReflectionCardState extends ConsumerState<WeeklyReflectionCard> {
                             ChoiceChip(
                               key: ValueKey('week-metric-${metric.name}'),
                               selected: metric == _metric,
+                              selectedColor: metric.visual.background(
+                                Theme.of(context).brightness,
+                              ),
+                              labelStyle: TextStyle(
+                                color: metric == _metric
+                                    ? metric.visual.foreground(
+                                        Theme.of(context).brightness,
+                                      )
+                                    : Theme.of(context).colorScheme.onSurface,
+                              ),
                               label: Text(switch (metric) {
                                 _ChartMetric.kcal => 'Năng lượng',
                                 _ChartMetric.water => 'Nước',
@@ -309,7 +341,7 @@ class _WeeklyReflectionCardState extends ConsumerState<WeeklyReflectionCard> {
                     TextButton.icon(
                       key: const ValueKey('refresh-week'),
                       onPressed: () => _refresh(start),
-                      icon: const Icon(Icons.refresh),
+                      icon: const Icon(AppIcons.refreshCw),
                       label: const Text('Tải lại báo cáo'),
                     ),
                   ],
@@ -465,7 +497,7 @@ class _WeekChart extends StatelessWidget {
                   BarChartRodData(
                     toY: metric.value(entry.$2),
                     width: 18,
-                    color: theme.colorScheme.primary,
+                    color: metric.visual.foreground(theme.brightness),
                     borderRadius: BorderRadius.circular(6),
                   ),
                 ]

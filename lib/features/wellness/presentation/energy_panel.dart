@@ -62,7 +62,7 @@ class EnergyBudgetCard extends ConsumerWidget {
                           'Mục tiêu gốc: ${energyNumber(b.baseTarget.kcalTarget)} kcal',
                         ),
                         Text(
-                          'Bước đã xác nhận: +${energyNumber(b.adjustmentKcal)} kcal (ước tính)',
+                          'Vận động đã xác nhận: +${energyNumber(b.adjustmentKcal)} kcal (ước tính)',
                         ),
                         Text('Ngân sách: ${energyNumber(b.kcalTarget)} kcal'),
                         if (recorded != null) ...[

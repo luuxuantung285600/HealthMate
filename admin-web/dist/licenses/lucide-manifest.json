@@ -1,0 +1,227 @@
+{
+  "source": {
+    "name": "lucide-static",
+    "version": "1.70.0",
+    "url": "https://www.npmjs.com/package/lucide-static/v/1.70.0",
+    "tarball": "https://registry.npmjs.org/lucide-static/-/lucide-static-1.70.0.tgz",
+    "sourceFontSha256": "a17478dfd261662eae3f64fd71c1a05465c70018b46a5d852af6a23459921d15",
+    "license": "ISC; includes Feather-derived glyphs under MIT"
+  },
+  "archiveSha256": "3d1f09df1c468abe512ee6d6596db0dc773fa46c61050e365f0c5fee5120f16a",
+  "icons": {
+    "overview": {
+      "lucide": "house",
+      "svgSha256": "889e861a3344a8639ad77145bd112846a58a395e063667826584d7e532e4b1cd"
+    },
+    "revenue": {
+      "lucide": "crown",
+      "svgSha256": "d51ab98b4ea9e44a184a6d65fd4ad326d61a8aeb7e903be3c1fc22b16c399df6"
+    },
+    "user_directory": {
+      "lucide": "user-round",
+      "svgSha256": "a189200fd41929f4bd66c4f0e5e6b3e2ee74e0db344f2d194e188535d9c57d16"
+    },
+    "food_catalog": {
+      "lucide": "utensils",
+      "svgSha256": "8982b8dbf10e868736934b4b25603e13eac024ac1ec15e673a10350f2641c110"
+    },
+    "workouts": {
+      "lucide": "dumbbell",
+      "svgSha256": "66137d1966562b0a890ef889a9b62d1021df12a3965ab0361283cfcd419e3654"
+    },
+    "chatbot": {
+      "lucide": "bot-message-square",
+      "svgSha256": "c96b59925116623603a782526c4f97206f971292a62a19c8fb63b682e41b1714"
+    },
+    "support": {
+      "lucide": "headset",
+      "svgSha256": "0fbc6ab2ad77964b8fbec840b8b6c4e04f66a64f3ca1660a36ee5159eda1f2f0"
+    },
+    "app_config": {
+      "lucide": "settings-2",
+      "svgSha256": "b5a2a253e32b4e25411bf383632a72b9a2ca67fa44e956033db5c73864139fb2"
+    },
+    "admin_audit": {
+      "lucide": "history",
+      "svgSha256": "815e002405d5f97cfe3c8331b1cc34dbe0e0e8655b3a09096e4f67d36facb656"
+    },
+    "heart": {
+      "lucide": "leaf",
+      "svgSha256": "c2bc8dde7626402cbdc6df2a3a354a7f5922f0f6e4d4e273fe80c161583768c0"
+    },
+    "logout": {
+      "lucide": "log-out",
+      "svgSha256": "ccba968a9a6e87c2eda40f7660e730f1985071d732c0a075a997bcc211023128"
+    },
+    "close": {
+      "lucide": "x",
+      "svgSha256": "4fcd3eb7104ef5e1ae949ebc9f316b72e3839bd790766d9795ee5f8d1eace91e"
+    },
+    "search": {
+      "lucide": "search",
+      "svgSha256": "b395924bb54d8c436cb5bf6aa21899dfbf5f43a8a3b4252ed88d3391ec724aa5"
+    },
+    "add": {
+      "lucide": "plus",
+      "svgSha256": "6785279aad64300db83832507ef7909f5c4470334add79dcc0fa5b74564fd08e"
+    },
+    "edit": {
+      "lucide": "square-pen",
+      "svgSha256": "b1ad0e40d4595b2d581683dcbec4f141c82e78dcc9decbbbebbe33f0b3254cb4"
+    },
+    "delete": {
+      "lucide": "trash-2",
+      "svgSha256": "a2a5e4e14af6c7a96d1598da379506dbd043913bfd7b82c77da105e594f5c7aa"
+    },
+    "download": {
+      "lucide": "download",
+      "svgSha256": "ad2856652924190146d9a439a8f4540c666311a5c142e0d7d012a2a2f74bb01e"
+    },
+    "refresh": {
+      "lucide": "refresh-cw",
+      "svgSha256": "d2da45f193b5a64eb08fe91da5aafec8a8c5fff57da852d124efaf3636f83389"
+    },
+    "scanner": {
+      "lucide": "scan-search",
+      "svgSha256": "df2e6028e209f9c750f8301fc10dd7af8b09f4bccab6f37fdb7e6be931de5921"
+    },
+    "sun": {
+      "lucide": "sun",
+      "svgSha256": "4ad5dde14c5cb7a42d00298b5addd2ca529d8232be5bc415f2344619b93154e6"
+    },
+    "moon": {
+      "lucide": "moon",
+      "svgSha256": "d0750f5f544dd1989f0568de388090dee6bdb00b838e4004feacc418de000a24"
+    },
+    "system": {
+      "lucide": "smartphone",
+      "svgSha256": "481349e38948472cfa2472dda758cc5a95d6a07902aad9043e11a0b9f91d4441"
+    },
+    "chevron_right": {
+      "lucide": "chevron-right",
+      "svgSha256": "bb612d70c6438fc1db7e3a1553ae6979a030f34f5a4486246eaef697b33395d4"
+    },
+    "info": {
+      "lucide": "info",
+      "svgSha256": "37065a66e66850ec1a5f66ddec761ded798a953167ab02ea3a41bced8d4e4847"
+    },
+    "check": {
+      "lucide": "check",
+      "svgSha256": "a0adbb843813a89f6f509155bb710a47de44c39e73f984e23cd89d3392828eaf"
+    },
+    "warning": {
+      "lucide": "triangle-alert",
+      "svgSha256": "48d294096897d0d304c2572042b92e082374332bb7cb49ae5f356f80d3eac7d3"
+    },
+    "menu": {
+      "lucide": "panel-left",
+      "svgSha256": "c71103a9528a2f55cc2582da203ba74877a65f14dfdfaa30dbb5fe621cc0c473"
+    },
+    "transactions": {
+      "lucide": "receipt-text",
+      "svgSha256": "04b52427c1a258e02914929a149eb013b3bac43a05f58a7c78262fe29509f2ad"
+    },
+    "buyers": {
+      "lucide": "shopping-bag",
+      "svgSha256": "214f54b5e2ba51f7be81fde6702c3226a320bc1ed006d783169e5376c35c7479"
+    }
+  },
+  "flutterAliases": {
+    "overview": "home",
+    "revenue": "premium",
+    "user_directory": "profile",
+    "food_catalog": "nutrition",
+    "workouts": "workout",
+    "chatbot": "chatbot",
+    "support": "support",
+    "app_config": "settings2",
+    "admin_audit": "history",
+    "heart": "brand",
+    "logout": "logOut",
+    "close": "x",
+    "search": "search",
+    "add": "plus",
+    "edit": "squarePen",
+    "delete": "trash2",
+    "download": "download",
+    "refresh": "refreshCw",
+    "scanner": "scanner",
+    "sun": "sun",
+    "moon": "moon",
+    "system": "smartphone",
+    "chevron_right": "chevronRight",
+    "info": "info",
+    "check": "check",
+    "warning": "triangleAlert"
+  },
+  "colors": {
+    "nutrition": {
+      "light": "#9a4107",
+      "dark": "#fbbf77"
+    },
+    "water": {
+      "light": "#0369a1",
+      "dark": "#7dd3fc"
+    },
+    "workout": {
+      "light": "#b34427",
+      "dark": "#ff9b7d"
+    },
+    "activity": {
+      "light": "#8a600d",
+      "dark": "#e7c77c"
+    },
+    "chatbot": {
+      "light": "#6854a5",
+      "dark": "#c1afe8"
+    },
+    "scanner": {
+      "light": "#0e7490",
+      "dark": "#67e8f9"
+    },
+    "weight": {
+      "light": "#ad3562",
+      "dark": "#f5a0bc"
+    },
+    "goals": {
+      "light": "#7a5b16",
+      "dark": "#e2cb90"
+    },
+    "quest": {
+      "light": "#946000",
+      "dark": "#f4c866"
+    },
+    "profile": {
+      "light": "#1d4ed8",
+      "dark": "#93c5fd"
+    },
+    "report": {
+      "light": "#087783",
+      "dark": "#74d9df"
+    },
+    "premium": {
+      "light": "#a16207",
+      "dark": "#fde047"
+    },
+    "support": {
+      "light": "#0e7490",
+      "dark": "#67e8f9"
+    },
+    "wellness": {
+      "light": "#be185d",
+      "dark": "#f9a8d4"
+    },
+    "sleep": {
+      "light": "#6d28d9",
+      "dark": "#c4b5fd"
+    },
+    "steps": {
+      "light": "#8a600d",
+      "dark": "#e7c77c"
+    },
+    "reminder": {
+      "light": "#b45309",
+      "dark": "#fbbf77"
+    }
+  }
+}

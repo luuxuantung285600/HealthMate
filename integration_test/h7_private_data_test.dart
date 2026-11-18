@@ -1,3 +1,4 @@
+import 'package:healthmate/core/theme/app_icons.dart';
 // Run ONLY through tool/test_h7_android.ps1; synthetic demo backend, no AI.
 import 'dart:async';
 import 'dart:convert';
@@ -300,7 +301,7 @@ void main() {
       await binding.convertFlutterSurfaceToImage();
       await tester.pump();
       await binding.takeScreenshot('c6-h7-export');
-      await ui.tap(tester, find.byIcon(Icons.close).last);
+      await ui.tap(tester, find.byIcon(AppIcons.x).last);
 
       await store.put(
         alice,

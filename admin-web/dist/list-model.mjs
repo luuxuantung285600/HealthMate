@@ -1,3 +1,4 @@
+import {allowsFoodBrowseGroup} from './food-browse-groups.mjs';
 export const adminPageSize = 25;
 export const maxAdminRows = 5000;
 export const adminLists = ['food_catalog', 'user_directory', 'admin_audit', 'demo_premium_transactions', 'demo_premium_accounts', 'premium_transactions', 'support_tickets'];
@@ -6,7 +7,7 @@ export function normalizeSearch(value) {
   return String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .replace(/đ/g, 'd').replace(/Đ/g, 'D').toLocaleLowerCase('vi').replace(/\s+/g, ' ').trim();
 }
-export function filterRows(rows, kind, {search = '', category = '', status = '', role = ''} = {}) {
+export function filterRows(rows, kind, {search = '', category = '', status = '', role = '', browseGroup = ''} = {}) {
   if (!adminLists.includes(kind)) throw Error('Danh sách không được hỗ trợ.');
   const words = normalizeSearch(search).split(' ').filter(Boolean);
   return rows.filter(row => {
@@ -14,6 +15,7 @@ export function filterRows(rows, kind, {search = '', category = '', status = '',
       row.email, row.displayName, row.entityType, row.entityId, row.actorUid, row.reason].join(' '));
     if (words.some(word => !haystack.includes(word))) return false;
     if (kind === 'food_catalog') {
+      if (!allowsFoodBrowseGroup(row, browseGroup)) return false;
       if (category && row.category !== category) return false;
       if (status && (row.isActive === false ? 'archived' : 'active') !== status) return false;
     }

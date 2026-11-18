@@ -21,6 +21,7 @@ class PendingSearch extends FakeFoodSearchService {
     int limit = 25,
     FoodSearchRequest? request,
     void Function(FoodSearchOutcome)? onProgress,
+    bool Function(FoodCatalogItem)? matches,
   }) {
     requests.add(request!);
     progress.add(onProgress);

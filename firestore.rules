@@ -79,12 +79,32 @@ service cloud.firestore {
     function catalogFields() {
       return ['name','alternateNames','category','servingBasis','unit',
         'kcalPer100g','proteinGPer100g','carbsGPer100g','fatGPer100g','fiberGPer100g',
-        'sourceLabel','sourceUrl','isEstimated','isActive','servingLabel','servingGrams'];
+        'sourceLabel','sourceUrl','isEstimated','isActive','servingLabel','servingGrams','photo','extraNutrientsPer100g'];
+    }
+
+    function photoHttps(url, max) {
+      return url is string && url.size() <= max
+        && url.matches('https://[a-zA-Z0-9][a-zA-Z0-9.-]*(:[0-9]{1,5})?([/?#][^\\s]*)?');
+    }
+    function validCatalogPhoto(p) {
+      return p == null || (p is map && (
+        (p.keys().hasOnly(['mode']) && p.mode in ['default','hidden']) ||
+        (p.keys().hasAll(['mode','url'])
+          && p.keys().hasOnly(['mode','url','title','author','sourceUrl','license','licenseUrl'])
+          && p.mode == 'custom' && photoHttps(p.url,1000)
+          && (!('sourceUrl' in p) || photoHttps(p.sourceUrl,500))
+          && (!('licenseUrl' in p) || photoHttps(p.licenseUrl,500))
+          && (!('title' in p) || (p.title is string && p.title.size()>0 && p.title.size()<=200))
+          && (!('author' in p) || (p.author is string && p.author.size()>0 && p.author.size()<=120))
+          && (!('license' in p) || (p.license is string && p.license.size()>0 && p.license.size()<=80)))));
     }
 
     function validAdminFood() {
       let d = request.resource.data;
       return alias(d.name) && aliases(d.alternateNames) && alias(d.category)
+        && validCatalogPhoto(d.get('photo',null))
+        && validExtras(d.get('extraNutrientsPer100g',{}))
+        && d.get('extraNutrientsPer100g',{}).get('sugar',0) <= 100
         && d.servingBasis == 'per_100g' && d.unit == 'g'
         && d.kcalPer100g is number && d.kcalPer100g >= 0 && d.kcalPer100g <= 1000
         && d.proteinGPer100g is number && d.proteinGPer100g >= 0 && d.proteinGPer100g <= 100
@@ -98,6 +118,10 @@ service cloud.firestore {
         && ((d.get('servingLabel',null)==null && d.get('servingGrams',null)==null)
           || (d.servingLabel is string && d.servingLabel.size()>0 && d.servingLabel.size()<=60
             && d.servingGrams is number && d.servingGrams>0 && d.servingGrams<=2000));
+    }
+
+    function optionalNutrientTarget(value, max) {
+      return value == null || (value is number && value >= 0 && value <= max);
     }
 
     function validPersonalization(d) {
@@ -123,6 +147,20 @@ service cloud.firestore {
         && (d.exerciseDays != 0 || (d.exerciseMinutes == null && d.exerciseType == null));
     }
 
+    function validProfileImage(image) {
+      return image == null || (image is string && image.size() <= 87384
+        && image.matches('iVBORw0KGgo[A-Za-z0-9+/]*={0,2}'));
+    }
+
+    function validProfileAppearance(appearance) {
+      return appearance is map
+        && appearance.keys().hasAll(['avatar','cover','background'])
+        && appearance.keys().hasOnly(['avatar','cover','background'])
+        && validProfileImage(appearance.avatar)
+        && validProfileImage(appearance.cover)
+        && validProfileImage(appearance.background);
+    }
+
     function validProfile() {
       let data = request.resource.data;
       return data.keys().hasAll([
@@ -133,9 +171,10 @@ service cloud.firestore {
         && data.keys().hasOnly([
           'displayName', 'email', 'heightCm', 'birthDate', 'healthGoal',
           'targetWeightKg', 'onboardingCompletedAt', 'createdAt', 'updatedAt',
-          'schemaVersion', 'personalization'
+          'schemaVersion', 'personalization', 'profileAppearance'
         ])
         && (!data.keys().hasAny(['personalization']) || validPersonalization(data.personalization))
+        && (!data.keys().hasAny(['profileAppearance']) || validProfileAppearance(data.profileAppearance))
         && data.displayName is string
         && data.displayName.size() <= 50
         && data.email is string
@@ -425,6 +464,33 @@ service cloud.firestore {
         && data.updatedAt is timestamp;
     }
 
+    function validActivityMet(code, type) {
+      return (type == 'walking' && code in ['17152','17190','17200'])
+        || (type == 'running' && code in ['12020','12025'])
+        || (type == 'cycling' && code in ['01010','01020','01030'])
+        || (type == 'strength' && code in ['02024','02056','02022','02020','02054','02050'])
+        || (type == 'yoga' && code in ['02150','02160']);
+    }
+
+    function validActivityEnergy(e, d) {
+      return e == null || (e is map
+        && e.keys().hasAll(['formulaVersion','metCode','weightKg','weightMeasuredAtMillis',
+          'ageYears','durationSeconds','budgetTargetFromDateKey','budgetBaseKcal'])
+        && e.keys().hasOnly(['formulaVersion','metCode','weightKg','weightMeasuredAtMillis',
+          'ageYears','durationSeconds','budgetTargetFromDateKey','budgetBaseKcal'])
+        && e.formulaVersion == 1 && validActivityMet(e.metCode, d.activityType)
+        && e.weightKg is number && e.weightKg >= 20 && e.weightKg <= 500
+        && e.weightMeasuredAtMillis is int && e.weightMeasuredAtMillis >= 0
+        && e.weightMeasuredAtMillis <= d.performedAt.toMillis()
+        && e.ageYears is int && e.ageYears >= 19 && e.ageYears <= 59
+        && e.durationSeconds is int && e.durationSeconds >= 60 && e.durationSeconds <= 86400
+        && e.durationSeconds >= d.durationMinutes * 60 && e.durationSeconds < (d.durationMinutes + 1) * 60
+        && ((e.budgetTargetFromDateKey == null && e.budgetBaseKcal == null)
+          || (e.budgetTargetFromDateKey is string && goalDate(e.budgetTargetFromDateKey)
+            && e.budgetTargetFromDateKey <= d.dateKey && e.budgetBaseKcal is number
+            && e.budgetBaseKcal > 0 && e.budgetBaseKcal <= 20000)));
+    }
+
     function validActivityLog() {
       let data = request.resource.data;
       return data.keys().hasAll([
@@ -433,7 +499,7 @@ service cloud.firestore {
         ])
         && data.keys().hasOnly([
           'activityType', 'durationMinutes', 'performedAt', 'dateKey',
-          'timezoneOffsetMinutes', 'note', 'createdAt', 'updatedAt'
+          'timezoneOffsetMinutes', 'note', 'createdAt', 'updatedAt', 'energyEstimate'
         ])
         && data.activityType in [
           'walking', 'running', 'cycling', 'strength', 'yoga', 'other'
@@ -446,6 +512,7 @@ service cloud.firestore {
         && validDateKeyAndTimezone(data, data.performedAt)
         && data.note is string
         && data.note.size() <= 200
+        && validActivityEnergy(data.get('energyEstimate', null), data)
         && data.createdAt is timestamp
         && data.updatedAt is timestamp;
     }
@@ -755,6 +822,33 @@ service cloud.firestore {
       }
     }
 
+    function exerciseText(s, max) { return s is string && s.size()>0 && s.size()<=max; }
+    function validExercise() {
+      let d=request.resource.data;
+      let steps=d.steps;
+      return d.keys().hasAll(['name','sourceId','region','equipment','target','steps','easier','isActive','schemaVersion'])
+        && d.keys().hasOnly(['name','sourceId','sourceProvider','region','equipment','target','steps','easier','isActive','schemaVersion','updatedAt','updatedBy','lastAdminOperationId'])
+        && exerciseText(d.name,120) && d.sourceId is string
+        && d.get('sourceProvider','exercisedb') == 'exercisedb'
+        && d.sourceId.matches('[a-zA-Z0-9]{7}')
+        && d.region in ['chest','back','legs','shoulders','arms','core','cardio']
+        && d.equipment in ['bodyweight','dumbbell','barbell','cable','machine','band','kettlebell']
+        && exerciseText(d.target,160) && exerciseText(d.easier,400)
+        && steps is list && steps.size()>=2 && steps.size()<=6
+        && exerciseText(steps[0],400) && exerciseText(steps[1],400)
+        && (steps.size()<3 || exerciseText(steps[2],400)) && (steps.size()<4 || exerciseText(steps[3],400))
+        && (steps.size()<5 || exerciseText(steps[4],400)) && (steps.size()<6 || exerciseText(steps[5],400))
+        && d.isActive is bool && d.schemaVersion == 1;
+    }
+    match /exercise_library/{exerciseId} {
+      allow read: if request.auth != null && request.auth.token.email_verified == true && accountAllowed(request.auth.uid);
+      allow create: if exerciseId.matches('[a-zA-Z0-9_-]{1,100}') && validExercise()
+        && audited('exercise_library',exerciseId,request.resource.data.keys().toSet());
+      allow update: if exerciseId.matches('[a-zA-Z0-9_-]{1,100}') && validExercise()
+        && audited('exercise_library',exerciseId,request.resource.data.diff(resource.data).affectedKeys());
+      allow delete: if false;
+    }
+
     match /food_catalog/{foodId} {
       allow read: if request.auth != null && request.auth.token.email_verified == true && accountAllowed(request.auth.uid);
       allow create: if request.resource.data.keys().hasOnly(catalogFields().concat(adminFields()))
@@ -824,7 +918,7 @@ service cloud.firestore {
       allow create: if admin()
         && request.resource.data.keys().hasOnly(['actorUid','entityType','entityId','at','changedFields','reason'])
         && request.resource.data.actorUid==request.auth.uid && request.resource.data.at==request.time
-        && request.resource.data.entityType in ['food_catalog','account_controls','app_config']
+        && request.resource.data.entityType in ['food_catalog','exercise_library','account_controls','app_config']
         && request.resource.data.entityId is string && request.resource.data.entityId.size()>0 && request.resource.data.entityId.size()<=128
         && request.resource.data.changedFields is list && request.resource.data.changedFields.size()>0 && request.resource.data.changedFields.size()<=30
         && request.resource.data.reason is string && request.resource.data.reason.size()>0 && request.resource.data.reason.size()<=200
@@ -862,7 +956,7 @@ service cloud.firestore {
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
           'displayName', 'email', 'heightCm', 'birthDate', 'healthGoal',
           'targetWeightKg', 'onboardingCompletedAt', 'updatedAt',
-          'schemaVersion', 'personalization'
+          'schemaVersion', 'personalization', 'profileAppearance'
         ]);
 
       allow delete: if owns(uid) || cleanup(uid);
@@ -1089,7 +1183,7 @@ service cloud.firestore {
           && request.resource.data.updatedAt == request.time
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
             'activityType', 'durationMinutes', 'performedAt', 'dateKey',
-            'timezoneOffsetMinutes', 'note', 'updatedAt'
+            'timezoneOffsetMinutes', 'note', 'updatedAt', 'energyEstimate'
           ]);
 
         allow delete: if owns(uid);
@@ -1302,13 +1396,16 @@ service cloud.firestore {
         function validTarget() {
           let d = request.resource.data;
           return d.keys().hasAll(['effectiveFromDateKey','kcalTarget','proteinGTarget','carbsGTarget','fatGTarget','source','schemaVersion','createdAt','updatedAt'])
-            && d.keys().hasOnly(['effectiveFromDateKey','kcalTarget','proteinGTarget','carbsGTarget','fatGTarget','source','schemaVersion','createdAt','updatedAt'])
+            && d.keys().hasOnly(['effectiveFromDateKey','kcalTarget','proteinGTarget','carbsGTarget','fatGTarget','source','schemaVersion','createdAt','updatedAt','saltGLimit','sugarGLimit','fiberGTarget'])
             && d.effectiveFromDateKey == dateKey && goalDate(dateKey)
             && d.kcalTarget is number && d.kcalTarget > 0 && d.kcalTarget <= 20000
             && ((d.proteinGTarget == null && d.carbsGTarget == null && d.fatGTarget == null)
               || (d.proteinGTarget is number && d.proteinGTarget >= 0 && d.proteinGTarget <= 5000
                 && d.carbsGTarget is number && d.carbsGTarget >= 0 && d.carbsGTarget <= 5000
                 && d.fatGTarget is number && d.fatGTarget >= 0 && d.fatGTarget <= 5000))
+            && optionalNutrientTarget(d.get('saltGLimit',null),50)
+            && optionalNutrientTarget(d.get('sugarGLimit',null),500)
+            && optionalNutrientTarget(d.get('fiberGTarget',null),200)
             && d.source == 'user_manual' && d.schemaVersion is int && d.schemaVersion == 1
             && d.createdAt is timestamp && d.updatedAt == request.time;
         }

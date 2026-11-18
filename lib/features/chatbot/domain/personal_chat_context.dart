@@ -236,24 +236,28 @@ class PersonalChatContext {
     final adjustments = energy != null
         ? await energy!.loadAdjustments(uid, r.start, r.end)
         : await energyLoader?.call(uid, r.start, r.end) ?? <EnergyAdjustment>[];
-    final activities = adjustments.isEmpty
-        ? <ActivityLog>[]
-        : await activity.loadRange(uid, r.start, r.end);
+    final activities = await activity.loadRange(uid, r.start, r.end);
     var appliedKcal = 0.0;
+    var appliedActivityKcal = 0.0;
     for (var i = 0; i < r.days; i++) {
       final day = localDateKey(
         DateTime(r.start.year, r.start.month, r.start.day + i),
       );
       final matches = adjustments.where((a) => a.dateKey == day);
-      appliedKcal += resolveEnergyBudget(
+      final budget = resolveEnergyBudget(
         configured[i],
         matches.isEmpty ? null : matches.first,
         hasManualActivity: activities.any((a) => a.dateKey == day),
-      ).adjustmentKcal;
+        activities: activities.where((a) => a.dateKey == day),
+      );
+      appliedKcal += budget.adjustmentKcal;
+      appliedActivityKcal += budget.activityAdjustmentKcal;
     }
     if (appliedKcal > 0) {
       lines.add(
-        'Ngân sách gồm ${_n(appliedKcal)} kcal bước chân đã được bạn xác nhận, chỉ là ước tính; mục tiêu macro giữ nguyên.',
+        appliedActivityKcal == 0
+            ? 'Ngân sách gồm ${_n(appliedKcal)} kcal bước chân đã được bạn xác nhận, chỉ là ước tính; mục tiêu macro giữ nguyên.'
+            : 'Ngân sách gồm ${_n(appliedKcal)} kcal vận động đã được bạn xác nhận ngoài mức thường ngày, chỉ là ước tính; mục tiêu macro giữ nguyên.',
       );
     }
     if (meals.isEmpty) {

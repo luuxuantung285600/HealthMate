@@ -1,5 +1,27 @@
 # Cá nhân hóa mục tiêu dinh dưỡng — 26/10/2026
 
+## Sửa luồng ngoài phạm vi — 11/11/2026
+
+Trường hợp tái hiện: chiều cao 175 cm, cân hiện tại 55 kg, đích tăng cân64kg.
+BMI hiện tại `55 / 1.75² ≈ 17.96` thấp hơn ngưỡng đề xuất tự động18.5 của
+phiên bản hiện hành; cân nặng đích64kg không phải nguyên nhân bị từ chối.
+Đây là giới hạn sản phẩm của bộ ước tính, không phải chẩn đoán hoặc cấm chọn
+mục tiêu Tăng cân. Không đổi ngưỡng/công thức hoặc sửa dữ liệu hồ sơ để vượt chặn.
+
+Thông báo mới nêu BMI hiện tại, số đo đã dùng và phạm vi, đồng thời xác nhận
+mục tiêu sức khỏe vẫn được chọn. Nêu rõ giới hạn BMI trước nút tính; sát ngưỡng
+18.5 không hiển thị số làm tròn như đã đủ điều kiện. Đổi lựa chọn xóa lỗi cũ.
+Sau lỗi có nút kiểm tra thông tin và mở form nhập mục tiêu thủ công ngay trong
+planner lưu vào tài khoản. Chỉ form thủ công xác nhận Lưu mục tiêu mới ghi
+repository; mở/nhập/hủy không ghi. Hủy form giữ nguyên số đo/đích trong planner.
+Planner dùng làm bản nháp (`saveToAccount:false`) không tự mở form ghi tài khoản;
+giữ thông báo thiết lập sau. Onboarding dùng cùng model nên nhận lý do chi tiết,
+vẫn có thể hoàn tất hồ sơ mà chưa áp dụng đề xuất tự động như trước.
+
+Không thêm schema/dependency, không deploy hoặc sửa quyền Firebase. Cần chạy
+lại bản app/web local để thấy thay đổi. Không tự gán kcal khi ngoài phạm vi.
+Kiểm thử thực tế ghi trong `docs/test-report.md`, mục cùng ngày.
+
 Phạm vi: hoàn thiện phần mục tiêu dinh dưỡng của Giai đoạn 7 theo yêu cầu mới.
 Không triển khai thêm tab điều hướng, bài tập có hướng dẫn hoặc web admin.
 

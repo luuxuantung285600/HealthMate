@@ -1,8 +1,80 @@
 # HealthMate Admin
 
+## 14/11/2026 — Web admin đã cập nhật giao diện và quản lý bài tập
+
+Mở https://healthmate-admin-vn.web.app và **Ctrl+F5**. Nền đen khi tối, trắng khi
+sáng; primary trung tính, màu feature đồng bộ app hiện tại. Giữ Public Sans.
+
+**Bài tập luyện** đã quản lý 50 bài có sẵn cùng các chỉnh sửa trực tiếp: thêm,
+sửa, ẩn/khôi phục, tìm kiếm, lọc nhóm cơ/dụng cụ/trạng thái và xuất Excel.
+Giữ kiểm phiên bản và audit. GIF inline tự tải theo viewport chỉ ở môi trường
+local phi thương mại, có dừng/thử lại; web online không phát GIF miễn phí.
+
+Node **147/147**, Chrome **72 lượt trang** và SDK emulator đúng bundle **1/1**
+qua. Chỉ phát hành Hosting; giữ nguyên Rules, config, dữ liệu và billing.
+[Phạm vi, bằng chứng và giới hạn](../docs/admin-ui-refresh-2026-11-14.md).
+
+## 11/11/2026 — Quản lý thư viện động tác (bản kiểm thử, chưa deploy)
+
+Trang **Bài tập luyện** mới có 50 động tác ban đầu; admin thêm/sửa/gỡ/khôi phục,
+lọc nhóm cơ/dụng cụ và xuất danh mục. App nhận override qua Firestore realtime;
+“xóa” là ẩn có thể khôi phục, giữ lịch sử. Ghi có kiểm tra phiên bản và audit.
+Thay đổi source này thay cho danh mục chỉ đọc mô tả trong lịch sử bên dưới.
+
+GIF ExerciseDB miễn phí chỉ dùng thử phi thương mại: tải từng bài theo yêu cầu,
+chỉ bật ở localhost với emulator; Firebase thật trên localhost cần cấu hình
+`enableFreeExerciseMedia:true`. Web hosted và CSP release giữ chế độ tắt.
+Để dùng thực tế cần phát hành rules/web/app cùng phiên bản; lượt này chưa deploy.
+[Chi tiết, cách chạy và kiểm thử](../docs/exercise-library-2026-11-11.md).
+
+## 10/11/2026 — Đường, natri và chất xơ
+
+Trong **Thực phẩm → Sửa**, nhập **Đường tổng (g/100 g)**, **Natri (mg/100 g)**
+và **Chất xơ (g/100 g)** theo nguồn. Form xem trước muối quy đổi từ natri;
+chi tiết món cũng hiển thị các giá trị. Để trống khi nguồn thiếu dữ liệu, chỉ
+nhập 0 khi đã xác nhận bằng 0. Các vi chất khác của món được giữ khi sửa.
+
+App tính theo khẩu phần và snapshot nhật ký; dữ liệu thiếu không thành 0.
+Thay đổi catalog chỉ áp dụng cho lần ghi mới. Source local chưa publish;
+cần phát hành Rules/web/app mới. [Chi tiết](../docs/secondary-nutrients-2026-11-10.md).
+
+## 10/11/2026 — Quản lý ảnh món ăn
+
+Trong **Thực phẩm → Sửa → Ảnh món ăn**, chọn ảnh có sẵn, thay bằng URL HTTPS công khai hoặc gỡ ảnh. Có preview, credits/giấy phép; lý do thay đổi và audit/version được giữ. Danh sách/chi tiết có ảnh; app nhận ảnh qua stream catalog chung, kể cả khi đang mở chi tiết. Khi chưa có ảnh, giữ cách hiển thị chữ.
+
+Ảnh mới nhập bằng **đường dẫn trực tiếp**, chưa tải tệp từ máy lên. Không thêm Firebase Storage/billing. Firestore lưu metadata, tệp ở URL công khai đã chọn; dùng URL mới/có phiên bản khi thay tệp. Các món offline chưa có trên Firestore cần bản ghi cùng ID để quản trị; web không tự import mọi món. Không dùng ảnh có người/món không liên quan; admin chịu trách nhiệm kiểm tra quyền sử dụng và chất lượng.
+
+Bản source hiện tại chưa deploy. Cần phát hành Rules (cho field `photo`) cùng web/app trước khi dùng online. Registry/51 preview licensed tái tạo bằng `node tool/build_admin_food_photos.cjs` từ gốc repo. Chi tiết và kiểm thử: [báo cáo](../docs/admin-food-photos-2026-11-10.md).
+
+
 Web quản trị nằm ngay trong repository HealthMate, mở/sửa được bằng VS Code.
 HTML, CSS và JavaScript thuần; Firebase Web SDK 13.0.0 tải từ CDN chính thức.
 Không cần React, bundler, Admin SDK, service-account hoặc backend riêng.
+
+## Đồng bộ nhận diện với app — 10/11/2026, bản local chưa publish
+
+Public Sans dùng cùng font với Flutter. Admin giữ icon Lucide 1.70.0 từ nguồn
+ghim riêng trong `dist/licenses/lucide-source.json`; app đã chuyển sang Phosphor
+2.1.2 theo yêu cầu ngày 11/11/2026. Màu thực phẩm, tập luyện,
+AI, Premium và các nhóm tính năng lấy từ `AppFeatureVisual`. Sidebar, tiêu đề,
+thẻ thống kê, form và nút thao tác dùng cùng hình/nét bo tròn.
+
+Chọn **Thiết bị / Sáng / Tối** trên thanh đầu trang hoặc màn đăng nhập.
+Nền trắng khi sáng, đen thực khi tối; lưu lựa chọn trên trình duyệt và theo
+thay đổi hệ thống khi chọn Thiết bị. Bộ icon nằm trong source, không tải CDN.
+Nguồn/ISC/MIT nằm trong `dist/licenses/`.
+
+Kiểm tra: `npm run check`, `npm test` (**104/104**) và `npm run test:ui`
+(Chrome headless, **72 lượt trang** sáng/tối × 320/390/1024/1440px, dialog,
+menu bàn phím, đăng nhập và lưu theme). QA dùng adapter local trống và chặn
+SDK/mạng production. Không thay Rules hoặc ghi dữ liệu Firebase.
+Chi tiết: [báo cáo đồng bộ giao diện](../docs/admin-app-identity-2026-11-10.md).
+
+Tái tạo icon admin/màu tính năng:
+`python tool/build_admin_icons.py --source-archive <lucide-static.tgz>`
+từ gốc repo, dùng đúng phiên bản ghim trong `dist/licenses/lucide-source.json`.
+Generator không phụ thuộc bộ font hiện tại của app. Không cài package
+icon vào runtime; không tự nâng toàn bộ dependencies.
 
 ## Hoàn thiện admin — 07/11/2026
 
@@ -16,11 +88,13 @@ Web 83/83, SDK 20/20, browser desktop/mobile qua. Đã publish Hosting, đọc l
 30 tệp khớp release; tải lại trang để dùng. Rules và gói Spark giữ nguyên.
 [Chi tiết rollout và giới hạn](../docs/admin-completion-2026-11-07.md).
 
-Font hiện tại: **Inter v4.1**, WOFF2 đóng gói trong `dist/fonts/inter/`,
+Font hiện tại: **Public Sans**, WOFF2 đóng gói trong `dist/fonts/public_sans/`,
 đủ 400/500/600/700 và tiếng Việt. Không phụ thuộc dịch vụ font bên ngoài;
-giấy phép SIL OFL 1.1 nằm cùng thư mục font. App Flutter dùng cùng Inter.
+giấy phép SIL OFL 1.1 nằm cùng thư mục font. App Flutter dùng cùng Public Sans.
+Font được chọn theo phong cách X, không phải Chirp của X. Nguồn, phiên bản
+và checksum: [thông tin font](../assets/fonts/public_sans/README.md).
 
-## Giao diện hiện tại — thiết kế 06/11, publish 07/11/2026
+## Giao diện đã publish — thiết kế 06/11, publish 07/11/2026
 
 Theo ảnh mới: nền đen, sidebar đen, panel xám đậm, viền mảnh, điểm nhấn
 xanh dương. Bốn card số liệu ở đầu, biểu đồ trái và thông tin vận hành
@@ -180,7 +254,7 @@ Dừng từng server bằng Ctrl+C sau khi thử.
 | File | Vai trò |
 | --- | --- |
 | `dist/index.html` | Trang gốc và dialog |
-| `dist/style.css` | Giao diện, responsive, khai báo font Inter |
+| `dist/style.css` | Giao diện, responsive, khai báo font Public Sans |
 | `dist/admin-theme.css` | Theme theo ảnh tham khảo, nạp sau style.css |
 | `dist/admin-shell.mjs` | Sidebar, menu, header và drawer mobile |
 | `dist/dashboard-page.mjs` | Bố cục tổng quan, biểu đồ và trạng thái dữ liệu |
@@ -365,3 +439,39 @@ Auth/Firestore emulators và kiểm hash release trước publish. Không cần 
 để sửa quyền deletion job/support quota. Giữ nhãn snapshot thủ công cho tổng
 Auth. Hỗ trợ đọc trang mới nhất theo updatedAt/ID giảm dần, cursor nanosecond,
 giữ draft và ID gửi lại khi chưa rõ kết quả. [Trạng thái rollout và kiểm thử](../docs/operations-hardening-2026-11-07.md).
+
+## Phát hành ảnh và nhóm món — 11/11/2026
+
+Đã phát hành https://healthmate-admin-vn.web.app. Vào Thực phẩm → Sửa ảnh để
+chọn ảnh có sẵn, thay URL HTTPS có nguồn/quyền sử dụng hoặc gỡ ảnh. Ảnh custom
+phải tải được trước khi lưu; chưa có upload tệp. Đủ10 nhóm cùng cách phân loại
+của app, tách Thịt/Cá & hải sản. Tìm kiếm/nhóm/trạng thái lọc toàn bộ kết quả
+trước phân trang25món, giới hạn5.000; export dùng cùng bộ lọc trong khoảng chọn.
+
+Release này dùng Rules production sao lưu + patch catalog photo/extra nutrients
+đã test, giữ nguyên các đường dẫn khác; không deploy toàn bộ Rules local ngoài
+phạm vi. Spark/AppCheck/statisticsMode=firestore giữ cấu hình đang chạy.
+Chi tiết kiểm thử, release/rollback và giới hạn:
+[admin-food-release-2026-11-11.md](../docs/admin-food-release-2026-11-11.md).
+
+
+## Thêm bài từ kho ExerciseDB
+
+Vào **Bài tập luyện → Thêm từ ExerciseDB**. Tìm bằng tên gốc tiếng Anh
+(ví dụ `squat`, `bench press`; có hỗ trợ một số từ Việt như `chống đẩy`),
+lọc nhóm/dụng cụ và chuyển trang. Chọn **Xem GIF và hướng dẫn** rồi
+**Thêm vào HealthMate** sau khi GIF tải thành công ở bản kiểm thử. Mã
+bài/mã nguồn tự điền; nhập tên/hướng dẫn tiếng Việt và lý do rồi lưu. Bài
+đã có sẽ mở bản hiện có, kể cả đang ẩn, để tránh tạo trùng.
+
+Nguồn danh mục/API hiện có1.500 bài, không cần tải GitHub hoặc API key.
+Không lưu bản sao kho/GIF. GIF vẫn giữ gate thử nghiệm phi thương mại và
+quyền nguồn đã thống nhất; không bật miễn phí cho phát hành thương mại.
+App/web cùng Firebase project nhận bài mới qua listener sau khi server
+xác nhận; không phải chạy lại VS Code cho từng lần thêm.
+
+Kiểm tra: `npm test --prefix admin-web`,
+`npm run check:exercises --prefix admin-web`. Kiểm Chrome với API/GIF thật
+và Firebase adapter QA cục bộ (không production writes):
+`npm run test:exercise-browser --prefix admin-web` (cần Chrome cài sẵn).
+Chi tiết: [báo cáo](../docs/exercisedb-admin-browser-2026-11-19.md).

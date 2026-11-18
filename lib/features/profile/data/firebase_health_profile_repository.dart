@@ -8,6 +8,8 @@ import '../models/onboarding_draft.dart';
 import '../models/profile_failure.dart';
 import '../models/user_profile.dart';
 import '../models/personalization_answers.dart';
+import '../models/profile_appearance.dart';
+import '../models/profile_validation.dart';
 import 'health_profile_repository.dart';
 
 class FirebaseHealthProfileRepository implements HealthProfileRepository {
@@ -75,6 +77,20 @@ class FirebaseHealthProfileRepository implements HealthProfileRepository {
       throw ProfileFailure.fromCode('unknown');
     }
   }
+
+  @override
+  Future<void> updateIdentity({
+    required String uid,
+    required ProfileIdentityDraft draft,
+  }) => _guard(() {
+    final error = ProfileValidation.displayName(draft.displayName);
+    if (error != null) throw ProfileFailure(error);
+    return _profile(uid).update({
+      'displayName': draft.displayName.trim(),
+      'profileAppearance': draft.appearance.toMap(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  });
 
   @override
   Future<void> updateProfile({
@@ -228,14 +244,20 @@ class FirebaseHealthProfileRepository implements HealthProfileRepository {
   @override
   Stream<List<BodyMetric>> watchLatestBodyMetric(
     String uid,
-    DateTime day,
-  ) async* {
+    DateTime day, {
+    bool atOrBefore = false,
+  }) async* {
     try {
       await for (final snapshot
           in _metrics(uid)
               .where(
                 'measuredAt',
-                isLessThan: Timestamp.fromDate(localDayRange(day).end),
+                isLessThan: atOrBefore
+                    ? null
+                    : Timestamp.fromDate(localDayRange(day).end),
+                isLessThanOrEqualTo: atOrBefore
+                    ? Timestamp.fromDate(day)
+                    : null,
               )
               .orderBy('measuredAt', descending: true)
               .limit(1)
@@ -333,6 +355,7 @@ class FirebaseHealthProfileRepository implements HealthProfileRepository {
       createdAt: _date(data['createdAt']),
       updatedAt: _date(data['updatedAt']),
       schemaVersion: data['schemaVersion'] as int? ?? 1,
+      appearance: ProfileAppearance.fromMap(data['profileAppearance']),
       personalization: data['personalization'] is Map
           ? PersonalizationAnswers.fromMap(
               Map<String, dynamic>.from(data['personalization'] as Map),

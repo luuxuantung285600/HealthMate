@@ -164,6 +164,7 @@ class MealSearchController {
           limit: 50,
           request: request,
           onProgress: accept,
+          matches: allows,
         ),
       );
     } catch (_) {

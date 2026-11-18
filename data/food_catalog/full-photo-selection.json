@@ -1,0 +1,2660 @@
+{
+  "reviewedOn": "2026-11-11",
+  "note": "Explicit identity/state review only; no category placeholders. Manufacturer photos retain their copyright; no Creative Commons grant is asserted.",
+  "sources": {
+    "manufacturer:hao-hao-ga-vang-74g": {
+      "kind": "manufacturer",
+      "foodId": "hao-hao-ga-vang-74g"
+    },
+    "manufacturer:hao-hao-sa-te-hanh-tim-75g": {
+      "kind": "manufacturer",
+      "foodId": "hao-hao-sa-te-hanh-tim-75g"
+    },
+    "manufacturer:hao-hao-kim-chi-75g": {
+      "kind": "manufacturer",
+      "foodId": "hao-hao-kim-chi-75g"
+    },
+    "manufacturer:hao-hao-suon-heo-toi-phi-73g": {
+      "kind": "manufacturer",
+      "foodId": "hao-hao-suon-heo-toi-phi-73g"
+    },
+    "manufacturer:hao-hao-chay-rau-nam-74g": {
+      "kind": "manufacturer",
+      "foodId": "hao-hao-chay-rau-nam-74g"
+    },
+    "manufacturer:hao-hao-xao-tom-chua-ngot-75g": {
+      "kind": "manufacturer",
+      "foodId": "hao-hao-xao-tom-chua-ngot-75g"
+    },
+    "manufacturer:hao-hao-xao-hai-san-72g": {
+      "kind": "manufacturer",
+      "foodId": "hao-hao-xao-hai-san-72g"
+    },
+    "manufacturer:hao-hao-big-tom-chua-cay-100g": {
+      "kind": "manufacturer",
+      "foodId": "hao-hao-big-tom-chua-cay-100g"
+    },
+    "manufacturer:pho-de-nhat-bo-68g": {
+      "kind": "manufacturer",
+      "foodId": "pho-de-nhat-bo-68g"
+    },
+    "manufacturer:pho-de-nhat-ga-67g": {
+      "kind": "manufacturer",
+      "foodId": "pho-de-nhat-ga-67g"
+    },
+    "manufacturer:mien-phu-huong-thit-bam-55g": {
+      "kind": "manufacturer",
+      "foodId": "mien-phu-huong-thit-bam-55g"
+    },
+    "manufacturer:mien-phu-huong-suon-heo-55g": {
+      "kind": "manufacturer",
+      "foodId": "mien-phu-huong-suon-heo-55g"
+    },
+    "manufacturer:mien-phu-huong-lau-thai-tom-60g": {
+      "kind": "manufacturer",
+      "foodId": "mien-phu-huong-lau-thai-tom-60g"
+    },
+    "manufacturer:mien-phu-huong-ga-53g": {
+      "kind": "manufacturer",
+      "foodId": "mien-phu-huong-ga-53g"
+    },
+    "manufacturer:hu-tieu-nhip-song-nam-vang-70g": {
+      "kind": "manufacturer",
+      "foodId": "hu-tieu-nhip-song-nam-vang-70g"
+    },
+    "manufacturer:hu-tieu-nhip-song-suon-heo-70g": {
+      "kind": "manufacturer",
+      "foodId": "hu-tieu-nhip-song-suon-heo-70g"
+    },
+    "manufacturer:hu-tieu-nhip-song-bo-kho-75g": {
+      "kind": "manufacturer",
+      "foodId": "hu-tieu-nhip-song-bo-kho-75g"
+    },
+    "manufacturer:hu-tieu-nhip-song-chay-nam-vang-70g": {
+      "kind": "manufacturer",
+      "foodId": "hu-tieu-nhip-song-chay-nam-vang-70g"
+    },
+    "manufacturer:hu-tieu-kho-nhip-song-72g": {
+      "kind": "manufacturer",
+      "foodId": "hu-tieu-kho-nhip-song-72g"
+    },
+    "manufacturer:pho-tron-de-nhat-bo-84g": {
+      "kind": "manufacturer",
+      "foodId": "pho-tron-de-nhat-bo-84g"
+    },
+    "manufacturer:pho-tron-de-nhat-thap-cam-cay-84g": {
+      "kind": "manufacturer",
+      "foodId": "pho-tron-de-nhat-thap-cam-cay-84g"
+    },
+    "commons:89967338": {
+      "kind": "commons",
+      "pageid": 89967338,
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "commons:682876": {
+      "kind": "commons",
+      "pageid": 682876,
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "commons:10483011": {
+      "kind": "commons",
+      "pageid": 10483011,
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "commons:110700": {
+      "kind": "commons",
+      "pageid": 110700,
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "commons:2809375": {
+      "kind": "commons",
+      "pageid": 2809375,
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "commons:44707117": {
+      "kind": "commons",
+      "pageid": 44707117,
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "commons:138638574": {
+      "kind": "commons",
+      "pageid": 138638574,
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "commons:3136013": {
+      "kind": "commons",
+      "pageid": 3136013,
+      "crop": [
+        0.17,
+        0.25,
+        0.9,
+        0.93
+      ]
+    },
+    "commons:7030152": {
+      "kind": "commons",
+      "pageid": 7030152,
+      "crop": [
+        0.02,
+        0.02,
+        0.9,
+        0.52
+      ]
+    },
+    "bundled:vn2007-3025": {
+      "kind": "bundled",
+      "foodId": "vn2007-3025"
+    },
+    "bundled:banana-raw": {
+      "kind": "bundled",
+      "foodId": "banana-raw"
+    },
+    "bundled:apple-raw-skin": {
+      "kind": "bundled",
+      "foodId": "apple-raw-skin"
+    },
+    "commons:116785226": {
+      "kind": "commons",
+      "pageid": 116785226,
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "commons:10005113": {
+      "kind": "commons",
+      "pageid": 10005113
+    },
+    "commons:18061079": {
+      "kind": "commons",
+      "pageid": 18061079
+    },
+    "commons:8288342": {
+      "kind": "commons",
+      "pageid": 8288342
+    },
+    "commons:96641162": {
+      "kind": "commons",
+      "pageid": 96641162
+    },
+    "commons:1796645": {
+      "kind": "commons",
+      "pageid": 1796645,
+      "crop": [
+        0.07,
+        0.08,
+        0.91,
+        0.98
+      ]
+    },
+    "commons:658529": {
+      "kind": "commons",
+      "pageid": 658529
+    },
+    "commons:3970975": {
+      "kind": "commons",
+      "pageid": 3970975
+    },
+    "commons:47775329": {
+      "kind": "commons",
+      "pageid": 47775329
+    },
+    "commons:6689660": {
+      "kind": "commons",
+      "pageid": 6689660
+    },
+    "commons:8046278": {
+      "kind": "commons",
+      "pageid": 8046278
+    },
+    "commons:161604012": {
+      "kind": "commons",
+      "pageid": 161604012
+    },
+    "commons:162659512": {
+      "kind": "commons",
+      "pageid": 162659512,
+      "crop": [
+        0.19,
+        0.03,
+        0.88,
+        0.99
+      ]
+    },
+    "commons:47101634": {
+      "kind": "commons",
+      "pageid": 47101634
+    },
+    "pexels:3429784": {
+      "kind": "pexels",
+      "id": 3429784
+    },
+    "pexels:39090341": {
+      "kind": "pexels",
+      "id": 39090341
+    },
+    "pexels:446459": {
+      "kind": "pexels",
+      "id": 446459
+    },
+    "pexels:12303099": {
+      "kind": "pexels",
+      "id": 12303099
+    },
+    "pexels:35494677": {
+      "kind": "pexels",
+      "id": 35494677
+    },
+    "pexels:5785658": {
+      "kind": "pexels",
+      "id": 5785658
+    },
+    "pexels:34067025": {
+      "kind": "pexels",
+      "id": 34067025
+    },
+    "pexels:4235460": {
+      "kind": "pexels",
+      "id": 4235460
+    },
+    "pexels:16817955": {
+      "kind": "pexels",
+      "id": 16817955
+    },
+    "pexels:4499211": {
+      "kind": "pexels",
+      "id": 4499211,
+      "crop": [
+        0.12,
+        0.22,
+        0.98,
+        0.87
+      ]
+    },
+    "pexels:6086004": {
+      "kind": "pexels",
+      "id": 6086004
+    },
+    "pexels:11682844": {
+      "kind": "pexels",
+      "id": 11682844
+    },
+    "pexels:37646934": {
+      "kind": "pexels",
+      "id": 37646934
+    },
+    "pexels:9469639": {
+      "kind": "pexels",
+      "id": 9469639
+    },
+    "pexels:4943057": {
+      "kind": "pexels",
+      "id": 4943057
+    },
+    "pexels:10899474": {
+      "kind": "pexels",
+      "id": 10899474
+    },
+    "pexels:4324359": {
+      "kind": "pexels",
+      "id": 4324359
+    },
+    "pexels:4187716": {
+      "kind": "pexels",
+      "id": 4187716,
+      "crop": [
+        0.2,
+        0.05,
+        0.93,
+        0.95
+      ]
+    },
+    "pexels:4187717": {
+      "kind": "pexels",
+      "id": 4187717,
+      "crop": [
+        0.05,
+        0.03,
+        0.98,
+        0.99
+      ]
+    },
+    "pexels:4395071": {
+      "kind": "pexels",
+      "id": 4395071
+    },
+    "pexels:28525197": {
+      "kind": "pexels",
+      "id": 28525197
+    },
+    "pexels:10066812": {
+      "kind": "pexels",
+      "id": 10066812,
+      "crop": [
+        0.08,
+        0.02,
+        0.89,
+        0.93
+      ]
+    },
+    "pexels:7855562": {
+      "kind": "pexels",
+      "id": 7855562
+    },
+    "pexels:4499228": {
+      "kind": "pexels",
+      "id": 4499228,
+      "crop": [
+        0.12,
+        0.17,
+        0.96,
+        0.92
+      ]
+    },
+    "commons:74475407": {
+      "kind": "commons",
+      "pageid": 74475407,
+      "crop": [
+        0.18,
+        0.16,
+        0.9,
+        0.83
+      ]
+    },
+    "commons:6099250": {
+      "kind": "commons",
+      "pageid": 6099250
+    },
+    "commons:20359001": {
+      "kind": "commons",
+      "pageid": 20359001,
+      "crop": [
+        0.12,
+        0.12,
+        0.91,
+        0.91
+      ]
+    },
+    "commons:96645775": {
+      "kind": "commons",
+      "pageid": 96645775,
+      "crop": [
+        0.08,
+        0.03,
+        0.96,
+        0.97
+      ]
+    },
+    "commons:89762276": {
+      "kind": "commons",
+      "pageid": 89762276,
+      "crop": [
+        0.08,
+        0.04,
+        0.95,
+        0.98
+      ]
+    },
+    "commons:127783306": {
+      "kind": "commons",
+      "pageid": 127783306
+    },
+    "pexels:36319683": {
+      "kind": "pexels",
+      "id": 36319683
+    },
+    "pexels:2676932": {
+      "kind": "pexels",
+      "id": 2676932
+    },
+    "pexels:7163989": {
+      "kind": "pexels",
+      "id": 7163989,
+      "crop": [
+        0.02,
+        0.02,
+        0.98,
+        0.98
+      ]
+    },
+    "pexels:3296279": {
+      "kind": "pexels",
+      "id": 3296279
+    },
+    "pexels:6149077": {
+      "kind": "pexels",
+      "id": 6149077
+    },
+    "pexels:32987809": {
+      "kind": "pexels",
+      "id": 32987809
+    },
+    "pexels:6294255": {
+      "kind": "pexels",
+      "id": 6294255
+    },
+    "pexels:4110227": {
+      "kind": "pexels",
+      "id": 4110227
+    },
+    "pexels:36346840": {
+      "kind": "pexels",
+      "id": 36346840
+    },
+    "pexels:17236203": {
+      "kind": "pexels",
+      "id": 17236203
+    },
+    "pexels:12338945": {
+      "kind": "pexels",
+      "id": 12338945
+    },
+    "pexels:36285397": {
+      "kind": "pexels",
+      "id": 36285397
+    },
+    "pexels:11806797": {
+      "kind": "pexels",
+      "id": 11806797
+    },
+    "pexels:13005068": {
+      "kind": "pexels",
+      "id": 13005068
+    },
+    "pexels:5702827": {
+      "kind": "pexels",
+      "id": 5702827
+    },
+    "pexels:36165494": {
+      "kind": "pexels",
+      "id": 36165494
+    },
+    "pexels:6157038": {
+      "kind": "pexels",
+      "id": 6157038
+    },
+    "pexels:6157047": {
+      "kind": "pexels",
+      "id": 6157047
+    },
+    "pexels:30462273": {
+      "kind": "pexels",
+      "id": 30462273
+    },
+    "pexels:32813825": {
+      "kind": "pexels",
+      "id": 32813825
+    },
+    "pexels:768089": {
+      "kind": "pexels",
+      "id": 768089
+    },
+    "pexels:7543109": {
+      "kind": "pexels",
+      "id": 7543109
+    },
+    "pexels:35716003": {
+      "kind": "pexels",
+      "id": 35716003
+    },
+    "pexels:36804213": {
+      "kind": "pexels",
+      "id": 36804213
+    },
+    "pexels:2893635": {
+      "kind": "pexels",
+      "id": 2893635
+    },
+    "pexels:10048317": {
+      "kind": "pexels",
+      "id": 10048317
+    },
+    "pexels:38293145": {
+      "kind": "pexels",
+      "id": 38293145
+    },
+    "pexels:13464445": {
+      "kind": "pexels",
+      "id": 13464445
+    },
+    "pexels:4113632": {
+      "kind": "pexels",
+      "id": 4113632,
+      "crop": [
+        0.0,
+        0.1,
+        0.5,
+        0.93
+      ]
+    },
+    "pexels:5659362": {
+      "kind": "pexels",
+      "id": 5659362,
+      "crop": [
+        0.1,
+        0.02,
+        0.95,
+        0.98
+      ]
+    },
+    "pexels:37691240": {
+      "kind": "pexels",
+      "id": 37691240
+    },
+    "pexels:18142601": {
+      "kind": "pexels",
+      "id": 18142601
+    },
+    "pexels:2134037": {
+      "kind": "pexels",
+      "id": 2134037
+    },
+    "pexels:11066830": {
+      "kind": "pexels",
+      "id": 11066830
+    },
+    "pexels:34426848": {
+      "kind": "pexels",
+      "id": 34426848
+    },
+    "pexels:12098987": {
+      "kind": "pexels",
+      "id": 12098987
+    },
+    "pexels:10165696": {
+      "kind": "pexels",
+      "id": 10165696,
+      "crop": [
+        0.05,
+        0.23,
+        0.98,
+        0.98
+      ]
+    },
+    "pexels:5865194": {
+      "kind": "pexels",
+      "id": 5865194
+    },
+    "pexels:6167328": {
+      "kind": "pexels",
+      "id": 6167328
+    },
+    "pexels:5724664": {
+      "kind": "pexels",
+      "id": 5724664,
+      "crop": [
+        0.27,
+        0.1,
+        0.77,
+        0.66
+      ]
+    },
+    "commons:102678881": {
+      "kind": "commons",
+      "pageid": 102678881,
+      "crop": [
+        0.08,
+        0.03,
+        0.98,
+        0.98
+      ]
+    },
+    "commons:89811015": {
+      "kind": "commons",
+      "pageid": 89811015,
+      "crop": [
+        0.04,
+        0.02,
+        0.96,
+        0.97
+      ]
+    },
+    "commons:39589470": {
+      "kind": "commons",
+      "pageid": 39589470
+    },
+    "commons:39642988": {
+      "kind": "commons",
+      "pageid": 39642988,
+      "crop": [
+        0.02,
+        0.13,
+        0.98,
+        0.98
+      ]
+    },
+    "commons:92984448": {
+      "kind": "commons",
+      "pageid": 92984448,
+      "crop": [
+        0.03,
+        0.12,
+        0.96,
+        0.9
+      ]
+    },
+    "commons:145872905": {
+      "kind": "commons",
+      "pageid": 145872905,
+      "crop": [
+        0.04,
+        0.15,
+        0.94,
+        0.98
+      ]
+    },
+    "commons:89819723": {
+      "kind": "commons",
+      "pageid": 89819723,
+      "crop": [
+        0,
+        0.05,
+        0.98,
+        0.99
+      ]
+    },
+    "commons:4277148": {
+      "kind": "commons",
+      "pageid": 4277148,
+      "crop": [
+        0.02,
+        0.02,
+        0.92,
+        0.99
+      ]
+    },
+    "commons:138055": {
+      "kind": "commons",
+      "pageid": 138055,
+      "authorCredit": "Renee Comet (photographer), National Cancer Institute",
+      "authorCreditEvidence": "Commons File:NCI steamed shrimp.jpg wikitext explicitly states Source: National Cancer Institute; Author: Renee Comet (photographer); AV Number: AV-9400-4228; 1994; original NCI image 2676; PD-USGov. Retrieved 2026-11-10."
+    },
+    "commons:3106330": {
+      "kind": "commons",
+      "pageid": 3106330,
+      "crop": [
+        0.12,
+        0.08,
+        0.91,
+        0.98
+      ]
+    },
+    "commons:45334307": {
+      "kind": "commons",
+      "pageid": 45334307,
+      "crop": [
+        0.05,
+        0.02,
+        0.98,
+        0.72
+      ]
+    },
+    "commons:106471023": {
+      "kind": "commons",
+      "pageid": 106471023
+    },
+    "commons:75159740": {
+      "kind": "commons",
+      "pageid": 75159740
+    },
+    "commons:17187098": {
+      "kind": "commons",
+      "pageid": 17187098
+    },
+    "commons:2389127": {
+      "kind": "commons",
+      "pageid": 2389127
+    },
+    "commons:19666": {
+      "kind": "commons",
+      "pageid": 19666
+    },
+    "bundled:vn2007-14005": {
+      "kind": "bundled",
+      "foodId": "vn2007-14005"
+    },
+    "bundled:vn2007-3032": {
+      "kind": "bundled",
+      "foodId": "vn2007-3032"
+    },
+    "pexels:793129": {
+      "kind": "pexels",
+      "id": 793129
+    },
+    "commons:148873464": {
+      "kind": "commons",
+      "pageid": 148873464
+    },
+    "commons:151725587": {
+      "kind": "commons",
+      "pageid": 151725587
+    },
+    "commons:148910253": {
+      "kind": "commons",
+      "pageid": 148910253
+    },
+    "commons:40855870": {
+      "kind": "commons",
+      "pageid": 40855870,
+      "crop": [
+        0.03,
+        0.03,
+        0.98,
+        0.93
+      ]
+    },
+    "commons:152612894": {
+      "kind": "commons",
+      "pageid": 152612894
+    },
+    "commons:151023435": {
+      "kind": "commons",
+      "pageid": 151023435
+    },
+    "commons:84937171": {
+      "kind": "commons",
+      "pageid": 84937171
+    },
+    "commons:144816061": {
+      "kind": "commons",
+      "pageid": 144816061
+    },
+    "commons:26330905": {
+      "kind": "commons",
+      "pageid": 26330905,
+      "crop": [
+        0.23,
+        0.37,
+        0.89,
+        0.93
+      ]
+    },
+    "commons:151725748": {
+      "kind": "commons",
+      "pageid": 151725748
+    },
+    "commons:11554029": {
+      "kind": "commons",
+      "pageid": 11554029
+    },
+    "commons:54787629": {
+      "kind": "commons",
+      "pageid": 54787629
+    },
+    "commons:192922059": {
+      "kind": "commons",
+      "pageid": 192922059,
+      "crop": [
+        0.13,
+        0.04,
+        0.93,
+        0.85
+      ]
+    },
+    "commons:408509": {
+      "kind": "commons",
+      "pageid": 408509
+    },
+    "commons:32488988": {
+      "kind": "commons",
+      "pageid": 32488988
+    },
+    "commons:1343738": {
+      "kind": "commons",
+      "pageid": 1343738
+    },
+    "commons:96671426": {
+      "kind": "commons",
+      "pageid": 96671426
+    },
+    "commons:177665298": {
+      "kind": "commons",
+      "pageid": 177665298,
+      "crop": [
+        0.14,
+        0.11,
+        0.93,
+        0.9
+      ]
+    },
+    "commons:125387310": {
+      "kind": "commons",
+      "pageid": 125387310
+    },
+    "commons:12279278": {
+      "kind": "commons",
+      "pageid": 12279278
+    },
+    "commons:113892622": {
+      "kind": "commons",
+      "pageid": 113892622,
+      "crop": [
+        0.34,
+        0,
+        0.99,
+        0.99
+      ]
+    },
+    "commons:45376891": {
+      "kind": "commons",
+      "pageid": 45376891
+    },
+    "commons:202745680": {
+      "kind": "commons",
+      "pageid": 202745680
+    },
+    "commons:157833603": {
+      "kind": "commons",
+      "pageid": 157833603
+    },
+    "commons:26235709": {
+      "kind": "commons",
+      "pageid": 26235709
+    },
+    "commons:107281541": {
+      "kind": "commons",
+      "pageid": 107281541,
+      "crop": [
+        0.18,
+        0.08,
+        0.82,
+        0.97
+      ]
+    },
+    "commons:176047218": {
+      "kind": "commons",
+      "pageid": 176047218,
+      "crop": [
+        0.16,
+        0.17,
+        0.88,
+        0.99
+      ]
+    },
+    "commons:12266902": {
+      "kind": "commons",
+      "pageid": 12266902
+    },
+    "commons:9094988": {
+      "kind": "commons",
+      "pageid": 9094988
+    },
+    "commons:163363592": {
+      "kind": "commons",
+      "pageid": 163363592,
+      "crop": [
+        0.1,
+        0.01,
+        0.92,
+        0.99
+      ]
+    },
+    "commons:105717998": {
+      "kind": "commons",
+      "pageid": 105717998
+    },
+    "commons:10491417": {
+      "kind": "commons",
+      "pageid": 10491417,
+      "crop": [
+        0.12,
+        0.09,
+        0.87,
+        0.99
+      ]
+    },
+    "commons:26886270": {
+      "kind": "commons",
+      "pageid": 26886270,
+      "crop": [
+        0.1,
+        0.01,
+        0.94,
+        0.99
+      ]
+    },
+    "commons:194269758": {
+      "kind": "commons",
+      "pageid": 194269758,
+      "crop": [
+        0.1,
+        0.1,
+        0.96,
+        0.99
+      ]
+    },
+    "commons:61350747": {
+      "kind": "commons",
+      "pageid": 61350747
+    },
+    "commons:117192204": {
+      "kind": "commons",
+      "pageid": 117192204,
+      "crop": [
+        0.02,
+        0.08,
+        0.97,
+        0.98
+      ]
+    },
+    "flickr:54287722192": {
+      "kind": "flickr",
+      "id": "54287722192",
+      "crop": [
+        0,
+        0.28,
+        0.99,
+        0.99
+      ]
+    },
+    "flickr:54300517062": {
+      "kind": "flickr",
+      "id": "54300517062",
+      "crop": [
+        0.02,
+        0.04,
+        0.83,
+        0.98
+      ]
+    },
+    "flickr:17139718018": {
+      "kind": "flickr",
+      "id": "17139718018",
+      "crop": [
+        0.1,
+        0.02,
+        0.91,
+        0.99
+      ]
+    },
+    "commons:54851382": {
+      "kind": "commons",
+      "pageid": 54851382
+    },
+    "commons:4424742": {
+      "kind": "commons",
+      "pageid": 4424742
+    },
+    "commons:100209647": {
+      "kind": "commons",
+      "pageid": 100209647
+    },
+    "commons:27942297": {
+      "kind": "commons",
+      "pageid": 27942297
+    },
+    "commons:135739002": {
+      "kind": "commons",
+      "pageid": 135739002
+    },
+    "commons:163580561": {
+      "kind": "commons",
+      "pageid": 163580561,
+      "crop": [
+        0.01,
+        0.02,
+        0.99,
+        0.99
+      ]
+    },
+    "commons:181909615": {
+      "kind": "commons",
+      "pageid": 181909615
+    },
+    "commons:200740255": {
+      "kind": "commons",
+      "pageid": 200740255
+    },
+    "commons:155937710": {
+      "kind": "commons",
+      "pageid": 155937710
+    },
+    "commons:151047621": {
+      "kind": "commons",
+      "pageid": 151047621
+    },
+    "commons:88930830": {
+      "kind": "commons",
+      "pageid": 88930830,
+      "crop": [
+        0.61,
+        0.14,
+        0.99,
+        0.88
+      ]
+    },
+    "commons:136417265": {
+      "kind": "commons",
+      "pageid": 136417265
+    },
+    "commons:16618361": {
+      "kind": "commons",
+      "pageid": 16618361
+    },
+    "commons:18896909": {
+      "kind": "commons",
+      "pageid": 18896909
+    },
+    "commons:54570249": {
+      "kind": "commons",
+      "pageid": 54570249
+    },
+    "commons:16645164": {
+      "kind": "commons",
+      "pageid": 16645164,
+      "crop": [
+        0.32,
+        0.06,
+        0.98,
+        0.98
+      ]
+    },
+    "commons:87521887": {
+      "kind": "commons",
+      "pageid": 87521887,
+      "crop": [
+        0.08,
+        0.45,
+        0.98,
+        0.98
+      ]
+    },
+    "commons:22382186": {
+      "kind": "commons",
+      "pageid": 22382186
+    },
+    "commons:68754797": {
+      "kind": "commons",
+      "pageid": 68754797
+    },
+    "commons:151467794": {
+      "kind": "commons",
+      "pageid": 151467794
+    },
+    "commons:132206801": {
+      "kind": "commons",
+      "pageid": 132206801
+    },
+    "commons:55457110": {
+      "kind": "commons",
+      "pageid": 55457110
+    },
+    "commons:1858146": {
+      "kind": "commons",
+      "pageid": 1858146
+    },
+    "commons:70663075": {
+      "kind": "commons",
+      "pageid": 70663075
+    },
+    "commons:37868519": {
+      "kind": "commons",
+      "pageid": 37868519
+    },
+    "commons:507131": {
+      "kind": "commons",
+      "pageid": 507131,
+      "authorCredit": "Yongxinge (người tải ảnh lên Wikimedia Commons)",
+      "authorCreditEvidence": "Commons API imageinfo user/timestamp/comment for page 507131, uploaded 2006-01-11T02:14:44Z by Yongxinge with comment Taro,food. File description lacks author field; credit explicitly names the uploader, not an asserted photographer. Evidence build/full-food-photos/taro-uploader.json."
+    },
+    "commons:61012136": {
+      "kind": "commons",
+      "pageid": 61012136
+    },
+    "commons:59351265": {
+      "kind": "commons",
+      "pageid": 59351265
+    },
+    "commons:136390269": {
+      "kind": "commons",
+      "pageid": 136390269,
+      "crop": [
+        0.2,
+        0.17,
+        0.94,
+        0.89
+      ]
+    },
+    "commons:5197599": {
+      "kind": "commons",
+      "pageid": 5197599
+    },
+    "commons:137696163": {
+      "kind": "commons",
+      "pageid": 137696163
+    },
+    "commons:30197555": {
+      "kind": "commons",
+      "pageid": 30197555
+    },
+    "commons:16611580": {
+      "kind": "commons",
+      "pageid": 16611580
+    },
+    "commons:184777060": {
+      "kind": "commons",
+      "pageid": 184777060
+    },
+    "commons:162640987": {
+      "kind": "commons",
+      "pageid": 162640987
+    },
+    "commons:147263604": {
+      "kind": "commons",
+      "pageid": 147263604
+    },
+    "commons:64447704": {
+      "kind": "commons",
+      "pageid": 64447704
+    },
+    "commons:121415705": {
+      "kind": "commons",
+      "pageid": 121415705,
+      "crop": [
+        0.01,
+        0.1,
+        0.95,
+        0.98
+      ]
+    },
+    "flickr:6749931947": {
+      "kind": "flickr",
+      "id": "6749931947"
+    },
+    "flickr:42063937425": {
+      "kind": "flickr",
+      "id": "42063937425"
+    },
+    "flickr:5511668773": {
+      "kind": "flickr",
+      "id": "5511668773",
+      "crop": [
+        0.08,
+        0.05,
+        0.94,
+        0.99
+      ]
+    },
+    "flickr:3565635793": {
+      "kind": "flickr",
+      "id": "3565635793"
+    },
+    "flickr:15705598768": {
+      "kind": "flickr",
+      "id": "15705598768"
+    },
+    "flickr:9220695141": {
+      "kind": "flickr",
+      "id": "9220695141"
+    },
+    "flickr:5850287148": {
+      "kind": "flickr",
+      "id": "5850287148"
+    },
+    "flickr:9586505754": {
+      "kind": "flickr",
+      "id": "9586505754"
+    },
+    "flickr:7062346549": {
+      "kind": "flickr",
+      "id": "7062346549"
+    },
+    "bundled:vn2007-7069": {
+      "kind": "bundled",
+      "foodId": "vn2007-7069"
+    },
+    "commons:71964531": {
+      "kind": "commons",
+      "pageid": "71964531"
+    },
+    "commons:123144022": {
+      "kind": "commons",
+      "pageid": "123144022"
+    },
+    "commons:173143302": {
+      "kind": "commons",
+      "pageid": "173143302"
+    },
+    "commons:66831793": {
+      "kind": "commons",
+      "pageid": "66831793"
+    },
+    "commons:130785374": {
+      "kind": "commons",
+      "pageid": "130785374"
+    },
+    "commons:1984356": {
+      "kind": "commons",
+      "pageid": "1984356"
+    },
+    "commons:5707861": {
+      "kind": "commons",
+      "pageid": "5707861"
+    },
+    "commons:70931155": {
+      "kind": "commons",
+      "pageid": "70931155"
+    },
+    "pexels:6103857": {
+      "kind": "pexels",
+      "id": "6103857"
+    },
+    "flickr:49859594076": {
+      "kind": "flickr",
+      "id": "49859594076",
+      "crop": [
+        0.23,
+        0.22,
+        0.71,
+        0.77
+      ]
+    },
+    "flickr:51431445474": {
+      "kind": "flickr",
+      "id": "51431445474",
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "flickr:26499247007": {
+      "kind": "flickr",
+      "id": "26499247007",
+      "crop": [
+        0.08,
+        0.1,
+        0.9,
+        0.97
+      ]
+    },
+    "flickr:14038011654": {
+      "kind": "flickr",
+      "id": "14038011654",
+      "crop": [
+        0.035,
+        0.625,
+        0.84,
+        1
+      ]
+    },
+    "flickr:788931602": {
+      "kind": "flickr",
+      "id": "788931602",
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "flickr:4873958273": {
+      "kind": "flickr",
+      "id": "4873958273",
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "flickr:14621280875": {
+      "kind": "flickr",
+      "id": "14621280875",
+      "crop": [
+        0,
+        0.13,
+        1,
+        0.94
+      ]
+    },
+    "flickr:3325110427": {
+      "kind": "flickr",
+      "id": "3325110427",
+      "crop": [
+        0.19,
+        0.19,
+        0.85,
+        0.94
+      ]
+    },
+    "flickr:3712942444": {
+      "kind": "flickr",
+      "id": "3712942444",
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "flickr:8096488863": {
+      "kind": "flickr",
+      "id": "8096488863",
+      "crop": [
+        0.1,
+        0.12,
+        0.88,
+        0.91
+      ]
+    },
+    "flickr:94012409": {
+      "kind": "flickr",
+      "id": "94012409",
+      "crop": [
+        0,
+        0.1,
+        1,
+        1
+      ]
+    },
+    "flickr:313570912": {
+      "kind": "flickr",
+      "id": "313570912",
+      "crop": [
+        0.08,
+        0.1,
+        0.96,
+        0.96
+      ]
+    },
+    "flickr:53236334605": {
+      "kind": "flickr",
+      "id": "53236334605",
+      "crop": [
+        0.02,
+        0.12,
+        0.98,
+        0.97
+      ]
+    },
+    "flickr:8397119665": {
+      "kind": "flickr",
+      "id": "8397119665",
+      "crop": [
+        0.12,
+        0.05,
+        0.91,
+        0.99
+      ]
+    },
+    "flickr:8237797": {
+      "kind": "flickr",
+      "id": "8237797",
+      "crop": [
+        0.02,
+        0.02,
+        0.98,
+        0.98
+      ]
+    },
+    "flickr:2935633733": {
+      "kind": "flickr",
+      "id": "2935633733",
+      "crop": [
+        0.4,
+        0.05,
+        0.61,
+        0.78
+      ]
+    },
+    "flickr:6806925796": {
+      "kind": "flickr",
+      "id": "6806925796",
+      "crop": [
+        0.02,
+        0.02,
+        0.98,
+        0.98
+      ]
+    },
+    "flickr:51858387462": {
+      "kind": "flickr",
+      "id": "51858387462",
+      "crop": [
+        0.01,
+        0.03,
+        0.99,
+        0.98
+      ]
+    },
+    "flickr:13902093603": {
+      "kind": "flickr",
+      "id": "13902093603",
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "flickr:5024763370": {
+      "kind": "flickr",
+      "id": "5024763370"
+    },
+    "flickr:3166049075": {
+      "kind": "flickr",
+      "id": "3166049075"
+    },
+    "flickr:54977246011": {
+      "kind": "flickr",
+      "id": "54977246011"
+    }
+  },
+  "assignments": {
+    "hao-hao-ga-vang-74g": {
+      "source": "manufacturer:hao-hao-ga-vang-74g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "hao-hao-sa-te-hanh-tim-75g": {
+      "source": "manufacturer:hao-hao-sa-te-hanh-tim-75g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "hao-hao-kim-chi-75g": {
+      "source": "manufacturer:hao-hao-kim-chi-75g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "hao-hao-suon-heo-toi-phi-73g": {
+      "source": "manufacturer:hao-hao-suon-heo-toi-phi-73g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "hao-hao-chay-rau-nam-74g": {
+      "source": "manufacturer:hao-hao-chay-rau-nam-74g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "hao-hao-xao-tom-chua-ngot-75g": {
+      "source": "manufacturer:hao-hao-xao-tom-chua-ngot-75g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "hao-hao-xao-hai-san-72g": {
+      "source": "manufacturer:hao-hao-xao-hai-san-72g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "hao-hao-big-tom-chua-cay-100g": {
+      "source": "manufacturer:hao-hao-big-tom-chua-cay-100g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "pho-de-nhat-bo-68g": {
+      "source": "manufacturer:pho-de-nhat-bo-68g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "pho-de-nhat-ga-67g": {
+      "source": "manufacturer:pho-de-nhat-ga-67g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "mien-phu-huong-thit-bam-55g": {
+      "source": "manufacturer:mien-phu-huong-thit-bam-55g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "mien-phu-huong-suon-heo-55g": {
+      "source": "manufacturer:mien-phu-huong-suon-heo-55g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "mien-phu-huong-lau-thai-tom-60g": {
+      "source": "manufacturer:mien-phu-huong-lau-thai-tom-60g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "mien-phu-huong-ga-53g": {
+      "source": "manufacturer:mien-phu-huong-ga-53g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "hu-tieu-nhip-song-nam-vang-70g": {
+      "source": "manufacturer:hu-tieu-nhip-song-nam-vang-70g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "hu-tieu-nhip-song-suon-heo-70g": {
+      "source": "manufacturer:hu-tieu-nhip-song-suon-heo-70g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "hu-tieu-nhip-song-bo-kho-75g": {
+      "source": "manufacturer:hu-tieu-nhip-song-bo-kho-75g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "hu-tieu-nhip-song-chay-nam-vang-70g": {
+      "source": "manufacturer:hu-tieu-nhip-song-chay-nam-vang-70g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "hu-tieu-kho-nhip-song-72g": {
+      "source": "manufacturer:hu-tieu-kho-nhip-song-72g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "pho-tron-de-nhat-bo-84g": {
+      "source": "manufacturer:pho-tron-de-nhat-bo-84g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "pho-tron-de-nhat-thap-cam-cay-84g": {
+      "source": "manufacturer:pho-tron-de-nhat-thap-cam-cay-84g",
+      "reviewNote": "Đã đối chiếu bao bì đúng hãng, hương vị và khối lượng theo dữ liệu nhãn; không dùng cho biến thể khác."
+    },
+    "vn2007-4015": {
+      "source": "commons:89967338",
+      "reviewNote": "Cải thìa sống, một bẹ rõ trên nền đen, không có người hoặc món khác."
+    },
+    "vn2007-10004": {
+      "source": "commons:682876",
+      "reviewNote": "Sữa chua nguyên kem trắng trong bát, không nhãn hãng, không thêm topping."
+    },
+    "vn2007-2009": {
+      "source": "commons:10483011",
+      "reviewNote": "Khoai lang vàng nguyên củ sống, ảnh chỉ có củ khoai."
+    },
+    "vn2007-2014": {
+      "source": "commons:110700",
+      "reviewNote": "Khoai tây sống nguyên củ, không dùng cho khoai đã nấu."
+    },
+    "vn2007-4125": {
+      "source": "commons:2809375",
+      "reviewNote": "Nấm rơm tươi nguyên nấm, ảnh cận cảnh không có món khác."
+    },
+    "vn2007-1014": {
+      "source": "commons:44707117",
+      "reviewNote": "Quẩy đã chiên vàng, không có người hoặc món khác trong crop."
+    },
+    "vn2007-12002": {
+      "source": "commons:138638574",
+      "reviewNote": "Bánh bích quy không nhãn hàng; ảnh bánh đặt riêng, không giả nhãn hãng."
+    },
+    "vn-banh-gio": {
+      "source": "commons:3136013",
+      "reviewNote": "Bánh giò mở thấy bột gạo và nhân thịt, cắt chỉ còn bát bánh; loại túi, giấy và dụng cụ nền."
+    },
+    "vn2007-1017": {
+      "source": "commons:7030152",
+      "reviewNote": "Bột gạo trắng từ ảnh hai loại bột gạo, chọn đúng phần bột rời."
+    },
+    "vn2007-4036": {
+      "source": "commons:116785226",
+      "reviewNote": "Giá đậu xanh tươi, không phải giá đậu nành."
+    },
+    "vn2007-5051": {
+      "source": "bundled:apple-raw-skin",
+      "reviewNote": "Táo tây tươi nguyên vỏ, cùng thực phẩm táo tươi; không dùng cho táo khô hoặc táo chế biến."
+    },
+    "tofu-firm": {
+      "source": "bundled:vn2007-3025",
+      "reviewNote": "Đậu phụ trắng dạng miếng cứng, ảnh minh họa cùng dạng đậu phụ; không dùng cho tào phớ."
+    },
+    "vn2007-5007": {
+      "source": "bundled:banana-raw",
+      "reviewNote": "Chuối tiêu tươi, cùng dạng chuối ăn chín; không dùng ảnh này cho chuối plantain hay chuối khô."
+    },
+    "vn2007-8053": {
+      "source": "commons:10005113",
+      "reviewNote": "Dried river shrimp, shell-on dry orange shrimp on a light plate, matching dried unbranded ingredient."
+    },
+    "vn2007-11008": {
+      "source": "commons:18061079",
+      "reviewNote": "Clear jar of orange marmalade showing orange peel in the preserve; no unrelated dish."
+    },
+    "usda-sr-169911": {
+      "source": "commons:8288342",
+      "reviewNote": "Cut fresh pale-green honeydew melon on white, recognisable fruit and flesh."
+    },
+    "vn2007-5013": {
+      "source": "commons:8288342",
+      "reviewNote": "Cut fresh pale-green honeydew melon on white, recognisable fruit and flesh."
+    },
+    "usda-sr-167755": {
+      "source": "commons:96641162",
+      "reviewNote": "Fresh red raspberries tightly framed, no other berries or unrelated objects."
+    },
+    "usda-sr-173963": {
+      "source": "commons:1796645",
+      "reviewNote": "Fresh ripe blackcurrant cluster with identifying leaves only; no people or unrelated food."
+    },
+    "vn2007-12001": {
+      "source": "commons:658529",
+      "reviewNote": "Plain dry rusks, three toasted bread slices isolated on a light background."
+    },
+    "usda-sr-171891": {
+      "source": "commons:3970975",
+      "reviewNote": "Espresso in a small cup; caffeine content is not visually distinguishable. Illustrative same beverage."
+    },
+    "usda-sr-174125": {
+      "source": "commons:3970975",
+      "reviewNote": "Espresso in a small cup; caffeine content is not visually distinguishable. Illustrative same beverage."
+    },
+    "vn2007-10008": {
+      "source": "commons:47775329",
+      "reviewNote": "Sweetened condensed milk visibly thick pouring from an unbranded tube; plain neutral background."
+    },
+    "vn2007-4030": {
+      "source": "commons:6689660",
+      "reviewNote": "Fresh yardlong beans shown as whole pods, not cooked beans or another legume."
+    },
+    "vn2007-3008": {
+      "source": "commons:8046278",
+      "reviewNote": "Dry white bean seeds, uncooked ingredient on wooden background, not canned or cooked."
+    },
+    "vn2007-1008": {
+      "source": "commons:161604012",
+      "reviewNote": "Dry mature yellow corn kernels tightly framed, not canned sweet corn."
+    },
+    "usda-sr-172446": {
+      "source": "bundled:vn2007-3032",
+      "reviewNote": "Soy milk in glass with soybeans. Sweetness and fortified vitamins are not visually distinguishable; same soy beverage illustration."
+    },
+    "usda-sr-172456": {
+      "source": "bundled:vn2007-3032",
+      "reviewNote": "Soy milk in glass with soybeans. Sweetness and fortified vitamins are not visually distinguishable; same soy beverage illustration."
+    },
+    "usda-sr-173768": {
+      "source": "bundled:vn2007-3032",
+      "reviewNote": "Soy milk in glass with soybeans. Sweetness and fortified vitamins are not visually distinguishable; same soy beverage illustration."
+    },
+    "usda-sr-175215": {
+      "source": "bundled:vn2007-3032",
+      "reviewNote": "Soy milk in glass with soybeans. Sweetness and fortified vitamins are not visually distinguishable; same soy beverage illustration."
+    },
+    "usda-sr-169947": {
+      "source": "commons:162659512",
+      "reviewNote": "Plain yellow pineapple juice in an unbranded glass. Canning and added vitamins are not visually distinguishable."
+    },
+    "vn2007-11013": {
+      "source": "commons:162659512",
+      "reviewNote": "Plain yellow pineapple juice in an unbranded glass. Canning and added vitamins are not visually distinguishable."
+    },
+    "vn2007-14006": {
+      "source": "commons:162659512",
+      "reviewNote": "Plain yellow pineapple juice in an unbranded glass. Canning and added vitamins are not visually distinguishable."
+    },
+    "usda-sr-170458": {
+      "source": "commons:47101634",
+      "reviewNote": "Red tomato juice in glass with tomato garnish. Salt levels cannot be inferred from appearance."
+    },
+    "usda-sr-170545": {
+      "source": "commons:47101634",
+      "reviewNote": "Red tomato juice in glass with tomato garnish. Salt levels cannot be inferred from appearance."
+    },
+    "usda-sr-167708": {
+      "source": "commons:47101634",
+      "reviewNote": "Red tomato juice in glass with tomato garnish. Salt levels cannot be inferred from appearance."
+    },
+    "vn2007-5011": {
+      "source": "pexels:3429784",
+      "reviewNote": "Fresh red watermelon slices on white background; no people, hands or other foods."
+    },
+    "vn2007-5017": {
+      "source": "pexels:39090341",
+      "reviewNote": "Two ripe papaya halves with orange flesh and seeds on blue, no other food."
+    },
+    "vn2007-5018": {
+      "source": "pexels:446459",
+      "reviewNote": "Fresh pink wax apples/roi, close-up fruit only with a few identifying leaves."
+    },
+    "vn2007-5025": {
+      "source": "pexels:12303099",
+      "reviewNote": "Recognisable whole green soursop fruits; no people or unrelated dishes."
+    },
+    "vn2007-5050": {
+      "source": "pexels:35494677",
+      "reviewNote": "Round fresh Indian jujube/táo ta fruits in a bowl, not dried elongated Chinese dates."
+    },
+    "vn2007-5041": {
+      "source": "pexels:5785658",
+      "reviewNote": "Purple-skinned Hass avocado, whole and halved on white; shows seed and flesh."
+    },
+    "vn2007-5042": {
+      "source": "pexels:34067025",
+      "reviewNote": "Fresh green-skinned avocado half and pit on a cutting board, no other dish."
+    },
+    "usda-sr-168176": {
+      "source": "pexels:4235460",
+      "reviewNote": "Fresh green feijoa fruits tightly framed with distinctive calyx, no other fruit."
+    },
+    "usda-sr-167760": {
+      "source": "pexels:16817955",
+      "reviewNote": "Halved mamey sapote with reddish orange flesh, brown skin and large dark seed, isolated on black."
+    },
+    "usda-sr-168162": {
+      "source": "pexels:4499211",
+      "reviewNote": "Bowl of dark wrinkled dried prunes, no fresh plum substituted."
+    },
+    "usda-sr-168164": {
+      "source": "pexels:6086004",
+      "reviewNote": "Close-up golden translucent dried raisins; correct dry state and golden color."
+    },
+    "usda-sr-168165": {
+      "source": "pexels:4499228",
+      "reviewNote": "Dark dried raisins in a ceramic bowl, correct dry state."
+    },
+    "usda-sr-168191": {
+      "source": "pexels:11682844",
+      "reviewNote": "Soft brown dates in bowl. Generic date-fruit illustration; cultivar and nutrients remain separately identified in text."
+    },
+    "usda-sr-171726": {
+      "source": "pexels:11682844",
+      "reviewNote": "Soft brown dates in bowl. Generic date-fruit illustration; cultivar and nutrients remain separately identified in text."
+    },
+    "vn2007-5005": {
+      "source": "pexels:37646934",
+      "reviewNote": "Sun-dried banana pieces on a woven tray, not fried banana chips or raw banana."
+    },
+    "usda-sr-169092": {
+      "source": "pexels:9469639",
+      "reviewNote": "Fresh orange-fleshed cantaloupe whole and cut, isolated on black."
+    },
+    "vn2007-5010": {
+      "source": "pexels:4943057",
+      "reviewNote": "Cut fresh pale green melon on a simple blue plate; no mixed fruit or people."
+    },
+    "vn2007-13003": {
+      "source": "pexels:10899474",
+      "reviewNote": "Fresh ginger roots in a bowl; recognisable raw ingredient, no other dish."
+    },
+    "milk-whole": {
+      "source": "pexels:4324359",
+      "reviewNote": "Plain white milk in an unbranded glass on a neutral surface. Animal species, fat level and vitamins are not visually distinguishable; image is illustrative."
+    },
+    "usda-foundation-746778": {
+      "source": "pexels:4324359",
+      "reviewNote": "Plain white milk in an unbranded glass on a neutral surface. Animal species, fat level and vitamins are not visually distinguishable; image is illustrative."
+    },
+    "usda-foundation-746782": {
+      "source": "pexels:4324359",
+      "reviewNote": "Plain white milk in an unbranded glass on a neutral surface. Animal species, fat level and vitamins are not visually distinguishable; image is illustrative."
+    },
+    "usda-sr-170872": {
+      "source": "pexels:4324359",
+      "reviewNote": "Plain white milk in an unbranded glass on a neutral surface. Animal species, fat level and vitamins are not visually distinguishable; image is illustrative."
+    },
+    "usda-sr-171269": {
+      "source": "pexels:4324359",
+      "reviewNote": "Plain white milk in an unbranded glass on a neutral surface. Animal species, fat level and vitamins are not visually distinguishable; image is illustrative."
+    },
+    "usda-sr-170882": {
+      "source": "pexels:4324359",
+      "reviewNote": "Plain white milk in an unbranded glass on a neutral surface. Animal species, fat level and vitamins are not visually distinguishable; image is illustrative."
+    },
+    "usda-sr-171278": {
+      "source": "pexels:4324359",
+      "reviewNote": "Plain white milk in an unbranded glass on a neutral surface. Animal species, fat level and vitamins are not visually distinguishable; image is illustrative."
+    },
+    "usda-sr-171280": {
+      "source": "pexels:4324359",
+      "reviewNote": "Plain white milk in an unbranded glass on a neutral surface. Animal species, fat level and vitamins are not visually distinguishable; image is illustrative."
+    },
+    "usda-sr-168751": {
+      "source": "pexels:4187716",
+      "reviewNote": "Almond milk in a glass with almonds. Sugar and flavor additions are not visually distinguishable."
+    },
+    "usda-sr-174832": {
+      "source": "pexels:4187716",
+      "reviewNote": "Almond milk in a glass with almonds. Sugar and flavor additions are not visually distinguishable."
+    },
+    "usda-foundation-2257046": {
+      "source": "pexels:4187717",
+      "reviewNote": "Oat milk jar with rolled oats at side, no cookies or mixed dishes."
+    },
+    "usda-sr-170174": {
+      "source": "pexels:4395071",
+      "reviewNote": "Coconut water served in an opened young coconut with glass behind; no colored cocktail or other fruit."
+    },
+    "usda-sr-174831": {
+      "source": "pexels:4395071",
+      "reviewNote": "Coconut water served in an opened young coconut with glass behind; no colored cocktail or other fruit."
+    },
+    "usda-sr-170884": {
+      "source": "pexels:28525197",
+      "reviewNote": "Vanilla milkshake in an unbranded glass, thick white beverage without other food."
+    },
+    "usda-sr-175102": {
+      "source": "pexels:10066812",
+      "reviewNote": "Strawberry milkshake with strawberry on rim; crop removes separate side food."
+    },
+    "usda-sr-171889": {
+      "source": "pexels:7855562",
+      "reviewNote": "Plain brewed black coffee viewed from above on neutral surface; caffeine and brewing method not visually distinguishable."
+    },
+    "usda-sr-171890": {
+      "source": "pexels:7855562",
+      "reviewNote": "Plain brewed black coffee viewed from above on neutral surface; caffeine and brewing method not visually distinguishable."
+    },
+    "usda-sr-171894": {
+      "source": "pexels:7855562",
+      "reviewNote": "Plain brewed black coffee viewed from above on neutral surface; caffeine and brewing method not visually distinguishable."
+    },
+    "usda-sr-174130": {
+      "source": "pexels:7855562",
+      "reviewNote": "Plain brewed black coffee viewed from above on neutral surface; caffeine and brewing method not visually distinguishable."
+    },
+    "salmon-cooked": {
+      "source": "commons:74475407",
+      "reviewNote": "Single cooked salmon steak on a plate, no raw fish or side dishes."
+    },
+    "vn-banh-canh-tom-thit": {
+      "source": "commons:6099250",
+      "reviewNote": "Vietnamese bánh canh bowl with thick rice noodles and pork/shrimp toppings, close-up only."
+    },
+    "vn2007-1011": {
+      "source": "commons:20359001",
+      "reviewNote": "Plain Vietnamese bánh đúc cut into ridged pieces, no meat-filled hot variant asserted."
+    },
+    "vn-bun-ca": {
+      "source": "commons:96645775",
+      "reviewNote": "Bún cá Kiên Giang, fish and vermicelli soup with herbs, bowl only."
+    },
+    "vn-canh-chua-ca": {
+      "source": "commons:89762276",
+      "reviewNote": "Canh chua cá lóc explicitly named by source, sliced snakehead fish in sour vegetable broth, crop to bowl."
+    },
+    "vn-canh-kho-qua": {
+      "source": "commons:127783306",
+      "reviewNote": "Bitter melon stuffed with pork in clear soup, correct cooked dish; simple bowl on neutral background."
+    },
+    "vn2007-7003": {
+      "source": "pexels:36319683",
+      "reviewNote": "Close-up of uncooked lean red beef fibers, no cooked meat or other food."
+    },
+    "vn2007-7017": {
+      "source": "pexels:2676932",
+      "reviewNote": "Single raw lean pork loin slice on plain black plate, minimal fat edge."
+    },
+    "vn2007-7053": {
+      "source": "pexels:7163989",
+      "reviewNote": "Raw pork rib rack with visible meat, bone and fat; appropriate cuts illustrated, not cooked ribs."
+    },
+    "vn2007-8011": {
+      "source": "pexels:3296279",
+      "reviewNote": "Single raw orange salmon fillet on dark neutral background, no garnish or side foods."
+    },
+    "vn2007-8015": {
+      "source": "pexels:6149077",
+      "reviewNote": "Fresh whole sardines, unprocessed silver small fish; no cooked or canned fish."
+    },
+    "vn2007-8035": {
+      "source": "pexels:32987809",
+      "reviewNote": "Raw blue swimming crabs/ghẹ with shell identity visible; not cooked red crabs."
+    },
+    "vn2007-9001": {
+      "source": "pexels:6294255",
+      "reviewNote": "Two raw cracked chicken eggs with intact yolks and whites in a plain bowl, no other ingredients."
+    },
+    "vn2007-9007": {
+      "source": "pexels:4110227",
+      "reviewNote": "Raw quail eggs with distinctive small speckled shells; ingredient illustration, not cooked eggs."
+    },
+    "vn2007-1004": {
+      "source": "pexels:36346840",
+      "reviewNote": "Dry white long grain rice tightly framed, no cooked grains or packaged brand."
+    },
+    "vn2007-1018": {
+      "source": "pexels:17236203",
+      "reviewNote": "Plain wheat flour in an unbranded bowl on neutral background, not bread or pastry."
+    },
+    "vn2007-3007": {
+      "source": "pexels:12338945",
+      "reviewNote": "Dry pale soybeans as whole seeds on white; no green edamame or cooked beans."
+    },
+    "vn2007-3005": {
+      "source": "pexels:36285397",
+      "reviewNote": "Dry black eyed peas/cowpea seeds in a wooden bowl, matching seed ingredient, not fresh pods."
+    },
+    "vn2007-3011": {
+      "source": "pexels:11806797",
+      "reviewNote": "Fresh raw chestnuts in brown shells, not roasted or peeled dry kernels."
+    },
+    "vn2007-1015": {
+      "source": "pexels:13005068",
+      "reviewNote": "Plain white popcorn in a clear glass bowl on dark gray surface; no cinema props or other foods."
+    },
+    "vn2007-3001": {
+      "source": "pexels:5702827",
+      "reviewNote": "Mature brown coconut halves with thick white flesh on a plain plate, no other foods."
+    },
+    "vn2007-4069": {
+      "source": "pexels:36165494",
+      "reviewNote": "Fresh green leaf lettuce tightly framed, not cooked or plated salad."
+    },
+    "vn2007-4011": {
+      "source": "pexels:6157038",
+      "reviewNote": "Single halved red cabbage on a neutral background, purple raw layers visible."
+    },
+    "vn2007-4010": {
+      "source": "pexels:6157047",
+      "reviewNote": "Halved fresh pale green cabbage, no unrelated vegetables or cooked dish."
+    },
+    "vn2007-4003": {
+      "source": "pexels:30462273",
+      "reviewNote": "Raw pumpkin with green rind and orange cut flesh, plain surface, no other food."
+    },
+    "vn2007-4055": {
+      "source": "pexels:32813825",
+      "reviewNote": "Fresh whole ridged green bitter melons on white, no ripe orange fruit or cooked dish."
+    },
+    "vn2007-4031": {
+      "source": "pexels:768089",
+      "reviewNote": "Fresh green peas in a plain bowl with one opened pod, visibly fresh and not dry."
+    },
+    "vn2007-4098": {
+      "source": "pexels:7543109",
+      "reviewNote": "Fresh green chayote fruits tightly framed, not bitter melon or other gourd."
+    },
+    "vn2007-4123": {
+      "source": "pexels:35716003",
+      "reviewNote": "Fresh shiitake mushrooms, stems and textured brown caps visible; not dried mushrooms."
+    },
+    "vn2007-4062": {
+      "source": "pexels:36804213",
+      "reviewNote": "Fresh yellow bell peppers tightly framed; no mixed red/green peppers."
+    },
+    "vn2007-4063": {
+      "source": "pexels:2893635",
+      "reviewNote": "Fresh green bell peppers tightly framed; no mixed colors or market signs."
+    },
+    "vn2007-4081": {
+      "source": "pexels:10048317",
+      "reviewNote": "Fresh coriander foliage tightly framed with recognisable lobed leaves, no unrelated food."
+    },
+    "usda-sr-171946": {
+      "source": "pexels:38293145",
+      "reviewNote": "Plain red hibiscus tea in a transparent cup with hibiscus petals only, no cocktail or other drink."
+    },
+    "vn2007-14008": {
+      "source": "pexels:13464445",
+      "reviewNote": "Clear still drinking water in unbranded glasses, no people or other foods."
+    },
+    "usda-sr-174852": {
+      "source": "pexels:4113632",
+      "reviewNote": "Cola with ice in glass next to Coca-Cola original can, brand only illustrates ordinary cola."
+    },
+    "usda-sr-174854": {
+      "source": "pexels:5659362",
+      "reviewNote": "Orange soda visibly sparkling in glass, poured from a plain bottle; no other food."
+    },
+    "usda-sr-173933": {
+      "source": "pexels:37691240",
+      "reviewNote": "Apple juice in a clear jug and glass with apples as context; no unrelated food."
+    },
+    "usda-sr-167787": {
+      "source": "pexels:18142601",
+      "reviewNote": "Pomegranate juice in a plain tall glass on neutral background, pomegranate seeds at base."
+    },
+    "usda-sr-167784": {
+      "source": "pexels:2134037",
+      "reviewNote": "Guava nectar in glass with a fresh guava beside it, no brand or unrelated fruits."
+    },
+    "usda-sr-168117": {
+      "source": "pexels:11066830",
+      "reviewNote": "Red cranberry juice in a glass mug with cranberries on wood, no other drinks."
+    },
+    "usda-sr-167807": {
+      "source": "pexels:34426848",
+      "reviewNote": "Cherry juice in a clear jug and glass with cherries only, no cola or alcoholic cocktail."
+    },
+    "vn2007-4082": {
+      "source": "pexels:12098987",
+      "reviewNote": "Fresh curly parsley leaves against white, recognisable parsley rather than coriander."
+    },
+    "vn2007-6001": {
+      "source": "pexels:10165696",
+      "reviewNote": "Unwrapped butter sticks in a plain white bowl. Salt is not visually distinguishable; no salted label shown."
+    },
+    "vn2007-10009": {
+      "source": "pexels:793129",
+      "reviewNote": "Plain pale yellow full-fat cheese, cut wedges and block on paper, no other foods."
+    },
+    "vn2007-12026": {
+      "source": "pexels:5865194",
+      "reviewNote": "Clear jars of honey with wooden honey dippers, no pastry or unrelated food."
+    },
+    "vn2007-12010": {
+      "source": "pexels:6167328",
+      "reviewNote": "Plain brown chocolate bar on white paper, no nuts or filled sweets."
+    },
+    "vn2007-12006": {
+      "source": "pexels:5724664",
+      "reviewNote": "Plain layered cream wafers; crop removes retail wrapper and biscuit stick."
+    },
+    "vn-chao-ca": {
+      "source": "commons:102678881",
+      "reviewNote": "Plain fish congee in bowl, cooked porridge with visible fish pieces and no unrelated side dishes."
+    },
+    "vn-che-dau-den": {
+      "source": "commons:89811015",
+      "reviewNote": "Homemade black-bean sweet soup without coconut milk; correct dark broth and cooked beans."
+    },
+    "vn-com-chien-trung": {
+      "source": "commons:39589470",
+      "reviewNote": "Egg fried rice explicitly identified by source, yellow egg pieces and cooked rice tightly framed."
+    },
+    "vn-com-chien-hai-san": {
+      "source": "commons:39642988",
+      "reviewNote": "Cooked seafood fried rice with visible prawns and squid on one plate, crop excludes condiments."
+    },
+    "vn-com-ga": {
+      "source": "commons:92984448",
+      "reviewNote": "Vietnamese chicken rice plate with cooked chicken leg and yellow rice, crop excludes background bowls."
+    },
+    "vn-dau-sot-ca": {
+      "source": "commons:145872905",
+      "reviewNote": "Cubes of cooked tofu coated in tomato sauce; correct dish without unrelated mains."
+    },
+    "vn-ga-kho": {
+      "source": "commons:89819723",
+      "reviewNote": "Braised Vietnamese chicken pieces with herbs, cooked sauce-glazed chicken on one plate."
+    },
+    "vn-mien-ga": {
+      "source": "commons:4277148",
+      "reviewNote": "Vietnamese glass noodles with chicken and herbs, one noodle bowl, no people or unrelated dish."
+    },
+    "vn-tom-hap": {
+      "source": "commons:138055",
+      "reviewNote": "Single cooked peeled shrimp on white, correct steamed pink shrimp, no raw shrimp substituted."
+    },
+    "vn-xoi-ga": {
+      "source": "commons:3106330",
+      "reviewNote": "Sticky rice topped with shredded cooked chicken on a banana leaf, no other meal or people."
+    },
+    "vn-xoi-lap-xuong": {
+      "source": "commons:45334307",
+      "reviewNote": "Sticky rice with recognisable red Chinese sausage; crop focuses on rice and sausage, excludes side sausage block."
+    },
+    "vn-xoi-trang": {
+      "source": "commons:106471023",
+      "reviewNote": "Plain cooked white sticky rice in a small bowl, no mango or savory toppings."
+    },
+    "vn2007-1016": {
+      "source": "commons:75159740",
+      "reviewNote": "White glutinous rice flour in a simple bowl, source identifies flour type, not rice grains."
+    },
+    "vn2007-12013": {
+      "source": "commons:17187098",
+      "reviewNote": "White granulated sugar in a clean bowl, source identifies sugar, no salt or flour substitution."
+    },
+    "vn2007-3020": {
+      "source": "commons:2389127",
+      "reviewNote": "White raw sesame seeds tightly framed, no other grain or roasted dish."
+    },
+    "vn2007-4021": {
+      "source": "commons:19666",
+      "reviewNote": "Fresh white daikon radishes with green tops, raw roots tightly framed, not cooked radish."
+    },
+    "usda-sr-169098": {
+      "source": "bundled:vn2007-14005",
+      "reviewNote": "Orange/mandarin-family juice illustration in a plain glass with citrus fruit. Exact cultivar and nutrients are independently stated by catalog source."
+    },
+    "usda-sr-169925": {
+      "source": "flickr:53236334605",
+      "reviewNote": "Source explicitly identifies mandarin orange juice; three small glasses on a tray, no people; replaces orange-fruit mismatch."
+    },
+    "vn2007-14009": {
+      "source": "flickr:53236334605",
+      "reviewNote": "Source explicitly identifies mandarin orange juice; three small glasses on a tray, no people; replaces orange-fruit mismatch."
+    },
+    "vn2007-4051": {
+      "source": "commons:148873464",
+      "reviewNote": "Dry bamboo shoot strips tightly framed, correct dry ingredient, no fresh bamboo or other dishes."
+    },
+    "vn2007-5036": {
+      "source": "commons:151725587",
+      "reviewNote": "Dried peeled longan flesh in a tight close-up, amber wrinkled flesh; not fresh longan."
+    },
+    "vn2007-5053": {
+      "source": "commons:148910253",
+      "reviewNote": "Dried lychees with wrinkled brown shells, source explicitly identifies dried lychee, not fresh red lychee."
+    },
+    "usda-sr-169091": {
+      "source": "commons:40855870",
+      "reviewNote": "Dried sugared mango shavings in a bowl; exact dried preserved state, no fresh mango."
+    },
+    "usda-sr-171691": {
+      "source": "commons:152612894",
+      "reviewNote": "Dried apple slices, pale yellow rings and crescents with shrunken texture, no fresh apple."
+    },
+    "usda-sr-168158": {
+      "source": "commons:151023435",
+      "reviewNote": "Dried small dark blueberries, tight close-up of dried berries, not fresh glossy berries."
+    },
+    "usda-sr-171723": {
+      "source": "commons:84937171",
+      "reviewNote": "Dried dark red cranberries in a bowl, correct wrinkled dry state, plain table."
+    },
+    "usda-sr-174665": {
+      "source": "commons:144816061",
+      "reviewNote": "Dried figs tightly framed, characteristic tan wrinkled whole fruits, no fresh fig."
+    },
+    "usda-sr-173032": {
+      "source": "commons:26330905",
+      "reviewNote": "Dry orange-red goji berries; tight crop removes price signage and adjacent ingredients."
+    },
+    "usda-sr-169934": {
+      "source": "commons:151725748",
+      "reviewNote": "Dried yellow peach crescents with sugary texture, source explicitly identifies peach, not apricot."
+    },
+    "usda-sr-169121": {
+      "source": "commons:11554029",
+      "reviewNote": "Dried pear slices, source identifies dried pears, no fresh pear substitution."
+    },
+    "usda-sr-169942": {
+      "source": "commons:54787629",
+      "reviewNote": "Whole dried persimmons with natural sugar bloom on a plain plate, correct dried state."
+    },
+    "usda-sr-168181": {
+      "source": "commons:192922059",
+      "reviewNote": "Canned peach halves in syrup in an open metal bowl; crop excludes utensils and cloth."
+    },
+    "usda-sr-168184": {
+      "source": "commons:408509",
+      "reviewNote": "Peeled canned mandarin segments in close-up, not a whole fresh orange."
+    },
+    "usda-sr-167763": {
+      "source": "commons:32488988",
+      "reviewNote": "Tamarind fruit pulp with fibers and seeds, no whole unpeeled pods or tamarind drink."
+    },
+    "usda-sr-173953": {
+      "source": "commons:1343738",
+      "reviewNote": "Cut cherimoya halves with cream flesh and black seeds, isolated on neutral background."
+    },
+    "usda-sr-173964": {
+      "source": "commons:96671426",
+      "reviewNote": "Fresh translucent red currants on a light background, no other berries."
+    },
+    "usda-sr-173043": {
+      "source": "commons:177665298",
+      "reviewNote": "Fresh cape gooseberries/physalis in a bowl; crop excludes empty tableware pattern."
+    },
+    "usda-sr-171686": {
+      "source": "commons:125387310",
+      "reviewNote": "Fresh acerola cherry with identifying leaves, tight fruit-only crop, not sweet cherry."
+    },
+    "usda-sr-171715": {
+      "source": "commons:12279278",
+      "reviewNote": "Green starfruit cut cross-section showing star shape, tight fruit crop no people."
+    },
+    "usda-sr-170879": {
+      "source": "commons:113892622",
+      "reviewNote": "Chocolate milk in an unbranded glass. Sugar, fat, vitamins and plant versus dairy base are not visually distinguishable; same chocolate-milk illustration."
+    },
+    "usda-sr-170880": {
+      "source": "commons:113892622",
+      "reviewNote": "Chocolate milk in an unbranded glass. Sugar, fat, vitamins and plant versus dairy base are not visually distinguishable; same chocolate-milk illustration."
+    },
+    "usda-sr-170881": {
+      "source": "commons:113892622",
+      "reviewNote": "Chocolate milk in an unbranded glass. Sugar, fat, vitamins and plant versus dairy base are not visually distinguishable; same chocolate-milk illustration."
+    },
+    "usda-sr-171303": {
+      "source": "commons:113892622",
+      "reviewNote": "Chocolate milk in an unbranded glass. Sugar, fat, vitamins and plant versus dairy base are not visually distinguishable; same chocolate-milk illustration."
+    },
+    "usda-sr-171277": {
+      "source": "commons:45376891",
+      "reviewNote": "Cup of hot cocoa without marshmallows, cream or cookies, cocoa is the only food shown."
+    },
+    "usda-sr-171910": {
+      "source": "commons:202745680",
+      "reviewNote": "Plain prepared green tea in a clear cup; caffeine, sugar, bottling and flavor additions are not visually distinguishable. Generic same green-tea drink."
+    },
+    "usda-sr-171911": {
+      "source": "commons:202745680",
+      "reviewNote": "Plain prepared green tea in a clear cup; caffeine, sugar, bottling and flavor additions are not visually distinguishable. Generic same green-tea drink."
+    },
+    "usda-sr-171917": {
+      "source": "commons:202745680",
+      "reviewNote": "Plain prepared green tea in a clear cup; caffeine, sugar, bottling and flavor additions are not visually distinguishable. Generic same green-tea drink."
+    },
+    "usda-sr-174128": {
+      "source": "commons:202745680",
+      "reviewNote": "Plain prepared green tea in a clear cup; caffeine, sugar, bottling and flavor additions are not visually distinguishable. Generic same green-tea drink."
+    },
+    "usda-sr-171883": {
+      "source": "commons:202745680",
+      "reviewNote": "Plain prepared green tea in a clear cup; caffeine, sugar, bottling and flavor additions are not visually distinguishable. Generic same green-tea drink."
+    },
+    "usda-sr-173227": {
+      "source": "commons:157833603",
+      "reviewNote": "Plain brewed black tea in a cup; caffeine, lemon flavor and sugar cannot be inferred from the illustration."
+    },
+    "usda-sr-174144": {
+      "source": "commons:157833603",
+      "reviewNote": "Plain brewed black tea in a cup; caffeine, lemon flavor and sugar cannot be inferred from the illustration."
+    },
+    "usda-sr-174871": {
+      "source": "commons:157833603",
+      "reviewNote": "Plain brewed black tea in a cup; caffeine, lemon flavor and sugar cannot be inferred from the illustration."
+    },
+    "usda-sr-171888": {
+      "source": "commons:157833603",
+      "reviewNote": "Plain brewed black tea in a cup; caffeine, lemon flavor and sugar cannot be inferred from the illustration."
+    },
+    "usda-sr-171892": {
+      "source": "commons:157833603",
+      "reviewNote": "Plain brewed black tea in a cup; caffeine, lemon flavor and sugar cannot be inferred from the illustration."
+    },
+    "usda-sr-174120": {
+      "source": "commons:26235709",
+      "reviewNote": "Prepared oolong tea in a clear pot and cup on white, no unrelated foods."
+    },
+    "usda-sr-171880": {
+      "source": "commons:107281541",
+      "reviewNote": "Milk coffee served over ice in a plain cup; sweetener and vanilla cannot be inferred visually."
+    },
+    "usda-sr-171877": {
+      "source": "commons:107281541",
+      "reviewNote": "Milk coffee served over ice in a plain cup; sweetener and vanilla cannot be inferred visually."
+    },
+    "usda-sr-174119": {
+      "source": "commons:176047218",
+      "reviewNote": "Iced mocha in a glass with chocolate coffee mixture, crop excludes cafe background and other tables."
+    },
+    "usda-sr-170491": {
+      "source": "commons:12266902",
+      "reviewNote": "Carrot juice in a clear glass with carrots beside it, no other drinks or foods."
+    },
+    "usda-sr-173042": {
+      "source": "commons:9094988",
+      "reviewNote": "Plain grape juice in a glass, no alcohol label or wine bottle; source explicitly identifies grape juice."
+    },
+    "usda-sr-167786": {
+      "source": "commons:163363592",
+      "reviewNote": "Tamarind juice with tamarind pods beside the glass; canning does not change visible beverage identity."
+    },
+    "usda-sr-168185": {
+      "source": "commons:105717998",
+      "reviewNote": "Peach nectar in a glass with peach on a plain surface, matching nectar beverage."
+    },
+    "usda-sr-169107": {
+      "source": "commons:10491417",
+      "reviewNote": "Papaya juice in a plain stemmed glass, crop removes cafe furniture."
+    },
+    "usda-sr-168196": {
+      "source": "commons:26886270",
+      "reviewNote": "Pale soursop juice in an unbranded glass; source identifies Annona muricata beverage."
+    },
+    "usda-sr-169109": {
+      "source": "commons:194269758",
+      "reviewNote": "Passion-fruit juice in a jug and glass, no other foods. Purple/yellow peel variety is not visible in juice."
+    },
+    "usda-sr-169110": {
+      "source": "commons:194269758",
+      "reviewNote": "Passion-fruit juice in a jug and glass, no other foods. Purple/yellow peel variety is not visible in juice."
+    },
+    "vn2007-5012": {
+      "source": "commons:61350747",
+      "reviewNote": "Cut yellow-rind pale-fleshed canary melon, a fresh muskmelon illustration, no other foods."
+    },
+    "usda-sr-169913": {
+      "source": "commons:117192204",
+      "reviewNote": "Fresh ripe dark mulberries in a bowl, clustered berry structure visible, no people."
+    },
+    "vn-banh-duc-nong": {
+      "source": "flickr:54287722192",
+      "reviewNote": "Hot bánh đúc with minced-meat topping and broth; crop focuses on orange bowl and removes spoon/background batter."
+    },
+    "vn-bun-bo-xao": {
+      "source": "flickr:54300517062",
+      "reviewNote": "Vietnamese bun bo xao: rice vermicelli, stir-fried beef, peanuts and vegetables in one bowl; crop removes separate dipping bowl."
+    },
+    "vn-bun-mang-vit": {
+      "source": "flickr:17139718018",
+      "reviewNote": "Bun mang vit bowl at Tuyet Mai: duck, bamboo shoots, vermicelli and herbs, no people or other main dishes."
+    },
+    "usda-sr-169914": {
+      "source": "commons:54851382",
+      "reviewNote": "Fresh whole smooth-skinned nectarine, isolated neutral background, no fuzzy peach substituted."
+    },
+    "usda-sr-173030": {
+      "source": "commons:4424742",
+      "reviewNote": "Fresh translucent green and blushing gooseberries on identifying branch, close-up fruit."
+    },
+    "usda-sr-173946": {
+      "source": "commons:100209647",
+      "reviewNote": "Single ripe black blackberry on neutral background, distinctive drupelets visible."
+    },
+    "usda-sr-168209": {
+      "source": "commons:27942297",
+      "reviewNote": "Frozen raspberries showing fine frost crystals, correct frozen state."
+    },
+    "usda-sr-168211": {
+      "source": "commons:135739002",
+      "reviewNote": "Golden-fleshed kiwifruit cross section, yellow flesh visible, no green kiwi."
+    },
+    "usda-sr-169130": {
+      "source": "commons:163580561",
+      "reviewNote": "Ripe yellow plantain bunch, visibly elongated angular plantains; crop excludes stall outside fruit."
+    },
+    "vn2007-8024": {
+      "source": "commons:181909615",
+      "reviewNote": "Whole raw tilapia fish with skin, fins and tail visible on a plain tray; no cooked fish."
+    },
+    "vn2007-8026": {
+      "source": "commons:200740255",
+      "reviewNote": "Whole raw mackerel on a clean surface, identifying blue barred skin visible, not cooked or smoked."
+    },
+    "vn2007-8038": {
+      "source": "commons:155937710",
+      "reviewNote": "Raw sliced swamp eel with orange flesh and dark skin, source explicitly identifies swamp eel."
+    },
+    "vn2007-8040": {
+      "source": "commons:151047621",
+      "reviewNote": "Whole raw squid, mantle and tentacles visible, source fresh squid; no cooked squid."
+    },
+    "vn2007-8056": {
+      "source": "commons:88930830",
+      "reviewNote": "Unfried dry prawn cracker rectangular slices; crop selects raw pieces only and excludes expanded fried crackers."
+    },
+    "vn2007-1006": {
+      "source": "commons:136417265",
+      "reviewNote": "Dry hulled yellow millet grains in a white bowl, source identifies millet, uncooked."
+    },
+    "vn-canh-ca-chua-trung": {
+      "source": "commons:16618361",
+      "reviewNote": "Tomato and egg soup with cooked egg ribbons and tomato pieces in one bowl, no unrelated dishes."
+    },
+    "vn-thit-kho-tieu": {
+      "source": "commons:18896909",
+      "reviewNote": "Vietnamese pepper-braised pork, caramelized pork cubes in sauce, single bowl."
+    },
+    "vn-xoi-dau-xanh": {
+      "source": "commons:54570249",
+      "reviewNote": "Cooked sticky rice with mung beans on banana leaf, source identifies xoi do xanh."
+    },
+    "vn-bot-chien": {
+      "source": "commons:16645164",
+      "reviewNote": "Bot chien in Vietnam with pan-fried rice cakes and egg; crop focuses on plate and excludes second plate."
+    },
+    "vn-dau-nhoi-thit": {
+      "source": "commons:87521887",
+      "reviewNote": "Pork-stuffed fried tofu with tomato and onion; crop selects one plate of stuffed tofu."
+    },
+    "vn-bo-xao-rau": {
+      "source": "commons:22382186",
+      "reviewNote": "Stir-fried beef with ginger and green vegetables, one plate, no unrelated food."
+    },
+    "vn2007-4018": {
+      "source": "commons:68754797",
+      "reviewNote": "Water celery/Oenanthe javanica fresh leaves, close crop to edible foliage."
+    },
+    "vn2007-4054": {
+      "source": "commons:151467794",
+      "reviewNote": "Whole fresh luffa gourds tightly framed, raw vegetable no cooked dish."
+    },
+    "vn2007-4056": {
+      "source": "commons:132206801",
+      "reviewNote": "Long striped snake gourds, whole fresh fruits, no other vegetable."
+    },
+    "vn2007-12012": {
+      "source": "commons:55457110",
+      "reviewNote": "Pure cocoa powder in a plain glass bowl, no sugar, flour or prepared dessert."
+    },
+    "vn2007-3004": {
+      "source": "commons:1858146",
+      "reviewNote": "Dry black beans on a white plate, source identifies black beans, uncooked."
+    },
+    "vn2007-3016": {
+      "source": "commons:70663075",
+      "reviewNote": "Fresh jackfruit seeds in close-up, whole brown seed coats and kernels, no cooked beans."
+    },
+    "vn2007-2010": {
+      "source": "commons:37868519",
+      "reviewNote": "Raw lesser-yam tubers Dioscorea esculenta isolated on white; no cooked yam."
+    },
+    "vn2007-2013": {
+      "source": "commons:507131",
+      "reviewNote": "Raw taro corms with brown ringed skin; same taro-family tuber illustration, source names retained separately."
+    },
+    "vn2007-2011": {
+      "source": "commons:507131",
+      "reviewNote": "Raw taro corms with brown ringed skin; same taro-family tuber illustration, source names retained separately."
+    },
+    "vn2007-12005": {
+      "source": "commons:61012136",
+      "reviewNote": "Plain mung-bean cakes cut into blocks, unbranded food on a simple plate."
+    },
+    "vn2007-12007": {
+      "source": "commons:59351265",
+      "reviewNote": "White pressed rice-flour banh khao cakes in paper, source identifies banh khao."
+    },
+    "vn2007-7076": {
+      "source": "commons:136390269",
+      "reviewNote": "Smoked dried buffalo meat whole and shredded on plate; crop removes herb border and dips."
+    },
+    "vn2007-7074": {
+      "source": "commons:5197599",
+      "reviewNote": "Plain pork floss on a plate, no bread or seaweed added; source identifies pork floss."
+    },
+    "vn2007-7065": {
+      "source": "commons:137696163",
+      "reviewNote": "Vietnamese cha que sausage cut into brown-edged slices on a white plate, no other dishes."
+    },
+    "vn2007-3033": {
+      "source": "commons:30197555",
+      "reviewNote": "Soft tofu pudding in clear sweet syrup, source douhua/tahwa, no savory toppings."
+    },
+    "vn2007-4040": {
+      "source": "commons:16611580",
+      "reviewNote": "Fresh green lotus seeds in a bowl, not dry white lotus seeds."
+    },
+    "vn2007-4076": {
+      "source": "commons:184777060",
+      "reviewNote": "Fresh edible sweet potato leaves in a tray, no other vegetables."
+    },
+    "vn2007-4070": {
+      "source": "commons:162640987",
+      "reviewNote": "Fresh jute leaves with serrated edges, raw leafy vegetable, not cooked soup."
+    },
+    "usda-sr-169908": {
+      "source": "commons:147263604",
+      "reviewNote": "Fresh orange loquat fruits with identifying foliage, tight branch crop no people."
+    },
+    "usda-sr-171711": {
+      "source": "commons:64447704",
+      "reviewNote": "Fresh blueberries in a white bowl, no frozen frost or other berries."
+    },
+    "vn2007-11010": {
+      "source": "commons:121415705",
+      "reviewNote": "Homemade pineapple jam in clear jars, crop focuses on jars and removes clutter."
+    },
+    "vn2007-7073": {
+      "source": "flickr:6749931947",
+      "reviewNote": "Nem chua cut into short pink cured-pork sections on a plain blue surface, no hands."
+    },
+    "usda-sr-168190": {
+      "source": "flickr:42063937425",
+      "reviewNote": "Yellow jackfruit bulbs emptied from a syrup can into a plain bowl; no raw jackfruit or label substitute."
+    },
+    "vn2007-11017": {
+      "source": "flickr:5511668773",
+      "reviewNote": "Canned beef preserved in a clear jar, actual cooked beef visible, crop excludes other jars."
+    },
+    "vn2007-11018": {
+      "source": "flickr:3565635793",
+      "reviewNote": "Exact canned whole chicken can, source identifies canned whole chicken; no soup or raw chicken substituted."
+    },
+    "usda-sr-174156": {
+      "source": "flickr:8237797",
+      "reviewNote": "Source identifies chamomile tea; clear golden brewed tea in a white cup, no people or unrelated foods."
+    },
+    "usda-sr-171722": {
+      "source": "flickr:15705598768",
+      "reviewNote": "Fresh red cranberries tightly framed, no frozen berries or other fruits."
+    },
+    "usda-sr-173021": {
+      "source": "flickr:9220695141",
+      "reviewNote": "Fresh whole figs on a white background, no other foods or damaged fruits."
+    },
+    "usda-sr-168173": {
+      "source": "flickr:5850287148",
+      "reviewNote": "Frozen strawberries showing frost crystals and no leaves, correct frozen state."
+    },
+    "usda-sr-173950": {
+      "source": "flickr:9586505754",
+      "reviewNote": "Frozen blueberries with frost crystals, no fresh berries or ice-cream dessert."
+    },
+    "vn2007-7028": {
+      "source": "flickr:7062346549",
+      "reviewNote": "Raw cut duck on red plate, visible skin and raw meat, no cooked duck or person."
+    },
+    "vn2007-7064": {
+      "source": "bundled:vn2007-7069",
+      "reviewNote": "Plain unbranded Vietnamese cooked pork sausage illustration, same pork-sausage family; exact catalog names remain separate."
+    },
+    "vn2007-4016": {
+      "source": "commons:71964531",
+      "reviewNote": "Brassica juncea fresh green mustard leaf, exact species and raw state."
+    },
+    "vn2007-4019": {
+      "source": "commons:123144022",
+      "reviewNote": "Unripe green banana bunch on plant, no cooked food or people."
+    },
+    "vn2007-4032": {
+      "source": "commons:173143302",
+      "reviewNote": "Raw winged bean pods on plate, no people or unrelated foods."
+    },
+    "vn2007-4042": {
+      "source": "commons:66831793",
+      "reviewNote": "Raw flat garlic chive leaves (Allium tuberosum), no unrelated food."
+    },
+    "vn2007-4096": {
+      "source": "commons:130785374",
+      "reviewNote": "Fresh kohlrabi bulb in field; clear raw vegetable identity."
+    },
+    "vn2007-4053": {
+      "source": "commons:1984356",
+      "reviewNote": "Fresh bamboo shoot growing with husk, no people or other foods."
+    },
+    "vn2007-4014": {
+      "source": "commons:5707861",
+      "reviewNote": "Fresh raw watercress leaves, no cooked preparation or unrelated food."
+    },
+    "vn2007-5022": {
+      "source": "commons:70931155",
+      "reviewNote": "Two halves of fresh sapodilla showing brown flesh and black seeds, no hands."
+    },
+    "vn2007-3006": {
+      "source": "pexels:6103857",
+      "reviewNote": "Dry whole white peas close-up; source describes dried organic peas, visibly dry seeds, no people or other foods."
+    },
+    "chicken-breast-roasted": {
+      "source": "flickr:49859594076",
+      "reviewNote": "Browned sliced cooked chicken breast; close crop centers the meat, omitting surrounding salad."
+    },
+    "oatmeal-cooked": {
+      "source": "flickr:51431445474",
+      "reviewNote": "USDA photo explicitly identifies cooked plain oatmeal; no toppings or person."
+    },
+    "sweet-potato-boiled": {
+      "source": "flickr:26499247007",
+      "reviewNote": "Source explicitly states boiled, opened sweet potatoes; yellow flesh and cooked red skins visible."
+    },
+    "vn-khoai-lang-luoc": {
+      "source": "flickr:26499247007",
+      "reviewNote": "Same boiled sweet potato identity and state as the basic ingredient entry."
+    },
+    "vn-banh-mi-trung": {
+      "source": "flickr:14038011654",
+      "reviewNote": "Fried egg banh mi in foreground; crop excludes the cocktail and condiment bottle."
+    },
+    "vn-bap-cai-xao": {
+      "source": "flickr:788931602",
+      "reviewNote": "Plain cooked stir-fried green cabbage on plate; no meat or unrelated dish."
+    },
+    "vn-chao-thit": {
+      "source": "flickr:4873958273",
+      "reviewNote": "Source explicitly identifies ground pork rice congee; visible cooked rice and minced pork."
+    },
+    "vn-com-chien-duong-chau": {
+      "source": "flickr:14621280875",
+      "reviewNote": "Source identifies Yang Chow fried rice; rice, shrimp, egg and diced vegetables visible."
+    },
+    "vn-thit-luoc": {
+      "source": "flickr:3325110427",
+      "reviewNote": "Source identifies boiled pork; crop centers sliced cooked lean pork and excludes vegetable accompaniment."
+    },
+    "vn-trung-chien": {
+      "source": "flickr:3712942444",
+      "reviewNote": "Plain fried folded chicken egg omelet, no fillings or unrelated side dishes."
+    },
+    "vn-trung-hap-thit": {
+      "source": "flickr:8096488863",
+      "reviewNote": "Source explicitly identifies steamed egg with minced pork; smooth cooked egg custard in bowl."
+    },
+    "usda-sr-167747": {
+      "source": "flickr:94012409",
+      "reviewNote": "Fresh squeezed lemon juice in transparent measuring vessels beside manual juicer; no people, no lemonade dilution claimed."
+    },
+    "usda-sr-168156": {
+      "source": "flickr:313570912",
+      "reviewNote": "Two small bowls of pale freshly expressed lime juice on work surface, no people; no added sweetener claimed."
+    },
+    "usda-sr-167785": {
+      "source": "flickr:8397119665",
+      "reviewNote": "Source identifies mango juice; yellow mango beverage in a glass, no people or other foods. Nectar packaging/vitamin content is not visually asserted."
+    },
+    "usda-sr-173947": {
+      "source": "flickr:2935633733",
+      "reviewNote": "Source explicitly identifies blackberry juice; crop isolates glass of dark purple juice and removes plates and bread, no people."
+    },
+    "usda-sr-173203": {
+      "source": "flickr:6806925796",
+      "reviewNote": "Photographed can explicitly labels grape naturally and artificially flavored soda; no people, real product photograph."
+    },
+    "usda-sr-173210": {
+      "source": "flickr:51858387462",
+      "reviewNote": "Original Red Bull cans in several package sizes; no people, no other energy-drink brands. USDA nutrient values are independent of pictured packaging size."
+    },
+    "usda-sr-167792": {
+      "source": "flickr:13902093603",
+      "reviewNote": "Fresh orange and pineapple with a glass of yellow juice; source juicing photo visually identifies the exact two fruits, no people. Canned state and nutrient values not inferred from photo."
+    },
+    "usda-sr-173225": {
+      "source": "flickr:13902093603",
+      "reviewNote": "Fresh orange and pineapple with a glass of yellow juice; source juicing photo visually identifies the exact two fruits, no people. Canned state and nutrient values not inferred from photo."
+    },
+    "usda-sr-168154": {
+      "source": "flickr:5024763370",
+      "reviewNote": "Fresh orange kumquats only; selected photograph shows intact oval fruit without hands or unrelated food."
+    },
+    "usda-sr-168155": {
+      "source": "flickr:3166049075",
+      "reviewNote": "Freshly sliced green lime on a white background; source and visible rind/pulp identify lime."
+    },
+    "usda-sr-171725": {
+      "source": "flickr:54977246011",
+      "reviewNote": "Single intact Annona reticulata bullocks-heart fruit; source explicitly identifies species, no hands or other fruit."
+    }
+  },
+  "rejectedFoodIds": {
+    "vn2007-11009": "Nguồn ảnh là mứt chuối húng quế và còn bánh mì trong khung; chưa đúng món được công bố.",
+    "vn2007-1005": "Chưa xác minh được trạng thái hạt gạo lứt sống qua ảnh; hạt giống gạo nở/phồng."
+  }
+}

@@ -9,7 +9,7 @@
   "excluded": {
     "existing_source_record": 4
   },
-  "assetBytes": 8658798,
+  "assetBytes": 8664483,
   "vietnameseHeadMatched": 6969,
   "vietnameseDisplayNames": 7444,
   "dietaryCounts": {
@@ -17,5 +17,16 @@
     "vegetarian": 151,
     "nonVegetarian": 3024,
     "unknown": 2644
+  },
+  "assetSha256": "1659dfdc43ee8b278b22ef498167399bb2d6f8003f729dfe9546149d3c8a6a56",
+  "browseMetadata": {
+    "reviewedOn": "2026-11-10",
+    "manifest": "fruit-drink-browse.json",
+    "groups": {
+      "fruits": 100,
+      "drinks": 100
+    },
+    "nutritionUnchanged": true,
+    "sourcePortionsReviewed": 63
   }
 }

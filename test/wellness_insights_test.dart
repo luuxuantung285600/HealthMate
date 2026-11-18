@@ -74,7 +74,13 @@ void main() {
             .kcalTarget,
         1850,
       );
-      expect(find.text('Mục tiêu 1.850 kcal'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('today-target-edit')),
+          matching: find.text('1.850'),
+        ),
+        findsOneWidget,
+      );
       // Compare the same fixture day, independent of the machine's current date.
       container
           .read(journalDateProvider.notifier)

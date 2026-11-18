@@ -1,49 +1,1425 @@
 {
-  "version": "manufacturer-labels-2026-10-19",
-  "reviewedOn": "2026-10-19",
-  "limitation": "Trang nhà sản xuất có thể đổi công thức. Chỉ dùng đúng dòng sản phẩm và khối lượng ghi; không áp dụng cho sữa uống/ml hoặc sản phẩm cùng thương hiệu khác. Đối chiếu nhãn đang cầm trước khi chọn.",
+  "version": "manufacturer-labels-2026-11-10-nutrients-1",
+  "reviewedOn": "2026-11-10",
+  "limitation": "Chỉ dùng đúng vị, khối lượng và trạng thái ghi ở từng mục. Số nhãn trung bình có thể đổi theo công thức/lô. Đối chiếu bao bì đang cầm; gói khô không bao gồm nước pha và topping thêm. Không dùng khối lượng sau pha nước cho dữ liệu gói khô.",
   "foods": [
     {
       "id": "th-yogurt-sweetened-100g",
       "name": "Sữa chua TH true YOGURT có đường 100 g",
       "brand": "TH true YOGURT",
-      "alternateNames": ["sữa chua TH có đường", "TH yogurt có đường"],
+      "alternateNames": [
+        "sữa chua TH có đường",
+        "TH yogurt có đường"
+      ],
       "packageLabel": "hộp 100 g · có đường",
-      "servingLabel": "hộp 100 g", "servingGrams": 100,
-      "category": "Sản phẩm đóng gói", "servingBasis": "per_100g", "unit": "g",
-      "kcalPer100g": 94.9, "proteinGPer100g": 3.1, "carbsGPer100g": 13.2, "fatGPer100g": 3.3,
-      "isEstimated": true, "sourceLabel": "TH · Nhãn trung bình/100 g · đối chiếu bao bì",
+      "servingLabel": "hộp 100 g",
+      "servingGrams": 100,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 94.9,
+      "proteinGPer100g": 3.1,
+      "carbsGPer100g": 13.2,
+      "fatGPer100g": 3.3,
+      "isEstimated": true,
+      "sourceLabel": "TH · Nhãn trung bình/100 g · đối chiếu bao bì",
       "sourceUrl": "https://www.thmilk.vn/products/sua-chua-an-co-duong/",
       "catalogVersion": "manufacturer-labels-2026-10-19",
-      "sourceDetails": {"method":"manufacturer_label", "basis":"100 g sản phẩm", "retrievedOn":"2026-10-19", "state":"sản phẩm ăn liền"}
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "100 g sản phẩm",
+        "retrievedOn": "2026-10-19",
+        "state": "sản phẩm ăn liền"
+      }
     },
     {
       "id": "th-yogurt-natural-100g",
       "name": "Sữa chua TH true YOGURT vị tự nhiên 100 g",
       "brand": "TH true YOGURT",
-      "alternateNames": ["sữa chua TH không đường", "TH yogurt vị tự nhiên"],
+      "alternateNames": [
+        "sữa chua TH không đường",
+        "TH yogurt vị tự nhiên"
+      ],
       "packageLabel": "hộp 100 g · vị tự nhiên",
-      "servingLabel": "hộp 100 g", "servingGrams": 100,
-      "category": "Sản phẩm đóng gói", "servingBasis": "per_100g", "unit": "g",
-      "kcalPer100g": 63.2, "proteinGPer100g": 3.3, "carbsGPer100g": 4.4, "fatGPer100g": 3.6,
-      "isEstimated": true, "sourceLabel": "TH · Nhãn trung bình/100 g · đối chiếu bao bì",
+      "servingLabel": "hộp 100 g",
+      "servingGrams": 100,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 63.2,
+      "proteinGPer100g": 3.3,
+      "carbsGPer100g": 4.4,
+      "fatGPer100g": 3.6,
+      "isEstimated": true,
+      "sourceLabel": "TH · Nhãn trung bình/100 g · đối chiếu bao bì",
       "sourceUrl": "https://thmilk.vn/products/sua-chua-an-khong-duong/",
       "catalogVersion": "manufacturer-labels-2026-10-19",
-      "sourceDetails": {"method":"manufacturer_label", "basis":"100 g sản phẩm", "retrievedOn":"2026-10-19", "state":"sản phẩm ăn liền"}
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "100 g sản phẩm",
+        "retrievedOn": "2026-10-19",
+        "state": "sản phẩm ăn liền"
+      }
     },
     {
       "id": "th-yogurt-durian-100g",
       "name": "Sữa chua TH true YOGURT sầu riêng tự nhiên 100 g",
       "brand": "TH true YOGURT",
-      "alternateNames": ["sữa chua TH sầu riêng", "TH yogurt sầu riêng"],
+      "alternateNames": [
+        "sữa chua TH sầu riêng",
+        "TH yogurt sầu riêng"
+      ],
       "packageLabel": "hộp 100 g · sầu riêng tự nhiên",
-      "servingLabel": "hộp 100 g", "servingGrams": 100,
-      "category": "Sản phẩm đóng gói", "servingBasis": "per_100g", "unit": "g",
-      "kcalPer100g": 100.4, "proteinGPer100g": 3.1, "carbsGPer100g": 14.8, "fatGPer100g": 3.2,
-      "isEstimated": true, "sourceLabel": "TH · Nhãn trung bình/100 g · đối chiếu bao bì",
+      "servingLabel": "hộp 100 g",
+      "servingGrams": 100,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 100.4,
+      "proteinGPer100g": 3.1,
+      "carbsGPer100g": 14.8,
+      "fatGPer100g": 3.2,
+      "isEstimated": true,
+      "sourceLabel": "TH · Nhãn trung bình/100 g · đối chiếu bao bì",
       "sourceUrl": "https://thmilk.vn/products/sua-chua-an-sau-rieng-tu-nhien/",
       "catalogVersion": "manufacturer-labels-2026-10-19",
-      "sourceDetails": {"method":"manufacturer_label", "basis":"100 g sản phẩm", "retrievedOn":"2026-10-19", "state":"sản phẩm ăn liền"}
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "100 g sản phẩm",
+        "retrievedOn": "2026-10-19",
+        "state": "sản phẩm ăn liền"
+      }
+    },
+    {
+      "id": "hao-hao-tom-chua-cay-75g",
+      "name": "Mì Hảo Hảo tôm chua cay 75 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Mì Hảo Hảo tôm chua cay",
+        "Mỳ Hảo Hảo tôm chua cay",
+        "mì tôm Hảo Hảo",
+        "mỳ tôm Hảo Hảo",
+        "Hảo Hảo tôm chua cay"
+      ],
+      "packageLabel": "gói 75 g · chưa pha nước",
+      "servingLabel": "gói khô 75 g",
+      "servingGrams": 75,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 466.666667,
+      "proteinGPer100g": 9.2,
+      "carbsGPer100g": 68.533333,
+      "fatGPer100g": 17.333333,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 75 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/mi-hao-hao/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 75,
+        "nutrientsPerPackage": {
+          "kcal": 350,
+          "proteinG": 6.9,
+          "carbsG": 51.4,
+          "fatG": 13,
+          "sodiumMg": 1778,
+          "sugarG": 4
+        },
+        "variantIndex": 0,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/11/3D-BB-HH-TCC-DBA-768x622.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "a015353763dfcc4873a99cd8be8d3d5740578fae0d4c6326d957be20e17f5c86",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "de16d432dc7514f6ff666b1fe954ad9c68da0c87bf5c1fcd92e2504827d1b4b4",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri",
+              "raw": "1.778mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số",
+              "raw": "4,0g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2370.6666666666665,
+        "sugar": 5.333333333333333
+      }
+    },
+    {
+      "id": "hao-hao-ga-vang-74g",
+      "name": "Mì Hảo Hảo gà vàng 74 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Mì Hảo Hảo gà vàng",
+        "Mỳ Hảo Hảo gà vàng"
+      ],
+      "packageLabel": "gói 74 g · chưa pha nước",
+      "servingLabel": "gói khô 74 g",
+      "servingGrams": 74,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 468.918919,
+      "proteinGPer100g": 9.054054,
+      "carbsGPer100g": 67.567568,
+      "fatGPer100g": 17.972973,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 74 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/mi-hao-hao/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 74,
+        "nutrientsPerPackage": {
+          "kcal": 347,
+          "proteinG": 6.7,
+          "carbsG": 50,
+          "fatG": 13.3,
+          "sodiumMg": 1746,
+          "sugarG": 2.4
+        },
+        "variantIndex": 1,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/11/3D-BB-HH-GA-DBA-768x622.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "a015353763dfcc4873a99cd8be8d3d5740578fae0d4c6326d957be20e17f5c86",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "de16d432dc7514f6ff666b1fe954ad9c68da0c87bf5c1fcd92e2504827d1b4b4",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri:",
+              "raw": "1.746 mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số:",
+              "raw": "2,4g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2359.4594594594596,
+        "sugar": 3.2432432432432434
+      }
+    },
+    {
+      "id": "hao-hao-sa-te-hanh-tim-75g",
+      "name": "Mì Hảo Hảo sa tế hành tím 75 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Mì Hảo Hảo sa tế hành tím",
+        "Mỳ Hảo Hảo sa tế hành tím"
+      ],
+      "packageLabel": "gói 75 g · chưa pha nước",
+      "servingLabel": "gói khô 75 g",
+      "servingGrams": 75,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 458.666667,
+      "proteinGPer100g": 10.133333,
+      "carbsGPer100g": 65.6,
+      "fatGPer100g": 17.333333,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 75 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/mi-hao-hao/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 75,
+        "nutrientsPerPackage": {
+          "kcal": 344,
+          "proteinG": 7.6,
+          "carbsG": 49.2,
+          "fatG": 13,
+          "sodiumMg": 1568,
+          "sugarG": 2.6
+        },
+        "variantIndex": 2,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/11/3D-BB-HH-STH-DBA-768x622.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "a015353763dfcc4873a99cd8be8d3d5740578fae0d4c6326d957be20e17f5c86",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "de16d432dc7514f6ff666b1fe954ad9c68da0c87bf5c1fcd92e2504827d1b4b4",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri:",
+              "raw": "1.568mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số:",
+              "raw": "2,6g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2090.6666666666665,
+        "sugar": 3.466666666666667
+      }
+    },
+    {
+      "id": "hao-hao-kim-chi-75g",
+      "name": "Mì Hảo Hảo lẩu kim chi Hàn Quốc 75 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Mì Hảo Hảo lẩu kim chi Hàn Quốc",
+        "Mỳ Hảo Hảo lẩu kim chi Hàn Quốc"
+      ],
+      "packageLabel": "gói 75 g · chưa pha nước",
+      "servingLabel": "gói khô 75 g",
+      "servingGrams": 75,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 453.333333,
+      "proteinGPer100g": 9.466667,
+      "carbsGPer100g": 61.733333,
+      "fatGPer100g": 18.666667,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 75 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/mi-hao-hao/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 75,
+        "nutrientsPerPackage": {
+          "kcal": 340,
+          "proteinG": 7.1,
+          "carbsG": 46.3,
+          "fatG": 14,
+          "sodiumMg": 2063,
+          "sugarG": 4.5
+        },
+        "variantIndex": 3,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/11/3D-BB-HH-KIM-CHI-DBA-768x622.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "a015353763dfcc4873a99cd8be8d3d5740578fae0d4c6326d957be20e17f5c86",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "de16d432dc7514f6ff666b1fe954ad9c68da0c87bf5c1fcd92e2504827d1b4b4",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri:",
+              "raw": "2.063mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số",
+              "raw": "4,5g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2750.6666666666665,
+        "sugar": 6
+      }
+    },
+    {
+      "id": "hao-hao-suon-heo-toi-phi-73g",
+      "name": "Mì Hảo Hảo sườn heo tỏi phi 73 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Mì Hảo Hảo sườn heo tỏi phi",
+        "Mỳ Hảo Hảo sườn heo tỏi phi"
+      ],
+      "packageLabel": "gói 73 g · chưa pha nước",
+      "servingLabel": "gói khô 73 g",
+      "servingGrams": 73,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 460.273973,
+      "proteinGPer100g": 10.136986,
+      "carbsGPer100g": 65.479452,
+      "fatGPer100g": 16.986301,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 73 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/mi-hao-hao/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 73,
+        "nutrientsPerPackage": {
+          "kcal": 336,
+          "proteinG": 7.4,
+          "carbsG": 47.8,
+          "fatG": 12.4,
+          "sodiumMg": 1708,
+          "sugarG": 2.4
+        },
+        "variantIndex": 4,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/11/3D-BB-HH-SHTP-DBA-768x622.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "a015353763dfcc4873a99cd8be8d3d5740578fae0d4c6326d957be20e17f5c86",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "de16d432dc7514f6ff666b1fe954ad9c68da0c87bf5c1fcd92e2504827d1b4b4",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri:",
+              "raw": "1.708mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số:",
+              "raw": "2,4g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2339.72602739726,
+        "sugar": 3.287671232876712
+      }
+    },
+    {
+      "id": "hao-hao-chay-rau-nam-74g",
+      "name": "Mì Hảo Hảo chay rau nấm 74 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Mì Hảo Hảo chay rau nấm",
+        "Mỳ Hảo Hảo chay rau nấm"
+      ],
+      "packageLabel": "gói 74 g · chưa pha nước",
+      "servingLabel": "gói khô 74 g",
+      "servingGrams": 74,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 451.351351,
+      "proteinGPer100g": 9.864865,
+      "carbsGPer100g": 64.459459,
+      "fatGPer100g": 17.162162,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 74 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/mi-hao-hao/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 74,
+        "nutrientsPerPackage": {
+          "kcal": 334,
+          "proteinG": 7.3,
+          "carbsG": 47.7,
+          "fatG": 12.7,
+          "sodiumMg": 1561,
+          "sugarG": 2.6
+        },
+        "variantIndex": 5,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/11/3D-BB-HH-CHAY-DBA-768x622.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "a015353763dfcc4873a99cd8be8d3d5740578fae0d4c6326d957be20e17f5c86",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "de16d432dc7514f6ff666b1fe954ad9c68da0c87bf5c1fcd92e2504827d1b4b4",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri:",
+              "raw": "1.561mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số:",
+              "raw": "2,6g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2109.4594594594596,
+        "sugar": 3.5135135135135136
+      }
+    },
+    {
+      "id": "hao-hao-xao-tom-chua-ngot-75g",
+      "name": "Mì Hảo Hảo xào tôm chua ngọt 75 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Mì Hảo Hảo xào tôm chua ngọt",
+        "Mỳ Hảo Hảo xào tôm chua ngọt"
+      ],
+      "packageLabel": "gói 75 g · chưa pha nước",
+      "servingLabel": "gói khô 75 g",
+      "servingGrams": 75,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 481.333333,
+      "proteinGPer100g": 8.666667,
+      "carbsGPer100g": 67.466667,
+      "fatGPer100g": 19.6,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 75 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/mi-hao-hao/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 75,
+        "nutrientsPerPackage": {
+          "kcal": 361,
+          "proteinG": 6.5,
+          "carbsG": 50.6,
+          "fatG": 14.7,
+          "sodiumMg": 968,
+          "sugarG": 2.1
+        },
+        "variantIndex": 6,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/11/3D-BB-HH-TXCN-DBA-768x622.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "a015353763dfcc4873a99cd8be8d3d5740578fae0d4c6326d957be20e17f5c86",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "de16d432dc7514f6ff666b1fe954ad9c68da0c87bf5c1fcd92e2504827d1b4b4",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri:",
+              "raw": "968mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số:",
+              "raw": "2,1g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 1290.6666666666667,
+        "sugar": 2.8
+      }
+    },
+    {
+      "id": "hao-hao-xao-hai-san-72g",
+      "name": "Mì Hảo Hảo xào hải sản 72 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Mì Hảo Hảo xào hải sản",
+        "Mỳ Hảo Hảo xào hải sản"
+      ],
+      "packageLabel": "gói 72 g · chưa pha nước",
+      "servingLabel": "gói khô 72 g",
+      "servingGrams": 72,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 466.666667,
+      "proteinGPer100g": 10.138889,
+      "carbsGPer100g": 58.472222,
+      "fatGPer100g": 21.388889,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 72 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/mi-hao-hao/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 72,
+        "nutrientsPerPackage": {
+          "kcal": 336,
+          "proteinG": 7.3,
+          "carbsG": 42.1,
+          "fatG": 15.4,
+          "sodiumMg": 1159,
+          "sugarG": 3
+        },
+        "variantIndex": 7,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/11/3D-BB-HH-HAI-SAN-DBA-768x622.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "a015353763dfcc4873a99cd8be8d3d5740578fae0d4c6326d957be20e17f5c86",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "de16d432dc7514f6ff666b1fe954ad9c68da0c87bf5c1fcd92e2504827d1b4b4",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri:",
+              "raw": "1.159mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số:",
+              "raw": "3,0g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 1609.7222222222222,
+        "sugar": 4.166666666666667
+      }
+    },
+    {
+      "id": "hao-hao-big-tom-chua-cay-100g",
+      "name": "Mì Hảo Hảo BIG tôm chua cay 100 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Mì Hảo Hảo BIG tôm chua cay",
+        "Mỳ Hảo Hảo BIG tôm chua cay"
+      ],
+      "packageLabel": "gói 100 g · chưa pha nước",
+      "servingLabel": "gói khô 100 g",
+      "servingGrams": 100,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 434,
+      "proteinGPer100g": 8.8,
+      "carbsGPer100g": 61.7,
+      "fatGPer100g": 16.9,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 100 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/mi-hao-hao/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 100,
+        "nutrientsPerPackage": {
+          "kcal": 434,
+          "proteinG": 8.8,
+          "carbsG": 61.7,
+          "fatG": 16.9,
+          "sodiumMg": 2320,
+          "sugarG": 6
+        },
+        "variantIndex": 8,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/11/3D-GOI-HH-BIG-100-RENEW-4-768x986.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "a015353763dfcc4873a99cd8be8d3d5740578fae0d4c6326d957be20e17f5c86",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "de16d432dc7514f6ff666b1fe954ad9c68da0c87bf5c1fcd92e2504827d1b4b4",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri",
+              "raw": "2.320mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số",
+              "raw": "6,0g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2320,
+        "sugar": 6
+      }
+    },
+    {
+      "id": "pho-de-nhat-bo-68g",
+      "name": "Phở gói Đệ Nhất bò 68 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Phở gói Đệ Nhất bò",
+        "Phở Đệ Nhất bò"
+      ],
+      "packageLabel": "gói 68 g · chưa pha nước",
+      "servingLabel": "gói khô 68 g",
+      "servingGrams": 68,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 369.117647,
+      "proteinGPer100g": 7.352941,
+      "carbsGPer100g": 72.647059,
+      "fatGPer100g": 5.441176,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 68 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/pho-de-nhat/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 68,
+        "nutrientsPerPackage": {
+          "kcal": 251,
+          "proteinG": 5,
+          "carbsG": 49.4,
+          "fatG": 3.7,
+          "sodiumMg": 1625,
+          "sugarG": 2.4
+        },
+        "variantIndex": 0,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/06/3D-PHO-DE-NHAT-BO-NHE_bk-1-768x598.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "a2da54639fa55a8e333da91a5013569300216fc6e80a06dfc8870597b45fdaf3",
+        "weightSourceUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2026/10/TCB-DE-NHAT-PHO-HUONG-VI-PHO-BO-15.ACV_.2026-7.01.2026.pdf",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "e800e56adf8253a93d3fd89b455d7783546bd9c216a6cae8080a3302deaab180",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri:",
+              "raw": "1.625 mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số:",
+              "raw": "2,4 g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2389.705882352941,
+        "sugar": 3.5294117647058822
+      }
+    },
+    {
+      "id": "pho-de-nhat-ga-67g",
+      "name": "Phở gói Đệ Nhất gà 67 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Phở gói Đệ Nhất gà",
+        "Phở Đệ Nhất gà"
+      ],
+      "packageLabel": "gói 67 g · chưa pha nước",
+      "servingLabel": "gói khô 67 g",
+      "servingGrams": 67,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 380.597015,
+      "proteinGPer100g": 7.462687,
+      "carbsGPer100g": 76.41791,
+      "fatGPer100g": 4.925373,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 67 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/pho-de-nhat/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 67,
+        "nutrientsPerPackage": {
+          "kcal": 255,
+          "proteinG": 5,
+          "carbsG": 51.2,
+          "fatG": 3.3,
+          "sodiumMg": 1420,
+          "sugarG": 1.7
+        },
+        "variantIndex": 1,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/06/3D-PHO-DE-NHAT-GA_bk-768x598.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "a2da54639fa55a8e333da91a5013569300216fc6e80a06dfc8870597b45fdaf3",
+        "weightSourceUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2026/10/TCB-DE-NHAT-PHO-HV-PHO-GA-95.ACV_.2025-5.12.2025.pdf",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "e800e56adf8253a93d3fd89b455d7783546bd9c216a6cae8080a3302deaab180",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri:",
+              "raw": "1.420 mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số:",
+              "raw": "1,7 g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2119.402985074627,
+        "sugar": 2.537313432835821
+      }
+    },
+    {
+      "id": "mien-phu-huong-thit-bam-55g",
+      "name": "Miến Phú Hương thịt bằm 55 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Miến Phú Hương thịt bằm"
+      ],
+      "packageLabel": "gói 55 g · chưa pha nước",
+      "servingLabel": "gói khô 55 g",
+      "servingGrams": 55,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 361.818182,
+      "proteinGPer100g": 4.545455,
+      "carbsGPer100g": 75.818182,
+      "fatGPer100g": 4.545455,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 55 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/mien-phu-huong/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 55,
+        "nutrientsPerPackage": {
+          "kcal": 199,
+          "proteinG": 2.5,
+          "carbsG": 41.7,
+          "fatG": 2.5,
+          "sodiumMg": 1744,
+          "sugarG": 4.3
+        },
+        "variantIndex": 0,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/07/3D-GOI-MIEN-THIT-BAM-BO-VITAMIN-B12-768x598.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "e4682c68202c3fc618b91a58d6c2265a592c14a8dab067d6a1f85cba055b9f55",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "c4b95de872e7312ff9fe31b7a3d1ece7696f863143b0c28ff161f4322ec35abf",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri",
+              "raw": "1.744 mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số",
+              "raw": "4,3 g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 3170.909090909091,
+        "sugar": 7.818181818181818
+      }
+    },
+    {
+      "id": "mien-phu-huong-suon-heo-55g",
+      "name": "Miến Phú Hương sườn heo 55 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Miến Phú Hương sườn heo"
+      ],
+      "packageLabel": "gói 55 g · chưa pha nước",
+      "servingLabel": "gói khô 55 g",
+      "servingGrams": 55,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 352.727273,
+      "proteinGPer100g": 3.818182,
+      "carbsGPer100g": 74.909091,
+      "fatGPer100g": 4.181818,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 55 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/mien-phu-huong/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 55,
+        "nutrientsPerPackage": {
+          "kcal": 194,
+          "proteinG": 2.1,
+          "carbsG": 41.2,
+          "fatG": 2.3,
+          "sodiumMg": 1851,
+          "sugarG": 4.2
+        },
+        "variantIndex": 1,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/07/3D-GOI-MIEN-SUON-HEO-BO-VITAMIN-B12-768x598.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "e4682c68202c3fc618b91a58d6c2265a592c14a8dab067d6a1f85cba055b9f55",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "c4b95de872e7312ff9fe31b7a3d1ece7696f863143b0c28ff161f4322ec35abf",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri",
+              "raw": "1.851 mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số",
+              "raw": "4,2 g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 3365.4545454545455,
+        "sugar": 7.636363636363637
+      }
+    },
+    {
+      "id": "mien-phu-huong-lau-thai-tom-60g",
+      "name": "Miến Phú Hương lẩu Thái tôm 60 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Miến Phú Hương lẩu Thái tôm"
+      ],
+      "packageLabel": "gói 60 g · chưa pha nước",
+      "servingLabel": "gói khô 60 g",
+      "servingGrams": 60,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 335,
+      "proteinGPer100g": 2.666667,
+      "carbsGPer100g": 73.166667,
+      "fatGPer100g": 3.5,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 60 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/mien-phu-huong/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 60,
+        "nutrientsPerPackage": {
+          "kcal": 201,
+          "proteinG": 1.6,
+          "carbsG": 43.9,
+          "fatG": 2.1,
+          "sodiumMg": 2094,
+          "sugarG": 6.6
+        },
+        "variantIndex": 2,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/07/3D-GOI-MIEN-TOM-BO-VITAMIN-B12-768x598.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "e4682c68202c3fc618b91a58d6c2265a592c14a8dab067d6a1f85cba055b9f55",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "c4b95de872e7312ff9fe31b7a3d1ece7696f863143b0c28ff161f4322ec35abf",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri",
+              "raw": "2.094 mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số",
+              "raw": "6,6 g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 3490,
+        "sugar": 11
+      }
+    },
+    {
+      "id": "mien-phu-huong-ga-53g",
+      "name": "Miến Phú Hương gà 53 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Miến Phú Hương gà"
+      ],
+      "packageLabel": "gói 53 g · chưa pha nước",
+      "servingLabel": "gói khô 53 g",
+      "servingGrams": 53,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 356.603774,
+      "proteinGPer100g": 3.584906,
+      "carbsGPer100g": 75.660377,
+      "fatGPer100g": 4.339623,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 53 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/mien-phu-huong/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 53,
+        "nutrientsPerPackage": {
+          "kcal": 189,
+          "proteinG": 1.9,
+          "carbsG": 40.1,
+          "fatG": 2.3,
+          "sodiumMg": 1532
+        },
+        "variantIndex": 3,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/07/3D-GOI-MIEN-GA-BO-VITAMIN-B12-768x598.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "e4682c68202c3fc618b91a58d6c2265a592c14a8dab067d6a1f85cba055b9f55",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "c4b95de872e7312ff9fe31b7a3d1ece7696f863143b0c28ff161f4322ec35abf",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri",
+              "raw": "1.532 mg"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2890.566037735849
+      }
+    },
+    {
+      "id": "hu-tieu-nhip-song-nam-vang-70g",
+      "name": "Hủ tiếu Nhịp Sống Nam Vang 70 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Hủ tiếu Nhịp Sống Nam Vang"
+      ],
+      "packageLabel": "gói 70 g · chưa pha nước",
+      "servingLabel": "gói khô 70 g",
+      "servingGrams": 70,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 404.285714,
+      "proteinGPer100g": 6,
+      "carbsGPer100g": 68.428571,
+      "fatGPer100g": 11.857143,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 70 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/hu-tieu-nhip-song/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 70,
+        "nutrientsPerPackage": {
+          "kcal": 283,
+          "proteinG": 4.2,
+          "carbsG": 47.9,
+          "fatG": 8.3,
+          "sodiumMg": 1669,
+          "sugarG": 2.4
+        },
+        "variantIndex": 0,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/06/3D-HU-TIEU-NAM-VANG-copy-768x598.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "f6784c6b959bbd8d0f3a534ff7bc0254618e61639c1f2d8d9eaa54a04f11e256",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "f4fad41661ee4d68a0370202a8429c6f3229f4dd7e8adc3d1613c6d07bc32987",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri:",
+              "raw": "1,669 mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số:",
+              "raw": "2,4 g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2384.285714285714,
+        "sugar": 3.4285714285714284
+      }
+    },
+    {
+      "id": "hu-tieu-nhip-song-suon-heo-70g",
+      "name": "Hủ tiếu Nhịp Sống sườn heo 70 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Hủ tiếu Nhịp Sống sườn heo"
+      ],
+      "packageLabel": "gói 70 g · chưa pha nước",
+      "servingLabel": "gói khô 70 g",
+      "servingGrams": 70,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 380,
+      "proteinGPer100g": 6,
+      "carbsGPer100g": 68.857143,
+      "fatGPer100g": 9,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 70 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/hu-tieu-nhip-song/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 70,
+        "nutrientsPerPackage": {
+          "kcal": 266,
+          "proteinG": 4.2,
+          "carbsG": 48.2,
+          "fatG": 6.3,
+          "sodiumMg": 1645,
+          "sugarG": 2.7
+        },
+        "variantIndex": 1,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/06/3D-HU-TIEU-SUON-HEO-copy-768x598.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "f6784c6b959bbd8d0f3a534ff7bc0254618e61639c1f2d8d9eaa54a04f11e256",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "f4fad41661ee4d68a0370202a8429c6f3229f4dd7e8adc3d1613c6d07bc32987",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri:",
+              "raw": "1,645 mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số:",
+              "raw": "2,7 g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2350,
+        "sugar": 3.857142857142857
+      }
+    },
+    {
+      "id": "hu-tieu-nhip-song-bo-kho-75g",
+      "name": "Hủ tiếu Nhịp Sống bò kho 75 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Hủ tiếu Nhịp Sống bò kho"
+      ],
+      "packageLabel": "gói 75 g · chưa pha nước",
+      "servingLabel": "gói khô 75 g",
+      "servingGrams": 75,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 394.666667,
+      "proteinGPer100g": 6,
+      "carbsGPer100g": 66.266667,
+      "fatGPer100g": 11.733333,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 75 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/hu-tieu-nhip-song/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 75,
+        "nutrientsPerPackage": {
+          "kcal": 296,
+          "proteinG": 4.5,
+          "carbsG": 49.7,
+          "fatG": 8.8,
+          "sodiumMg": 1673,
+          "sugarG": 4.6
+        },
+        "variantIndex": 2,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/06/3D-HU-TIEU-BO-KHO-copy-768x598.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "f6784c6b959bbd8d0f3a534ff7bc0254618e61639c1f2d8d9eaa54a04f11e256",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "f4fad41661ee4d68a0370202a8429c6f3229f4dd7e8adc3d1613c6d07bc32987",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri:",
+              "raw": "1,673 mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số:",
+              "raw": "4,6 g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2230.6666666666665,
+        "sugar": 6.133333333333333
+      }
+    },
+    {
+      "id": "hu-tieu-nhip-song-chay-nam-vang-70g",
+      "name": "Hủ tiếu Nhịp Sống chay Nam Vang 70 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Hủ tiếu Nhịp Sống chay Nam Vang"
+      ],
+      "packageLabel": "gói 70 g · chưa pha nước",
+      "servingLabel": "gói khô 70 g",
+      "servingGrams": 70,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 397.142857,
+      "proteinGPer100g": 6.142857,
+      "carbsGPer100g": 74,
+      "fatGPer100g": 8.571429,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 70 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/hu-tieu-nhip-song/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 70,
+        "nutrientsPerPackage": {
+          "kcal": 278,
+          "proteinG": 4.3,
+          "carbsG": 51.8,
+          "fatG": 6,
+          "sodiumMg": 1701,
+          "sugarG": 2.8
+        },
+        "variantIndex": 3,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/06/3D-HU-TIEU-CHAY-NAM-VANG-copy-768x598.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "f6784c6b959bbd8d0f3a534ff7bc0254618e61639c1f2d8d9eaa54a04f11e256",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "f4fad41661ee4d68a0370202a8429c6f3229f4dd7e8adc3d1613c6d07bc32987",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri:",
+              "raw": "1,701 mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số:",
+              "raw": "2,8 g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2430,
+        "sugar": 4
+      }
+    },
+    {
+      "id": "hu-tieu-kho-nhip-song-72g",
+      "name": "Hủ tiếu khô Nhịp Sống Nam Vang 72 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Hủ tiếu khô Nhịp Sống Nam Vang"
+      ],
+      "packageLabel": "gói 72 g · chưa pha nước",
+      "servingLabel": "gói khô 72 g",
+      "servingGrams": 72,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 405.555556,
+      "proteinGPer100g": 6.388889,
+      "carbsGPer100g": 67.5,
+      "fatGPer100g": 12.222222,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 72 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/hu-tieu-nhip-song/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 72,
+        "nutrientsPerPackage": {
+          "kcal": 292,
+          "proteinG": 4.6,
+          "carbsG": 48.6,
+          "fatG": 8.8,
+          "sodiumMg": 950,
+          "sugarG": 3.5
+        },
+        "variantIndex": 4,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/06/3D-HU-TIEU-KHO-NAM-VANG-copy-768x598.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "f6784c6b959bbd8d0f3a534ff7bc0254618e61639c1f2d8d9eaa54a04f11e256",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "f4fad41661ee4d68a0370202a8429c6f3229f4dd7e8adc3d1613c6d07bc32987",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri:",
+              "raw": "950 mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số:",
+              "raw": "3,5 g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 1319.4444444444443,
+        "sugar": 4.861111111111111
+      }
+    },
+    {
+      "id": "pho-tron-de-nhat-bo-84g",
+      "name": "Phở trộn Đệ Nhất bò 84 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Phở trộn Đệ Nhất bò"
+      ],
+      "packageLabel": "gói 84 g · chưa pha nước",
+      "servingLabel": "gói khô 84 g",
+      "servingGrams": 84,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 386.904762,
+      "proteinGPer100g": 6.071429,
+      "carbsGPer100g": 72.02381,
+      "fatGPer100g": 8.333333,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 84 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/pho-tron-de-nhat/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 84,
+        "nutrientsPerPackage": {
+          "kcal": 325,
+          "proteinG": 5.1,
+          "carbsG": 60.5,
+          "fatG": 7,
+          "sodiumMg": 1016,
+          "sugarG": 3.6
+        },
+        "variantIndex": 0,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/06/Pho-tron-De-Nhat-huong-vi-Bo-new-768x598.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "72d06362db06a50934f8c907f2dce95a9ab7ce235730ca9b2087b9cad5a28c15",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "5bf88b48a9ba844620f468736d96829bab6544aae542f14b9f2271d9d9039bd7",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri/Sodium:",
+              "raw": "1.016mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số/Total Sugars:",
+              "raw": "3,6g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 1209.5238095238096,
+        "sugar": 4.285714285714286
+      }
+    },
+    {
+      "id": "pho-tron-de-nhat-thap-cam-cay-84g",
+      "name": "Phở trộn Đệ Nhất thập cẩm cay 84 g (gói khô)",
+      "brand": "Acecook",
+      "alternateNames": [
+        "Phở trộn Đệ Nhất thập cẩm cay"
+      ],
+      "packageLabel": "gói 84 g · chưa pha nước",
+      "servingLabel": "gói khô 84 g",
+      "servingGrams": 84,
+      "category": "Sản phẩm đóng gói",
+      "servingBasis": "per_100g",
+      "unit": "g",
+      "kcalPer100g": 389.285714,
+      "proteinGPer100g": 6.071429,
+      "carbsGPer100g": 70.833333,
+      "fatGPer100g": 9.047619,
+      "isEstimated": true,
+      "sourceLabel": "Acecook VN · Nhãn/gói 84 g · đối chiếu bao bì",
+      "sourceUrl": "https://acecookvietnam.vn/product/pho-tron-de-nhat/",
+      "catalogVersion": "manufacturer-labels-2026-11-10",
+      "sourceDetails": {
+        "method": "manufacturer_label",
+        "basis": "per_package",
+        "netWeightGrams": 84,
+        "nutrientsPerPackage": {
+          "kcal": 327,
+          "proteinG": 5.1,
+          "carbsG": 59.5,
+          "fatG": 7.6,
+          "sodiumMg": 976,
+          "sugarG": 2.9
+        },
+        "variantIndex": 1,
+        "packageImageUrl": "https://acecookvietnam.vn/wp/wp-content/uploads/2025/06/Pho-tron-De-Nhat-huong-vi-Thap-Cam-Cay-new-768x598.png",
+        "retrievedOn": "2026-11-10",
+        "state": "Sản phẩm khô gồm vắt và toàn bộ gói gia vị đi kèm; chưa thêm nước, thịt, trứng hoặc rau.",
+        "normalization": "Nhãn một gói × 100 / khối lượng tịnh. Chọn 1 gói để ghi đủ dinh dưỡng nhãn; không nhập khối lượng sau pha nước.",
+        "sourcePageSha256": "72d06362db06a50934f8c907f2dce95a9ab7ce235730ca9b2087b9cad5a28c15",
+        "additionalNutrientEvidence": {
+          "reviewedOn": "2026-11-10",
+          "snapshotSha256": "5bf88b48a9ba844620f468736d96829bab6544aae542f14b9f2271d9d9039bd7",
+          "basis": "per_package",
+          "rows": {
+            "sodium": {
+              "label": "Natri/Sodium:",
+              "raw": "976mg"
+            },
+            "sugar": {
+              "label": "Đường tổng số/Total Sugars:",
+              "raw": "2,9g"
+            }
+          }
+        }
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 1161.904761904762,
+        "sugar": 3.4523809523809526
+      }
     }
-  ]
+  ],
+  "additionalNutrientNotes": "Natri (mg) và đường tổng (g) theo từng gói khô đúng vị/khối lượng; chuẩn hóa về 100 g. Không có số liệu chất xơ trong các bảng Acecook đã đọc. Miến Phú Hương gà có đường 4,0 nhưng bảng thiếu đơn vị nên chưa nhập."
 }

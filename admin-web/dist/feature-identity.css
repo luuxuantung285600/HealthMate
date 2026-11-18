@@ -1,0 +1,56 @@
+/* Generated from Flutter AppFeatureVisual; do not maintain a second palette. */
+:root {
+  --feature-nutrition: #9a4107;
+  --feature-water: #0369a1;
+  --feature-workout: #b34427;
+  --feature-activity: #8a600d;
+  --feature-chatbot: #6854a5;
+  --feature-scanner: #0e7490;
+  --feature-weight: #ad3562;
+  --feature-goals: #7a5b16;
+  --feature-quest: #946000;
+  --feature-profile: #1d4ed8;
+  --feature-report: #087783;
+  --feature-premium: #a16207;
+  --feature-support: #0e7490;
+  --feature-wellness: #be185d;
+  --feature-sleep: #6d28d9;
+  --feature-steps: #8a600d;
+  --feature-reminder: #b45309;
+}
+:root[data-theme="dark"] {
+  --feature-nutrition: #fbbf77;
+  --feature-water: #7dd3fc;
+  --feature-workout: #ff9b7d;
+  --feature-activity: #e7c77c;
+  --feature-chatbot: #c1afe8;
+  --feature-scanner: #67e8f9;
+  --feature-weight: #f5a0bc;
+  --feature-goals: #e2cb90;
+  --feature-quest: #f4c866;
+  --feature-profile: #93c5fd;
+  --feature-report: #74d9df;
+  --feature-premium: #fde047;
+  --feature-support: #67e8f9;
+  --feature-wellness: #f9a8d4;
+  --feature-sleep: #c4b5fd;
+  --feature-steps: #e7c77c;
+  --feature-reminder: #fbbf77;
+}
+.feature-nutrition { --feature-color: var(--feature-nutrition); }
+.feature-water { --feature-color: var(--feature-water); }
+.feature-workout { --feature-color: var(--feature-workout); }
+.feature-activity { --feature-color: var(--feature-activity); }
+.feature-chatbot { --feature-color: var(--feature-chatbot); }
+.feature-scanner { --feature-color: var(--feature-scanner); }
+.feature-weight { --feature-color: var(--feature-weight); }
+.feature-goals { --feature-color: var(--feature-goals); }
+.feature-quest { --feature-color: var(--feature-quest); }
+.feature-profile { --feature-color: var(--feature-profile); }
+.feature-report { --feature-color: var(--feature-report); }
+.feature-premium { --feature-color: var(--feature-premium); }
+.feature-support { --feature-color: var(--feature-support); }
+.feature-wellness { --feature-color: var(--feature-wellness); }
+.feature-sleep { --feature-color: var(--feature-sleep); }
+.feature-steps { --feature-color: var(--feature-steps); }
+.feature-reminder { --feature-color: var(--feature-reminder); }

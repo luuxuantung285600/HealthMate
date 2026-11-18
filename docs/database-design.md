@@ -1,5 +1,133 @@
 # Thiết kế dữ liệu HealthMate
 
+## 17/11/2026 — Nhận diện hồ sơ cá nhân
+
+`users/{uid}` có map tùy chọn `profileAppearance`, schemaVersion vẫn2:
+
+| Field | Giá trị | Giới hạn |
+| --- | --- | --- |
+| avatar | null hoặc base64 PNG | tối đa64KiB PNG,87384 ký tự |
+| cover | null hoặc base64 PNG | tối đa64KiB PNG,87384 ký tự |
+| background | null hoặc base64 PNG | tối đa64KiB PNG,87384 ký tự |
+
+Map hiện diện phải đủ đúng ba key; null gỡ ảnh từng vị trí. Không có map
+nghĩa là dùng giao diện cũ. Client cắt giữa khung/resize/re-encode, không
+ghi file gốc, URL, EXIF, tên file hoặc vị trí. Kích thước mong muốn lần lượt
+160×160/640×240/400×640; ảnh nhiều chi tiết được giảm thêm để đạt giới hạn.
+Ba chuỗi tối đa262.152 ký tự, dưới trần document1MiB với hồ sơ hiện có.
+Không thêm collection, Storage, dependency hoặc dịch vụ trả phí.
+
+Lưu nhận diện atomically chỉ cập nhật displayName/profileAppearance/updatedAt;
+không sửa sức khỏe, createdAt hoặc nhật ký. Form sức khỏe cũ dùng partial
+update nên giữ ảnh. Đọc từ stream hồ sơ hiện có, dữ liệu riêng theo UID;
+Security Rules giữ xác minh email, khóa/xóa tài khoản và chặn admin/UID khác
+đọc ảnh. Quy trình xóa document hồ sơ hiện có loại bỏ cả map ảnh.
+
+Miễn automatic index cho `users.profileAppearance` và subfield kế thừa;
+cấu hình lưu tại firestore.indexes.json. Đã áp dụng một field exemption bằng
+REST PATCH updateMask=indexConfig và đọc lại đủ ba subfield; không deploy
+toàn bộ indexes local. Rules đã deploy riêng/đọc lại khớp local, ba composite
+indexes production giữ nguyên. Chi tiết/quyền/kiểm thử/giới hạn:
+[tên và ảnh hồ sơ](profile-identity-2026-11-17.md).
+
+## 10/11/2026 — Phát hành nutrient catalog v1
+
+Đã đưa extras/evidence lên 110 document catalog hiện có, thêm fiber có nguồn
+cho 4 mục USDA. Không tạo collection/schema hoặc deploy Rules. Các patch
+dùng đường dẫn lồng nhau để giữ vi chất khác; `sourceDetails.additionalNutrientEvidence.releaseVersion`
+là `verified-nutrients-2026-11-10-v1`. Metadata server updatedAt/updatedBy/
+lastAdminOperationId và 110 admin_audit được commit atomically qua CLI/IAM.
+Actor dạng `firebase-cli:<hash>`, phân biệt với Firebase Auth UID. Client
+không được quyền giả mạo audit/IAM này. Không chạm users/* hoặc snapshot.
+Trường tường minh null/rỗng/0, ảnh, visibility, nguồn/khẩu phần được bảo vệ.
+[Quy trình và kiểm chứng thực tế](verified-nutrients-release-2026-11-10.md).
+
+## 10/11/2026 — Nguồn natri/đường cho catalog Việt Nam
+
+Không thêm collection, index hoặc Rules. Dùng `extraNutrientsPer100g` hiện có:
+`sodium` mg/100g, `sugar` g/100g. `sourceDetails.additionalNutrientEvidence`
+giữ ngày kiểm tra, hash tài liệu và dòng/ID dưỡng chất tương ứng. Dữ liệu gói
+giữ thêm `sodiumMg`/`sugarG` trong `sourceDetails.nutrientsPerPackage`, importer
+kiểm tra phép chuẩn hóa về 100g theo đúng trọng lượng gói khô.
+
+Asset bổ sung 106 mục natri và 74 mục đường; chất xơ tổng vẫn 4 mục ở nhóm
+213 mục Việt Nam/đồ gói. Không dùng Celluloza của bảng 2007 thay chất xơ tổng,
+không gán nguồn thiếu bằng 0 và không cập nhật snapshot nhật ký cũ.
+
+Chỉ kế thừa extras từ bundle cho document cũ hoàn toàn thiếu field khi ID,
+tên, sourceLabel, bốn macro và cơ sở g/100g khớp. Field hiện diện rỗng/null
+hoặc đã có giá trị là quyết định của catalog server, không tự ghi đè.
+Lượt chuẩn bị chưa ghi production; đã phát hành ở mục phía trên.
+[Nguồn và giới hạn](vietnamese-nutrients-2026-11-10.md).
+
+## 10/11/2026 — Muối, đường tổng và chất xơ trên Trang chủ
+
+Giữ collection hiện có. `food_catalog/{foodId}.extraNutrientsPer100g` dùng map
+các key vi chất đã hỗ trợ; admin nhập `sugar` (g/100 g) và `sodium` (mg/100 g),
+giữ những key khác khi sửa. `fiberGPer100g` tiếp tục dùng field riêng. Để trống
+nghĩa là chưa có thông tin; số 0 chỉ khi nguồn xác nhận bằng 0. Rules kiểm tra
+map/key/giới hạn và giữ quyền ghi catalog dành cho admin qua audit transaction.
+
+Muối quy đổi (g) = natri (mg) × 2,5 / 1.000. Đường là đường tổng, gồm đường tự
+nhiên; không suy từ carb hoặc coi như đường thêm/đường tự do. App dùng snapshot
+nhật ký và lượng khẩu phần đã xác nhận. Tổng ngày thiếu bất kỳ món nào sẽ hiện
+chưa đủ dữ liệu cho chất tương ứng. Đổi catalog không sửa nhật ký đã lưu.
+
+`users/{uid}/nutrition_targets/{effectiveFromDateKey}` có thêm ba field tùy chọn:
+
+| Field | Đơn vị | Kiểm tra kỹ thuật |
+| --- | --- | --- |
+| `saltGLimit` | g/ngày | null hoặc 0–50 |
+| `sugarGLimit` | g/ngày | null hoặc 0–500 |
+| `fiberGTarget` | g/ngày | null hoặc 0–200 |
+
+Đây là mốc người dùng tự đặt, không tự áp khuyến nghị y tế. SchemaVersion vẫn 1;
+document cũ không có field vẫn hợp lệ, null gỡ mốc, 0 được giữ. Repository đọc/lưu
+và xác nhận server cả ba field. Tính lại kcal/macros bằng cá nhân hóa/onboarding
+giữ mốc đã lưu; cá nhân hóa từ form giữ cả mốc đang nhập. Không thêm listener,
+index, collection hay dịch vụ. Cần phát hành Rules trước app/web mới; chưa deploy.
+
+Chi tiết: [muối, đường và chất xơ](secondary-nutrients-2026-11-10.md).
+
+## 10/11/2026 — Ảnh món ăn do admin quản lý
+
+`food_catalog/{foodId}` bổ sung field công khai, tùy chọn `photo`:
+
+- Không có field, `null`, hoặc `{mode: "default"}`: dùng ảnh bundled nếu mã và tên món khớp. Không tự gán ảnh món khác.
+- `{mode: "hidden"}`: gỡ ảnh trên app, không quay lại ảnh bundled.
+- `{mode: "custom", url, title, author, sourceUrl, license, licenseUrl}`: ảnh công khai cùng thông tin quyền sử dụng. URL ảnh tối đa 1.000 ký tự; source/license URL tối đa 500; title 200, author 120, license 80. Ba URL dùng HTTPS, không thông tin đăng nhập hoặc khoảng trắng. Mode và field không hợp lệ bị từ chối bởi Rules; app bỏ ảnh lỗi metadata, giữ dinh dưỡng.
+
+Không lưu binary/base64 hoặc ảnh bữa ăn riêng tư vào Firestore; không thêm collection/Storage/dependency. Admin lưu qua transaction và audit nguyên tử hiện có, có lý do và kiểm tra version; client thường không được ghi catalog. Dữ liệu cũ tiếp tục đọc được. Ảnh bundled vẫn trong app; 51 bản preview có cùng hash và license đi kèm web. Ảnh custom được tải từ URL nguồn; Firestore chỉ giữ cấu hình/credits, không sao chép tệp.
+
+App dùng chung stream catalog hiện có cho list/chọn món/khẩu phần/nguyên liệu/modal nguồn ảnh. Không tạo listener Firestore cho từng ảnh. Nhật ký dinh dưỡng giữ snapshot; đổi ảnh không đổi kcal/khối lượng/lịch sử. Dùng URL mới hoặc có phiên bản khi thay nội dung tệp ở máy chủ ảnh để tránh cache cũ. Các món chỉ có trong thư viện offline cần có bản ghi catalog cùng ID trước khi admin áp dụng override; không tự publish toàn bộ 11.220 món lên Firebase trong giai đoạn này.
+
+Rules, web và app mới cần được phát hành cùng nhau. Chưa deploy/ghi dữ liệu production trong lượt này.
+
+
+## 09/11/2026 — Buổi tập theo bộ đếm
+
+Giữ schema `users/{uid}/activity_logs/{id}` và Rules. Buổi hướng dẫn dùng
+ID ổn định có tiền tố `workout_`, transaction chống ghi trùng và xác nhận
+server trước báo thành công. `durationMinutes` là phút vận động trọn vẹn;
+không cộng nghỉ/tạm dừng, không ghi khi dưới một phút. `note` ghi tên buổi,
+phần đủ thời gian/bỏ qua, giây vận động/nghỉ và việc dừng sớm; không thêm
+calo giả hoặc field mới. `performedAt` là thời điểm bắt đầu buổi, vẫn dùng
+`dateKey`/offset hiện có. Chưa lưu session đang chạy lên database.
+
+Ba buổi/14 động tác hướng dẫn là nội dung cục bộ theo phiên bản app,
+không đổi danh mục MET/33 hoạt động trên admin hoặc mở quyền đọc sức khỏe.
+Chi tiết: [báo cáo tập luyện](guided-workouts-2026-11-09.md).
+
+## 09/11/2026 — Luồng câu hỏi ban đầu
+
+Giữ nguyên schema Firestore, danh sách năm mục tiêu và map `personalization`
+version 1. Không thêm collection, quyền admin hoặc field hồ sơ. Nháp riêng tư
+trên thiết bị nâng lên version 2, bổ sung `screen` (ID màn ổn định) và
+`includeDetails` (nhánh câu hỏi tùy chọn), giữ `step` tương đương phần cũ.
+Đọc được nháp version 1 và bảo toàn dữ liệu khi chuyển sang luồng mới.
+Nháp không phải hồ sơ hoàn tất. Kcal/macro vẫn lưu qua repository mục tiêu
+hiện có sau xác nhận, theo UID và ngày hiệu lực; lịch sử được giữ nguyên.
+
 ## 07/11/2026 — Tra cứu và nhật ký admin
 
 Không thêm collection/field hoặc đổi Rules. Tra cứu UID/mã dùng document
@@ -1440,3 +1568,138 @@ collection, index hoặc Rules; không sửa snapshot dinh dưỡng lịch sử.
 
 Chi tiết và kiểm thử tại
 [meal-plan-operations-2026-11-09.md](meal-plan-operations-2026-11-09.md).
+# Bổ sung 10/11/2026 — Danh mục trái cây và đồ uống
+
+Không tạo collection hoặc database mới. Danh sách gợi ý100 mục mỗi nhóm
+là metadata duyệt theo ID, không phải lịch sử ăn uống hoặc khuyến nghị sức
+khỏe. Vẫn dùng `food_catalog/{id}` và snapshot trong nhật ký hiện có.
+
+27 dòng VDD mới dùng các field dinh dưỡng/nguồn hiện hành, thêm bằng chứng
+ô bảng tại `sourceDetails.compositionEvidence` (SHA PDF, ngày rà soát, value
+cell/reference cell/unit). Dữ liệu chế độ ăn và thành phần của quả/đồ uống
+đơn được ghi rõ; metadata base được giữ nếu supplement không có ID tương ứng.
+150 tham chiếu USDA giữ ID FDC và mô tả nguồn. Khẩu phần cốc dùng
+`servingLabel/servingGrams/portionSource` hiện có, không thêm mật độ mặc định.
+
+Phát hành177 create-only vào food_catalog và177 audit tương ứng; không
+ghi users/*, không đổi209 document cũ, không đổi Security Rules. Bộ xử lý
+tìm kiếm áp dụng nhóm cùng bộ lọc hiện có trước giới hạn kết quả; quyền
+ẩn món từ admin vẫn có ưu tiên. Chi tiết:
+[fruit-drink-catalog-2026-11-10.md](fruit-drink-catalog-2026-11-10.md).
+
+
+## Bổ sung 10/11/2026 — 114 mục mới, catalog đạt500
+
+Không thêm collection/đổi Rules.114 food_catalog document mới và114
+admin_audit được tạo atomically với precondition exists:false. Đã đọc lại
+so toàn bộ field/timestamp và xác minh386 document cũ nguyên vẹn. Tổng500;
+review sau phát hành không còn creates. Không ghi users/* hoặc meal snapshot.
+
+Giữ schema nguồn hiện có: sourceDetails.compositionEvidence có mã/trang PDF,
+SHA nguồn và ô value/reference/unit.17 mục đồ hộp tham khảo dùng packageLabel
+để hiện trong bộ lọc đóng gói; không tự đặt servingGrams/brand/barcode. Đồ hộp
+trái cây/đồ uống có thể thuộc cả hai bộ lọc.Ảnh86 mục vẫn là asset/manifest,
+không lưu binary ảnh trong Firestore; photo custom/hidden của admin giữ ưu tiên.
+Chi tiết: [catalog-500-2026-11-10.md](catalog-500-2026-11-10.md).
+
+## Bổ sung 11/11/2026 — ẩn món chưa có ảnh đạt yêu cầu
+
+Giữ500 food_catalog document để bảo toàn nguồn/lịch sử;121 mục đặt isActive:false,
+379 mục hoạt động giữ nguyên. Không đổi schema/Rules/index hoặc ghi users/*.
+Publisher chỉ mask isActive,updatedBy,lastAdminOperationId và server updatedAt;
+precondition updateTime, create-only admin_audit trong cùng commit, đọc lại.
+Ảnh là asset app/admin, không phải binary lưu Firestore. Ảnh custom hợp lệ
+vẫn thuộc field photo hiện có; có thể thêm ảnh và bật lại qua admin. Bản app
+mới có loại trừ offline và FDC aliases; snapshot cũ/món riêng không bị thay đổi.
+Phạm vi500 ID và partition379/121 nằm ở data/food_catalog/photo-release.json.
+Chi tiết: [food-photo-release-2026-11-11.md](food-photo-release-2026-11-11.md).
+
+## 11/11/2026 — Tương thích quyền của client hiện tại
+
+Đã phát hành Rules chuẩn cho support topic enum (giữ ticket legacy không topic),
+nullable bounded saltGLimit/sugarGLimit/fiberGTarget trên nutrition_targets riêng,
+và owner GET premium_memberships đã có trong repository. Không tạo collection,
+import/chuyển dữ liệu hoặc bật billing. Catalog photo và các quyền riêng tư trước
+đó giữ nguyên. Client/admin không được ghi membership/giao dịch hoặc đọc billing
+secret. Chi tiết: [user-permissions-2026-11-11.md](user-permissions-2026-11-11.md).
+## 11/11/2026 — Thư viện động tác quản trị được
+
+`exercise_library/{exerciseId}` lưu override của danh mục động tác, độc lập
+`activity_logs`/MET. Field: `name` (1–120 ký tự), `sourceId` (7 chữ/số ID
+ExerciseDB), `region` (`chest/back/legs/shoulders/arms/core/cardio`), `equipment`
+(`bodyweight/dumbbell/barbell/cable/machine/band/kettlebell`), `target` (1–160),
+`steps` (2–6 chuỗi, 1–400 ký tự/bước), `easier` (1–400), `isActive` (bool),
+`schemaVersion:1`, `updatedAt`, `updatedBy`, `lastAdminOperationId`.
+
+ID document 1–100 chữ/số/gạch ngang/gạch dưới. Bài đi kèm dùng `edb-{sourceId}`.
+Client đọc là tài khoản đã xác minh email, đang được phép hoạt động; ghi chỉ
+admin đang đủ quyền và kèm `admin_audit` nguyên tử/phiên bản. Cấm hard-delete.
+Gỡ bài dùng `isActive:false` để override bộ đi kèm không sống lại; khôi phục true.
+Không lưu GIF/URL xoay vòng/hướng dẫn gốc nhà cung cấp hoặc dữ liệu sức khỏe.
+Catalog biên soạn ban đầu có 50 bài, remote có thể bổ sung. Không cần index ghép.
+Không tạo collection hoặc seed dữ liệu trên production trong giai đoạn này.
+
+## 11/11/2026 — Photo tùy chỉnh chỉ yêu cầu URL
+
+Theo yêu cầu người dùng, `food_catalog/{foodId}.photo` ở mode custom chỉ bắt buộc
+`mode:custom` và `url` (public HTTPS, tối đa 1000 ký tự, không có credentials).
+`title/author/sourceUrl/license/licenseUrl` legacy là tùy chọn, vẫn giới hạn
+kiểu/độ dài/HTTPS nếu có. Không chấp nhận key khác. Mode default/hidden giữ
+schema chỉ field mode. Không migration hoặc xóa metadata hàng loạt.
+
+Admin sửa ảnh chỉ ghi photo, kèm audit nguyên tử và expected version như trước;
+same URL giữ metadata hiện có, URL mới không gán lại credits cũ. App hỗ trợ cả
+minimal và legacy, không tự điền tác giả/giấy phép. Rules chỉ thay validator ảnh,
+quyền đọc/ghi catalog và riêng tư không đổi. Đã deploy, xem
+docs/admin-photo-url-only-2026-11-11.md.
+
+### Calo vận động v1 — 16/11/2026
+
+`users/{uid}/activity_logs/{id}` thêm field tùy chọn `energyEstimate` (map hoặc
+null). Bản ghi cũ không có field vẫn hợp lệ. Map có đúng các field:
+
+- `formulaVersion: 1`: cố định bảng 2024 Adult Compendium và quy ước MET × kg × giờ.
+- `metCode`: mã trong bảng v1, khớp `activityType`; không nhận MET/calo tự nhập.
+- `weightKg`: snapshot cân thực tế (20–500 kg là giới hạn nhập liệu).
+- `weightMeasuredAtMillis`: epoch milliseconds của lần cân, không sau `performedAt`.
+- `ageYears`: tuổi tại ngày vận động, 19–59 theo phạm vi bảng nguồn.
+- `durationSeconds`: giây vận động, 60–86400, phần nguyên chia 60 khớp `durationMinutes`.
+- `budgetTargetFromDateKey`, `budgetBaseKcal`: cùng null nếu chưa xác nhận cộng
+  ngân sách; nếu xác nhận, lưu phiên bản ngày áp dụng và kcal mục tiêu gốc.
+
+Suy ra `grossKcal = MET × kg × giây / 3600`,
+`activeKcal = (MET − 1) × kg × giây / 3600` từ snapshot/bảng v1 bất biến. Không
+lưu hoặc tin một tổng calo do client tự cung cấp. Phiên bản mới không sửa MET
+của v1. Không lấy cân nặng/hệ số hiện tại để tính lại lịch sử khi đọc.
+
+Ngân sách chỉ cộng `activeKcal` nếu người dùng xác nhận ngoài mức hoạt động
+thường ngày và phiên bản mục tiêu vẫn khớp. Mọi nhật ký vận động ngăn cộng đồng
+thời điều chỉnh bước chân. Stream sửa/xóa nhật ký làm ngân sách tính lại. Các
+món đã ăn, mục tiêu gốc và macro không đổi. Rules chặn field lạ, nhóm/mã không
+khớp, input ngoài biên, thời lượng mâu thuẫn và truy cập chéo UID. Đã kiểm bằng
+emulator và SDK thật; rules production đã phát hành riêng phạm vi này, đọc lại
+khớp candidate. Chi tiết: `docs/activity-energy-2026-11-16.md`.
+
+
+### Nguồn minh họa tập luyện RepDB preview — 17/11/2026
+
+`exercise_library/{exerciseId}` thêm `sourceProvider` tùy chọn: thiếu hoặc
+`exercisedb` vẫn dùng sourceId 7 ký tự như trước; `repdb` dùng một trong 30
+slug preview được phép. schemaVersion vẫn 1. RepDB bundled ID có dạng
+`repdb-female-{slug}`; override giữ nguyên document ID khi sửa/ẩn/khôi phục.
+Không lưu URL/bytes media vào Firestore. Các field hướng dẫn, audit, quyền
+admin và quyền đọc người dùng giữ nguyên. Dụng cụ bổ sung `ab_wheel` và
+`balance_dome`. Không đổi nhật ký/calo. Rules local đã qua 5 ca emulator;
+chưa deploy Rules production. Chi tiết: `repdb-female-30-2026-11-17.md`.
+
+### Chỉ dùng ExerciseDB — 18/11/2026 (thay thế preview RepDB ở trên)
+
+Người dùng đã chọn một nguồn ExerciseDB. Không phát hành schema/Rules RepDB
+trước đó lên production. Trạng thái local hiện tại: sourceProvider tùy chọn,
+khi thiếu mặc định exercisedb; nếu có chỉ được là exercisedb. sourceId luôn
+7 chữ/số; không còn 30 slug RepDB hoặc dụng cụ ab_wheel/balance_dome trong
+schema bài tập. Danh mục chung app/admin trở lại 54 bài (50 nam + 4 nữ).
+Không ghi/xóa document từ Firebase thật để chuyển nguồn. Giữ audit/quyền
+admin/user read, ẩn/khôi phục bằng isActive và snapshot nhật ký như cũ.
+Không lưu URL/GIF vào Firestore. Rules local qua 5/5 ca emulator, chưa deploy.
+Chi tiết: [exercisedb-only-2026-11-18.md](exercisedb-only-2026-11-18.md).

@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import '../models/nutrition_models.dart';
 import '../models/nutrition_validation.dart';
@@ -141,7 +142,7 @@ class _QuickAddDialogState extends State<QuickAddDialog> {
           leading: IconButton(
             tooltip: 'Hủy',
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.close),
+            icon: const Icon(AppIcons.x),
           ),
         ),
         bottomNavigationBar: SafeArea(

@@ -34,7 +34,8 @@ export async function dashboardPage({host, api, h, button, openPage, errorMessag
   const message = error => errorMessage?.(error) ?? error.message;
   function stat(node, label, value, foot, {compact = false, accent = false} = {}) {
     const icon = {'dashboard-accounts':'user_directory','dashboard-revenue':'revenue','dashboard-transactions':'transactions','dashboard-buyers':'buyers'}[node.id];
-    node.className = `stat${accent ? ' stat-accent' : ''}`;
+    const feature = {'dashboard-accounts':'profile','dashboard-revenue':'premium','dashboard-transactions':'premium','dashboard-buyers':'profile'}[node.id];
+    node.className = `stat feature-${feature}${accent ? ' stat-accent' : ''}`;
     node.replaceChildren(h('div',{class:'stat-label'},label),
       h('div',{class:`stat-number${compact ? ' stat-unavailable' : ''}`},value),h('div',{class:'stat-foot'},foot),
       h('span',{class:'stat-symbol','aria-hidden':'true'},adminIcon(icon)));

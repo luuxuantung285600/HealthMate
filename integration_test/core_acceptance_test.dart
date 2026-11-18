@@ -61,6 +61,15 @@ final _today = localDateOnly(DateTime.now());
 final _yesterday = DateTime(_today.year, _today.month, _today.day - 1);
 Finder keyed(String key) => find.byKey(ValueKey(key));
 
+// The journal starts a new meal at the selected clock time. Templates supply
+// frozen food snapshots, and must not replace that time or its inferred type.
+MealType mealTypeAt(DateTime time) => switch (time.hour) {
+  < 10 => MealType.breakfast,
+  < 14 => MealType.lunch,
+  < 18 => MealType.snack,
+  _ => MealType.dinner,
+};
+
 Future<void> waitFor(
   WidgetTester tester,
   Finder finder, {
@@ -158,21 +167,26 @@ Future<void> register(
 
 Future<void> onboard(WidgetTester tester, String name) async {
   await enter(tester, 'onboarding-name', name);
+  await tap(tester, keyed('onboarding-next'));
+  await tap(
+    tester,
+    keyed('onboarding-next'),
+  ); // Formula coefficient can be deferred.
   await tap(tester, keyed('onboarding-birth-date'));
   await pickDate(tester, DateTime(2000, 1, 15));
+  await tap(tester, keyed('onboarding-next'));
   await enter(tester, 'onboarding-height', '170');
+  await tap(tester, keyed('onboarding-next'));
   await enter(tester, 'onboarding-weight', '70');
   await tap(tester, keyed('onboarding-next'));
   await tap(tester, keyed('onboarding-goal-maintain_weight'));
   await tap(tester, keyed('onboarding-next'));
-  await tap(tester, keyed('onboarding-next'));
-  for (var i = 0; i < 3; i++) {
+  for (var i = 0; i < 4; i++) {
     await tap(
       tester,
       keyed('onboarding-next'),
-    ); // Activity, food, sleep questions.
+    ); // Activity, scope, optional details, review.
   }
-  await tap(tester, keyed('onboarding-next')); // Optional nutrition plan step.
   await tap(tester, keyed('onboarding-complete'));
   // Auth restores the protected destination (Profile after signing out there).
   // First verify that onboarding exits into the real app shell, then open Home.
@@ -425,7 +439,7 @@ void main() {
       await checkpoint('02-target-history');
 
       await tap(tester, keyed('nav-journal'));
-      await waitFor(tester, keyed('add-meal-lunch'));
+      await waitFor(tester, keyed('journal-add-meal'));
       await waitFor(
         tester,
         find.byWidgetPredicate(
@@ -441,13 +455,13 @@ void main() {
       final journalViewport = tester.getRect(
         find.byType(CustomScrollView).first,
       );
-      final breakfastAdd = tester.getRect(keyed('add-meal-breakfast'));
-      expect(breakfastAdd.top, greaterThanOrEqualTo(journalViewport.top));
-      expect(breakfastAdd.bottom, lessThanOrEqualTo(journalViewport.bottom));
-      expect(keyed('add-meal-breakfast').hitTestable(), findsOneWidget);
-      debugPrint('U1_VIEWPORT journal add=$breakfastAdd body=$journalViewport');
+      final journalAdd = tester.getRect(keyed('journal-add-meal'));
+      expect(journalAdd.top, greaterThanOrEqualTo(journalViewport.top));
+      expect(journalAdd.bottom, lessThanOrEqualTo(journalViewport.bottom));
+      expect(keyed('journal-add-meal').hitTestable(), findsOneWidget);
+      debugPrint('U1_VIEWPORT journal add=$journalAdd body=$journalViewport');
       await capture('c6-u1-journal-first-viewport');
-      await tap(tester, keyed('add-meal-lunch'));
+      await tap(tester, keyed('journal-add-meal'));
       await waitFor(tester, keyed('food-search'));
       await enter(tester, 'food-search', 'Cơm fixture C6');
       await waitFor(tester, find.byTooltip('Thêm Cơm fixture C6'));
@@ -640,10 +654,10 @@ void main() {
       await checkpoint('06-create-personal-and-recipe');
 
       await quick('meal');
-      // Exercise two valid breakfasts regardless of the wall clock. The global
-      // quick action still keeps the application's normal time-based default.
-      await tap(tester, keyed('meal-type'));
-      await tap(tester, find.text(MealType.breakfast.label).last);
+      // Recipe snapshots use the new meal's clock time and inferred type.
+      final recipeAt = tester
+          .widget<MealFormDialog>(find.byType(MealFormDialog))
+          .initialConsumedAt!;
       await tap(tester, keyed('food-source-recipes'));
       await waitFor(tester, keyed('choose-recipe-$recipeId'));
       await tap(tester, keyed('choose-recipe-$recipeId'));
@@ -662,7 +676,8 @@ void main() {
       );
       expect(recipeMeal.items.single.grams, 20);
       expect(recipeMeal.totals.kcal, 50);
-      expect(recipeMeal.type, MealType.breakfast);
+      expect(recipeMeal.type, mealTypeAt(recipeAt));
+      expect(recipeMeal.consumedAt, recipeAt);
 
       await profileRoot();
       await tap(tester, keyed('open-food-library'));
@@ -728,7 +743,10 @@ void main() {
       await checkpoint('08-offline-draft-retry-target-history');
 
       await tap(tester, keyed('nav-journal'));
-      await tap(tester, keyed('add-meal-breakfast'));
+      await tap(tester, keyed('journal-add-meal'));
+      final recentAt = tester
+          .widget<MealFormDialog>(find.byType(MealFormDialog))
+          .initialConsumedAt!;
       await waitFor(tester, find.byTooltip('Dùng lại Cơm fixture C6'));
       await tap(tester, find.byTooltip('Dùng lại Cơm fixture C6'));
       await tap(tester, keyed('save-meal'));
@@ -739,20 +757,24 @@ void main() {
         DateTime(_today.year, _today.month, _today.day + 1),
       );
       expect(repeated.length, 3);
-      final breakfast = repeated.singleWhere(
+      final recentMeal = repeated.singleWhere(
         (m) => m.id != sourceId && m.id != recipeMeal.id,
       );
       expect(repeated.map((m) => m.id).toSet(), hasLength(3));
-      expect(breakfast.id, isNot(sourceId));
-      expect(breakfast.id, isNot(recipeMeal.id));
-      expect(breakfast.type, MealType.breakfast);
+      expect(recentMeal.id, isNot(sourceId));
+      expect(recentMeal.id, isNot(recipeMeal.id));
+      expect(recentMeal.type, mealTypeAt(recentAt));
+      expect(recentMeal.consumedAt, recentAt);
       expect(
-        repeated.where((m) => m.type == MealType.breakfast).length,
-        greaterThanOrEqualTo(2),
+        find.descendant(
+          of: keyed('journal-hour-${recentAt.hour}'),
+          matching: keyed('meal-log-${recentMeal.id}'),
+        ),
+        findsOneWidget,
       );
-      expect(breakfast.items.single.grams, 200);
-      expect(breakfast.totals.kcal, 260);
-      expect(breakfast.dateKey, localDateKey(_today));
+      expect(recentMeal.items.single.grams, 200);
+      expect(recentMeal.totals.kcal, 260);
+      expect(recentMeal.dateKey, localDateKey(_today));
       debugPrint(
         'H2_RECENT repeated through 3 taps, no typed search or portion confirmation; source amount shown before use',
       );
@@ -771,7 +793,7 @@ void main() {
       // Create a named multi-food template from an unsaved meal, discard that
       // meal, then use/edit the frozen template after the recipe source is gone.
       await tap(tester, keyed('nav-journal'));
-      await tap(tester, keyed('add-meal-dinner'));
+      await tap(tester, keyed('journal-add-meal'));
       await tap(tester, find.byTooltip('Dùng lại Cơm fixture C6'));
       await tap(tester, find.byTooltip('Dùng lại C6 công thức'));
       await tap(tester, keyed('meal-templates'));
@@ -796,7 +818,10 @@ void main() {
         )).length,
         3,
       );
-      await tap(tester, keyed('add-meal-dinner'));
+      await tap(tester, keyed('journal-add-meal'));
+      final templateAt = tester
+          .widget<MealFormDialog>(find.byType(MealFormDialog))
+          .initialConsumedAt!;
       await tap(tester, keyed('meal-templates'));
       await waitFor(tester, keyed('use-template-${template.id}'));
       await tap(tester, keyed('use-template-${template.id}'));
@@ -822,10 +847,11 @@ void main() {
       );
       expect(withTemplate.length, 4);
       expect(newMeal.items.length, 2);
-      expect(newMeal.type, MealType.dinner);
+      expect(newMeal.type, mealTypeAt(templateAt));
+      expect(newMeal.consumedAt, templateAt);
       expect(newMeal.dateKey, localDateKey(_today));
       expect(newMeal.totals.kcal, 180);
-      await tap(tester, keyed('add-meal-dinner'));
+      await tap(tester, keyed('journal-add-meal'));
       await tap(tester, keyed('meal-templates'));
       await waitFor(tester, keyed('delete-template-${template.id}'));
       await tap(tester, keyed('delete-template-${template.id}'));
@@ -847,7 +873,7 @@ void main() {
       debugPrint(
         'H2_TEMPLATES UI create/cancel/use/edit/delete; source gone; two foods 180 kcal; no history mutation',
       );
-      await tap(tester, keyed('add-meal-snack'));
+      await tap(tester, keyed('journal-add-meal'));
       await tap(tester, keyed('open-quick-add'));
       await enter(tester, 'quick-name', 'H3 QA chỉ kcal');
       await enter(tester, 'quick-kcal', '250');
@@ -962,7 +988,7 @@ void main() {
         'H5_REPORT 30/90 real totals and effective targets; explicit confirmation; old empty period stays empty',
       );
       await tap(tester, keyed('nav-journal'));
-      await tap(tester, keyed('add-meal-snack'));
+      await tap(tester, keyed('journal-add-meal'));
       await tap(tester, keyed('open-quick-add'));
       await tap(tester, keyed('quick-basis'));
       await tap(tester, find.text(LabelBasis.per100ml.label).last);

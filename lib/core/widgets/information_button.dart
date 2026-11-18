@@ -1,3 +1,4 @@
+import '../theme/app_icons.dart';
 import 'package:flutter/material.dart';
 
 class InformationButton extends StatelessWidget {
@@ -13,7 +14,7 @@ class InformationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => IconButton(
     tooltip: title,
-    icon: const Icon(Icons.info_outline_rounded, size: 20),
+    icon: const Icon(AppIcons.info, size: 20),
     onPressed: () => showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(

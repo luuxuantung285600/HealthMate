@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/widgets/confirmed_save.dart';
@@ -170,7 +171,7 @@ class _LibraryFoodListState extends ConsumerState<LibraryFoodList> {
           onPressed: busy
               ? null
               : () => openLibraryForm(context, kind: widget.kind),
-          icon: const Icon(Icons.add),
+          icon: const Icon(AppIcons.plus),
           label: Text(
             widget.kind == FoodSourceKind.custom
                 ? 'Tạo món cá nhân'
@@ -236,7 +237,7 @@ class _LibraryFoodListState extends ConsumerState<LibraryFoodList> {
                             onPressed: busy
                                 ? null
                                 : () => widget.onChoose!(item.asFood()),
-                            icon: const Icon(Icons.add),
+                            icon: const Icon(AppIcons.plus),
                             label: const Text('Thêm vào bữa'),
                           ),
                         TextButton(

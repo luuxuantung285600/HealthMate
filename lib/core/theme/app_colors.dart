@@ -1,65 +1,65 @@
 import 'package:flutter/material.dart';
 
-import 'design_tokens.dart';
+import 'app_feature_visuals.dart';
 
 /// App-wide color definitions
-/// Modern minimalist palette: Deep navy + electric cyan + warm orange
+/// Neutral canvases and controls shared by every feature.
 abstract final class AppColors {
   // ============================================================================
   // LIGHT THEME COLORS
   // ============================================================================
 
-  /// Canvas/Scaffold background - Off-white
-  static const lightCanvas = DesignTokens.navy50; // #F8FAFC
+  /// Canvas/Scaffold background - Pure white
+  static const lightCanvas = Colors.white;
 
   /// Surface - Pure white cards
   static const lightSurface = Color(0xFFFFFFFF);
 
   /// Surface muted - Subtle gray
-  static const lightSurfaceMuted = DesignTokens.navy100; // #F1F5F9
+  static const lightSurfaceMuted = Color(0xFFF5F5F5);
 
-  /// Primary - Electric cyan
-  static const lightPrimary = Color(0xFF2459A3);
+  /// Primary controls follow the neutral app theme.
+  static const lightPrimary = Color(0xFF262626);
 
-  /// On primary - Dark navy (readable on cyan)
+  /// On primary - White on dark controls
   static const lightOnPrimary = Color(0xFFFFFFFF);
 
-  /// Text - Dark navy
-  static const lightText = DesignTokens.navy900; // #0F172A
+  /// Text - Near black
+  static const lightText = Color(0xFF171717);
 
-  /// Text muted - Mid navy
-  static const lightTextMuted = DesignTokens.navy600; // #475569
+  /// Text muted - Neutral gray
+  static const lightTextMuted = Color(0xFF606060);
 
   /// Outline - Light gray
-  static const lightOutline = DesignTokens.navy200; // #E2E8F0
+  static const lightOutline = Color(0xFFDFDFDF);
 
   // ============================================================================
   // DARK THEME COLORS
   // ============================================================================
 
   /// Canvas - True black for OLED
-  static const darkCanvas = Color(0xFF171824);
+  static const darkCanvas = Colors.black;
 
-  /// Surface - Dark navy
-  static const darkSurface = Color(0xFF252832);
+  /// Surface - Neutral charcoal
+  static const darkSurface = Color(0xFF121212);
 
-  /// Surface elevated - Slightly lighter navy
-  static const darkSurfaceElevated = DesignTokens.navy800; // #1E293B
+  /// Surface elevated - Neutral raised layer
+  static const darkSurfaceElevated = Color(0xFF202020);
 
-  /// Primary - Bright cyan (more vibrant for dark)
-  static const darkPrimary = Color(0xFF91BAFF);
+  /// Primary controls stay readable on the black canvas.
+  static const darkPrimary = Color(0xFFEEEEEE);
 
-  /// On primary - Dark navy
-  static const darkOnPrimary = Color(0xFF10233F);
+  /// On primary - Near black on light controls
+  static const darkOnPrimary = Color(0xFF171717);
 
   /// Text - Off-white
-  static const darkText = DesignTokens.navy50; // #F8FAFC
+  static const darkText = Color(0xFFF5F5F5);
 
   /// Text muted - Light gray
-  static const darkTextMuted = DesignTokens.navy400; // #94A3B8
+  static const darkTextMuted = Color(0xFFBDBDBD);
 
   /// Outline - Dark gray
-  static const darkOutline = DesignTokens.navy700; // #334155
+  static const darkOutline = Color(0xFF353535);
 }
 
 @immutable
@@ -75,36 +75,20 @@ class AppMetricColors extends ThemeExtension<AppMetricColors> {
     required this.onWeightContainer,
   });
 
-  /// Updated metric colors with modern palette
-  static const light = AppMetricColors(
-    // Water - Electric cyan
-    waterContainer: DesignTokens.cyan100, // Light cyan background
-    onWaterContainer: Color(0xFF12616F), // Dark cyan text
-    // Meal - Warm orange
-    mealContainer: DesignTokens.orange100, // Light orange background
-    onMealContainer: Color(0xFF8A3B0B), // Dark orange text
-    // Activity - Emerald green
-    activityContainer: DesignTokens.activityLight, // Light green background
-    onActivityContainer: Color(0xFF176244), // Dark green text
-    // Weight - Purple
-    weightContainer: DesignTokens.weightLight, // Light purple background
-    onWeightContainer: Color(0xFF6D28D9),
-  );
+  static final light = _forBrightness(Brightness.light);
+  static final dark = _forBrightness(Brightness.dark);
 
-  static const dark = AppMetricColors(
-    // Water - Electric cyan (vibrant for dark)
-    waterContainer: Color(0xFF164E63), // Dark cyan background
-    onWaterContainer: DesignTokens.cyan300, // Light cyan text
-    // Meal - Warm orange
-    mealContainer: Color(0xFF7C2D12), // Dark orange background
-    onMealContainer: DesignTokens.orange300, // Light orange text
-    // Activity - Emerald green
-    activityContainer: Color(0xFF065F46), // Dark green background
-    onActivityContainer: Color(0xFF6EE7B7), // Light green text
-    // Weight - Purple
-    weightContainer: Color(0xFF581C87), // Dark purple background
-    onWeightContainer: Color(0xFFC4B5FD), // Light purple text
-  );
+  static AppMetricColors _forBrightness(Brightness brightness) =>
+      AppMetricColors(
+        waterContainer: _background(AppFeatureVisual.water, brightness),
+        onWaterContainer: AppFeatureVisual.water.foreground(brightness),
+        mealContainer: _background(AppFeatureVisual.nutrition, brightness),
+        onMealContainer: AppFeatureVisual.nutrition.foreground(brightness),
+        activityContainer: _background(AppFeatureVisual.activity, brightness),
+        onActivityContainer: AppFeatureVisual.activity.foreground(brightness),
+        weightContainer: _background(AppFeatureVisual.weight, brightness),
+        onWeightContainer: AppFeatureVisual.weight.foreground(brightness),
+      );
 
   final Color waterContainer;
   final Color onWaterContainer;
@@ -135,6 +119,12 @@ class AppMetricColors extends ThemeExtension<AppMetricColors> {
     weightContainer: weightContainer ?? this.weightContainer,
     onWeightContainer: onWeightContainer ?? this.onWeightContainer,
   );
+
+  static Color _background(AppFeatureVisual feature, Brightness brightness) =>
+      Color.alphaBlend(
+        feature.background(brightness),
+        brightness == Brightness.dark ? AppColors.darkSurface : Colors.white,
+      );
 
   @override
   AppMetricColors lerp(AppMetricColors? other, double t) {

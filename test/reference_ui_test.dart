@@ -1,3 +1,4 @@
+import 'support/load_icon_font.dart';
 import 'package:healthmate/core/config/app_feature_flags.dart';
 import 'package:healthmate/core/utils/local_date_key.dart';
 import 'package:healthmate/features/nutrition/models/nutrition_models.dart';
@@ -66,9 +67,12 @@ Future<void> captureReference(
 void main() {
   final now = DateTime(2026, 10, 27, 9);
   setUpAll(() async {
-    final font = FontLoader('Inter');
+    await loadIconFont();
+    final font = FontLoader('Public Sans');
     for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      font.addFont(rootBundle.load('assets/fonts/inter/Inter-$weight.ttf'));
+      font.addFont(
+        rootBundle.load('assets/fonts/public_sans/PublicSans-$weight.ttf'),
+      );
     }
     await font.load();
     await (FontLoader(
@@ -259,15 +263,22 @@ void main() {
       ],
     );
     await captureReference(tester, key, 'today-populated');
-    expect(find.text('1.160 đã ăn'), findsOneWidget);
+    expect(
+      tester
+          .widget<Text>(find.byKey(const ValueKey('today-recorded-energy')))
+          .data,
+      '1.160',
+    );
     expect(find.byTooltip('Chụp món ăn'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('nav-journal')));
     await captureReference(tester, key, 'journal-populated');
-    expect(find.byKey(const ValueKey('add-meal-breakfast')), findsOneWidget);
+    expect(find.byKey(const ValueKey('add-meal-hour-7')), findsOneWidget);
     await openWellnessFromShell(tester);
     await captureReference(tester, key, 'habits-populated');
     expect(find.text('4.872'), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('nav-profile')));
+    await tester.tap(find.byKey(const ValueKey('nav-dashboard')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('profile-avatar')));
     await captureReference(tester, key, 'profile-populated');
     expect(find.text('68'), findsWidgets);
     container.read(appRouterProvider).go(AppRoutes.progress);
@@ -292,7 +303,15 @@ void main() {
           dashboardNow: now,
           captureKey: key,
         );
-        expect(find.byKey(const ValueKey('nav-profile')), findsOneWidget);
+        expect(find.byKey(const ValueKey('nav-profile')), findsNothing);
+        expect(find.byKey(const ValueKey('nav-workouts')), findsOneWidget);
+        expect(find.byKey(const ValueKey('nav-progress')), findsOneWidget);
+        expect(
+          tester.getCenter(find.byKey(const ValueKey('nav-workouts'))).dx,
+          lessThan(
+            tester.getCenter(find.byKey(const ValueKey('nav-progress'))).dx,
+          ),
+        );
         expect(find.text('Chưa ghi món'), findsNWidgets(4));
         if (layout.$1 == 390) {
           await captureReference(tester, key, 'today-${mode.name}');
@@ -369,7 +388,7 @@ void main() {
       container.read(appRouterProvider).go(AppRoutes.journal);
       await tester.pumpAndSettle();
       // Use the accessible summary card rather than the long log section.
-      final breakfast = find.byKey(const ValueKey('add-meal-breakfast'));
+      final breakfast = find.byKey(const ValueKey('add-meal-hour-7'));
       await tester.ensureVisible(breakfast);
       await tester.tap(breakfast);
       await tester.pumpAndSettle();

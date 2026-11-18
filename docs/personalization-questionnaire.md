@@ -4,11 +4,15 @@ Triển khai ngày 27/10/2026 theo yêu cầu. Mở rộng hồ sơ/onboarding (
 
 ## Trải nghiệm
 
-- Lần đầu đăng nhập và xác minh email: 8 màn ngắn, 20 câu đánh số, sau đó xem đề xuất và xác nhận.
-- Người đã hoàn tất hồ sơ vào app bình thường. Có lối vào **Thêm → Cá nhân hóa · 20 câu hỏi** để điền/sửa sau.
+- Cập nhật 09/11/2026: mỗi màn tập trung một câu theo tham khảo trải nghiệm Wao, dùng nhận diện HealthMate và Inter. Phần thiết yếu gồm tên, hệ số công thức, ngày sinh, số đo, một trong năm mục tiêu, vận động, phạm vi đề xuất và nhịp điều chỉnh khi thay đổi cân nặng.
+- Chiều cao/cân nặng có thanh kéo và nhập số chính xác; BMI tham khảo thay đổi theo số đo. Nhịp nhẹ/vừa hiển thị phần trăm điều chỉnh và cập nhật kcal ngay, không quy đổi thành cam kết kg/tuần.
+- Phần ngày tập, ăn uống, thực phẩm tránh, giấc ngủ, khó khăn và ưu tiên là nhánh tùy chọn. Số bước thay đổi theo mục tiêu và câu trả lời; không bắt người dùng hoàn thành mọi câu.
+- Người đã hoàn tất hồ sơ vào app bình thường. Mở **Cá nhân → Cá nhân hóa thêm** để điền/sửa.
 - Các thông tin bắt buộc cũ (ngày sinh, chiều cao, cân nặng, mục tiêu) giữ validation. Tên hiển thị là thông tin hồ sơ ngoài bộ khảo sát.
 - Mọi câu bổ sung có thể để sau; không suy ra câu trả lời từ trường trống. Không tập thường xuyên bỏ câu 11–12. Duy trì/tăng cơ/thói quen bỏ câu 6–7: thường còn 16–20 câu phù hợp.
 - Xem lại câu trả lời trước khi lưu; hủy không ghi dữ liệu. Chỉ nút hoàn tất ghi hồ sơ. Không xóa lịch sử.
+- Trang cuối tự tạo bản đề xuất khi đủ thông tin phù hợp: mục tiêu, kcal/ngày, tổng 7 ngày nếu giữ cùng mục tiêu, năng lượng nghỉ, TDEE, phần điều chỉnh và ba chất. Có lựa chọn không áp dụng calo. Mục tiêu đang có cần đồng ý thay từ hôm nay; không thay ngầm.
+- Nháp cục bộ version 2 dùng ID màn ổn định và lựa chọn nhánh tùy chọn; đọc và chuyển nháp version 1, giữ câu trả lời, không di chuyển dữ liệu sức khỏe trên Firestore.
 
 ## Danh sách và mục đích
 
@@ -35,7 +39,7 @@ Triển khai ngày 27/10/2026 theo yêu cầu. Mở rộng hồ sơ/onboarding (
 | 19 | Khó khăn chính | Đặc điểm hồ sơ |
 | 20 | Ưu tiên ngoài mục tiêu chính | Hướng dẫn hành động đầu tiên: ghi bữa/vận động/giấc ngủ |
 
-Tăng cơ là lựa chọn mới, dùng năng lượng duy trì khởi đầu; chưa tự tính thặng dư hay chương trình tập cơ. Giá trị `gain_weight_or_muscle` đã lưu được giữ nguyên (nhãn mới Tăng cân); không sửa dữ liệu người cũ. Thiết bị cũ cần cập nhật app để hiểu lựa chọn `gain_muscle` mới.
+Tăng cơ dùng năng lượng duy trì khởi đầu; luồng thiết lập mới chọn phân bổ ưu tiên đạm có sẵn (25% đạm, 45% carb, 30% béo). Không tự tính thặng dư hay chương trình tập cơ. Giá trị `gain_weight_or_muscle` đã lưu được giữ nguyên (nhãn Tăng cân); không sửa dữ liệu người cũ. Thiết bị cũ cần cập nhật app để hiểu lựa chọn `gain_muscle`.
 
 ## Nguồn và giới hạn
 
@@ -60,4 +64,4 @@ Khi sửa khảo sát: giữ `onboardingCompletedAt` và các số đo cũ. Cân
 
 ## Kiểm thử
 
-Xem kết quả thực tế mới nhất ở [test-report.md](test-report.md). Có model/codec/nhánh/null/validation, widget tạo-sửa-tải lại/giữ số đo/đăng xuất/font150%, lỗi và thử lại mục tiêu, Rules UID/admin/ẩn danh và giới hạn payload. Test ảnh dùng font BeVietnamPro thật; chưa thay cho nghiệm thu trên điện thoại.
+Xem kết quả thực tế mới nhất ở [test-report.md](test-report.md). Có model/codec/nhánh/null/validation, widget tạo-sửa-tải lại/giữ số đo/đăng xuất, lỗi và thử lại mục tiêu, Rules UID/admin/ẩn danh và giới hạn payload. Ảnh kiểm tra mới dùng Inter; chưa thay cho nghiệm thu trên điện thoại.

@@ -60,6 +60,10 @@ const journalCsvColumns = [
   'note',
   'source_label',
   'is_estimated',
+  'activity_active_kcal',
+  'activity_gross_kcal',
+  'activity_met_code',
+  'activity_seconds',
 ];
 
 /// Pure encoder for ALREADY owner-scoped repository results. This is not an
@@ -244,7 +248,9 @@ List<Map<String, Object?>> _journalRows({
       base(
         'activity',
         log.id,
-        'activity_logs_contract_v1',
+        log.energyEstimate == null
+            ? 'activity_logs_contract_v1'
+            : 'activity_energy_v1',
         log.dateKey,
         log.performedAt,
         log.timezoneOffsetMinutes,
@@ -252,6 +258,14 @@ List<Map<String, Object?>> _journalRows({
       )..addAll({
         'name': log.type.label,
         'activity_minutes': log.durationMinutes,
+        'activity_active_kcal': log.energyEstimate?.activeKcal,
+        'activity_gross_kcal': log.energyEstimate?.grossKcal,
+        'activity_met_code': log.energyEstimate?.metCode,
+        'activity_seconds': log.energyEstimate?.durationSeconds,
+        'weight_kg': log.energyEstimate?.weightKg,
+        if (log.energyEstimate != null)
+          'source_label': '2024 Adult Compendium; MET x kg x hours; formula v1',
+        if (log.energyEstimate != null) 'is_estimated': true,
         'note': log.note,
       }),
     );

@@ -24,7 +24,7 @@ const firebase = {};
 for (const key of ['projectId','appId','apiKey','authDomain','storageBucket','messagingSenderId']) {
   if (typeof report.webConfig[key] === 'string') firebase[key] = report.webConfig[key];
 }
-const csp = "default-src 'self'; script-src 'self' https://www.gstatic.com https://www.google.com https://www.recaptcha.net https://apis.google.com; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://www.gstatic.com https://www.google.com; frame-src https://*.firebaseapp.com https://www.google.com https://www.recaptcha.net; object-src 'none'; base-uri 'self'; frame-ancestors 'none'";
+const csp = "default-src 'self'; script-src 'self' https://www.gstatic.com https://www.google.com https://www.recaptcha.net https://apis.google.com; style-src 'self'; font-src 'self'; img-src 'self' https: data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://www.gstatic.com https://www.google.com; frame-src https://*.firebaseapp.com https://www.google.com https://www.recaptcha.net; object-src 'none'; base-uri 'self'; frame-ancestors 'none'";
 fs.mkdirSync(dest, {recursive:true});
 fs.cpSync(path.join(root, 'admin-web/dist'), path.join(dest, 'site'), {recursive:true});
 fs.writeFileSync(path.join(dest, 'site/config.js'), 'window.HEALTHMATE_ADMIN_CONFIG = ' + JSON.stringify({firebase,appCheckSiteKey:siteKey}, null, 2) + ';\n');

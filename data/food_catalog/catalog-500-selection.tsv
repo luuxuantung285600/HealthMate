@@ -1,0 +1,115 @@
+code	name	category	photoQuery
+1006	Hạt kê (khô)	Ngũ cốc	Foxtail millet grain
+1007	Bắp tươi (hạt sống)	Ngũ cốc	Corn kernels
+1008	Bắp vàng (hạt khô)	Ngũ cốc	Dried maize kernels
+1015	Bỏng ngô (không nhãn hàng)	Sản phẩm đóng gói	Popcorn
+1019	Bột bắp vàng	Ngũ cốc	Corn flour
+1021	Cốm tươi	Món ăn Việt	Cốm
+2010	Củ từ (sống)	Củ quả	Dioscorea esculenta tuber
+2011	Khoai nước (sống)	Củ quả	Taro tuber
+3002	Cùi dừa non	Trái cây	Young coconut meat
+3003	Đậu cô ve (hạt khô)	Hạt và đậu	White beans
+3005	Đậu đũa (hạt khô)	Hạt và đậu	Cowpea seeds
+3006	Đậu Hà Lan (hạt khô)	Hạt và đậu	Dried peas
+3008	Đậu trắng (hạt khô)	Hạt và đậu	Kidney beans
+3011	Hạt dẻ to (tươi)	Hạt và đậu	Chestnuts
+3013	Hạt dẻ (khô)	Hạt và đậu	Dried chestnuts
+3016	Hạt mít (sống)	Hạt và đậu	Jackfruit seeds
+3027	Đậu phụ chiên	Món ăn Việt	Fried tofu
+3028	Hạt bí rang (phần ăn được)	Hạt và đậu	Roasted pumpkin seeds
+3029	Hạt dưa rang (phần ăn được)	Hạt và đậu	Watermelon seeds
+4004	Cà bát (sống)	Rau củ	Solanum macrocarpon fruit
+4011	Bắp cải tím (sống)	Rau củ	Red cabbage
+4014	Cải xoong (sống)	Rau củ	Watercress
+4018	Cần ta (sống)	Rau củ	Chinese celery
+4019	Chuối xanh (sống)	Rau củ	Green bananas
+4032	Đậu rồng (sống)	Rau củ	Winged bean
+4034	Gấc (phần ăn được)	Rau củ	Gac fruit
+4035	Giá đậu nành (sống)	Rau củ	Soybean sprouts
+4037	Hành lá (sống)	Rau củ	Scallions
+4041	Hạt sen khô	Hạt và đậu	Dried lotus seeds
+4042	Hẹ (sống)	Rau củ	Garlic chives
+4051	Măng khô	Rau củ	Dried bamboo shoots
+4052	Măng tây trắng (sống)	Rau củ	White asparagus
+4056	Mướp Nhật (sống)	Rau củ	Luffa acutangula fruit
+4057	Ngải cứu (sống)	Rau củ	Mugwort leaves
+4058	Bắp non (sống)	Rau củ	Baby corn
+4059	Ngó sen (sống)	Rau củ	Lotus stems
+4061	Ớt đỏ (sống)	Rau củ	Red chili peppers
+4062	Ớt vàng (sống)	Rau củ	Yellow bell pepper
+4063	Ớt xanh (sống)	Rau củ	Green bell pepper
+4067	Rong biển khô	Rau củ	Dried seaweed
+4068	Rong biển tươi	Rau củ	Edible seaweed
+4073	Rau dền đỏ (sống)	Rau củ	Red amaranth leaves
+4075	Húng quế (sống)	Rau củ	Thai basil
+4076	Rau lang (sống)	Rau củ	Sweet potato leaves
+4081	Ngò rí / rau mùi (sống)	Rau củ	Coriander leaves
+4082	Ngò tây (sống)	Rau củ	Parsley leaves
+7011	Thịt dê nạc (sống)	Thịt	Goat meat
+7023	Thịt trâu (sống)	Thịt	Buffalo meat
+7032	Chân giò heo (phần ăn được, sống)	Thịt	Pork hock raw
+7040	Gan gà (sống)	Thịt	Chicken liver
+7041	Gan heo (sống)	Thịt	Pork liver
+7048	Mề gà (sống)	Thịt	Chicken gizzards
+7064	Chả heo (không nhãn hàng)	Thịt chế biến	Chả chiên
+7065	Chả quế (không nhãn hàng)	Thịt chế biến	Chả quế
+7066	Dăm bông heo (không nhãn hàng)	Thịt chế biến	Ham slices
+7067	Dồi heo (không nhãn hàng)	Thịt chế biến	Dồi
+7068	Giò bò (không nhãn hàng)	Thịt chế biến	Giò bò
+7070	Giò thủ (không nhãn hàng)	Thịt chế biến	Giò thủ
+7072	Nem chạo	Món ăn Việt	Nem chạo
+7074	Chà bông heo (không nhãn hàng)	Thịt chế biến	Pork floss
+7075	Khô bò (không nhãn hàng)	Thịt chế biến	Vietnamese beef jerky
+7076	Khô trâu (không nhãn hàng)	Thịt chế biến	Dried buffalo meat
+7077	Xúc xích heo (không nhãn hàng)	Thịt chế biến	Pork sausages
+8011	Cá hồi (thịt sống)	Hải sản	Raw salmon fillet
+8015	Cá mòi (thịt sống)	Hải sản	Sardines raw
+8020	Cá nục (thịt sống)	Hải sản	Scad fish
+8023	Cá rô đồng (thịt sống)	Hải sản	Anabas testudineus fish
+8027	Cá thu đao (thịt sống)	Hải sản	Pacific saury
+8030	Cá trê (thịt sống)	Hải sản	Catfish fillet
+8031	Cá trích (thịt sống)	Hải sản	Herring fish
+8033	Cua biển (phần ăn được, sống)	Hải sản	Crab meat raw
+8035	Ghẹ (phần ăn được, sống)	Hải sản	Blue swimming crab meat
+8037	Hến (phần ăn được, sống)	Hải sản	Clam meat
+8038	Lươn (thịt sống)	Hải sản	Eel meat raw
+8039	Mực khô (chưa nướng)	Hải sản	Dried squid
+8041	Ốc bươu (phần ăn được, sống)	Hải sản	Apple snail meat
+8052	Tôm đồng (phần ăn được, sống)	Hải sản	Freshwater shrimp
+8053	Tôm khô (không nhãn hàng)	Hải sản	Dried shrimp
+8055	Bánh phồng tôm đã chiên	Sản phẩm đóng gói	Prawn crackers
+8056	Bánh phồng tôm khô (chưa chiên)	Sản phẩm đóng gói	Uncooked prawn crackers
+8058	Chà bông cá lóc (không nhãn hàng)	Hải sản	Fish floss
+8059	Chà bông tôm (không nhãn hàng)	Hải sản	Shrimp floss
+11001	Chuối đóng hộp nước đường (VDD 2007)	Trái cây	Banana in syrup
+11002	Dưa leo đóng hộp (VDD 2007)	Sản phẩm đóng gói	Pickled cucumbers
+11003	Dứa đóng hộp có đường (VDD 2007)	Trái cây	Canned pineapple
+11006	Mận đóng hộp nước đường (VDD 2007)	Trái cây	Canned plums
+11008	Mứt cam có vỏ (không nhãn hàng)	Sản phẩm đóng gói	Orange marmalade
+11009	Mứt chuối (không nhãn hàng)	Sản phẩm đóng gói	Banana jam
+11010	Mứt dứa (không nhãn hàng)	Sản phẩm đóng gói	Pineapple jam
+11012	Nhãn đóng hộp nước đường (VDD 2007)	Trái cây	Canned longan
+11013	Nước dứa đóng hộp (VDD 2007)	Đồ uống	Pineapple juice glass
+11014	Vải đóng hộp nước đường (VDD 2007)	Trái cây	Lychee in syrup
+11015	Cá thu đóng hộp (VDD 2007)	Sản phẩm đóng gói	Canned mackerel
+11016	Cá trích đóng hộp (VDD 2007)	Sản phẩm đóng gói	Canned herring
+11017	Thịt bò đóng hộp (VDD 2007)	Sản phẩm đóng gói	Canned beef
+11018	Thịt gà đóng hộp (VDD 2007)	Sản phẩm đóng gói	Canned chicken
+11019	Thịt heo đóng hộp (VDD 2007)	Sản phẩm đóng gói	Canned pork
+11020	Thịt heo và bò xay đóng hộp (VDD 2007)	Sản phẩm đóng gói	Canned luncheon meat
+11021	Thịt vịt hầm đóng hộp (VDD 2007)	Sản phẩm đóng gói	Canned duck
+12001	Bánh bích cốt (không nhãn hàng)	Sản phẩm đóng gói	Rusk
+12002	Bánh bích quy (không nhãn hàng)	Sản phẩm đóng gói	Biscuits
+12003	Bánh chả (không nhãn hàng)	Sản phẩm đóng gói	Bánh chả
+12005	Bánh đậu xanh (không nhãn hàng)	Sản phẩm đóng gói	Bánh đậu xanh
+12006	Bánh kem xốp (không nhãn hàng)	Sản phẩm đóng gói	Wafer biscuits
+12007	Bánh khảo chay (không nhãn hàng)	Sản phẩm đóng gói	Bánh khảo
+12008	Bánh quế cuộn (không nhãn hàng)	Sản phẩm đóng gói	Wafer rolls
+12009	Bánh sô cô la có nhân (không nhãn hàng)	Sản phẩm đóng gói	Chocolate filled cake
+12010	Sô cô la ngọt dạng thanh (không nhãn hàng)	Sản phẩm đóng gói	Chocolate bar
+12012	Bột ca cao nguyên chất	Sản phẩm đóng gói	Cocoa powder
+12018	Kẹo dừa mềm (không nhãn hàng)	Sản phẩm đóng gói	Coconut candy
+12020	Kẹo đậu phộng (không nhãn hàng)	Sản phẩm đóng gói	Peanut brittle
+12024	Kẹo mè (không nhãn hàng)	Sản phẩm đóng gói	Sesame candy
+12026	Mật ong (không nhãn hàng)	Sản phẩm đóng gói	Honey jar
+13003	Gừng tươi	Rau củ	Ginger root

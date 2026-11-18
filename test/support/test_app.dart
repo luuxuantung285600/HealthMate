@@ -1,3 +1,8 @@
+import 'package:healthmate/core/theme/app_icons.dart';
+import 'package:healthmate/features/profile/data/profile_image_picker.dart';
+import 'package:healthmate/features/activity/data/bundled_exercise_library.dart';
+import 'package:healthmate/features/activity/data/exercise_db_service.dart';
+import 'package:healthmate/features/activity/providers/exercise_library_providers.dart';
 import 'package:healthmate/features/nutrition/data/unified_food_search_service.dart';
 import 'fake_food_search_service.dart';
 import 'package:flutter/material.dart';
@@ -60,12 +65,10 @@ import 'package:healthmate/features/meal_drafts/data/meal_draft_store.dart';
 
 /// Reports follow Figma's title/export header; the Home avatar opens Profile.
 Future<void> openProfileFromShell(WidgetTester tester) async {
-  if (find.byKey(const ValueKey('nav-profile')).evaluate().isEmpty) {
-    await tester.tap(find.byKey(const ValueKey('nav-dashboard')));
-    await tester.pumpAndSettle();
-  }
-  await tester.ensureVisible(find.byKey(const ValueKey('nav-profile')));
-  await tester.tap(find.byKey(const ValueKey('nav-profile')));
+  await tester.tap(find.byKey(const ValueKey('nav-dashboard')));
+  await tester.pumpAndSettle();
+  await tester.ensureVisible(find.byKey(const ValueKey('profile-avatar')));
+  await tester.tap(find.byKey(const ValueKey('profile-avatar')));
   await tester.pumpAndSettle();
 }
 
@@ -82,7 +85,7 @@ Future<void> openMealTools(WidgetTester tester) async {
   final toggle = find.byKey(const ValueKey('meal-more-tools'));
   if (toggle.evaluate().isEmpty) return;
   final icon = tester.widget<IconButton>(toggle).icon as Icon;
-  if (icon.icon == Icons.more_horiz) {
+  if (icon.icon == AppIcons.ellipsis) {
     await tester.tap(find.byKey(const ValueKey('meal-more-tools')));
     await tester.pump(const Duration(milliseconds: 300));
   }
@@ -91,6 +94,18 @@ Future<void> openMealTools(WidgetTester tester) async {
 Future<void> openSelectedMealItems(WidgetTester tester) async {
   if (find.byTooltip('Sửa khẩu phần').evaluate().isNotEmpty) return;
   final selected = find.byKey(const ValueKey('selected-meal-items'));
+  if (selected.evaluate().isEmpty) {
+    await tester.scrollUntilVisible(
+      selected,
+      -240,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey('meal-manual-content')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+  }
   await tester.ensureVisible(selected);
   await tester.pumpAndSettle();
   await tester.tap(
@@ -187,6 +202,7 @@ Future<ProviderContainer> pumpApp(
   Future<BarcodeMealSelection?> Function(BuildContext)? barcodeScanner,
   FoodScannerService? foodScannerService,
   FakeHealthProfileRepository? profileRepository,
+  ProfileImagePicker? profileImagePicker,
   FakeNutritionRepository? nutritionRepository,
   UnifiedFoodSearchService? foodSearchService,
   FakeWaterRepository? waterRepository,
@@ -201,6 +217,7 @@ Future<ProviderContainer> pumpApp(
   bool settle = true,
   AppFeatureFlags featureFlags = const AppFeatureFlags(),
   GlobalKey? captureKey,
+  ExerciseDbService? exerciseMediaService,
   NutritionTargetRepository? targetRepository,
   DayReviewRepository? dayReviewRepository,
   FakeFavoriteFoodRepository? favoriteRepository,
@@ -234,6 +251,15 @@ Future<ProviderContainer> pumpApp(
   final library = libraryRepository ?? FakeFoodLibraryRepository();
   final container = ProviderContainer(
     overrides: [
+      exerciseDbServiceProvider.overrideWith((ref) {
+        final service =
+            exerciseMediaService ?? ExerciseDbService(enabled: false);
+        ref.onDispose(service.close);
+        return service;
+      }),
+      exerciseLibraryProvider.overrideWith(
+        (ref) => Stream.value(bundledExerciseLibrary),
+      ),
       playBillingSupportedProvider.overrideWithValue(false),
       if (premiumQuota != null)
         premiumQuotaProvider.overrideWithValue(premiumQuota),
@@ -284,6 +310,8 @@ Future<ProviderContainer> pumpApp(
         knowledgeService ?? FakeKnowledgeService(),
       ),
       healthProfileRepositoryProvider.overrideWithValue(healthProfile),
+      if (profileImagePicker != null)
+        profileImagePickerProvider.overrideWithValue(profileImagePicker),
       nutritionRepositoryProvider.overrideWithValue(nutrition),
       waterRepositoryProvider.overrideWithValue(water),
       activityRepositoryProvider.overrideWithValue(activity),

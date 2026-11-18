@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -162,13 +163,13 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
           IconButton(
             onPressed: _isProcessing ? null : _scannerService.toggleTorch,
             icon: Icon(
-              _scannerService.hasTorch ? Icons.flash_on : Icons.flash_off,
+              _scannerService.hasTorch ? AppIcons.zap : AppIcons.zapOff,
             ),
             tooltip: 'Đèn flash',
           ),
           IconButton(
             onPressed: _isProcessing ? null : _scannerService.switchCamera,
-            icon: const Icon(Icons.flip_camera_android),
+            icon: const Icon(AppIcons.switchCamera),
             tooltip: 'Đổi camera',
           ),
         ],
@@ -185,7 +186,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
               height: 150,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: _isProcessing ? Colors.green : Colors.white,
+                  color: _isProcessing ? Colors.grey : Colors.white,
                   width: 3,
                 ),
                 borderRadius: BorderRadius.circular(12),

@@ -1,7 +1,9 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import '../../../core/widgets/confirmed_save.dart';
 
 import '../models/activity_log.dart';
+import 'activity_energy_editor.dart';
 
 class ActivityLogDialog extends StatefulWidget {
   const ActivityLogDialog({
@@ -22,6 +24,7 @@ class ActivityLogDialog extends StatefulWidget {
 class _ActivityLogDialogState extends State<ActivityLogDialog>
     with ConfirmedSave<ActivityLogDraft, ActivityLogDialog> {
   final _formKey = GlobalKey<FormState>();
+  final _energyKey = GlobalKey<ActivityEnergyEditorState>();
   late final TextEditingController _duration;
   late final TextEditingController _note;
   late ActivityType _type;
@@ -36,7 +39,8 @@ class _ActivityLogDialogState extends State<ActivityLogDialog>
       _duration.text != _initialDuration ||
       _note.text != _initialNote ||
       _type != _initialType ||
-      _performedAt != _initialAt;
+      _performedAt != _initialAt ||
+      (_energyKey.currentState?.changed ?? false);
 
   @override
   void initState() {
@@ -105,6 +109,7 @@ class _ActivityLogDialogState extends State<ActivityLogDialog>
         durationMinutes: int.parse(_duration.text.trim()),
         performedAt: _performedAt,
         note: _note.text.trim(),
+        energyEstimate: _energyKey.currentState?.estimate,
       ),
       widget.onSave,
     );
@@ -145,13 +150,15 @@ class _ActivityLogDialogState extends State<ActivityLogDialog>
                   decoration: const InputDecoration(
                     labelText: 'Thời lượng',
                     suffixText: 'phút',
+                    helperText:
+                        'Chỉ tính thời gian vận động, không tính lúc nghỉ.',
                   ),
                   validator: ActivityValidation.duration,
                 ),
                 const SizedBox(height: 16),
                 OutlinedButton.icon(
                   onPressed: _pickTime,
-                  icon: const Icon(Icons.schedule_outlined),
+                  icon: const Icon(AppIcons.clock3),
                   label: Text(
                     locale.formatTimeOfDay(
                       TimeOfDay.fromDateTime(_performedAt),
@@ -167,6 +174,19 @@ class _ActivityLogDialogState extends State<ActivityLogDialog>
                     ),
                   ),
                 ],
+                const SizedBox(height: 16),
+                ActivityEnergyEditor(
+                  key: _energyKey,
+                  type: _type,
+                  performedAt: _performedAt,
+                  durationSeconds:
+                      _duration.text == _initialDuration &&
+                          widget.log?.energyEstimate != null
+                      ? widget.log!.energyEstimate!.durationSeconds
+                      : (int.tryParse(_duration.text.trim()) ?? 0) * 60,
+                  initial: widget.log?.energyEstimate,
+                  onChanged: _changed,
+                ),
                 const SizedBox(height: 16),
                 TextFormField(
                   key: const ValueKey('activity-note'),

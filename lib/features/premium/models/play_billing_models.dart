@@ -8,6 +8,13 @@ class PlayBillingConfig {
   });
   final bool enabled;
   final String productId, basePlanId, accountId, packageName;
+  Uri get managementUri => Uri.https(
+    'play.google.com',
+    '/store/account/subscriptions',
+    productId.isNotEmpty && packageName.isNotEmpty
+        ? {'sku': productId, 'package': packageName}
+        : null,
+  );
   factory PlayBillingConfig.fromData(Map<String, dynamic> data) {
     if (data['enabled'] == false) {
       return const PlayBillingConfig(enabled: false);
@@ -63,6 +70,16 @@ class VerifiedMembership {
   final String environment, status;
   bool activeAt(DateTime now) =>
       active && !now.isBefore(startedAt) && now.isBefore(expiresAt);
+
+  /// An owned subscription in these states is repaired or resumed in Play,
+  /// rather than starting another checkout for the same product.
+  bool blocksNewPurchaseAt(DateTime now) =>
+      activeAt(now) ||
+      const {
+        'SUBSCRIPTION_STATE_ON_HOLD',
+        'SUBSCRIPTION_STATE_PAUSED',
+        'SUBSCRIPTION_STATE_PENDING',
+      }.contains(status);
 }
 
 class BillingVerification {
@@ -70,12 +87,16 @@ class BillingVerification {
     required this.verified,
     required this.pending,
     this.completionAllowed = false,
+    this.active = false,
   });
-  final bool verified, pending, completionAllowed;
+  final bool verified, pending, completionAllowed, active;
   factory BillingVerification.fromData(Map<String, dynamic> data) {
     if (data['verified'] is! bool ||
         data['pending'] is! bool ||
         data['completionAllowed'] is! bool ||
+        data.containsKey('active') && data['active'] is! bool ||
+        data['active'] == true &&
+            (data['verified'] != true || data['pending'] == true) ||
         data['pending'] == true && data['completionAllowed'] == true) {
       throw const FormatException(
         'Máy chủ chưa xác nhận trạng thái thanh toán.',
@@ -85,6 +106,7 @@ class BillingVerification {
       verified: data['verified'],
       pending: data['pending'],
       completionAllowed: data['completionAllowed'],
+      active: data['active'] == true,
     );
   }
 }

@@ -1,3 +1,4 @@
+import '../theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,11 +17,11 @@ class RouteErrorScreen extends StatelessWidget {
           title: 'Không tìm thấy trang',
           subtitle: 'Đường dẫn này chưa có trong HealthMate.',
           children: [
-            const Icon(Icons.explore_outlined, size: 64),
+            const Icon(AppIcons.compass, size: 64),
             const SizedBox(height: AppSpacing.lg),
             FilledButton.icon(
               onPressed: () => context.go(AppRoutes.dashboard),
-              icon: const Icon(Icons.home_outlined),
+              icon: const Icon(AppIcons.house),
               label: const Text('Về Tổng quan'),
             ),
           ],

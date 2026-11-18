@@ -1,0 +1,1 @@
+void configureExerciseGifWebBackground(bool dark) {}

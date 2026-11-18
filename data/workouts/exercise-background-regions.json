@@ -1,0 +1,140 @@
+{
+  "width": 180,
+  "height": 180,
+  "description": "Reviewed enclosed backdrop seeds for the 10 female ExerciseDB clips. Guard [x,y,isAbove,rgbSumThreshold] prevents erasing body highlights in other poses. Rendering only; no source media.",
+  "profiles": {
+    "Nh3mvOO": [
+      {
+        "seed": [
+          97,
+          68
+        ],
+        "guards": []
+      }
+    ],
+    "Pjbc0Kt": [
+      {
+        "seed": [
+          33,
+          113
+        ],
+        "guards": []
+      },
+      {
+        "seed": [
+          108,
+          110
+        ],
+        "guards": []
+      },
+      {
+        "seed": [
+          110,
+          104
+        ],
+        "guards": []
+      }
+    ],
+    "BCs0G2F": [
+      {
+        "seed": [
+          52,
+          68
+        ],
+        "guards": []
+      }
+    ],
+    "daBmy1Y": [
+      {
+        "seed": [
+          112,
+          95
+        ],
+        "guards": [
+          [
+            105,
+            100,
+            true,
+            614.0
+          ]
+        ]
+      },
+      {
+        "seed": [
+          84,
+          102
+        ],
+        "guards": [
+          [
+            90,
+            102,
+            true,
+            506.5
+          ]
+        ]
+      },
+      {
+        "seed": [
+          84,
+          103
+        ],
+        "guards": [
+          [
+            96,
+            103,
+            true,
+            485.5
+          ]
+        ]
+      }
+    ],
+    "gFyFj9z": [
+      {
+        "seed": [
+          141,
+          136
+        ],
+        "guards": []
+      },
+      {
+        "seed": [
+          43,
+          137
+        ],
+        "guards": []
+      }
+    ],
+    "wSScovH": [
+      {
+        "seed": [
+          72,
+          102
+        ],
+        "guards": []
+      },
+      {
+        "seed": [
+          99,
+          102
+        ],
+        "guards": [
+          [
+            95,
+            68,
+            true,
+            201.5
+          ]
+        ]
+      }
+    ],
+    "eOG0r6v": [
+      {
+        "seed": [
+          99,
+          102
+        ],
+        "guards": []
+      }
+    ]
+  }
+}

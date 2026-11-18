@@ -55,6 +55,7 @@ dependencies:
   shared_preferences: ^2.5.6
   sqflite: ^2.4.4+2
   url_launcher: ^6.3.3
+  youtube_player_iframe: 6.0.2
 
 dev_dependencies:
   # Register real web SDK implementations in the opt-in emulator test harness.
@@ -87,22 +88,27 @@ flutter:
   uses-material-design: true
   assets:
     - assets/design/
+    - assets/food_photos/
     - assets/branding/google_g.png
     - assets/nutrition/vietnamese-foods.json
     - assets/nutrition/usda-sr-legacy.json
     - assets/nutrition/usda-current.json
-    - assets/fonts/inter/LICENSE.txt
+    - assets/fonts/public_sans/OFL.txt
+    - assets/fonts/healthmate_icons/LICENSE.txt
 
   fonts:
-    - family: Inter
+    - family: HealthMateIcons
       fonts:
-        - asset: assets/fonts/inter/Inter-Regular.ttf
+        - asset: assets/fonts/healthmate_icons/HealthMateIcons.ttf
+    - family: Public Sans
+      fonts:
+        - asset: assets/fonts/public_sans/PublicSans-Regular.ttf
           weight: 400
-        - asset: assets/fonts/inter/Inter-Medium.ttf
+        - asset: assets/fonts/public_sans/PublicSans-Medium.ttf
           weight: 500
-        - asset: assets/fonts/inter/Inter-SemiBold.ttf
+        - asset: assets/fonts/public_sans/PublicSans-SemiBold.ttf
           weight: 600
-        - asset: assets/fonts/inter/Inter-Bold.ttf
+        - asset: assets/fonts/public_sans/PublicSans-Bold.ttf
           weight: 700
 
   # To add assets to your application, add an assets section, like this:

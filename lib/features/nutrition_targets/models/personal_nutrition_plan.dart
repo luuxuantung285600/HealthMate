@@ -143,7 +143,22 @@ class PersonalNutritionInput {
     final heightM = heightCm! / 100;
     final bmi = weightKg! / (heightM * heightM);
     if (bmi < 18.5 || bmi >= 40) {
-      return 'Thể trạng nằm ngoài phạm vi đề xuất tự động của bản này; bạn vẫn có thể đặt mục tiêu được tư vấn riêng.';
+      String number(double value, int precision) => value
+          .toStringAsFixed(precision)
+          .replaceFirst(RegExp(r'\.?0+$'), '')
+          .replaceAll('.', ',');
+      final range = bmi < 18.5 ? 'dưới 18,5' : 'từ 40 trở lên';
+      // Rounding must not tell someone that an ineligible value is exactly
+      // on the inclusive boundary (for example 18.49975 displayed as 18.50).
+      final bmiLabel = bmi < 18.5 && bmi.toStringAsFixed(2) == '18.50'
+          ? 'gần 18,5 nhưng vẫn dưới ngưỡng'
+          : '${number(bmi, 2)} ($range)';
+      return 'BMI hiện tại $bmiLabel, tính từ '
+          '${number(heightCm!, 1)} cm và ${number(weightKg!, 1)} kg. '
+          'HealthMate chưa tự đề xuất calo trong phạm vi này. '
+          'Bạn vẫn có thể chọn mục tiêu ${goal!.label.toLowerCase()}. '
+          'Kiểm tra lại số đo hoặc nhập mục tiêu dinh dưỡng được tư vấn riêng; '
+          'BMI chỉ là chỉ số tham khảo.';
     }
     if (changesWeight) {
       final target = targetWeightKg;
@@ -208,12 +223,18 @@ class PersonalNutritionPlan {
   double get carbsG => _round(kcal * input.macros.carbs / 4);
   double get fatG => _round(kcal * input.macros.fat / 9);
 
-  NutritionTarget toTarget(String dateKey) => NutritionTarget(
+  NutritionTarget toTarget(
+    String dateKey, {
+    NutritionTarget? preserveMarkers,
+  }) => NutritionTarget(
     effectiveFromDateKey: dateKey,
     kcalTarget: kcal,
     proteinGTarget: proteinG,
     carbsGTarget: carbsG,
     fatGTarget: fatG,
+    saltGLimit: preserveMarkers?.saltGLimit,
+    sugarGLimit: preserveMarkers?.sugarGLimit,
+    fiberGTarget: preserveMarkers?.fiberGTarget,
   );
 }
 
@@ -222,4 +243,7 @@ bool sameNutritionTarget(NutritionTarget? a, NutritionTarget? b) =>
     a?.kcalTarget == b?.kcalTarget &&
     a?.proteinGTarget == b?.proteinGTarget &&
     a?.carbsGTarget == b?.carbsGTarget &&
-    a?.fatGTarget == b?.fatGTarget;
+    a?.fatGTarget == b?.fatGTarget &&
+    a?.saltGLimit == b?.saltGLimit &&
+    a?.sugarGLimit == b?.sugarGLimit &&
+    a?.fiberGTarget == b?.fiberGTarget;

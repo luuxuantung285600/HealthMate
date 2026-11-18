@@ -14,10 +14,20 @@
       "sourceFoodCode": "1001",
       "sourcePdfPage": 14,
       "per100g": {
-        "kcal": 344.0,
+        "kcal": 344,
         "proteinG": 8.6,
         "carbsG": 74.5,
         "fatG": 1.5
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 3
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 3 1"
+        }
       }
     },
     {
@@ -31,10 +41,20 @@
       "sourceFoodCode": "1004",
       "sourcePdfPage": 17,
       "per100g": {
-        "kcal": 344.0,
+        "kcal": 344,
         "proteinG": 7.9,
         "carbsG": 75.9,
-        "fatG": 1.0
+        "fatG": 1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 5
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 5 1"
+        }
       }
     },
     {
@@ -48,10 +68,20 @@
       "sourceFoodCode": "1005",
       "sourcePdfPage": 18,
       "per100g": {
-        "kcal": 345.0,
+        "kcal": 345,
         "proteinG": 7.5,
         "carbsG": 72.8,
         "fatG": 2.7
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 5
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 5 2"
+        }
       }
     },
     {
@@ -65,8 +95,8 @@
       "sourceFoodCode": "1010",
       "sourcePdfPage": 23,
       "per100g": {
-        "kcal": 333.0,
-        "proteinG": 4.0,
+        "kcal": 333,
+        "proteinG": 4,
         "carbsG": 78.9,
         "fatG": 0.2
       }
@@ -81,7 +111,7 @@
       "sourceFoodCode": "1011",
       "sourcePdfPage": 24,
       "per100g": {
-        "kcal": 52.0,
+        "kcal": 52,
         "proteinG": 0.9,
         "carbsG": 11.3,
         "fatG": 0.3
@@ -99,7 +129,7 @@
       "sourceFoodCode": "1012",
       "sourcePdfPage": 25,
       "per100g": {
-        "kcal": 249.0,
+        "kcal": 249,
         "proteinG": 7.9,
         "carbsG": 52.6,
         "fatG": 0.8
@@ -116,10 +146,20 @@
       "sourceFoodCode": "1013",
       "sourcePdfPage": 26,
       "per100g": {
-        "kcal": 143.0,
+        "kcal": 143,
         "proteinG": 3.2,
         "carbsG": 31.7,
         "fatG": 0.4
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 3
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 3 1"
+        }
       }
     },
     {
@@ -133,8 +173,8 @@
       "sourceFoodCode": "1014",
       "sourcePdfPage": 27,
       "per100g": {
-        "kcal": 292.0,
-        "proteinG": 8.0,
+        "kcal": 292,
+        "proteinG": 8,
         "carbsG": 40.7,
         "fatG": 10.8
       }
@@ -149,10 +189,20 @@
       "sourceFoodCode": "1016",
       "sourcePdfPage": 29,
       "per100g": {
-        "kcal": 362.0,
+        "kcal": 362,
         "proteinG": 8.2,
         "carbsG": 78.8,
         "fatG": 1.6
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 3
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 3 3"
+        }
       }
     },
     {
@@ -166,10 +216,20 @@
       "sourceFoodCode": "1017",
       "sourcePdfPage": 30,
       "per100g": {
-        "kcal": 359.0,
+        "kcal": 359,
         "proteinG": 6.6,
         "carbsG": 82.2,
         "fatG": 0.4
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 0 3"
+        }
       }
     },
     {
@@ -182,10 +242,20 @@
       "sourceFoodCode": "1018",
       "sourcePdfPage": 31,
       "per100g": {
-        "kcal": 346.0,
+        "kcal": 346,
         "proteinG": 10.3,
         "carbsG": 73.6,
         "fatG": 1.1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 4
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 4 1"
+        }
       }
     },
     {
@@ -200,8 +270,8 @@
       "sourceFoodCode": "1022",
       "sourcePdfPage": 35,
       "per100g": {
-        "kcal": 349.0,
-        "proteinG": 11.0,
+        "kcal": 349,
+        "proteinG": 11,
         "carbsG": 74.2,
         "fatG": 0.9
       }
@@ -217,7 +287,7 @@
       "sourceFoodCode": "1023",
       "sourcePdfPage": 36,
       "per100g": {
-        "kcal": 167.0,
+        "kcal": 167,
         "proteinG": 3.9,
         "carbsG": 32.9,
         "fatG": 2.2
@@ -233,7 +303,7 @@
       "sourceFoodCode": "2009",
       "sourcePdfPage": 47,
       "per100g": {
-        "kcal": 116.0,
+        "kcal": 116,
         "proteinG": 1.2,
         "carbsG": 27.1,
         "fatG": 0.3
@@ -250,10 +320,20 @@
       "sourceFoodCode": "2013",
       "sourcePdfPage": 51,
       "per100g": {
-        "kcal": 114.0,
+        "kcal": 114,
         "proteinG": 1.8,
         "carbsG": 26.5,
         "fatG": 0.1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 10
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 10 1"
+        }
       }
     },
     {
@@ -266,10 +346,20 @@
       "sourceFoodCode": "2014",
       "sourcePdfPage": 52,
       "per100g": {
-        "kcal": 93.0,
-        "proteinG": 2.0,
+        "kcal": 93,
+        "proteinG": 2,
         "carbsG": 20.9,
         "fatG": 0.1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 7
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 7 1"
+        }
       }
     },
     {
@@ -283,7 +373,7 @@
       "sourceFoodCode": "2015",
       "sourcePdfPage": 53,
       "per100g": {
-        "kcal": 332.0,
+        "kcal": 332,
         "proteinG": 0.6,
         "carbsG": 82.2,
         "fatG": 0.1
@@ -300,10 +390,20 @@
       "sourceFoodCode": "3001",
       "sourcePdfPage": 67,
       "per100g": {
-        "kcal": 368.0,
+        "kcal": 368,
         "proteinG": 4.8,
         "carbsG": 6.2,
-        "fatG": 36.0
+        "fatG": 36
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 7
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 7 1"
+        }
       }
     },
     {
@@ -317,7 +417,7 @@
       "sourceFoodCode": "3004",
       "sourcePdfPage": 70,
       "per100g": {
-        "kcal": 325.0,
+        "kcal": 325,
         "proteinG": 24.2,
         "carbsG": 53.3,
         "fatG": 1.7
@@ -334,10 +434,20 @@
       "sourceFoodCode": "3007",
       "sourcePdfPage": 73,
       "per100g": {
-        "kcal": 400.0,
-        "proteinG": 34.0,
+        "kcal": 400,
+        "proteinG": 34,
         "carbsG": 24.6,
         "fatG": 18.4
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 2 3"
+        }
       }
     },
     {
@@ -351,10 +461,20 @@
       "sourceFoodCode": "3010",
       "sourcePdfPage": 76,
       "per100g": {
-        "kcal": 328.0,
+        "kcal": 328,
         "proteinG": 23.4,
         "carbsG": 53.1,
         "fatG": 2.4
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 6
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 6 1"
+        }
       }
     },
     {
@@ -367,10 +487,22 @@
       "sourceFoodCode": "3015",
       "sourcePdfPage": 81,
       "per100g": {
-        "kcal": 605.0,
+        "kcal": 605,
         "proteinG": 18.4,
         "carbsG": 28.7,
         "fatG": 46.3
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 12,
+        "sugar": 5.91
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 12 3",
+          "sugar": "Đường tổng số (Sugar) g 5.91 3"
+        }
       }
     },
     {
@@ -384,10 +516,20 @@
       "sourceFoodCode": "3017",
       "sourcePdfPage": 83,
       "per100g": {
-        "kcal": 573.0,
+        "kcal": 573,
         "proteinG": 27.5,
         "carbsG": 15.5,
         "fatG": 44.5
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 4
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 4 1"
+        }
       }
     },
     {
@@ -402,10 +544,22 @@
       "sourceFoodCode": "3020",
       "sourcePdfPage": 86,
       "per100g": {
-        "kcal": 568.0,
+        "kcal": 568,
         "proteinG": 20.1,
         "carbsG": 17.6,
         "fatG": 46.4
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 11,
+        "sugar": 0.3
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 11 3",
+          "sugar": "Đường tổng số (Sugar) g 0.3 3"
+        }
       }
     },
     {
@@ -420,10 +574,20 @@
       "sourceFoodCode": "3025",
       "sourcePdfPage": 91,
       "per100g": {
-        "kcal": 95.0,
+        "kcal": 95,
         "proteinG": 10.9,
         "carbsG": 0.7,
         "fatG": 5.4
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 7
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 7 3"
+        }
       }
     },
     {
@@ -437,10 +601,20 @@
       "sourceFoodCode": "3032",
       "sourcePdfPage": 98,
       "per100g": {
-        "kcal": 28.0,
+        "kcal": 28,
         "proteinG": 3.1,
         "carbsG": 0.4,
         "fatG": 1.6
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 55
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 55 3"
+        }
       }
     },
     {
@@ -454,7 +628,7 @@
       "sourceFoodCode": "3033",
       "sourcePdfPage": 99,
       "per100g": {
-        "kcal": 37.0,
+        "kcal": 37,
         "proteinG": 2.3,
         "carbsG": 6.4,
         "fatG": 0.2
@@ -470,10 +644,20 @@
       "sourceFoodCode": "4001",
       "sourcePdfPage": 103,
       "per100g": {
-        "kcal": 14.0,
+        "kcal": 14,
         "proteinG": 0.6,
         "carbsG": 2.9,
         "fatG": 0.02
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 2 3"
+        }
       }
     },
     {
@@ -487,10 +671,20 @@
       "sourceFoodCode": "4003",
       "sourcePdfPage": 105,
       "per100g": {
-        "kcal": 27.0,
+        "kcal": 27,
         "proteinG": 0.3,
         "carbsG": 6.1,
         "fatG": 0.1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 8
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 8 1"
+        }
       }
     },
     {
@@ -503,10 +697,22 @@
       "sourceFoodCode": "4005",
       "sourcePdfPage": 107,
       "per100g": {
-        "kcal": 20.0,
+        "kcal": 20,
         "proteinG": 0.6,
-        "carbsG": 4.0,
+        "carbsG": 4,
         "fatG": 0.2
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 12,
+        "sugar": 2.63
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 12 1",
+          "sugar": "Đường tổng số (Sugar) g 2.63 3"
+        }
       }
     },
     {
@@ -519,10 +725,22 @@
       "sourceFoodCode": "4007",
       "sourcePdfPage": 109,
       "per100g": {
-        "kcal": 39.0,
+        "kcal": 39,
         "proteinG": 1.5,
         "carbsG": 7.8,
         "fatG": 0.2
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 52,
+        "sugar": 4.54
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 52 1",
+          "sugar": "Đường tổng số (Sugar) g 4.54 3"
+        }
       }
     },
     {
@@ -536,10 +754,22 @@
       "sourceFoodCode": "4010",
       "sourcePdfPage": 112,
       "per100g": {
-        "kcal": 29.0,
+        "kcal": 29,
         "proteinG": 1.8,
         "carbsG": 5.3,
         "fatG": 0.1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 28,
+        "sugar": 3.58
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 28 1",
+          "sugar": "Đường tổng số (Sugar) g 3.58 3"
+        }
       }
     },
     {
@@ -553,10 +783,22 @@
       "sourceFoodCode": "4015",
       "sourcePdfPage": 117,
       "per100g": {
-        "kcal": 17.0,
+        "kcal": 17,
         "proteinG": 1.4,
         "carbsG": 2.4,
         "fatG": 0.2
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 25,
+        "sugar": 1.18
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 25 1",
+          "sugar": "Đường tổng số (Sugar) g 1.18 3"
+        }
       }
     },
     {
@@ -570,10 +812,22 @@
       "sourceFoodCode": "4016",
       "sourcePdfPage": 118,
       "per100g": {
-        "kcal": 16.0,
+        "kcal": 16,
         "proteinG": 1.7,
         "carbsG": 1.9,
         "fatG": 0.2
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 29,
+        "sugar": 1.6
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 29 1",
+          "sugar": "Đường tổng số (Sugar) g 1.6 3"
+        }
       }
     },
     {
@@ -587,10 +841,22 @@
       "sourceFoodCode": "4021",
       "sourcePdfPage": 123,
       "per100g": {
-        "kcal": 21.0,
+        "kcal": 21,
         "proteinG": 1.5,
         "carbsG": 3.6,
         "fatG": 0.1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 10,
+        "sugar": 2.5
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 10 1",
+          "sugar": "Đường tổng số (Sugar) g 2.5 3"
+        }
       }
     },
     {
@@ -604,10 +870,22 @@
       "sourceFoodCode": "4027",
       "sourcePdfPage": 129,
       "per100g": {
-        "kcal": 16.0,
+        "kcal": 16,
         "proteinG": 0.8,
         "carbsG": 2.9,
         "fatG": 0.1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 13,
+        "sugar": 1.67
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 13 1",
+          "sugar": "Đường tổng số (Sugar) g 1.67 3"
+        }
       }
     },
     {
@@ -621,10 +899,20 @@
       "sourceFoodCode": "4030",
       "sourcePdfPage": 132,
       "per100g": {
-        "kcal": 59.0,
-        "proteinG": 6.0,
+        "kcal": 59,
+        "proteinG": 6,
         "carbsG": 7.9,
         "fatG": 0.4
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 5
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 5 1"
+        }
       }
     },
     {
@@ -637,10 +925,22 @@
       "sourceFoodCode": "4031",
       "sourcePdfPage": 133,
       "per100g": {
-        "kcal": 72.0,
+        "kcal": 72,
         "proteinG": 6.5,
         "carbsG": 10.6,
         "fatG": 0.4
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 5,
+        "sugar": 5.67
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 5 3",
+          "sugar": "Đường tổng số (Sugar) g 5.67 3"
+        }
       }
     },
     {
@@ -655,10 +955,22 @@
       "sourceFoodCode": "4036",
       "sourcePdfPage": 138,
       "per100g": {
-        "kcal": 44.0,
+        "kcal": 44,
         "proteinG": 5.5,
         "carbsG": 5.1,
         "fatG": 0.2
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 23,
+        "sugar": 4.13
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 23 1",
+          "sugar": "Đường tổng số (Sugar) g 4.13 3"
+        }
       }
     },
     {
@@ -671,10 +983,22 @@
       "sourceFoodCode": "4039",
       "sourcePdfPage": 141,
       "per100g": {
-        "kcal": 41.0,
+        "kcal": 41,
         "proteinG": 1.8,
         "carbsG": 8.2,
         "fatG": 0.1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 8,
+        "sugar": 4.28
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 8 1",
+          "sugar": "Đường tổng số (Sugar) g 4.28 3"
+        }
       }
     },
     {
@@ -687,10 +1011,20 @@
       "sourceFoodCode": "4040",
       "sourcePdfPage": 142,
       "per100g": {
-        "kcal": 161.0,
+        "kcal": 161,
         "proteinG": 9.5,
         "carbsG": 29.5,
         "fatG": 0.5
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 1
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 1 3"
+        }
       }
     },
     {
@@ -704,10 +1038,22 @@
       "sourceFoodCode": "4053",
       "sourcePdfPage": 155,
       "per100g": {
-        "kcal": 15.0,
+        "kcal": 15,
         "proteinG": 1.7,
         "carbsG": 1.4,
         "fatG": 0.3
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 4,
+        "sugar": 3
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 4 3",
+          "sugar": "Đường tổng số (Sugar) g 3 3"
+        }
       }
     },
     {
@@ -720,10 +1066,20 @@
       "sourceFoodCode": "4054",
       "sourcePdfPage": 156,
       "per100g": {
-        "kcal": 17.0,
+        "kcal": 17,
         "proteinG": 0.9,
         "carbsG": 2.8,
         "fatG": 0.2
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 3
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 3 3"
+        }
       }
     },
     {
@@ -737,10 +1093,20 @@
       "sourceFoodCode": "4055",
       "sourcePdfPage": 157,
       "per100g": {
-        "kcal": 16.0,
+        "kcal": 16,
         "proteinG": 0.9,
         "carbsG": 2.8,
         "fatG": 0.2
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 5
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 5 3"
+        }
       }
     },
     {
@@ -754,10 +1120,22 @@
       "sourceFoodCode": "4069",
       "sourcePdfPage": 171,
       "per100g": {
-        "kcal": 14.0,
+        "kcal": 14,
         "proteinG": 1.2,
         "carbsG": 1.8,
         "fatG": 0.2
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 14,
+        "sugar": 0.78
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 14 1",
+          "sugar": "Đường tổng số (Sugar) g 0.78 3"
+        }
       }
     },
     {
@@ -770,10 +1148,20 @@
       "sourceFoodCode": "4070",
       "sourcePdfPage": 172,
       "per100g": {
-        "kcal": 25.0,
+        "kcal": 25,
         "proteinG": 2.8,
-        "carbsG": 3.0,
+        "carbsG": 3,
         "fatG": 0.3
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 16
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 16 1"
+        }
       }
     },
     {
@@ -787,10 +1175,20 @@
       "sourceFoodCode": "4072",
       "sourcePdfPage": 174,
       "per100g": {
-        "kcal": 21.0,
+        "kcal": 21,
         "proteinG": 3.4,
         "carbsG": 1.1,
         "fatG": 0.3
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 20
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 20 3"
+        }
       }
     },
     {
@@ -803,10 +1201,22 @@
       "sourceFoodCode": "4083",
       "sourcePdfPage": 185,
       "per100g": {
-        "kcal": 25.0,
+        "kcal": 25,
         "proteinG": 3.2,
         "carbsG": 2.1,
         "fatG": 0.4
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 37,
+        "sugar": 0.42
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 37 1",
+          "sugar": "Đường tổng số (Sugar) g 0.42 3"
+        }
       }
     },
     {
@@ -819,10 +1229,22 @@
       "sourceFoodCode": "4096",
       "sourcePdfPage": 198,
       "per100g": {
-        "kcal": 37.0,
+        "kcal": 37,
         "proteinG": 2.8,
         "carbsG": 6.2,
         "fatG": 0.1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 53,
+        "sugar": 2.6
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 53 1",
+          "sugar": "Đường tổng số (Sugar) g 2.6 3"
+        }
       }
     },
     {
@@ -835,10 +1257,22 @@
       "sourceFoodCode": "4098",
       "sourcePdfPage": 200,
       "per100g": {
-        "kcal": 19.0,
+        "kcal": 19,
         "proteinG": 0.8,
         "carbsG": 3.6,
         "fatG": 0.1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2,
+        "sugar": 1.85
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 2 3",
+          "sugar": "Đường tổng số (Sugar) g 1.85 3"
+        }
       }
     },
     {
@@ -852,10 +1286,22 @@
       "sourceFoodCode": "4099",
       "sourcePdfPage": 201,
       "per100g": {
-        "kcal": 30.0,
+        "kcal": 30,
         "proteinG": 2.5,
         "carbsG": 4.8,
         "fatG": 0.1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 20,
+        "sugar": 2.4
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 20 1",
+          "sugar": "Đường tổng số (Sugar) g 2.4 3"
+        }
       }
     },
     {
@@ -869,10 +1315,22 @@
       "sourceFoodCode": "4100",
       "sourcePdfPage": 202,
       "per100g": {
-        "kcal": 26.0,
-        "proteinG": 3.0,
+        "kcal": 26,
+        "proteinG": 3,
         "carbsG": 2.9,
         "fatG": 0.3
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 23,
+        "sugar": 3.03
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 23 3",
+          "sugar": "Đường tổng số (Sugar) g 3.03 3"
+        }
       }
     },
     {
@@ -885,10 +1343,22 @@
       "sourceFoodCode": "4103",
       "sourcePdfPage": 205,
       "per100g": {
-        "kcal": 121.0,
-        "proteinG": 6.0,
-        "carbsG": 23.0,
+        "kcal": 121,
+        "proteinG": 6,
+        "carbsG": 23,
         "fatG": 0.5
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 18,
+        "sugar": 1
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 18 1",
+          "sugar": "Đường tổng số (Sugar) g 1 3"
+        }
       }
     },
     {
@@ -902,7 +1372,7 @@
       "sourceFoodCode": "4123",
       "sourcePdfPage": 225,
       "per100g": {
-        "kcal": 39.0,
+        "kcal": 39,
         "proteinG": 5.5,
         "carbsG": 3.1,
         "fatG": 0.5
@@ -919,7 +1389,7 @@
       "sourceFoodCode": "4125",
       "sourcePdfPage": 227,
       "per100g": {
-        "kcal": 57.0,
+        "kcal": 57,
         "proteinG": 3.6,
         "carbsG": 3.4,
         "fatG": 3.2
@@ -935,10 +1405,20 @@
       "sourceFoodCode": "5001",
       "sourcePdfPage": 231,
       "per100g": {
-        "kcal": 30.0,
+        "kcal": 30,
         "proteinG": 0.2,
         "carbsG": 7.3,
-        "fatG": 0.0
+        "fatG": 0
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 3
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 3 1"
+        }
       }
     },
     {
@@ -951,10 +1431,22 @@
       "sourceFoodCode": "5002",
       "sourcePdfPage": 232,
       "per100g": {
-        "kcal": 38.0,
+        "kcal": 38,
         "proteinG": 0.9,
         "carbsG": 8.3,
         "fatG": 0.1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 4,
+        "sugar": 9.35
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 4 1",
+          "sugar": "Đường tổng số (Sugar) g 9.35 3"
+        }
       }
     },
     {
@@ -967,10 +1459,10 @@
       "sourceFoodCode": "5004",
       "sourcePdfPage": 234,
       "per100g": {
-        "kcal": 72.0,
+        "kcal": 72,
         "proteinG": 1.5,
         "carbsG": 16.4,
-        "fatG": 0.0
+        "fatG": 0
       }
     },
     {
@@ -983,10 +1475,20 @@
       "sourceFoodCode": "5009",
       "sourcePdfPage": 239,
       "per100g": {
-        "kcal": 43.0,
+        "kcal": 43,
         "proteinG": 1.8,
         "carbsG": 8.1,
         "fatG": 0.4
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 37
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 37 3"
+        }
       }
     },
     {
@@ -999,10 +1501,22 @@
       "sourceFoodCode": "5011",
       "sourcePdfPage": 241,
       "per100g": {
-        "kcal": 16.0,
+        "kcal": 16,
         "proteinG": 1.2,
         "carbsG": 2.3,
         "fatG": 0.2
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 5,
+        "sugar": 6.2
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 5 1",
+          "sugar": "Đường tổng số (Sugar) g 6.2 3"
+        }
       }
     },
     {
@@ -1016,10 +1530,22 @@
       "sourceFoodCode": "5015",
       "sourcePdfPage": 245,
       "per100g": {
-        "kcal": 38.0,
+        "kcal": 38,
         "proteinG": 0.5,
         "carbsG": 8.8,
         "fatG": 0.1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 1,
+        "sugar": 9.26
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 1 3",
+          "sugar": "Đường tổng số (Sugar) g 9.26 3"
+        }
       }
     },
     {
@@ -1032,10 +1558,22 @@
       "sourceFoodCode": "5017",
       "sourcePdfPage": 247,
       "per100g": {
-        "kcal": 36.0,
-        "proteinG": 1.0,
+        "kcal": 36,
+        "proteinG": 1,
         "carbsG": 7.6,
         "fatG": 0.1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 4,
+        "sugar": 5.9
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 4 1",
+          "sugar": "Đường tổng số (Sugar) g 5.9 3"
+        }
       }
     },
     {
@@ -1049,10 +1587,20 @@
       "sourceFoodCode": "5018",
       "sourcePdfPage": 248,
       "per100g": {
-        "kcal": 16.0,
+        "kcal": 16,
         "proteinG": 0.4,
         "carbsG": 3.2,
         "fatG": 0.3
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 0 3"
+        }
       }
     },
     {
@@ -1065,10 +1613,22 @@
       "sourceFoodCode": "5023",
       "sourcePdfPage": 253,
       "per100g": {
-        "kcal": 45.0,
+        "kcal": 45,
         "proteinG": 0.7,
         "carbsG": 10.2,
         "fatG": 0.2
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 5,
+        "sugar": 9.8
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 5 1",
+          "sugar": "Đường tổng số (Sugar) g 9.8 3"
+        }
       }
     },
     {
@@ -1082,10 +1642,20 @@
       "sourceFoodCode": "5025",
       "sourcePdfPage": 255,
       "per100g": {
-        "kcal": 53.0,
+        "kcal": 53,
         "proteinG": 1.8,
         "carbsG": 10.1,
         "fatG": 0.6
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 4
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 4 3"
+        }
       }
     },
     {
@@ -1099,10 +1669,20 @@
       "sourceFoodCode": "5028",
       "sourcePdfPage": 258,
       "per100g": {
-        "kcal": 50.0,
+        "kcal": 50,
         "proteinG": 0.6,
         "carbsG": 11.1,
         "fatG": 0.3
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 3
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 3 1"
+        }
       }
     },
     {
@@ -1116,10 +1696,20 @@
       "sourceFoodCode": "5034",
       "sourcePdfPage": 264,
       "per100g": {
-        "kcal": 66.0,
+        "kcal": 66,
         "proteinG": 1.6,
         "carbsG": 14.2,
         "fatG": 0.3
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 22
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 22 1"
+        }
       }
     },
     {
@@ -1132,10 +1722,20 @@
       "sourceFoodCode": "5035",
       "sourcePdfPage": 265,
       "per100g": {
-        "kcal": 48.0,
+        "kcal": 48,
         "proteinG": 0.9,
         "carbsG": 10.9,
         "fatG": 0.1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 26
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 26 1"
+        }
       }
     },
     {
@@ -1148,10 +1748,22 @@
       "sourceFoodCode": "5037",
       "sourcePdfPage": 267,
       "per100g": {
-        "kcal": 68.0,
+        "kcal": 68,
         "proteinG": 0.4,
         "carbsG": 16.3,
         "fatG": 0.2
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2,
+        "sugar": 15.48
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 2 3",
+          "sugar": "Đường tổng số (Sugar) g 15.48 3"
+        }
       }
     },
     {
@@ -1164,10 +1776,22 @@
       "sourceFoodCode": "5040",
       "sourcePdfPage": 270,
       "per100g": {
-        "kcal": 38.0,
+        "kcal": 38,
         "proteinG": 0.6,
         "carbsG": 6.8,
-        "fatG": 1.0
+        "fatG": 1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 4,
+        "sugar": 8.92
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 4 1",
+          "sugar": "Đường tổng số (Sugar) g 8.92 3"
+        }
       }
     },
     {
@@ -1181,10 +1805,22 @@
       "sourceFoodCode": "5042",
       "sourcePdfPage": 272,
       "per100g": {
-        "kcal": 101.0,
+        "kcal": 101,
         "proteinG": 1.9,
         "carbsG": 2.3,
         "fatG": 9.4
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2,
+        "sugar": 2.42
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 2 3",
+          "sugar": "Đường tổng số (Sugar) g 2.42 3"
+        }
       }
     },
     {
@@ -1197,10 +1833,22 @@
       "sourceFoodCode": "5047",
       "sourcePdfPage": 277,
       "per100g": {
-        "kcal": 39.0,
+        "kcal": 39,
         "proteinG": 0.8,
         "carbsG": 8.3,
         "fatG": 0.3
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 4,
+        "sugar": 10.58
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 4 1",
+          "sugar": "Đường tổng số (Sugar) g 10.58 3"
+        }
       }
     },
     {
@@ -1213,10 +1861,20 @@
       "sourceFoodCode": "5048",
       "sourcePdfPage": 278,
       "per100g": {
-        "kcal": 132.0,
+        "kcal": 132,
         "proteinG": 2.5,
         "carbsG": 26.9,
         "fatG": 1.6
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 1
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 1 1"
+        }
       }
     },
     {
@@ -1229,10 +1887,22 @@
       "sourceFoodCode": "5052",
       "sourcePdfPage": 282,
       "per100g": {
-        "kcal": 45.0,
+        "kcal": 45,
         "proteinG": 0.7,
         "carbsG": 9.6,
         "fatG": 0.4
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 1,
+        "sugar": 15.23
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 1 3",
+          "sugar": "Đường tổng số (Sugar) g 15.23 3"
+        }
       }
     },
     {
@@ -1245,10 +1915,22 @@
       "sourceFoodCode": "5055",
       "sourcePdfPage": 285,
       "per100g": {
-        "kcal": 62.0,
+        "kcal": 62,
         "proteinG": 0.6,
         "carbsG": 14.1,
         "fatG": 0.3
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 2,
+        "sugar": 14.8
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 2 1",
+          "sugar": "Đường tổng số (Sugar) g 14.8 3"
+        }
       }
     },
     {
@@ -1262,10 +1944,20 @@
       "sourceFoodCode": "6001",
       "sourcePdfPage": 289,
       "per100g": {
-        "kcal": 756.0,
+        "kcal": 756,
         "proteinG": 0.5,
         "carbsG": 0.5,
         "fatG": 83.5
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 11
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 11 3"
+        }
       }
     },
     {
@@ -1279,10 +1971,20 @@
       "sourceFoodCode": "6002",
       "sourcePdfPage": 290,
       "per100g": {
-        "kcal": 897.0,
-        "proteinG": 0.0,
-        "carbsG": 0.0,
+        "kcal": 897,
+        "proteinG": 0,
+        "carbsG": 0,
         "fatG": 99.7
+      },
+      "extraNutrientsPer100g": {
+        "sugar": 0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sugar": "Đường tổng số (Sugar) g 0 3"
+        }
       }
     },
     {
@@ -1296,10 +1998,22 @@
       "sourceFoodCode": "7003",
       "sourcePdfPage": 307,
       "per100g": {
-        "kcal": 118.0,
-        "proteinG": 21.0,
-        "carbsG": 0.0,
+        "kcal": 118,
+        "proteinG": 21,
+        "carbsG": 0,
         "fatG": 3.8
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 83,
+        "sugar": 0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 83 1",
+          "sugar": "Đường tổng số (Sugar) g 0 3"
+        }
       }
     },
     {
@@ -1313,10 +2027,22 @@
       "sourceFoodCode": "7013",
       "sourcePdfPage": 317,
       "per100g": {
-        "kcal": 199.0,
+        "kcal": 199,
         "proteinG": 20.3,
-        "carbsG": 0.0,
+        "carbsG": 0,
         "fatG": 13.1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 70,
+        "sugar": 0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 70 3",
+          "sugar": "Đường tổng số (Sugar) g 0 3"
+        }
       }
     },
     {
@@ -1331,10 +2057,22 @@
       "sourceFoodCode": "7016",
       "sourcePdfPage": 320,
       "per100g": {
-        "kcal": 394.0,
+        "kcal": 394,
         "proteinG": 14.5,
-        "carbsG": 0.0,
+        "carbsG": 0,
         "fatG": 37.3
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 42,
+        "sugar": 0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 42 3",
+          "sugar": "Đường tổng số (Sugar) g 0 3"
+        }
       }
     },
     {
@@ -1349,10 +2087,22 @@
       "sourceFoodCode": "7017",
       "sourcePdfPage": 321,
       "per100g": {
-        "kcal": 139.0,
-        "proteinG": 19.0,
-        "carbsG": 0.0,
-        "fatG": 7.0
+        "kcal": 139,
+        "proteinG": 19,
+        "carbsG": 0,
+        "fatG": 7
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 76,
+        "sugar": 0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 76 3",
+          "sugar": "Đường tổng số (Sugar) g 0 3"
+        }
       }
     },
     {
@@ -1366,10 +2116,22 @@
       "sourceFoodCode": "7028",
       "sourcePdfPage": 332,
       "per100g": {
-        "kcal": 267.0,
+        "kcal": 267,
         "proteinG": 17.8,
-        "carbsG": 0.0,
+        "carbsG": 0,
         "fatG": 21.8
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 63,
+        "sugar": 0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 63 3",
+          "sugar": "Đường tổng số (Sugar) g 0 3"
+        }
       }
     },
     {
@@ -1383,10 +2145,22 @@
       "sourceFoodCode": "7053",
       "sourcePdfPage": 357,
       "per100g": {
-        "kcal": 187.0,
+        "kcal": 187,
         "proteinG": 17.9,
-        "carbsG": 0.0,
+        "carbsG": 0,
         "fatG": 12.8
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 60,
+        "sugar": 0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 60 5",
+          "sugar": "Đường tổng số (Sugar) g 0 3"
+        }
       }
     },
     {
@@ -1400,7 +2174,7 @@
       "sourceFoodCode": "7063",
       "sourcePdfPage": 367,
       "per100g": {
-        "kcal": 326.0,
+        "kcal": 326,
         "proteinG": 10.8,
         "carbsG": 15.4,
         "fatG": 24.6
@@ -1417,10 +2191,20 @@
       "sourceFoodCode": "7069",
       "sourcePdfPage": 373,
       "per100g": {
-        "kcal": 136.0,
+        "kcal": 136,
         "proteinG": 21.5,
-        "carbsG": 0.0,
+        "carbsG": 0,
         "fatG": 5.5
+      },
+      "extraNutrientsPer100g": {
+        "sugar": 0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sugar": "Đường tổng số (Sugar) g 0 3"
+        }
       }
     },
     {
@@ -1433,10 +2217,10 @@
       "sourceFoodCode": "7071",
       "sourcePdfPage": 375,
       "per100g": {
-        "kcal": 585.0,
+        "kcal": 585,
         "proteinG": 20.8,
         "carbsG": 1.7,
-        "fatG": 55.0
+        "fatG": 55
       }
     },
     {
@@ -1449,7 +2233,7 @@
       "sourceFoodCode": "7073",
       "sourcePdfPage": 377,
       "per100g": {
-        "kcal": 137.0,
+        "kcal": 137,
         "proteinG": 21.7,
         "carbsG": 4.3,
         "fatG": 3.7
@@ -1466,10 +2250,22 @@
       "sourceFoodCode": "8003",
       "sourcePdfPage": 391,
       "per100g": {
-        "kcal": 96.0,
-        "proteinG": 16.0,
-        "carbsG": 0.0,
+        "kcal": 96,
+        "proteinG": 16,
+        "carbsG": 0,
         "fatG": 3.6
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 49,
+        "sugar": 0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 49 3",
+          "sugar": "Đường tổng số (Sugar) g 0 3"
+        }
       }
     },
     {
@@ -1483,10 +2279,20 @@
       "sourceFoodCode": "8022",
       "sourcePdfPage": 410,
       "per100g": {
-        "kcal": 97.0,
+        "kcal": 97,
         "proteinG": 18.2,
-        "carbsG": 0.0,
+        "carbsG": 0,
         "fatG": 2.7
+      },
+      "extraNutrientsPer100g": {
+        "sugar": 0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sugar": "Đường tổng số (Sugar) g 0 3"
+        }
       }
     },
     {
@@ -1500,10 +2306,20 @@
       "sourceFoodCode": "8024",
       "sourcePdfPage": 412,
       "per100g": {
-        "kcal": 100.0,
+        "kcal": 100,
         "proteinG": 19.7,
-        "carbsG": 0.0,
+        "carbsG": 0,
         "fatG": 2.3
+      },
+      "extraNutrientsPer100g": {
+        "sugar": 0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sugar": "Đường tổng số (Sugar) g 0 3"
+        }
       }
     },
     {
@@ -1517,10 +2333,22 @@
       "sourceFoodCode": "8026",
       "sourcePdfPage": 414,
       "per100g": {
-        "kcal": 166.0,
+        "kcal": 166,
         "proteinG": 18.2,
-        "carbsG": 0.0,
+        "carbsG": 0,
         "fatG": 10.3
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 110,
+        "sugar": 0
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 110 1",
+          "sugar": "Đường tổng số (Sugar) g 0 3"
+        }
       }
     },
     {
@@ -1534,10 +2362,20 @@
       "sourceFoodCode": "8034",
       "sourcePdfPage": 422,
       "per100g": {
-        "kcal": 87.0,
+        "kcal": 87,
         "proteinG": 12.3,
-        "carbsG": 2.0,
+        "carbsG": 2,
         "fatG": 3.3
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 453
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 453 2"
+        }
       }
     },
     {
@@ -1551,10 +2389,20 @@
       "sourceFoodCode": "8040",
       "sourcePdfPage": 428,
       "per100g": {
-        "kcal": 73.0,
+        "kcal": 73,
         "proteinG": 16.3,
-        "carbsG": 0.0,
+        "carbsG": 0,
         "fatG": 0.9
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 44
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 44 3"
+        }
       }
     },
     {
@@ -1568,10 +2416,20 @@
       "sourceFoodCode": "8051",
       "sourcePdfPage": 439,
       "per100g": {
-        "kcal": 82.0,
+        "kcal": 82,
         "proteinG": 17.6,
         "carbsG": 0.9,
         "fatG": 0.9
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 148
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 148 3"
+        }
       }
     },
     {
@@ -1585,10 +2443,22 @@
       "sourceFoodCode": "9001",
       "sourcePdfPage": 450,
       "per100g": {
-        "kcal": 166.0,
+        "kcal": 166,
         "proteinG": 14.8,
         "carbsG": 0.5,
         "fatG": 11.6
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 158,
+        "sugar": 0.77
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 158 1",
+          "sugar": "Đường tổng số (Sugar) g 0.77 3"
+        }
       }
     },
     {
@@ -1602,10 +2472,22 @@
       "sourceFoodCode": "9004",
       "sourcePdfPage": 453,
       "per100g": {
-        "kcal": 184.0,
-        "proteinG": 13.0,
-        "carbsG": 1.0,
+        "kcal": 184,
+        "proteinG": 13,
+        "carbsG": 1,
         "fatG": 14.2
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 191,
+        "sugar": 0.93
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 191 1",
+          "sugar": "Đường tổng số (Sugar) g 0.93 3"
+        }
       }
     },
     {
@@ -1619,10 +2501,22 @@
       "sourceFoodCode": "9007",
       "sourcePdfPage": 456,
       "per100g": {
-        "kcal": 154.0,
+        "kcal": 154,
         "proteinG": 13.1,
         "carbsG": 0.4,
         "fatG": 11.1
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 141,
+        "sugar": 0.41
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 141 3",
+          "sugar": "Đường tổng số (Sugar) g 0.41 3"
+        }
       }
     },
     {
@@ -1636,10 +2530,22 @@
       "sourceFoodCode": "10004",
       "sourcePdfPage": 466,
       "per100g": {
-        "kcal": 61.0,
+        "kcal": 61,
         "proteinG": 3.3,
         "carbsG": 3.6,
         "fatG": 3.7
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 46,
+        "sugar": 4.66
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 46 3",
+          "sugar": "Đường tổng số (Sugar) g 4.66 3"
+        }
       }
     },
     {
@@ -1653,9 +2559,9 @@
       "sourceFoodCode": "10008",
       "sourcePdfPage": 470,
       "per100g": {
-        "kcal": 336.0,
+        "kcal": 336,
         "proteinG": 8.1,
-        "carbsG": 56.0,
+        "carbsG": 56,
         "fatG": 8.8
       }
     },
@@ -1670,10 +2576,22 @@
       "sourceFoodCode": "10009",
       "sourcePdfPage": 471,
       "per100g": {
-        "kcal": 380.0,
+        "kcal": 380,
         "proteinG": 25.5,
-        "carbsG": 0.0,
+        "carbsG": 0,
         "fatG": 30.9
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 621,
+        "sugar": 0.52
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 621 3",
+          "sugar": "Đường tổng số (Sugar) g 0.52 3"
+        }
       }
     },
     {
@@ -1687,11 +2605,25 @@
       "sourceFoodCode": "12013",
       "sourcePdfPage": 509,
       "per100g": {
-        "kcal": 390.0,
-        "proteinG": 0.0,
+        "kcal": 390,
+        "proteinG": 0,
         "carbsG": 97.4,
-        "fatG": 0.0
+        "fatG": 0
+      },
+      "extraNutrientsPer100g": {
+        "sodium": 39,
+        "sugar": 96.21
+      },
+      "additionalNutrientEvidence": {
+        "reviewedOn": "2026-11-10",
+        "sourceSha256": "6c4838ba5623df6d62b2bf4ef1a82968bbfad8a10980247c32b7e60c0c9ca281",
+        "rows": {
+          "sodium": "Natri (Sodium) mg 39 3",
+          "sugar": "Đường tổng số (Sugar) g 96.21 3"
+        }
       }
     }
-  ]
+  ],
+  "additionalNutrientsReviewedOn": "2026-11-10",
+  "additionalNutrientNotes": "Natri (mg) và đường tổng (g) theo đúng trang/mã thực phẩm. Dấu - giữ chưa biết. Không đưa Celluloza vào field chất xơ tổng vì khác chỉ tiêu Fiber, total dietary."
 }

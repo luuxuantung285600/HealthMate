@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../models/nutrition_models.dart';
 import '../models/food_catalog_search.dart';
+import '../models/food_visibility.dart';
 import 'food_search_cache.dart';
 import 'food_search_request.dart';
 import 'usda_api_service.dart';
@@ -69,7 +70,8 @@ class UnifiedFoodSearchService {
   final FoodSearchCache localDatabase;
   final UsdaApiService usdaService;
   final bool Function(FoodCatalogItem)? isAllowed;
-  bool _allows(FoodCatalogItem food) => isAllowed?.call(food) ?? true;
+  bool _allows(FoodCatalogItem food) =>
+      const FoodVisibility().allows(food) && (isAllowed?.call(food) ?? true);
   void _checkVisible(FoodCatalogItem food) {
     if (!_allows(food)) {
       throw const FoodSearchFailure(FoodSearchFailureKind.invalidData);
@@ -82,18 +84,21 @@ class UnifiedFoodSearchService {
     int limit = 25,
     FoodSearchRequest? request,
     void Function(FoodSearchOutcome)? onProgress,
+    bool Function(FoodCatalogItem)? matches,
   }) async {
     final work = request ?? FoodSearchRequest();
     final count = limit.clamp(1, 50);
     final results = <FoodSearchResult>[];
     final seen = <String>{};
     var cacheWarning = false;
+    bool eligible(FoodCatalogItem food) =>
+        _allows(food) && (matches?.call(food) ?? true);
     void add(
       FoodCatalogItem food,
       FoodResultSource source, {
       bool detail = false,
     }) {
-      if (_allows(food) && seen.add(food.id) && results.length < count) {
+      if (eligible(food) && seen.add(food.id) && results.length < count) {
         results.add(
           FoodSearchResult(food: food, source: source, requiresDetail: detail),
         );
@@ -104,7 +109,7 @@ class UnifiedFoodSearchService {
       FoodSearchStage stage, {
       FoodSearchFailure? failure,
     }) => FoodSearchOutcome(
-      List.unmodifiable(results.where((row) => _allows(row.food))),
+      List.unmodifiable(results.where((row) => eligible(row.food))),
       stage: stage,
       failure: failure,
       cacheWarning: cacheWarning,
@@ -120,7 +125,7 @@ class UnifiedFoodSearchService {
       for (final food in searchFoodCatalog(
         firestoreCatalog,
         query,
-      ).take(count)) {
+      ).where(eligible).take(count)) {
         add(
           food,
           food.dataSource == FoodDataSource.user
@@ -134,7 +139,10 @@ class UnifiedFoodSearchService {
       }
       try {
         final cached = await work.run(
-          () => localDatabase.searchFoods(query, limit: count - results.length),
+          () => localDatabase.searchFoods(
+            query,
+            limit: matches == null ? count - results.length : 50,
+          ),
         );
         for (final food in cached) {
           add(food, FoodResultSource.cache);
@@ -150,7 +158,7 @@ class UnifiedFoodSearchService {
       publish(FoodSearchStage.online);
       final rows = await usdaService.searchFoods(
         query,
-        pageSize: count - results.length,
+        pageSize: matches == null ? count - results.length : 50,
         request: work,
       );
       work.check();

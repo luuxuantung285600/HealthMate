@@ -12,7 +12,7 @@ import 'support/fake_private_local_data.dart';
 import 'support/fake_auth_repository.dart';
 import 'support/test_app.dart';
 import 'onboarding_test.dart'
-    show legacyProfile, currentWeight, tapOnboardingButton;
+    show legacyProfile, currentWeight, tapOnboardingButton, advanceToOnboarding;
 import 'h7_private_data_test.dart' show saved;
 import 'personalization_questionnaire_test.dart' show selectAnswer;
 
@@ -59,21 +59,35 @@ void main() {
             textScale: scale,
             initialThemeMode: mode,
             profileRepository: FakeHealthProfileRepository(
-              profile: FakeHealthProfileRepository.incompleteProfile,
+              profile: legacyProfile(birthDate: DateTime(2000, 1, 15)),
+              metrics: [currentWeight(70)],
             ),
           );
           for (final finder in [
             find.byKey(const ValueKey('onboarding-skip-all')),
-            find.text('Quyền riêng tư'),
+            find.byTooltip('Tùy chọn tài khoản'),
             find.byKey(const ValueKey('onboarding-name')),
-            find.byKey(const ValueKey('onboarding-birth-date')),
-            find.byKey(const ValueKey('onboarding-height')),
-            find.byKey(const ValueKey('onboarding-weight')),
           ]) {
             await tester.ensureVisible(finder);
             await tester.pumpAndSettle();
             expect(finder.hitTestable(), findsOneWidget);
-            expect(tester.takeException(), isNull);
+            expect(
+              tester.takeException(),
+              isNull,
+              reason: 'Initial controls remain reachable',
+            );
+          }
+          for (final key in [
+            'onboarding-birth-date',
+            'onboarding-height',
+            'onboarding-weight',
+          ]) {
+            await advanceToOnboarding(tester, key);
+            final finder = find.byKey(ValueKey(key));
+            await tester.ensureVisible(finder);
+            await tester.pumpAndSettle();
+            expect(finder.hitTestable(), findsOneWidget);
+            expect(tester.takeException(), isNull, reason: key);
           }
         });
       }
@@ -114,20 +128,16 @@ void main() {
         metrics: [currentWeight(70)],
       );
       await pumpApp(tester, profileRepository: repository);
-      for (var i = 0; i < 2; i++) {
-        await tapOnboardingButton(tester, 'onboarding-next');
-      }
+      await advanceToOnboarding(tester, 'survey-guidance');
       await selectAnswer(
         tester,
         'guidance',
         'Không, tôi thuộc phạm vi đề xuất',
       );
-      for (var i = 0; i < 4; i++) {
-        await tapOnboardingButton(tester, 'onboarding-next');
-      }
+      await advanceToOnboarding(tester, 'onboarding-nutrition-step');
       await tapOnboardingButton(tester, 'onboarding-personalize-nutrition');
       expect(
-        find.byKey(const ValueKey('onboarding-body-step')),
+        find.byKey(const ValueKey('onboarding-formulaSex-step')),
         findsOneWidget,
       );
       await selectAnswer(tester, 'formulaSex', 'Nam · hệ số công thức');
@@ -241,7 +251,7 @@ void main() {
       router.go(AppRoutes.onboarding);
       await tester.pumpAndSettle();
       expect(
-        find.byKey(const ValueKey('onboarding-goal-step')),
+        find.byKey(const ValueKey('onboarding-formulaSex-step')),
         findsOneWidget,
       );
       await tapOnboardingButton(tester, 'onboarding-back');
@@ -254,7 +264,8 @@ void main() {
             .text,
         'Tên nháp',
       );
-      expect(find.text('Ngày sinh · 15/01/2000'), findsOneWidget);
+      await advanceToOnboarding(tester, 'onboarding-birth-date');
+      expect(find.text('15/01/2000'), findsOneWidget);
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpWidget(const SizedBox.shrink());
     },

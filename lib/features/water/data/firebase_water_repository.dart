@@ -55,6 +55,36 @@ class FirebaseWaterRepository implements WaterRepository {
       });
 
   @override
+  Future<void> undoAdd({
+    required String uid,
+    required String logId,
+    required WaterLogDraft draft,
+  }) => _guard(() async {
+    final reference = _logs(uid).doc(logId);
+    final expected = _data(draft);
+    final undone = await _firestore.runTransaction<bool>((transaction) async {
+      final snapshot = await transaction.get(reference);
+      if (!snapshot.exists) return true;
+      final data = snapshot.data()!;
+      if (expected.entries.any((entry) => data[entry.key] != entry.value) ||
+          data['createdAt'] == null ||
+          data['createdAt'] != data['updatedAt']) {
+        return false;
+      }
+      transaction.delete(reference);
+      return true;
+    });
+    // Keep domain errors outside the SDK callback: the web bridge wraps thrown
+    // Dart exceptions in a FirebaseException and loses their specific code.
+    if (!undone) {
+      throw const DailyLogFailure(
+        'Lần ghi này đã được chỉnh sửa. Hãy kiểm tra trong nhật ký để sửa hoặc xóa.',
+        code: 'water-entry-changed',
+      );
+    }
+  });
+
+  @override
   Future<void> update({
     required String uid,
     required String logId,
@@ -97,6 +127,8 @@ class FirebaseWaterRepository implements WaterRepository {
   Future<T> _guard<T>(Future<T> Function() action) async {
     try {
       return await action();
+    } on DailyLogFailure {
+      rethrow;
     } on FirebaseException catch (error) {
       throw DailyLogFailure.fromCode(error.code);
     } catch (_) {

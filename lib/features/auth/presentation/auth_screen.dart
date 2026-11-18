@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -170,7 +171,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     textCapitalization: TextCapitalization.none,
                     decoration: const InputDecoration(
                       label: Text('Email'),
-                      prefixIcon: Icon(Icons.mail_outline_rounded),
+                      prefixIcon: Icon(AppIcons.mail),
                     ),
                     validator: AuthValidation.email,
                   ),
@@ -201,7 +202,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     decoration: InputDecoration(
                       label: const Text('Mật khẩu'),
                       helperText: _registering ? 'Dùng ít nhất 8 ký tự.' : null,
-                      prefixIcon: const Icon(Icons.lock_outline_rounded),
+                      prefixIcon: const Icon(AppIcons.lockKeyhole),
                       suffixIcon: IconButton(
                         tooltip: _hidePassword
                             ? 'Hiện mật khẩu'
@@ -212,9 +213,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                 () => _hidePassword = !_hidePassword,
                               ),
                         icon: Icon(
-                          _hidePassword
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
+                          _hidePassword ? AppIcons.eye : AppIcons.eyeOff,
                         ),
                       ),
                     ),
@@ -247,7 +246,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       onFieldSubmitted: (_) => _submit(),
                       decoration: InputDecoration(
                         label: const Text('Nhập lại mật khẩu'),
-                        prefixIcon: const Icon(Icons.lock_outline_rounded),
+                        prefixIcon: const Icon(AppIcons.lockKeyhole),
                         suffixIcon: IconButton(
                           tooltip: _hideConfirmation
                               ? 'Hiện mật khẩu nhập lại'
@@ -258,9 +257,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                   () => _hideConfirmation = !_hideConfirmation,
                                 ),
                           icon: Icon(
-                            _hideConfirmation
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
+                            _hideConfirmation ? AppIcons.eye : AppIcons.eyeOff,
                           ),
                         ),
                       ),

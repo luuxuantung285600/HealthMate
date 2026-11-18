@@ -1,5 +1,7 @@
+import '../../../core/theme/app_icons.dart';
 import '../../../core/widgets/tracking_page.dart';
 import '../../../core/widgets/reference_segments.dart';
+import '../../../core/widgets/app_inset_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -18,6 +20,7 @@ import '../../reports/models/period_report.dart';
 import '../../reports/providers/report_providers.dart';
 import '../../../core/utils/local_date_key.dart';
 import 'progress_overview.dart';
+import 'week_comparison_card.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/router/app_routes.dart';
 
@@ -31,7 +34,9 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
   int _days = 7;
   int _tab = 0;
   int _offset = 0;
+  int _periodOffset = 0;
   bool _details = false;
+  bool _compare = false;
   String _mode = 'preset';
   int? _year;
   ReportRange? _customRange;
@@ -45,6 +50,23 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
     final monday = weekStart(today);
     final start = DateTime(monday.year, monday.month, monday.day + _offset * 7);
     final end = DateTime(start.year, start.month, start.day + 6);
+    final exportRange = _mode == 'year'
+        ? ReportRange.year(selectedYear, today)
+        : _mode == 'custom'
+        ? _customRange
+        : weekly
+        ? ReportRange.inclusive(
+            start,
+            end.isAfter(localDateOnly(today)) ? today : end,
+          )
+        : ReportRange(
+            DateTime(
+              today.year,
+              today.month,
+              today.day + 1 + _days * _periodOffset,
+            ),
+            _days,
+          );
     final theme = Theme.of(context);
     final state = weekly && !_details
         ? ref.watch(weeklyLogsProvider(start))
@@ -56,50 +78,56 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
             ),
           )
         : null;
-    final weeklyControls = Column(
-      children: [
-        ReferenceSegments(
-          items: [
-            for (final entry in const [
-              (0, 'Tổng quan'),
-              (3, 'Dưỡng chất'),
-              (2, 'Thói quen'),
-            ])
-              (
-                key: ValueKey('progress-tab-${entry.$1}'),
-                label: entry.$2,
-                selected: _tab == entry.$1,
-                onTap: () => setState(() {
-                  _tab = entry.$1;
-                  _details = false;
-                }),
+    final weeklyControls = AppInsetPanel(
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        children: [
+          ReferenceSegments(
+            items: [
+              for (final entry in const [
+                (0, 'Tổng quan'),
+                (3, 'Dưỡng chất'),
+                (2, 'Thói quen'),
+              ])
+                (
+                  key: ValueKey('progress-tab-${entry.$1}'),
+                  label: entry.$2,
+                  selected: _tab == entry.$1,
+                  onTap: () => setState(() {
+                    _tab = entry.$1;
+                    _details = false;
+                  }),
+                ),
+            ],
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+            child: Divider(height: 1),
+          ),
+          Row(
+            children: [
+              IconButton(
+                key: const ValueKey('previous-week'),
+                tooltip: 'Tuần trước',
+                onPressed: () => setState(() => _offset--),
+                icon: const Icon(AppIcons.chevronLeft),
               ),
-          ],
-        ),
-        Row(
-          children: [
-            IconButton(
-              key: const ValueKey('previous-week'),
-              tooltip: 'Tuần trước',
-              onPressed: () => setState(() => _offset--),
-              icon: const Icon(Icons.chevron_left),
-            ),
-            Expanded(
-              child: Text(
-                '${DateFormat('dd/MM/yyyy').format(start)} – ${DateFormat('dd/MM/yyyy').format(end)}',
-                textAlign: TextAlign.center,
+              Expanded(
+                child: Text(
+                  '${DateFormat('dd/MM/yyyy').format(start)} – ${DateFormat('dd/MM/yyyy').format(end)}',
+                  textAlign: TextAlign.center,
+                ),
               ),
-            ),
-            IconButton(
-              key: const ValueKey('next-week'),
-              tooltip: 'Tuần sau',
-              onPressed: _offset < 0 ? () => setState(() => _offset++) : null,
-              icon: const Icon(Icons.chevron_right),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-      ],
+              IconButton(
+                key: const ValueKey('next-week'),
+                tooltip: 'Tuần sau',
+                onPressed: _offset < 0 ? () => setState(() => _offset++) : null,
+                icon: const Icon(AppIcons.chevronRight),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
     return TrackingPage(
       key: const ValueKey('progress-screen'),
@@ -121,56 +149,58 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
               context: context,
               barrierDismissible: false,
               builder: (_) => AccountBoundDialog(
-                child: JournalExportDialog(
-                  initialRange: _mode == 'year'
-                      ? ReportRange.year(selectedYear, today)
-                      : _mode == 'custom'
-                      ? _customRange
-                      : null,
-                ),
+                child: JournalExportDialog(initialRange: exportRange),
               ),
             ),
-            icon: const Icon(Icons.file_download_outlined),
+            icon: const Icon(AppIcons.download),
           ),
         ],
       ),
       children: [
-        ReferenceSegments(
-          items: [
-            for (final days in [7, 30, 90])
+        AppInsetPanel(
+          padding: const EdgeInsets.all(8),
+          child: ReferenceSegments(
+            items: [
+              for (final days in [7, 30, 90])
+                (
+                  key: ValueKey('report-window-$days'),
+                  label: days == 7 ? 'Tuần' : '$days ngày',
+                  selected: _mode == 'preset' && _days == days,
+                  onTap: () => setState(() {
+                    if (_mode != 'preset' || _days != days) _periodOffset = 0;
+                    _mode = 'preset';
+                    _days = days;
+                  }),
+                ),
               (
-                key: ValueKey('report-window-$days'),
-                label: days == 7 ? 'Tuần' : '$days ngày',
-                selected: _mode == 'preset' && _days == days,
+                key: const ValueKey('report-window-year'),
+                label: 'Năm',
+                selected: _mode == 'year',
                 onTap: () => setState(() {
-                  _mode = 'preset';
-                  _days = days;
+                  _mode = 'year';
+                  _periodOffset = 0;
                 }),
               ),
-            (
-              key: const ValueKey('report-window-year'),
-              label: 'Năm',
-              selected: _mode == 'year',
-              onTap: () => setState(() => _mode = 'year'),
-            ),
-            (
-              key: const ValueKey('report-window-custom'),
-              label: 'Tùy chọn',
-              selected: _mode == 'custom',
-              onTap: () async {
-                final range = await chooseReportRange(
-                  context,
-                  today: today,
-                  initial: _customRange,
-                );
-                if (!mounted || range == null) return;
-                setState(() {
-                  _mode = 'custom';
-                  _customRange = range;
-                });
-              },
-            ),
-          ],
+              (
+                key: const ValueKey('report-window-custom'),
+                label: 'Tùy chọn',
+                selected: _mode == 'custom',
+                onTap: () async {
+                  final range = await chooseReportRange(
+                    context,
+                    today: today,
+                    initial: _customRange,
+                  );
+                  if (!mounted || range == null) return;
+                  setState(() {
+                    _mode = 'custom';
+                    _periodOffset = 0;
+                    _customRange = range;
+                  });
+                },
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 16),
         if (_mode == 'year') ...[
@@ -182,7 +212,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                 onPressed: selectedYear > 1900
                     ? () => setState(() => _year = selectedYear - 1)
                     : null,
-                icon: const Icon(Icons.chevron_left),
+                icon: const Icon(AppIcons.chevronLeft),
               ),
               Expanded(
                 child: DropdownButtonFormField<int>(
@@ -202,7 +232,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                 onPressed: selectedYear < today.year
                     ? () => setState(() => _year = selectedYear + 1)
                     : null,
-                icon: const Icon(Icons.chevron_right),
+                icon: const Icon(AppIcons.chevronRight),
               ),
             ],
           ),
@@ -227,7 +257,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                 setState(() => _customRange = range);
               }
             },
-            icon: const Icon(Icons.date_range),
+            icon: const Icon(AppIcons.calendarRange),
             label: const Text('Đổi khoảng ngày'),
           ),
           PeriodReportPanel(
@@ -237,16 +267,33 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
             selectedRange: _customRange,
           ),
         ] else if (_days != 7)
-          PeriodReportPanel(days: _days, today: today)
+          PeriodReportPanel(
+            key: ValueKey('rolling-progress-$_days'),
+            days: _days,
+            today: today,
+            initialOffset: _periodOffset,
+            onOffsetChanged: (offset) => setState(() => _periodOffset = offset),
+          )
         else if (_details)
           WeeklyReflectionCard(
-            key: ValueKey('weekly-details-$_offset'),
+            key: const ValueKey('weekly-details'),
             today: today,
             progressMode: true,
             initialWeekOffset: _offset,
+            onWeekOffsetChanged: (offset) => setState(() => _offset = offset),
           )
         else ...[
           weeklyControls,
+          const SizedBox(height: 16),
+          if (_tab == 0) ...[
+            WeekComparisonCard(
+              start: start,
+              today: today,
+              expanded: _compare,
+              onToggle: () => setState(() => _compare = !_compare),
+            ),
+            const SizedBox(height: 16),
+          ],
           state!.when(
             skipLoadingOnRefresh: false,
             skipLoadingOnReload: false,
@@ -259,17 +306,19 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                 ),
               ],
             ),
-            error: (_, _) => Column(
-              children: [
-                const Text(
-                  'Chưa tải đủ dữ liệu tuần. Không tính tổng từ dữ liệu thiếu.',
-                ),
-                TextButton(
-                  key: const ValueKey('retry-progress-overview'),
-                  onPressed: () => ref.invalidate(weeklyLogsProvider(start)),
-                  child: const Text('Thử lại'),
-                ),
-              ],
+            error: (_, _) => AppInsetPanel(
+              child: Column(
+                children: [
+                  const Text(
+                    'Chưa tải đủ dữ liệu tuần. Không tính tổng từ dữ liệu thiếu.',
+                  ),
+                  TextButton(
+                    key: const ValueKey('retry-progress-overview'),
+                    onPressed: () => ref.invalidate(weeklyLogsProvider(start)),
+                    child: const Text('Thử lại'),
+                  ),
+                ],
+              ),
             ),
             data: (logs) => Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -316,7 +365,9 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
           OutlinedButton.icon(
             key: const ValueKey('progress-details'),
             onPressed: () => setState(() => _details = !_details),
-            icon: Icon(_details ? Icons.bar_chart : Icons.table_rows_outlined),
+            icon: Icon(
+              _details ? AppIcons.chartColumnIncreasing : AppIcons.rows3,
+            ),
             label: Text(
               _details ? 'Trở về biểu đồ' : 'Chi tiết từng ngày / Mục tiêu',
             ),
@@ -325,7 +376,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
         OutlinedButton.icon(
           key: const ValueKey('open-weight-progress'),
           onPressed: () => context.push('${AppRoutes.wellness}?tab=5'),
-          icon: const Icon(Icons.monitor_weight_outlined),
+          icon: const Icon(AppIcons.weight),
           label: const Text('Tiến độ cân nặng và ngân sách ăn'),
         ),
         const HealthDisclaimer(),

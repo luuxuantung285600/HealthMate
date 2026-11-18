@@ -1,3 +1,4 @@
+import 'package:healthmate/features/nutrition/providers/nutrition_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -59,6 +60,7 @@ final foods = [
 
 Widget host(Widget child, {Stream<AuthUser?>? session}) => ProviderScope(
   overrides: [
+    foodCatalogProvider.overrideWith((ref) => Stream.value(foods)),
     // MealFormDialog owns a session-bound draft; widget fixtures must provide
     // that dependency rather than constructing FirebaseAuth without Firebase.
     authSessionProvider.overrideWith(
@@ -332,6 +334,8 @@ void main() {
     await tester.pumpWidget(
       host(FoodPortionDialog(initial: 200, food: foods.last)),
     );
+    await tester.ensureVisible(find.text('Tên gốc và nguồn USDA'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Tên gốc và nguồn USDA'));
     await tester.pumpAndSettle();
     expect(find.text('Bananas, raw'), findsOneWidget);

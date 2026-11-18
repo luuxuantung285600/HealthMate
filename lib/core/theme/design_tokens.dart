@@ -2,6 +2,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'reference_palette.dart';
 
 /// Design Tokens - Single source of truth cho design system
 abstract final class DesignTokens {
@@ -61,18 +62,18 @@ abstract final class DesignTokens {
   static const mealLight = Color(0xFFFDBA74);
   static const mealDark = Color(0xFFEA580C);
 
-  static const activityPrimary = Color(0xFF10B981); // Emerald
-  static const activityLight = Color(0xFFA7F3D0);
-  static const activityDark = Color(0xFF059669);
+  static const activityPrimary = Color(0xFFB18A38);
+  static const activityLight = Color(0xFFE7C77C);
+  static const activityDark = Color(0xFF8A600D);
 
-  static const weightPrimary = Color(0xFF8B5CF6); // Purple
-  static const weightLight = Color(0xFFDDD6FE);
-  static const weightDark = Color(0xFF7C3AED);
+  static const weightPrimary = Color(0xFFAD3562);
+  static const weightLight = Color(0xFFF5A0BC);
+  static const weightDark = Color(0xFF8B234B);
 
   /// Macro colors shared with ReferencePalette across nutrition screens.
-  static const carbsColor = Color(0xFF67CAD3);
-  static const fatColor = Color(0xFFFFCB48);
-  static const proteinColor = Color(0xFF76C87A);
+  static const carbsColor = ReferencePalette.carb;
+  static const fatColor = ReferencePalette.fat;
+  static const proteinColor = ReferencePalette.protein;
 
   /// Semantic colors
   static const success = Color(0xFF10B981);
@@ -86,8 +87,8 @@ abstract final class DesignTokens {
 
   /// Bundled font with Vietnamese glyphs; no network font loading.
   /// Assets and font license are declared in pubspec.yaml and assets/fonts.
-  static const fontFamily = 'Inter';
-  static const fontFamilyFallback = 'Inter';
+  static const fontFamily = 'Public Sans';
+  static const fontFamilyFallback = 'Public Sans';
 
   /// Font weights
   static const FontWeight regular = FontWeight.w400;

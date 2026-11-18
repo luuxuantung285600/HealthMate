@@ -7,6 +7,7 @@ import 'package:healthmate/features/profile/models/health_goal.dart';
 import 'package:healthmate/features/profile/models/onboarding_draft.dart';
 import 'package:healthmate/features/profile/models/profile_failure.dart';
 import 'package:healthmate/features/profile/models/user_profile.dart';
+import 'package:healthmate/features/profile/models/profile_appearance.dart';
 
 class FakeHealthProfileRepository implements HealthProfileRepository {
   factory FakeHealthProfileRepository({
@@ -52,6 +53,7 @@ class FakeHealthProfileRepository implements HealthProfileRepository {
   Completer<void>? pending;
   int ensureCalls = 0;
   int updateProfileCalls = 0;
+  int updateIdentityCalls = 0;
   int completeOnboardingCalls = 0;
   int addMetricCalls = 0;
   int updateMetricCalls = 0;
@@ -104,6 +106,35 @@ class FakeHealthProfileRepository implements HealthProfileRepository {
   });
 
   @override
+  Future<void> updateIdentity({
+    required String uid,
+    required ProfileIdentityDraft draft,
+  }) async {
+    updateIdentityCalls++;
+    await _operation();
+    final current = _profile;
+    if (current == null || current.uid != uid) {
+      throw const ProfileFailure('Missing profile');
+    }
+    _profile = UserProfile(
+      uid: uid,
+      displayName: draft.displayName.trim(),
+      email: current.email,
+      heightCm: current.heightCm,
+      birthDate: current.birthDate,
+      healthGoal: current.healthGoal,
+      targetWeightKg: current.targetWeightKg,
+      onboardingCompletedAt: current.onboardingCompletedAt,
+      createdAt: current.createdAt,
+      updatedAt: DateTime.now(),
+      schemaVersion: current.schemaVersion,
+      personalization: current.personalization,
+      appearance: draft.appearance,
+    );
+    _profileChanges.add(_profile);
+  }
+
+  @override
   Future<void> updateProfile({
     required String uid,
     required String displayName,
@@ -125,6 +156,7 @@ class FakeHealthProfileRepository implements HealthProfileRepository {
       healthGoal: HealthGoal.fromValue(healthGoal),
       targetWeightKg: targetWeightKg,
       personalization: current.personalization,
+      appearance: current.appearance,
       onboardingCompletedAt: current.onboardingCompletedAt,
       createdAt: current.createdAt,
       updatedAt: DateTime.now(),
@@ -155,6 +187,7 @@ class FakeHealthProfileRepository implements HealthProfileRepository {
           ? draft.targetWeightKg
           : null,
       personalization: draft.personalization ?? current.personalization,
+      appearance: current.appearance,
       onboardingCompletedAt: current.onboardingCompletedAt ?? now,
       createdAt: current.createdAt,
       updatedAt: now,
@@ -258,28 +291,35 @@ class FakeHealthProfileRepository implements HealthProfileRepository {
       });
 
   @override
-  Stream<List<BodyMetric>> watchLatestBodyMetric(String uid, DateTime day) =>
-      Stream.multi((c) {
-        latestMetricListeners++;
-        void emit() {
-          final list =
-              _metrics
-                  .where((m) => m.measuredAt.isBefore(localDayRange(day).end))
-                  .toList()
-                ..sort((a, b) => b.measuredAt.compareTo(a.measuredAt));
-          c.add(list.take(1).toList());
-        }
+  Stream<List<BodyMetric>> watchLatestBodyMetric(
+    String uid,
+    DateTime day, {
+    bool atOrBefore = false,
+  }) => Stream.multi((c) {
+    latestMetricListeners++;
+    void emit() {
+      final list =
+          _metrics
+              .where(
+                (m) => atOrBefore
+                    ? !m.measuredAt.isAfter(day)
+                    : m.measuredAt.isBefore(localDayRange(day).end),
+              )
+              .toList()
+            ..sort((a, b) => b.measuredAt.compareTo(a.measuredAt));
+      c.add(list.take(1).toList());
+    }
 
-        emit();
-        final sub = _metricChanges.stream.listen(
-          (_) => emit(),
-          onError: c.addError,
-        );
-        c.onCancel = () async {
-          latestMetricListeners--;
-          await sub.cancel();
-        };
-      });
+    emit();
+    final sub = _metricChanges.stream.listen(
+      (_) => emit(),
+      onError: c.addError,
+    );
+    c.onCancel = () async {
+      latestMetricListeners--;
+      await sub.cancel();
+    };
+  });
 
   @override
   Future<List<BodyMetric>> loadBodyMetricsRange(

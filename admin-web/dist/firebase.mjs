@@ -62,6 +62,7 @@ export async function connect(config) {
   const live = createLiveData(db,session,{statisticsMode:config.statisticsMode});
   return {
     ...live,
+    freeExerciseMediaEnabled: ['localhost','127.0.0.1','[::1]'].includes(location.hostname) && (Boolean(config.emulators)||config.enableFreeExerciseMedia===true),
     emulator: Boolean(config.emulators), projectId: config.firebase.projectId,
     authChanges: callback => onAuthStateChanged(auth, next => {live.stopAll();sessionEpoch++;pending.clear();callback(next);}),
     login: (email, password) => signInWithEmailAndPassword(auth, email, password), logout: () => signOut(auth),
@@ -142,7 +143,7 @@ export async function connect(config) {
     async save(kind, id, payload, reason, expectedVersion) {
       const actorUid = auth.currentUser?.uid;
       const check = session();
-      if(!['food_catalog','account_controls','app_config'].includes(kind) || typeof id!=='string'||id.includes('/'))throw Error('Đối tượng thao tác không hợp lệ.');
+      if(!['food_catalog','exercise_library','account_controls','app_config'].includes(kind) || typeof id!=='string'||id.includes('/'))throw Error('Đối tượng thao tác không hợp lệ.');
       const key = JSON.stringify([actorUid,kind,id,payload,reason,expectedVersion]);
       const audit = pending.get(key) ?? doc(collection(db,'admin_audit'));
       if (pending.size > 100) pending.clear();
@@ -156,7 +157,7 @@ export async function connect(config) {
         if (actualVersion !== expectedVersion) throw Error('Dữ liệu đã được thay đổi. Đóng form, tải lại rồi kiểm tra bản mới trước khi lưu.');
         const metadata = { updatedAt: serverTimestamp(), updatedBy: actorUid, lastAdminOperationId: audit.id };
         const after = { ...before, ...payload, ...metadata };
-        const changes = changedFields(before,after,kind);
+        const changes = kind==='exercise_library' && before ? Object.keys(after).filter(key=>JSON.stringify(before[key])!==JSON.stringify(after[key])) : changedFields(before,after,kind);
         // Timestamp sentinels are not the same as the previous server timestamp.
         for (const field of ['updatedAt','lastAdminOperationId']) if (!changes.includes(field)) changes.push(field);
         t.set(target,after);

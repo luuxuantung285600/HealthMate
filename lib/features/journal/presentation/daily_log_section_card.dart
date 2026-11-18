@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,10 +21,13 @@ class DailyLogSectionCard<T> extends StatelessWidget {
     required this.onDismissError,
     required this.emptyText,
     required this.children,
+    this.entryActions,
+    this.accent,
     super.key,
   });
 
   final IconData icon;
+  final Color? accent;
   final String title;
   final String summary;
   final String description;
@@ -36,6 +40,7 @@ class DailyLogSectionCard<T> extends StatelessWidget {
   final VoidCallback onDismissError;
   final String emptyText;
   final List<Widget> children;
+  final Widget? entryActions;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +53,7 @@ class DailyLogSectionCard<T> extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, color: theme.colorScheme.primary),
+                Icon(icon, color: accent ?? theme.colorScheme.primary),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(child: Text(title, style: theme.textTheme.titleLarge)),
                 InformationButton(title: 'Về $title', message: description),
@@ -59,8 +64,16 @@ class DailyLogSectionCard<T> extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             FilledButton.icon(
               key: addKey,
+              style: accent == null
+                  ? null
+                  : FilledButton.styleFrom(
+                      backgroundColor: accent,
+                      foregroundColor: theme.brightness == Brightness.dark
+                          ? Colors.black
+                          : Colors.white,
+                    ),
               onPressed: action.isLoading ? null : onAdd,
-              icon: const Icon(Icons.add_rounded),
+              icon: const Icon(AppIcons.plus),
               label: Text(addLabel),
             ),
             if (action.isLoading) ...[
@@ -73,12 +86,12 @@ class DailyLogSectionCard<T> extends StatelessWidget {
                 color: theme.colorScheme.errorContainer,
                 borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
                 child: ListTile(
-                  leading: const Icon(Icons.error_outline),
+                  leading: const Icon(AppIcons.circleAlert),
                   title: Text(error.message),
                   trailing: IconButton(
                     onPressed: onDismissError,
                     tooltip: 'Đóng',
-                    icon: const Icon(Icons.close_rounded),
+                    icon: const Icon(AppIcons.x),
                   ),
                 ),
               ),
@@ -107,15 +120,16 @@ class DailyLogSectionCard<T> extends StatelessWidget {
                   ),
                   TextButton.icon(
                     onPressed: onRetry,
-                    icon: const Icon(Icons.refresh_rounded),
+                    icon: const Icon(AppIcons.refreshCw),
                     label: const Text('Thử lại'),
                   ),
                 ],
               )
-            else if (children.isEmpty)
-              Text(emptyText)
-            else
+            else ...[
+              ?entryActions,
+              if (children.isEmpty) Text(emptyText),
               ...children,
+            ],
           ],
         ),
       ),

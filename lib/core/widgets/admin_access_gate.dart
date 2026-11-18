@@ -1,3 +1,4 @@
+import '../theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../config/admin_runtime.dart';
@@ -75,12 +76,12 @@ class AdminAccessGate extends ConsumerWidget {
                 children: [
                   Icon(
                     deleting
-                        ? Icons.delete_outline
+                        ? AppIcons.trash2
                         : blocked
-                        ? Icons.lock_outline
+                        ? AppIcons.lockKeyhole
                         : maintenance
-                        ? Icons.build_outlined
-                        : Icons.cloud_sync_outlined,
+                        ? AppIcons.wrench
+                        : AppIcons.cloudCheck,
                     size: 48,
                   ),
                   const SizedBox(height: 20),

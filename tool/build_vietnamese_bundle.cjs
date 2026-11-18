@@ -4,8 +4,8 @@ const {buildCatalog} = require('./import_food_catalog.cjs');
 const recipes = JSON.parse(fs.readFileSync('data/food_catalog/recipes.json', 'utf8'));
 const foods = buildCatalog();
 for (const food of foods) {
-  if (food.servingGrams) {
-    food.defaultServingGrams = food.servingGrams;
+  if (food.servingGrams) food.defaultServingGrams = food.servingGrams;
+  if (food.servingGrams && food.sourceDetails.method === 'recipe_estimate') {
     food.servingLabel = /phở|bún|cháo|miến|hủ tiếu/i.test(food.name)
       ? 'tô tham khảo' : /bánh mì/i.test(food.name) ? 'ổ tham khảo' : 'phần tham khảo';
   }
@@ -16,7 +16,7 @@ for (const food of foods) {
 }
 fs.mkdirSync('assets/nutrition', {recursive: true});
 fs.writeFileSync('assets/nutrition/vietnamese-foods.json', JSON.stringify({
-  version: 'wellness-expansion-1',
+  version: recipes.version,
   note: recipes.method + ' ' + recipes.limitation,
   foods,
 }, null, 2));

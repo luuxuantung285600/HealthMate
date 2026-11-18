@@ -50,5 +50,11 @@
       ]
     }
   ],
-  "fieldOverrides": []
+  "fieldOverrides": [
+    {
+      "collectionGroup": "users",
+      "fieldPath": "profileAppearance",
+      "indexes": []
+    }
+  ]
 }

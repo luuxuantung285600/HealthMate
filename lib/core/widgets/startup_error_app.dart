@@ -1,3 +1,4 @@
+import '../theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -46,7 +47,7 @@ class _StartupErrorAppState extends State<StartupErrorApp> {
             children: [
               FilledButton.icon(
                 onPressed: _busy ? null : _retry,
-                icon: const Icon(Icons.refresh),
+                icon: const Icon(AppIcons.refreshCw),
                 label: Text(_busy ? 'Đang thử lại…' : 'Thử lại'),
               ),
             ],

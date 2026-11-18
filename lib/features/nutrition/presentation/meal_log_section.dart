@@ -1,4 +1,6 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_meal_visuals.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -20,6 +22,7 @@ class MealLogSection extends StatelessWidget {
     required this.onScan,
     this.showScanner = false,
     this.compact = false,
+    this.timeline,
     required this.onEdit,
     this.onDuplicate,
     required this.onDelete,
@@ -39,138 +42,149 @@ class MealLogSection extends StatelessWidget {
   final VoidCallback? onScan;
   final bool showScanner;
   final bool compact;
+  final Widget? timeline;
   final ValueChanged<MealLog> onEdit;
   final ValueChanged<MealLog>? onDuplicate;
   final ValueChanged<MealLog> onDelete;
   final VoidCallback onRetry;
   final VoidCallback onDismissError;
 
+  Widget _frame(Widget child) => timeline != null
+      ? child
+      : Card(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: child,
+          ),
+        );
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final loadError = mealsState.error;
     final integer = NumberFormat.decimalPattern('vi_VN');
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (!compact)
-              Row(
-                children: [
-                  Expanded(
-                    child: Text('Bữa ăn', style: theme.textTheme.titleLarge),
+    return _frame(
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (!compact)
+            Row(
+              children: [
+                Expanded(
+                  child: Text('Bữa ăn', style: theme.textTheme.titleLarge),
+                ),
+                if (onOpenDrafts != null)
+                  IconButton(
+                    key: const ValueKey('open-meal-drafts'),
+                    onPressed: action.isLoading ? null : onOpenDrafts,
+                    tooltip: 'Bản nháp trên thiết bị',
+                    icon: const Icon(AppIcons.filePenLine),
                   ),
-                  if (onOpenDrafts != null)
-                    IconButton(
-                      key: const ValueKey('open-meal-drafts'),
-                      onPressed: action.isLoading ? null : onOpenDrafts,
-                      tooltip: 'Bản nháp trên thiết bị',
-                      icon: const Icon(Icons.drafts_outlined),
-                    ),
-                ],
-              ),
-            if (!compact) const SizedBox(height: AppSpacing.md),
-            if (!compact)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  FilledButton(
-                    key: const ValueKey('add-meal'),
-                    onPressed: onAdd,
-                    child: const Row(
-                      children: [
-                        Icon(Icons.add_rounded),
-                        SizedBox(width: AppSpacing.sm),
-                        Expanded(child: Text('Thêm thủ công')),
-                      ],
-                    ),
-                  ),
-                  if (showScanner) ...[
-                    const SizedBox(height: AppSpacing.sm),
-                    FilledButton.tonal(
-                      key: const ValueKey('scan-food'),
-                      onPressed: onScan,
-                      child: const Row(
-                        children: [
-                          Icon(Icons.camera_alt_outlined),
-                          SizedBox(width: AppSpacing.sm),
-                          Expanded(child: Text('Quét món')),
-                        ],
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            if (action.isLoading) ...[
-              const SizedBox(height: AppSpacing.md),
-              const LinearProgressIndicator(),
-            ],
-            if (action.error case final NutritionFailure error) ...[
-              const SizedBox(height: AppSpacing.md),
-              Material(
-                color: theme.colorScheme.errorContainer,
-                borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.sm),
-                  child: Row(
+              ],
+            ),
+          if (!compact) const SizedBox(height: AppSpacing.md),
+          if (!compact)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                FilledButton(
+                  key: const ValueKey('add-meal'),
+                  onPressed: onAdd,
+                  child: const Row(
                     children: [
-                      const Icon(Icons.error_outline),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(child: Text(error.message)),
-                      IconButton(
-                        onPressed: onDismissError,
-                        tooltip: 'Đóng',
-                        icon: const Icon(Icons.close_rounded),
-                      ),
+                      Icon(AppIcons.plus),
+                      SizedBox(width: AppSpacing.sm),
+                      Expanded(child: Text('Thêm thủ công')),
                     ],
                   ),
                 ),
+                if (showScanner) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  FilledButton.tonal(
+                    key: const ValueKey('scan-food'),
+                    onPressed: onScan,
+                    child: const Row(
+                      children: [
+                        Icon(AppIcons.camera),
+                        SizedBox(width: AppSpacing.sm),
+                        Expanded(child: Text('Quét món')),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          if (action.isLoading) ...[
+            const SizedBox(height: AppSpacing.md),
+            const LinearProgressIndicator(),
+          ],
+          if (action.error case final NutritionFailure error) ...[
+            const SizedBox(height: AppSpacing.md),
+            Material(
+              color: theme.colorScheme.errorContainer,
+              borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                child: Row(
+                  children: [
+                    const Icon(AppIcons.circleAlert),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(child: Text(error.message)),
+                    IconButton(
+                      onPressed: onDismissError,
+                      tooltip: 'Đóng',
+                      icon: const Icon(AppIcons.x),
+                    ),
+                  ],
+                ),
               ),
-            ],
-            if (!compact) const Divider(height: AppSpacing.xl),
-            if (mealsState.isLoading)
-              const Row(
-                children: [
-                  SizedBox.square(
-                    dimension: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                  SizedBox(width: AppSpacing.sm),
-                  Expanded(child: Text('Đang tải danh mục và nhật ký…')),
-                ],
-              )
-            else if (loadError != null)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    loadError is NutritionFailure
-                        ? loadError.message
-                        : 'Chưa thể tải dữ liệu.',
-                    style: TextStyle(color: theme.colorScheme.error),
-                  ),
-                  TextButton.icon(
-                    onPressed: onRetry,
-                    icon: const Icon(Icons.refresh_rounded),
-                    label: const Text('Thử lại'),
-                  ),
-                ],
-              )
-            else ...[
-              if (!compact && meals.isEmpty)
+            ),
+          ],
+          if (!compact) const Divider(height: AppSpacing.xl),
+          if (mealsState.isLoading)
+            const Row(
+              children: [
+                SizedBox.square(
+                  dimension: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                SizedBox(width: AppSpacing.sm),
+                Expanded(child: Text('Đang tải danh mục và nhật ký…')),
+              ],
+            )
+          else if (loadError != null)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Text(
-                  catalog.isEmpty &&
-                          !catalogState.hasError &&
-                          !catalogState.isLoading
-                      ? 'Chưa có bữa ăn. Bạn có thể nhập món ngoài danh mục.'
-                      : 'Chưa có bữa ăn. Chọn Thêm để bắt đầu.',
+                  loadError is NutritionFailure
+                      ? loadError.message
+                      : 'Chưa thể tải dữ liệu.',
+                  style: TextStyle(color: theme.colorScheme.error),
                 ),
-              if (catalogState.hasError)
-                const Text(
-                  'Danh mục chưa tải được; các bữa đã ghi vẫn hiển thị bên dưới.',
+                TextButton.icon(
+                  onPressed: onRetry,
+                  icon: const Icon(AppIcons.refreshCw),
+                  label: const Text('Thử lại'),
                 ),
+              ],
+            )
+          else ...[
+            if (!compact && meals.isEmpty)
+              Text(
+                catalog.isEmpty &&
+                        !catalogState.hasError &&
+                        !catalogState.isLoading
+                    ? 'Chưa có bữa ăn. Bạn có thể nhập món ngoài danh mục.'
+                    : 'Chưa có bữa ăn. Chọn Thêm để bắt đầu.',
+              ),
+            if (catalogState.hasError)
+              const Text(
+                'Danh mục chưa tải được; các bữa đã ghi vẫn hiển thị bên dưới.',
+              ),
+            if (timeline != null)
+              timeline!
+            else
               for (final type in MealType.values) ...[
                 const Divider(),
                 Row(
@@ -181,7 +195,9 @@ class MealLogSection extends StatelessWidget {
                         children: [
                           Text(
                             type.label,
-                            style: theme.textTheme.titleMedium,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: AppMealVisuals.color(context, type),
+                            ),
                             key: ValueKey('meal-group-${type.name}'),
                           ),
                           Text(
@@ -192,6 +208,7 @@ class MealLogSection extends StatelessWidget {
                     ),
                     IconButton(
                       key: ValueKey('add-meal-${type.name}'),
+                      color: AppMealVisuals.color(context, type),
                       tooltip: 'Thêm ${type.label.toLowerCase()}',
                       onPressed:
                           action.isLoading ||
@@ -200,7 +217,7 @@ class MealLogSection extends StatelessWidget {
                           : () => onAddForType != null
                                 ? onAddForType!(type)
                                 : onAdd?.call(),
-                      icon: const Icon(Icons.add),
+                      icon: const Icon(AppIcons.plus),
                     ),
                   ],
                 ),
@@ -227,9 +244,8 @@ class MealLogSection extends StatelessWidget {
                       ),
                     ),
               ],
-            ],
           ],
-        ),
+        ],
       ),
     );
   }

@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_spacing.dart';
@@ -55,7 +56,7 @@ class AuthFlowPage extends StatelessWidget {
                             key: const ValueKey('auth-flow-back'),
                             tooltip: 'Quay lại đăng nhập',
                             onPressed: onBack,
-                            icon: const Icon(Icons.arrow_back_rounded),
+                            icon: const Icon(AppIcons.arrowLeft),
                           )
                         else
                           ExcludeSemantics(
@@ -67,7 +68,7 @@ class AuthFlowPage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: Icon(
-                                Icons.spa_outlined,
+                                AppIcons.leaf,
                                 color: colors.onPrimaryContainer,
                                 size: 28,
                               ),
@@ -136,7 +137,7 @@ class AuthNotice extends StatelessWidget {
           children: [
             ExcludeSemantics(
               child: Icon(
-                isError ? Icons.error_outline : Icons.info_outline,
+                isError ? AppIcons.circleAlert : AppIcons.info,
                 color: isError ? colors.onErrorContainer : colors.primary,
                 size: 20,
               ),
@@ -174,7 +175,7 @@ class AuthEmailAddress extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(
-          Icons.mail_outline_rounded,
+          AppIcons.mail,
           color: Theme.of(context).colorScheme.primary,
           semanticLabel: 'Địa chỉ email',
         ),

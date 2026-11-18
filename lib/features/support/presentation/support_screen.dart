@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -69,7 +70,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                       AccountBoundDialog(child: _NewTicket(uid: uid)),
                 ),
               ),
-              icon: const Icon(Icons.add),
+              icon: const Icon(AppIcons.plus),
               label: const Text('Gửi yêu cầu mới'),
             ),
             const SizedBox(height: 24),
@@ -105,8 +106,8 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                       key: ValueKey('support-${ticket.id}'),
                       leading: Icon(
                         ticket.type == SupportType.bug
-                            ? Icons.bug_report_outlined
-                            : Icons.lightbulb_outline,
+                            ? AppIcons.bug
+                            : AppIcons.lightbulb,
                       ),
                       title: Text(
                         ticket.title,
@@ -119,7 +120,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                           '${ticket.topicLabel}\n${ticket.status.label}\n${_time(ticket.updatedAt)}',
                         ),
                       ),
-                      trailing: const Icon(Icons.chevron_right),
+                      trailing: const Icon(AppIcons.chevronRight),
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute<void>(
                           builder: (_) => AccountBoundDialog(

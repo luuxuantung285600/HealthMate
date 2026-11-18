@@ -1,16 +1,53 @@
 import 'nutrition_models.dart';
 
-/// Preserve curated Vietnamese discovery; prefer current USDA references over
-/// historical USDA rows for equally relevant matches. Never remap old IDs.
-int compareCatalogFoods(FoodCatalogItem a, FoodCatalogItem b) {
-  int group(String id) {
-    if (id.startsWith('usda-foundation-')) return 1;
-    if (id.startsWith('usda-fndds-')) return 2;
-    if (id.startsWith('usda-sr-')) return 3;
-    return 0;
+// A discovery order, not a nutrition recommendation or popularity statistic.
+const _vietnameseDishOrder = [
+  'vn-pho-bo',
+  'vn-com-tam-suon',
+  'vn-bun-bo-hue',
+  'vn-bun-thit-nuong',
+  'vn-bun-cha',
+  'vn-pho-ga',
+  'vn-banh-mi-thit',
+  'vn-goi-cuon',
+  'vn-banh-cuon',
+  'vn-banh-xeo',
+  'vn-bun-rieu',
+  'vn-mi-quang',
+  'vn-cha-gio',
+  'vn-thit-kho-trung',
+];
+
+/// Vietnamese prepared dishes come before ingredients and overseas references.
+/// Search relevance still takes precedence over this discovery order.
+int _compareDiscoveryPriority(FoodCatalogItem a, FoodCatalogItem b) {
+  int group(FoodCatalogItem food) {
+    final id = food.id;
+    if (id.startsWith('usda-foundation-')) return 3;
+    if (id.startsWith('usda-fndds-')) return 4;
+    if (id.startsWith('usda-sr-')) return 5;
+    if (food.dataSource == FoodDataSource.usda) return 6;
+    if (food.category == 'Món ăn Việt' || food.category == 'Món nhà') return 0;
+    if (id.startsWith('vn-') || id.startsWith('vn2007-')) return 1;
+    return 2;
   }
 
-  final priority = group(a.id).compareTo(group(b.id));
+  final priority = group(a).compareTo(group(b));
+  if (priority != 0) return priority;
+  if (group(a) == 0) {
+    int order(String id) {
+      final index = _vietnameseDishOrder.indexOf(id);
+      return index < 0 ? _vietnameseDishOrder.length : index;
+    }
+
+    final dish = order(a.id).compareTo(order(b.id));
+    if (dish != 0) return dish;
+  }
+  return 0;
+}
+
+int compareCatalogFoods(FoodCatalogItem a, FoodCatalogItem b) {
+  final priority = _compareDiscoveryPriority(a, b);
   if (priority != 0) return priority;
   final name = a.name.compareTo(b.name);
   return name != 0 ? name : a.id.compareTo(b.id);
@@ -81,7 +118,10 @@ List<FoodCatalogItem> searchFoodCatalog(
         ..removeWhere((r) => r.$3 == 99)
         ..sort((a, b) {
           final rank = a.$3.compareTo(b.$3);
-          return rank != 0 ? rank : a.$1.compareTo(b.$1);
+          if (rank != 0) return rank;
+          final discovery = _compareDiscoveryPriority(a.$2, b.$2);
+          // Keep the upstream relevance order within the same discovery group.
+          return discovery != 0 ? discovery : a.$1.compareTo(b.$1);
         });
   return [for (final result in ranked) result.$2];
 }

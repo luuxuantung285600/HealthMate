@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -199,7 +200,14 @@ class _MacroEnergyCardState extends ConsumerState<MacroEnergyCard> {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.circle, color: _color(macro), size: 12),
+                        Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: _color(macro),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
@@ -208,7 +216,7 @@ class _MacroEnergyCardState extends ConsumerState<MacroEnergyCard> {
                             '${_number.format(report.percent(macro))}%',
                           ),
                         ),
-                        const Icon(Icons.expand_more),
+                        const Icon(AppIcons.chevronDown),
                       ],
                     ),
                   ),
@@ -243,7 +251,7 @@ class _MacroEnergyCardState extends ConsumerState<MacroEnergyCard> {
                     key: const ValueKey('close-macro-energy-detail'),
                     tooltip: 'Đóng chi tiết dưỡng chất',
                     onPressed: () => _select(null),
-                    icon: const Icon(Icons.close),
+                    icon: const Icon(AppIcons.x),
                   ),
                 ],
               ),

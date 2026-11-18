@@ -1,3 +1,6 @@
+import '../../../core/theme/app_icons.dart';
+import '../../../core/theme/app_feature_visuals.dart';
+import '../../../core/widgets/feature_icon_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -23,6 +26,8 @@ import '../models/user_profile.dart';
 import '../providers/profile_providers.dart';
 import 'body_metric_form_dialog.dart';
 import 'profile_form_dialog.dart';
+import 'profile_identity_dialog.dart';
+import '../models/profile_appearance.dart';
 import 'weight_chart.dart';
 import 'personal_overview.dart';
 import 'delete_body_metric_dialog.dart';
@@ -76,7 +81,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final metricState = pageState.whenData((page) => page.metrics);
     final today = localDateOnly(ref.watch(localClockProvider));
     final latest = ref.watch(latestBodyMetricProvider(today));
-    final profile = !profileState.isLoading && !profileState.hasError
+    final profile =
+        !profileState.isLoading &&
+            !profileState.hasError &&
+            !ref.watch(authSessionProvider).isLoading &&
+            !ref.watch(authSessionProvider).hasError &&
+            profileState.value?.uid == user?.uid
         ? profileState.value
         : null;
     final metrics = !metricState.isLoading && !metricState.hasError
@@ -84,12 +94,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         : const <BodyMetric>[];
     final canEdit = profile != null && !profileAction.isLoading;
 
-    return FeaturePage(
+    final page = FeaturePage(
       contentPadding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-      titleStyle: theme.textTheme.headlineSmall?.copyWith(fontSize: 25),
+      titleStyle: theme.textTheme.headlineSmall?.copyWith(fontSize: 22),
       headerAction: IconButton(
         tooltip: 'Tài khoản và cài đặt',
-        icon: const Icon(Icons.settings_outlined),
+        icon: const Icon(AppIcons.settings2),
         onPressed: () => _jumpTo(_accountAnchor),
       ),
       title: 'Không gian cá nhân',
@@ -101,19 +111,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           children: [
             ActionChip(
               key: const ValueKey('jump-profile'),
-              avatar: const Icon(Icons.person_outline),
+              avatar: const Icon(AppIcons.userRound),
               label: const Text('Hồ sơ'),
               onPressed: () => _jumpTo(_profileAnchor),
             ),
             ActionChip(
               key: const ValueKey('jump-weight'),
-              avatar: const Icon(Icons.monitor_weight_outlined),
+              avatar: const Icon(AppIcons.weight),
               label: const Text('Cân nặng'),
               onPressed: () => _jumpTo(_metricsAnchor),
             ),
             ActionChip(
               key: const ValueKey('jump-account'),
-              avatar: const Icon(Icons.manage_accounts_outlined),
+              avatar: const Icon(AppIcons.userRoundCog),
               label: const Text('Tài khoản'),
               onPressed: () => _jumpTo(_accountAnchor),
             ),
@@ -122,6 +132,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         const SizedBox(height: AppSpacing.md),
         PersonalOverview(
           onEdit: !canEdit ? null : () => _editProfile(context, ref, profile),
+          onCustomize: !canEdit
+              ? null
+              : () => _editIdentity(context, ref, profile),
         ),
         _ProfileCard(
           key: _profileAnchor,
@@ -135,14 +148,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             key: const ValueKey('open-premium'),
             leading: MediaQuery.textScalerOf(context).scale(1) > 1.5
                 ? null
-                : const Icon(Icons.workspace_premium_outlined),
+                : const FeatureIconBadge(AppFeatureVisual.premium),
             title: const Text('HealthMate Premium'),
             subtitle: Text(
               ref.watch(premiumDemoEnabledProvider)
                   ? 'Demo không thu tiền'
                   : 'Gói đăng ký qua Google Play',
             ),
-            trailing: const Icon(Icons.chevron_right_rounded),
+            trailing: const Icon(AppIcons.chevronRight),
             onTap: () => context.push(AppRoutes.premium),
           ),
         ),
@@ -150,10 +163,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         Card(
           child: ListTile(
             key: const ValueKey('open-support'),
-            leading: const Icon(Icons.support_agent_outlined),
+            leading: const FeatureIconBadge(AppFeatureVisual.support),
             title: const Text('Báo lỗi & Góp ý'),
             subtitle: const Text('Gửi yêu cầu và xem phản hồi từ HealthMate'),
-            trailing: const Icon(Icons.chevron_right_rounded),
+            trailing: const Icon(AppIcons.chevronRight),
             onTap: () => context.push(AppRoutes.support),
           ),
         ),
@@ -162,7 +175,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             children: [
               ListTile(
                 key: const ValueKey('open-wellness'),
-                leading: const Icon(Icons.favorite_outline),
+                leading: const FeatureIconBadge(AppFeatureVisual.wellness),
                 title: const Text('Thói quen & kế hoạch'),
                 subtitle: const Text(
                   'Nhắc bữa · Thực đơn · Bước chân · Giấc ngủ · Dưỡng chất',
@@ -170,19 +183,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 onTap: () => context.push(AppRoutes.wellness),
               ),
               ListTile(
+                key: const ValueKey('open-workouts'),
+                leading: const FeatureIconBadge(AppFeatureVisual.workout),
+                title: const Text('Tập luyện'),
+                subtitle: const Text(
+                  'Buổi tập ngắn · hướng dẫn · đồng hồ tập/nghỉ',
+                ),
+                trailing: const Icon(AppIcons.chevronRight),
+                onTap: () => context.push(AppRoutes.workouts),
+              ),
+              ListTile(
                 key: const ValueKey('open-goals-quests'),
-                leading: const Icon(Icons.flag_outlined),
+                leading: const FeatureIconBadge(AppFeatureVisual.goals),
                 title: const Text('Mục tiêu và nhiệm vụ hằng ngày'),
-                trailing: const Icon(Icons.chevron_right_rounded),
+                trailing: const Icon(AppIcons.chevronRight),
                 onTap: () => context.go(AppRoutes.quest),
               ),
               if (ref.watch(appFeatureFlagsProvider).chatbotEnabled) ...[
                 const Divider(height: 1),
                 ListTile(
                   key: const ValueKey('open-chat'),
-                  leading: const Icon(Icons.forum_outlined),
+                  leading: const FeatureIconBadge(AppFeatureVisual.chatbot),
                   title: const Text('Trò chuyện cùng HealthMate'),
-                  trailing: const Icon(Icons.chevron_right_rounded),
+                  trailing: const Icon(AppIcons.chevronRight),
                   onTap: () => context.go(AppRoutes.chat),
                 ),
               ],
@@ -204,25 +227,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             children: [
               ListTile(
                 key: const ValueKey('open-about'),
-                leading: const Icon(Icons.info_outline_rounded),
+                leading: const Icon(AppIcons.info),
                 title: const Text('Giới thiệu'),
-                trailing: const Icon(Icons.chevron_right_rounded),
+                trailing: const Icon(AppIcons.chevronRight),
                 onTap: () => context.go(AppRoutes.about),
               ),
               const Divider(height: 1),
               ListTile(
                 key: const ValueKey('open-privacy'),
-                leading: const Icon(Icons.privacy_tip_outlined),
+                leading: const Icon(AppIcons.shieldCheck),
                 title: const Text('Quyền riêng tư'),
-                trailing: const Icon(Icons.chevron_right_rounded),
+                trailing: const Icon(AppIcons.chevronRight),
                 onTap: () => context.go(AppRoutes.privacy),
               ),
               const Divider(height: 1),
               ListTile(
                 key: const ValueKey('open-disclaimer'),
-                leading: const Icon(Icons.health_and_safety_outlined),
+                leading: const Icon(AppIcons.shieldCheck),
                 title: const Text('Lưu ý sức khỏe'),
-                trailing: const Icon(Icons.chevron_right_rounded),
+                trailing: const Icon(AppIcons.chevronRight),
                 onTap: () => context.go(AppRoutes.disclaimer),
               ),
             ],
@@ -244,7 +267,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         Card(
           child: ListTile(
             key: const ValueKey('open-personalization'),
-            leading: const Icon(Icons.tune_rounded),
+            leading: const Icon(AppIcons.slidersHorizontal),
             title: const Text('Cá nhân hóa thêm'),
             subtitle: Text(
               profile?.personalization == null
@@ -253,7 +276,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            trailing: const Icon(Icons.chevron_right_rounded),
+            trailing: const Icon(AppIcons.chevronRight),
             onTap: () => context.push(AppRoutes.personalization),
           ),
         ),
@@ -314,7 +337,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         Card(
           child: ListTile(
             key: const ValueKey('open-food-library'),
-            leading: const Icon(Icons.menu_book_outlined),
+            leading: const FeatureIconBadge(AppFeatureVisual.nutrition),
             title: const Text('Thư viện món của tôi'),
             subtitle: const Text('Món cá nhân, công thức và khẩu phần'),
             onTap: () => context.push(AppRoutes.foodLibrary),
@@ -323,7 +346,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         Card(
           child: ListTile(
             key: const ValueKey('open-journal-export'),
-            leading: const Icon(Icons.download_outlined),
+            leading: const FeatureIconBadge(AppFeatureVisual.report),
             title: const Text('Xuất nhật ký CSV'),
             subtitle: const Text('Chọn khoảng ngày và nơi lưu tệp riêng tư'),
             onTap: () => showDialog<void>(
@@ -352,18 +375,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       (
                         mode: ThemeMode.system,
                         label: 'Thiết bị',
-                        icon: Icons.phone_android,
+                        icon: AppIcons.smartphone,
                       ),
                       (
                         mode: ThemeMode.light,
                         label: 'Sáng',
-                        icon: Icons.light_mode_outlined,
+                        icon: AppIcons.sun,
                       ),
-                      (
-                        mode: ThemeMode.dark,
-                        label: 'Tối',
-                        icon: Icons.dark_mode_outlined,
-                      ),
+                      (mode: ThemeMode.dark, label: 'Tối', icon: AppIcons.moon),
                     ])
                       ChoiceChip(
                         avatar: Icon(option.icon, size: 18),
@@ -392,6 +411,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
+      ],
+    );
+    final background = profile?.appearance.background;
+    if (background == null) return page;
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        ExcludeSemantics(
+          child: Image.memory(
+            background.bytes,
+            key: const ValueKey('profile-background-image'),
+            fit: BoxFit.cover,
+            errorBuilder: (_, _, _) => const SizedBox.shrink(),
+          ),
+        ),
+        ColoredBox(
+          color: theme.scaffoldBackgroundColor.withValues(
+            alpha: theme.brightness == Brightness.dark ? .84 : .92,
+          ),
+        ),
+        page,
       ],
     );
   }
@@ -450,6 +490,35 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         context.mounted &&
         ref.read(authSessionProvider).value?.uid == uid) {
       _showSaved(context, 'Đã cập nhật hồ sơ.');
+    }
+  }
+
+  Future<void> _editIdentity(
+    BuildContext context,
+    WidgetRef ref,
+    UserProfile profile,
+  ) async {
+    final uid = ref.read(authSessionProvider).value?.uid;
+    if (uid == null || uid != profile.uid) return;
+    final result = await showDialog<ProfileIdentityDraft>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AccountBoundDialog(
+        child: ProfileIdentityDialog(
+          profile: profile,
+          onSave: (draft) async {
+            if (ref.read(authSessionProvider).value?.uid != uid) return false;
+            return ref
+                .read(profileControllerProvider.notifier)
+                .updateIdentity(draft);
+          },
+        ),
+      ),
+    );
+    if (result != null &&
+        context.mounted &&
+        ref.read(authSessionProvider).value?.uid == uid) {
+      _showSaved(context, 'Đã cập nhật tên và ảnh hồ sơ.');
     }
   }
 
@@ -590,14 +659,14 @@ class _AccountCard extends StatelessWidget {
               OutlinedButton.icon(
                 key: const ValueKey('change-password'),
                 onPressed: busy ? null : onChangePassword,
-                icon: const Icon(Icons.password_rounded),
+                icon: const Icon(AppIcons.keyRound),
                 label: const Text('Đổi mật khẩu'),
               ),
             const SizedBox(height: AppSpacing.sm),
             OutlinedButton.icon(
               key: const ValueKey('sign-out'),
               onPressed: busy ? null : onSignOut,
-              icon: const Icon(Icons.logout_rounded),
+              icon: const Icon(AppIcons.logOut),
               label: Text(
                 authAction.isLoading ? 'Đang đăng xuất…' : 'Đăng xuất',
               ),
@@ -609,7 +678,7 @@ class _AccountCard extends StatelessWidget {
               style: TextButton.styleFrom(
                 foregroundColor: theme.colorScheme.error,
               ),
-              icon: const Icon(Icons.delete_forever_outlined),
+              icon: const Icon(AppIcons.trash2),
               label: Text(
                 accountAction.isLoading
                     ? 'Đang xử lý tài khoản…'
@@ -665,7 +734,7 @@ class _ProfileCard extends StatelessWidget {
                 IconButton(
                   onPressed: onEdit,
                   tooltip: 'Chỉnh sửa hồ sơ',
-                  icon: const Icon(Icons.edit_outlined),
+                  icon: const Icon(AppIcons.squarePen),
                 ),
               ],
             ),
@@ -816,7 +885,7 @@ class _MetricsCard extends StatelessWidget {
                 final add = FilledButton.icon(
                   key: const ValueKey('add-metric'),
                   onPressed: onAdd,
-                  icon: const Icon(Icons.add_rounded),
+                  icon: const Icon(AppIcons.plus),
                   label: const Text('Thêm'),
                 );
                 if (constraints.maxWidth < 360 &&
@@ -884,7 +953,7 @@ class _MetricsCard extends StatelessWidget {
                                       onPressed: busy
                                           ? null
                                           : () => onEdit(metric),
-                                      icon: const Icon(Icons.edit_outlined),
+                                      icon: const Icon(AppIcons.squarePen),
                                       label: const Text('Sửa lần đo'),
                                     ),
                                     TextButton.icon(
@@ -894,7 +963,7 @@ class _MetricsCard extends StatelessWidget {
                                       onPressed: busy
                                           ? null
                                           : () => onDelete(metric),
-                                      icon: const Icon(Icons.delete_outline),
+                                      icon: const Icon(AppIcons.trash2),
                                       label: const Text('Xóa lần đo'),
                                     ),
                                   ],
@@ -913,13 +982,13 @@ class _MetricsCard extends StatelessWidget {
                 TextButton.icon(
                   key: const ValueKey('weight-history-newer'),
                   onPressed: state.isLoading ? null : onNewer,
-                  icon: const Icon(Icons.chevron_left),
+                  icon: const Icon(AppIcons.chevronLeft),
                   label: const Text('Mới hơn'),
                 ),
                 TextButton.icon(
                   key: const ValueKey('weight-history-older'),
                   onPressed: state.isLoading ? null : onOlder,
-                  icon: const Icon(Icons.chevron_right),
+                  icon: const Icon(AppIcons.chevronRight),
                   label: const Text('Cũ hơn'),
                 ),
               ],
@@ -967,7 +1036,7 @@ class _LoadError extends StatelessWidget {
         const SizedBox(height: AppSpacing.sm),
         TextButton.icon(
           onPressed: onRetry,
-          icon: const Icon(Icons.refresh_rounded),
+          icon: const Icon(AppIcons.refreshCw),
           label: const Text('Thử lại'),
         ),
       ],
@@ -990,13 +1059,13 @@ class _InlineError extends StatelessWidget {
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Row(
           children: [
-            const Icon(Icons.error_outline),
+            const Icon(AppIcons.circleAlert),
             const SizedBox(width: AppSpacing.sm),
             Expanded(child: Text(message)),
             IconButton(
               onPressed: onDismiss,
               tooltip: 'Đóng thông báo',
-              icon: const Icon(Icons.close_rounded),
+              icon: const Icon(AppIcons.x),
             ),
           ],
         ),

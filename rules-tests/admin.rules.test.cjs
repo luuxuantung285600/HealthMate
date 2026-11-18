@@ -24,6 +24,7 @@ after(async()=>env.cleanup());
 const db = uid => env.authenticatedContext(uid,{email:`${uid}@example.com`,email_verified:true}).firestore();
 const food = () => ({name:'Cơm fixture',alternateNames:['cơm'],category:'Ngũ cốc',servingBasis:'per_100g',unit:'g',kcalPer100g:130,proteinGPer100g:2.69,carbsGPer100g:28.17,fatGPer100g:0.28,fiberGPer100g:null,sourceLabel:'USDA fixture',sourceUrl:'https://fdc.nal.usda.gov/',isEstimated:false,isActive:true,servingLabel:null,servingGrams:null});
 let operation=0;
+const customPhoto=()=>({mode:'custom',url:'https://example.com/pho.webp',title:'Ảnh phở fixture',author:'Fixture owner',sourceUrl:'https://example.com/pho',license:'CC0',licenseUrl:'https://creativecommons.org/publicdomain/zero/1.0/'});
 function mutation(database,kind,id,payload,{before=null,auditPatch={},targetPatch={},changes=null}={}) {
   const auditId=`op-${++operation}`,batch=writeBatch(database);
   const after={...before,...payload,updatedAt:serverTimestamp(),updatedBy:'admin',lastAdminOperationId:auditId,...targetPatch};
@@ -87,6 +88,41 @@ test('catalog validation rejects invalid and missing nutrients, aliases, source,
   await assertFails(mutation(a,'food_catalog','missing',missing).commit());
   await assertFails(mutation(a,'food_catalog','Invalid_ID',food()).commit());
   await assertSucceeds(mutation(a,'food_catalog','known-zero',{...food(),fiberGPer100g:0}).commit());
+});
+test('photo overrides require complete safe metadata, admin rights and an atomic audit',async()=>{
+  const a=db('admin');
+  for(const photo of [undefined,null,{mode:'default'},{mode:'hidden'},{mode:'custom',url:'https://example.com/apple.jpg'},customPhoto()]) {
+    const id=`photo-${++operation}`;
+    await assertSucceeds(mutation(a,'food_catalog',id,{...food(),...(photo===undefined?{}:{photo})}).commit());
+    await assertSucceeds(getDoc(doc(db('alice'),'food_catalog',id)));
+  }
+  for(const photo of [{mode:'nope'},{mode:'hidden',url:'https://example.com/x'},
+    {...customPhoto(),url:'javascript:alert(1)'},{...customPhoto(),url:'http://example.com/a'},
+    {...customPhoto(),url:'https://user:pass@example.com/a'},{...customPhoto(),url:'https://example.com/a b'},
+    {...customPhoto(),author:''},{...customPhoto(),licenseUrl:null},{mode:'custom'},
+    {mode:'custom',url:'https://example.com/x',unexpected:true},{mode:'custom',url:''},
+    {mode:'custom',url:'http://example.com/x'},{mode:'custom',url:7}]) {
+    await assertFails(mutation(a,'food_catalog',`bad-photo-${++operation}`,{...food(),photo}).commit());
+  }
+  await assertFails(mutation(db('alice'),'food_catalog','user-photo',{...food(),photo:customPhoto()}).commit());
+  await assertFails(mutation(db('alice'),'food_catalog','user-url-photo',{...food(),photo:{mode:'custom',url:'https://example.com/apple.jpg'}}).commit());
+  await assertFails(setDoc(doc(a,'food_catalog/no-audit'),{...food(),photo:customPhoto()}));
+  await assertSucceeds(mutation(a,'food_catalog','photo-update',{...food(),photo:customPhoto()}).commit());
+  for(const photo of [{mode:'hidden'},{mode:'default'},customPhoto(),{mode:'custom',url:'https://example.com/apple.jpg'}]) {
+    const before=(await getDoc(doc(a,'food_catalog/photo-update'))).data();
+    const change=mutation(a,'food_catalog','photo-update',{photo},{before});
+    await assertSucceeds(change.commit());
+    assert.ok((await getDoc(doc(a,'admin_audit',change.auditId))).data().changedFields.includes('photo'));
+  }
+});
+test('admin nutrient edits validate sugar/sodium and preserve unknown and verified zero',async()=>{
+  const a=db('admin');
+  for(const extras of [{},{sugar:0,sodium:0},{sugar:12,sodium:400,potassium:120}]) {
+    await assertSucceeds(mutation(a,'food_catalog',`nutrients-${++operation}`,{...food(),extraNutrientsPer100g:extras}).commit());
+  }
+  for(const extras of [{sugar:-1},{sugar:101},{sodium:-1},{sodium:NaN},{sodium:100001},{sugar:'12'},{injected:10}]) {
+    await assertFails(mutation(a,'food_catalog',`invalid-nutrients-${++operation}`,{...food(),extraNutrientsPer100g:extras}).commit());
+  }
 });
 test('audit cannot be forged, reused, orphaned or mismatched; failures leave target absent',async()=>{
   const a=db('admin');

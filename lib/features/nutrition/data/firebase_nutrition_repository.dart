@@ -106,6 +106,7 @@ class FirebaseNutritionRepository implements NutritionRepository {
                     doc.data(),
                     updatedAt: _date(doc.data()['updatedAt']),
                     referenceFood: bundledById[doc.id],
+                    ingredientCatalog: bundledById,
                   ),
               for (final food in bundled)
                 if (!serverIds.contains(food.id)) food,

@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -128,7 +129,7 @@ class _FoodCameraViewState extends ConsumerState<FoodCameraView>
     builder: (context, constraints) {
       final error = _error ?? widget.errorMessage;
       return ColoredBox(
-        color: const Color(0xff0b0c10),
+        color: Colors.black,
         child: Column(
           children: [
             Padding(
@@ -139,12 +140,12 @@ class _FoodCameraViewState extends ConsumerState<FoodCameraView>
                 runSpacing: 8,
                 children: [
                   const Chip(
-                    avatar: Icon(Icons.restaurant),
+                    avatar: Icon(AppIcons.nutrition),
                     label: Text('Ảnh món ăn'),
                   ),
                   ActionChip(
                     key: const ValueKey('camera-barcode'),
-                    avatar: const Icon(Icons.qr_code_scanner),
+                    avatar: const Icon(AppIcons.scanBarcode),
                     label: const Text('Mã vạch'),
                     onPressed: _capturing ? null : widget.onBarcode,
                   ),
@@ -178,7 +179,7 @@ class _FoodCameraViewState extends ConsumerState<FoodCameraView>
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       const Icon(
-                                        Icons.no_photography_outlined,
+                                        AppIcons.cameraOff,
                                         color: Colors.white,
                                         size: 40,
                                       ),
@@ -230,7 +231,7 @@ class _FoodCameraViewState extends ConsumerState<FoodCameraView>
                     tooltip: 'Chọn ảnh',
                     iconSize: 32,
                     color: Colors.white,
-                    icon: const Icon(Icons.photo_library_outlined),
+                    icon: const Icon(AppIcons.images),
                   ),
                   Semantics(
                     button: true,

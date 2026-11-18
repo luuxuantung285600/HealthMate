@@ -1,0 +1,2505 @@
+{
+  "version": "food-photo-coverage-500-20261110",
+  "foods": [
+    {
+      "id": "apple-raw-skin",
+      "name": "Táo tươi có vỏ",
+      "category": "Trái cây"
+    },
+    {
+      "id": "banana-raw",
+      "name": "Chuối tươi",
+      "category": "Trái cây"
+    },
+    {
+      "id": "chicken-breast-roasted",
+      "name": "Ức gà nướng chín",
+      "category": "Thịt gia cầm"
+    },
+    {
+      "id": "egg-boiled",
+      "name": "Trứng gà luộc",
+      "category": "Trứng"
+    },
+    {
+      "id": "hao-hao-big-tom-chua-cay-100g",
+      "name": "Mì Hảo Hảo BIG tôm chua cay 100 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "hao-hao-chay-rau-nam-74g",
+      "name": "Mì Hảo Hảo chay rau nấm 74 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "hao-hao-ga-vang-74g",
+      "name": "Mì Hảo Hảo gà vàng 74 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "hao-hao-kim-chi-75g",
+      "name": "Mì Hảo Hảo lẩu kim chi Hàn Quốc 75 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "hao-hao-sa-te-hanh-tim-75g",
+      "name": "Mì Hảo Hảo sa tế hành tím 75 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "hao-hao-suon-heo-toi-phi-73g",
+      "name": "Mì Hảo Hảo sườn heo tỏi phi 73 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "hao-hao-tom-chua-cay-75g",
+      "name": "Mì Hảo Hảo tôm chua cay 75 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "hao-hao-xao-hai-san-72g",
+      "name": "Mì Hảo Hảo xào hải sản 72 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "hao-hao-xao-tom-chua-ngot-75g",
+      "name": "Mì Hảo Hảo xào tôm chua ngọt 75 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "hu-tieu-kho-nhip-song-72g",
+      "name": "Hủ tiếu khô Nhịp Sống Nam Vang 72 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "hu-tieu-nhip-song-bo-kho-75g",
+      "name": "Hủ tiếu Nhịp Sống bò kho 75 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "hu-tieu-nhip-song-chay-nam-vang-70g",
+      "name": "Hủ tiếu Nhịp Sống chay Nam Vang 70 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "hu-tieu-nhip-song-nam-vang-70g",
+      "name": "Hủ tiếu Nhịp Sống Nam Vang 70 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "hu-tieu-nhip-song-suon-heo-70g",
+      "name": "Hủ tiếu Nhịp Sống sườn heo 70 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "mien-phu-huong-ga-53g",
+      "name": "Miến Phú Hương gà 53 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "mien-phu-huong-lau-thai-tom-60g",
+      "name": "Miến Phú Hương lẩu Thái tôm 60 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "mien-phu-huong-suon-heo-55g",
+      "name": "Miến Phú Hương sườn heo 55 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "mien-phu-huong-thit-bam-55g",
+      "name": "Miến Phú Hương thịt bằm 55 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "milk-whole",
+      "name": "Sữa bò nguyên kem",
+      "category": "Sữa"
+    },
+    {
+      "id": "oatmeal-cooked",
+      "name": "Yến mạch nấu chín",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "pho-de-nhat-bo-68g",
+      "name": "Phở gói Đệ Nhất bò 68 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "pho-de-nhat-ga-67g",
+      "name": "Phở gói Đệ Nhất gà 67 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "pho-tron-de-nhat-bo-84g",
+      "name": "Phở trộn Đệ Nhất bò 84 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "pho-tron-de-nhat-thap-cam-cay-84g",
+      "name": "Phở trộn Đệ Nhất thập cẩm cay 84 g (gói khô)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "rice-cooked",
+      "name": "Cơm trắng chín",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "salmon-cooked",
+      "name": "Cá hồi chín",
+      "category": "Cá"
+    },
+    {
+      "id": "sweet-potato-boiled",
+      "name": "Khoai lang luộc",
+      "category": "Củ"
+    },
+    {
+      "id": "tofu-firm",
+      "name": "Đậu phụ cứng",
+      "category": "Đậu và chế phẩm"
+    },
+    {
+      "id": "usda-foundation-2257046",
+      "name": "Sữa yến mạch không đường, bảo quản lạnh",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-foundation-746778",
+      "name": "Sữa ít béo 2% có vitamin A/D",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-foundation-746782",
+      "name": "Sữa nguyên kem 3,25% béo có vitamin D",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-167708",
+      "name": "Nước ép cà chua và rau củ ít natri",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-167747",
+      "name": "Nước cốt chanh vàng nguyên chất",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-167755",
+      "name": "Mâm xôi đỏ (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-167760",
+      "name": "Hồng xiêm Mamey (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-167763",
+      "name": "Me (phần thịt quả)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-167767",
+      "name": "Dứa đóng hộp nước quả (để ráo)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-167784",
+      "name": "Nectar ổi đóng hộp có vitamin C",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-167785",
+      "name": "Nectar xoài đóng hộp",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-167786",
+      "name": "Nectar me đóng hộp",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-167787",
+      "name": "Nước lựu đóng chai",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-167792",
+      "name": "Nước cam và dứa phối trộn",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-167807",
+      "name": "Nước cherry chua",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-168117",
+      "name": "Nước nam việt quất không đường",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-168150",
+      "name": "Trâm / jamun (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168154",
+      "name": "Quất / tắc (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168155",
+      "name": "Chanh xanh (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168156",
+      "name": "Nước cốt chanh xanh nguyên chất",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-168158",
+      "name": "Việt quất sấy có đường",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168162",
+      "name": "Mận khô (prune, chưa nấu)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168164",
+      "name": "Nho khô vàng không hạt",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168165",
+      "name": "Nho khô đen không hạt",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168167",
+      "name": "Chôm chôm đóng hộp ngâm siro",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168173",
+      "name": "Dâu tây đông lạnh không thêm đường",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168176",
+      "name": "Ổi dứa Feijoa (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168181",
+      "name": "Đào đóng hộp siro đậm (để ráo)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168182",
+      "name": "Lê đóng hộp siro đậm (để ráo)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168184",
+      "name": "Quýt đóng hộp nước quả (để ráo)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168185",
+      "name": "Nectar đào đóng hộp có vitamin C",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-168190",
+      "name": "Mít đóng hộp ngâm siro",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168191",
+      "name": "Chà là Medjool",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168195",
+      "name": "Quýt Clementine (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168196",
+      "name": "Nectar mãng cầu xiêm đóng hộp",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-168197",
+      "name": "Nước táo và nho phối trộn có vitamin C",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-168209",
+      "name": "Mâm xôi đỏ đông lạnh không thêm đường",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168211",
+      "name": "Kiwi vàng Zespri SunGold (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168216",
+      "name": "Chuối plantain xanh (luộc)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-168751",
+      "name": "Sữa hạnh nhân vani có đường",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-169090",
+      "name": "Măng cụt đóng hộp ngâm siro",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-169091",
+      "name": "Xoài sấy có đường",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-169092",
+      "name": "Dưa lưới Cantaloupe (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-169093",
+      "name": "Dưa Casaba (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-169098",
+      "name": "Nước cam nguyên chất",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-169104",
+      "name": "Nước cam và bưởi chùm đóng hộp không thêm đường",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-169107",
+      "name": "Nectar đu đủ đóng hộp",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-169108",
+      "name": "Chanh dây tím (phần ăn được)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-169109",
+      "name": "Nước chanh dây tím nguyên chất",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-169110",
+      "name": "Nước chanh dây vàng nguyên chất",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-169121",
+      "name": "Lê sấy có xử lý sulfite",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-169130",
+      "name": "Chuối plantain vàng (sống)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-169908",
+      "name": "Nhót tây / tỳ bà (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-169911",
+      "name": "Dưa lê Honeydew (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-169913",
+      "name": "Dâu tằm (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-169914",
+      "name": "Đào trơn nectarine (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-169925",
+      "name": "Nước quýt nguyên chất",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-169934",
+      "name": "Đào sấy có xử lý sulfite",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-169940",
+      "name": "Nectar lê đóng hộp chưa thêm vitamin C",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-169942",
+      "name": "Hồng Nhật khô",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-169947",
+      "name": "Nước dứa đóng hộp không thêm đường, chưa thêm vitamin C",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-170174",
+      "name": "Nước dừa tươi",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-170458",
+      "name": "Nước cà chua đóng hộp có thêm muối",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-170491",
+      "name": "Nước cà rốt đóng hộp",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-170545",
+      "name": "Nước cà chua đóng hộp không thêm muối",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-170872",
+      "name": "Sữa ít béo 1% có vitamin A/D",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-170879",
+      "name": "Sữa chocolate nguyên kem có vitamin A/D",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-170880",
+      "name": "Sữa chocolate giảm béo có vitamin A/D",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-170881",
+      "name": "Sữa chocolate ít béo có vitamin A/D",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-170882",
+      "name": "Sữa cừu dạng lỏng",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-170883",
+      "name": "Sữa lắc chocolate đặc",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-170884",
+      "name": "Sữa lắc vani đặc",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171269",
+      "name": "Sữa tách béo có vitamin A/D",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171277",
+      "name": "Cacao nóng pha sữa, công thức tại nhà",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171278",
+      "name": "Sữa dê dạng lỏng có vitamin D",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171280",
+      "name": "Sữa trâu dạng lỏng",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171303",
+      "name": "Sữa chocolate tách béo có vitamin A/D",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171686",
+      "name": "Sơ ri (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-171691",
+      "name": "Táo sấy có xử lý sulfite",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-171704",
+      "name": "Nectar mơ đóng hộp có vitamin C",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171711",
+      "name": "Việt quất (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-171715",
+      "name": "Khế (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-171722",
+      "name": "Nam việt quất (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-171723",
+      "name": "Nam việt quất sấy có đường",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-171725",
+      "name": "Bình bát / mãng cầu tim bò (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-171726",
+      "name": "Chà là Deglet Noor",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-171869",
+      "name": "Nước tonic có ga",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171877",
+      "name": "Cà phê sữa vani giảm năng lượng, có đường",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171880",
+      "name": "Cà phê sữa pha sẵn có đường",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171883",
+      "name": "Trà xanh nhân sâm mật ong có đường",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171888",
+      "name": "Trà đen vị chanh có đường",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171889",
+      "name": "Cà phê đen khử caffeine",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171890",
+      "name": "Cà phê đen pha nước",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171891",
+      "name": "Cà phê espresso",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171892",
+      "name": "Trà đen vị chanh loại diet",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171894",
+      "name": "Cà phê hòa tan khử caffeine đã pha",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171910",
+      "name": "Trà xanh khử caffeine đã pha",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171911",
+      "name": "Trà xanh đóng chai không đường",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171917",
+      "name": "Trà xanh pha nước",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171942",
+      "name": "Sữa gạo không đường",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-171946",
+      "name": "Trà atiso đỏ / hibiscus pha nước",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-172446",
+      "name": "Sữa đậu nành nguyên bản/vani chưa tăng cường vi chất",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-172456",
+      "name": "Sữa đậu nành nguyên bản/vani có canxi, vitamin A/D",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-173021",
+      "name": "Sung ngọt (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-173030",
+      "name": "Lý gai (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-173032",
+      "name": "Kỷ tử khô",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-173033",
+      "name": "Bưởi chùm hồng / đỏ / trắng (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-173034",
+      "name": "Bưởi chùm trắng Florida (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-173039",
+      "name": "Nước bưởi chùm trắng nguyên chất",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-173042",
+      "name": "Nước nho đóng hộp không thêm đường, chưa thêm vitamin C",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-173043",
+      "name": "Tầm bóp / thù lù (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-173187",
+      "name": "Sữa hạnh nhân chocolate không đường có vitamin D2/E",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-173203",
+      "name": "Nước ngọt có ga vị nho",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-173205",
+      "name": "Nước ngọt có ga chanh xanh/vàng không caffeine",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-173210",
+      "name": "Nước tăng lực RED BULL (USDA tham khảo)",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-173225",
+      "name": "Đồ uống nước dứa và cam đóng hộp",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-173227",
+      "name": "Trà đen pha nước",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-173232",
+      "name": "Trà thảo mộc đã pha (không phải hoa cúc)",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-173768",
+      "name": "Sữa đậu nành nhẹ không đường có canxi, vitamin A/D",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-173933",
+      "name": "Nước táo đóng hộp không thêm đường, chưa thêm vitamin C",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-173946",
+      "name": "Mâm xôi đen (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-173947",
+      "name": "Nước mâm xôi đen đóng hộp",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-173950",
+      "name": "Việt quất đông lạnh không thêm đường",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-173953",
+      "name": "Na Cherimoya (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-173963",
+      "name": "Lý chua đen (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-173964",
+      "name": "Lý chua đỏ / trắng (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-174119",
+      "name": "Cà phê mocha sữa uống lạnh",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174120",
+      "name": "Trà ô long pha nước",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174125",
+      "name": "Cà phê espresso khử caffeine",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174128",
+      "name": "Trà xanh đóng chai có đường",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174130",
+      "name": "Cà phê hòa tan đã pha nước",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174131",
+      "name": "Đồ uống nha đam có vitamin C",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174144",
+      "name": "Trà đen pha sẵn",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174156",
+      "name": "Trà hoa cúc pha nước",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174293",
+      "name": "Sữa đậu nành chocolate chưa tăng cường vi chất",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174295",
+      "name": "Sữa đậu nành chocolate có canxi, vitamin A/D",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174665",
+      "name": "Sung ngọt khô",
+      "category": "Trái cây"
+    },
+    {
+      "id": "usda-sr-174820",
+      "name": "Sữa hạnh nhân chocolate",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174831",
+      "name": "Nước dừa đóng hộp không thêm đường",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174832",
+      "name": "Sữa hạnh nhân không đường",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174842",
+      "name": "Soda không hương (club soda)",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174846",
+      "name": "Nước ngọt có ga vị gừng (ginger ale)",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174851",
+      "name": "Nước ngọt cola không caffeine",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174852",
+      "name": "Nước ngọt cola thông thường",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174854",
+      "name": "Nước ngọt có ga vị cam",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-174871",
+      "name": "Trà đen khử caffeine đã pha",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-175099",
+      "name": "Nước ngọt cola/pepper ít năng lượng, aspartame, có caffeine",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-175102",
+      "name": "Sữa lắc dâu (cửa hàng thức ăn nhanh)",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-175108",
+      "name": "Nước thể thao POWERADE vị chanh (USDA tham khảo)",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "usda-sr-175215",
+      "name": "Sữa đậu nành không đường có canxi, vitamin A/D",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "vn-banh-bao",
+      "name": "Bánh bao nhân thịt (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-banh-beo",
+      "name": "Bánh bèo tôm (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-banh-canh-tom-thit",
+      "name": "Bánh canh tôm thịt (bột gạo, công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-banh-chung",
+      "name": "Bánh chưng (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-banh-cuon",
+      "name": "Bánh cuốn thịt",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-banh-duc-nong",
+      "name": "Bánh đúc nóng thịt bằm (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-banh-gio",
+      "name": "Bánh giò nhân thịt (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-banh-mi-thit",
+      "name": "Bánh mì thịt (bản giản lược)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-banh-mi-trung",
+      "name": "Bánh mì trứng",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-banh-tet",
+      "name": "Bánh tét nhân đậu thịt (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-banh-xeo",
+      "name": "Bánh xèo tôm thịt",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-bap-cai-xao",
+      "name": "Bắp cải xào tỏi (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-bo-kho",
+      "name": "Bò kho (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-bo-luc-lac",
+      "name": "Bò lúc lắc (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-bo-xao-rau",
+      "name": "Bò xào rau củ",
+      "category": "Món nhà"
+    },
+    {
+      "id": "vn-bot-chien",
+      "name": "Bột chiên trứng (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-bun-bo-hue",
+      "name": "Bún bò Huế (bản giản lược)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-bun-bo-xao",
+      "name": "Bún bò xào",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-bun-ca",
+      "name": "Bún cá",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-bun-cha",
+      "name": "Bún chả",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-bun-mang-vit",
+      "name": "Bún măng vịt (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-bun-rieu",
+      "name": "Bún riêu cua (bản giản lược)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-bun-suon",
+      "name": "Bún sườn (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-bun-thit-nuong",
+      "name": "Bún thịt nướng",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-bun-tuoi",
+      "name": "Bún tươi (ước tính từ bột gạo)",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn-ca-kho-tieu",
+      "name": "Cá lóc kho tiêu (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-ca-loc-hap",
+      "name": "Cá lóc hấp (thịt chín)",
+      "category": "Món nhà"
+    },
+    {
+      "id": "vn-canh-bau-tom",
+      "name": "Canh bầu nấu tôm",
+      "category": "Món nhà"
+    },
+    {
+      "id": "vn-canh-bi-do",
+      "name": "Canh bí đỏ thịt bằm (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-canh-ca-chua-trung",
+      "name": "Canh cà chua trứng (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-canh-cai-thit",
+      "name": "Canh cải thịt bằm",
+      "category": "Món nhà"
+    },
+    {
+      "id": "vn-canh-chua-ca",
+      "name": "Canh chua cá lóc (bản giản lược)",
+      "category": "Món nhà"
+    },
+    {
+      "id": "vn-canh-kho-qua",
+      "name": "Canh khổ qua nhồi thịt (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-canh-rau-day",
+      "name": "Canh rau đay nấu tôm (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-cha-gio",
+      "name": "Chả giò chiên",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-chao-bi-do",
+      "name": "Cháo bí đỏ đậu xanh (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-chao-ca",
+      "name": "Cháo cá lóc (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-chao-dau-xanh",
+      "name": "Cháo đậu xanh",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-chao-ga",
+      "name": "Cháo gà",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-chao-suon",
+      "name": "Cháo sườn (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-chao-thit",
+      "name": "Cháo thịt bằm",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-chao-tom",
+      "name": "Cháo tôm (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-chao-trung",
+      "name": "Cháo trứng gà",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-che-dau-den",
+      "name": "Chè đậu đen (không cốt dừa)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-che-dau-xanh",
+      "name": "Chè đậu xanh (công thức ít thành phần)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-com-chien-duong-chau",
+      "name": "Cơm chiên Dương Châu (bản giản lược)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-com-chien-hai-san",
+      "name": "Cơm chiên hải sản (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-com-chien-trung",
+      "name": "Cơm chiên trứng",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-com-ga",
+      "name": "Cơm gà (bản giản lược)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-com-gao-lut",
+      "name": "Cơm gạo lứt chín",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn-com-tam-suon",
+      "name": "Cơm tấm sườn (bản giản lược)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-dau-nhoi-thit",
+      "name": "Đậu phụ nhồi thịt sốt cà (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-dau-sot-ca",
+      "name": "Đậu phụ sốt cà chua",
+      "category": "Món nhà"
+    },
+    {
+      "id": "vn-ga-kho",
+      "name": "Gà kho (bản giản lược)",
+      "category": "Món nhà"
+    },
+    {
+      "id": "vn-goi-cuon",
+      "name": "Gỏi cuốn tôm thịt",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-hu-tieu",
+      "name": "Hủ tiếu tôm thịt (bản giản lược)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-khoai-lang-luoc",
+      "name": "Khoai lang luộc (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-mi-quang",
+      "name": "Mì Quảng gà tôm (bản giản lược)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-mi-xao-bo",
+      "name": "Mì xào bò rau củ",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-mien-ga",
+      "name": "Miến gà",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-mien-xao-rau",
+      "name": "Miến xào rau nấm",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-pho-bo",
+      "name": "Phở bò",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-pho-ga",
+      "name": "Phở gà",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-rau-muong-luoc",
+      "name": "Rau muống luộc",
+      "category": "Món nhà"
+    },
+    {
+      "id": "vn-rau-muong-xao",
+      "name": "Rau muống xào tỏi",
+      "category": "Món nhà"
+    },
+    {
+      "id": "vn-thit-kho-tieu",
+      "name": "Thịt heo kho tiêu",
+      "category": "Món nhà"
+    },
+    {
+      "id": "vn-thit-kho-trung",
+      "name": "Thịt kho trứng",
+      "category": "Món nhà"
+    },
+    {
+      "id": "vn-thit-luoc",
+      "name": "Thịt heo nạc luộc",
+      "category": "Món nhà"
+    },
+    {
+      "id": "vn-tom-hap",
+      "name": "Tôm hấp (bóc vỏ)",
+      "category": "Món nhà"
+    },
+    {
+      "id": "vn-trung-chien",
+      "name": "Trứng gà chiên (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-trung-hap-thit",
+      "name": "Trứng hấp thịt (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-xoi-dau-xanh",
+      "name": "Xôi đậu xanh",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-xoi-ga",
+      "name": "Xôi gà",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-xoi-lac",
+      "name": "Xôi đậu phộng (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-xoi-lap-xuong",
+      "name": "Xôi lạp xưởng (công thức tham khảo)",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn-xoi-trang",
+      "name": "Xôi trắng",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn2007-10004",
+      "name": "Sữa chua nguyên kem",
+      "category": "Sữa và chế phẩm"
+    },
+    {
+      "id": "vn2007-10008",
+      "name": "Sữa đặc có đường",
+      "category": "Sữa và chế phẩm"
+    },
+    {
+      "id": "vn2007-10009",
+      "name": "Phô mai nguyên béo",
+      "category": "Sữa và chế phẩm"
+    },
+    {
+      "id": "vn2007-1001",
+      "name": "Gạo nếp (khô)",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn2007-1004",
+      "name": "Gạo tẻ (khô)",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn2007-1005",
+      "name": "Gạo lứt (khô)",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn2007-1006",
+      "name": "Hạt kê (khô)",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn2007-1007",
+      "name": "Bắp tươi (hạt sống)",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn2007-1008",
+      "name": "Bắp vàng (hạt khô)",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn2007-1010",
+      "name": "Bánh tráng khô",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn2007-1011",
+      "name": "Bánh đúc",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn2007-1012",
+      "name": "Bánh mì không nhân",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn2007-1013",
+      "name": "Bánh phở tươi",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn2007-1014",
+      "name": "Quẩy chiên",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn2007-1015",
+      "name": "Bỏng ngô (không nhãn hàng)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-1016",
+      "name": "Bột nếp (khô)",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn2007-1017",
+      "name": "Bột gạo tẻ (khô)",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn2007-1018",
+      "name": "Bột mì (khô)",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn2007-1019",
+      "name": "Bột bắp vàng",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn2007-1021",
+      "name": "Cốm tươi",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn2007-1022",
+      "name": "Mì sợi (khô)",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn2007-1023",
+      "name": "Bắp nếp luộc",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn2007-11001",
+      "name": "Chuối đóng hộp nước đường (VDD 2007)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-11002",
+      "name": "Dưa leo đóng hộp (VDD 2007)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-11003",
+      "name": "Dứa đóng hộp có đường (VDD 2007)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-11006",
+      "name": "Mận đóng hộp nước đường (VDD 2007)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-11008",
+      "name": "Mứt cam có vỏ (không nhãn hàng)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-11009",
+      "name": "Mứt chuối (không nhãn hàng)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-11010",
+      "name": "Mứt dứa (không nhãn hàng)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-11012",
+      "name": "Nhãn đóng hộp nước đường (VDD 2007)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-11013",
+      "name": "Nước dứa đóng hộp (VDD 2007)",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "vn2007-11014",
+      "name": "Vải đóng hộp nước đường (VDD 2007)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-11015",
+      "name": "Cá thu đóng hộp (VDD 2007)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-11016",
+      "name": "Cá trích đóng hộp (VDD 2007)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-11017",
+      "name": "Thịt bò đóng hộp (VDD 2007)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-11018",
+      "name": "Thịt gà đóng hộp (VDD 2007)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-11019",
+      "name": "Thịt heo đóng hộp (VDD 2007)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-11020",
+      "name": "Thịt heo và bò xay đóng hộp (VDD 2007)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-11021",
+      "name": "Thịt vịt hầm đóng hộp (VDD 2007)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-12001",
+      "name": "Bánh bích cốt (không nhãn hàng)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-12002",
+      "name": "Bánh bích quy (không nhãn hàng)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-12003",
+      "name": "Bánh chả (không nhãn hàng)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-12005",
+      "name": "Bánh đậu xanh (không nhãn hàng)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-12006",
+      "name": "Bánh kem xốp (không nhãn hàng)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-12007",
+      "name": "Bánh khảo chay (không nhãn hàng)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-12008",
+      "name": "Bánh quế cuộn (không nhãn hàng)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-12009",
+      "name": "Bánh sô cô la có nhân (không nhãn hàng)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-12010",
+      "name": "Sô cô la ngọt dạng thanh (không nhãn hàng)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-12012",
+      "name": "Bột ca cao nguyên chất",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-12013",
+      "name": "Đường cát",
+      "category": "Gia vị"
+    },
+    {
+      "id": "vn2007-12018",
+      "name": "Kẹo dừa mềm (không nhãn hàng)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-12020",
+      "name": "Kẹo đậu phộng (không nhãn hàng)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-12024",
+      "name": "Kẹo mè (không nhãn hàng)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-12026",
+      "name": "Mật ong (không nhãn hàng)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-13003",
+      "name": "Gừng tươi",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-14005",
+      "name": "Nước cam tươi (VDD 2007)",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "vn2007-14006",
+      "name": "Nước dứa (VDD 2007)",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "vn2007-14007",
+      "name": "Nước ép cà chua (VDD 2007)",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "vn2007-14008",
+      "name": "Nước khoáng (VDD 2007)",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "vn2007-14009",
+      "name": "Nước quýt tươi (VDD 2007)",
+      "category": "Đồ uống"
+    },
+    {
+      "id": "vn2007-2009",
+      "name": "Khoai lang vàng (sống)",
+      "category": "Củ quả"
+    },
+    {
+      "id": "vn2007-2010",
+      "name": "Củ từ (sống)",
+      "category": "Củ quả"
+    },
+    {
+      "id": "vn2007-2011",
+      "name": "Khoai nước (sống)",
+      "category": "Củ quả"
+    },
+    {
+      "id": "vn2007-2013",
+      "name": "Khoai môn (sống)",
+      "category": "Củ quả"
+    },
+    {
+      "id": "vn2007-2014",
+      "name": "Khoai tây (sống)",
+      "category": "Củ quả"
+    },
+    {
+      "id": "vn2007-2015",
+      "name": "Miến dong (khô)",
+      "category": "Ngũ cốc"
+    },
+    {
+      "id": "vn2007-3001",
+      "name": "Cùi dừa già",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-3002",
+      "name": "Cùi dừa non",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-3003",
+      "name": "Đậu cô ve (hạt khô)",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-3004",
+      "name": "Đậu đen (khô)",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-3005",
+      "name": "Đậu đũa (hạt khô)",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-3006",
+      "name": "Đậu Hà Lan (hạt khô)",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-3007",
+      "name": "Đậu nành (khô)",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-3008",
+      "name": "Đậu trắng (hạt khô)",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-3010",
+      "name": "Đậu xanh (khô)",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-3011",
+      "name": "Hạt dẻ to (tươi)",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-3013",
+      "name": "Hạt dẻ (khô)",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-3015",
+      "name": "Hạt điều",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-3016",
+      "name": "Hạt mít (sống)",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-3017",
+      "name": "Đậu phộng (khô)",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-3020",
+      "name": "Mè (vừng)",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-3025",
+      "name": "Đậu phụ trắng",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-3027",
+      "name": "Đậu phụ chiên",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn2007-3028",
+      "name": "Hạt bí rang (phần ăn được)",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-3029",
+      "name": "Hạt dưa rang (phần ăn được)",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-3032",
+      "name": "Sữa đậu nành không đường",
+      "category": "Sữa và chế phẩm"
+    },
+    {
+      "id": "vn2007-3033",
+      "name": "Tào phớ nước đường",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn2007-4001",
+      "name": "Bầu (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4003",
+      "name": "Bí đỏ (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4004",
+      "name": "Cà bát (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4005",
+      "name": "Cà chua (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4007",
+      "name": "Cà rốt (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4010",
+      "name": "Bắp cải (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4011",
+      "name": "Bắp cải tím (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4014",
+      "name": "Cải xoong (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4015",
+      "name": "Cải thìa (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4016",
+      "name": "Cải xanh (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4018",
+      "name": "Cần ta (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4019",
+      "name": "Chuối xanh (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4021",
+      "name": "Củ cải trắng (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4027",
+      "name": "Dưa leo (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4030",
+      "name": "Đậu đũa (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4031",
+      "name": "Đậu Hà Lan tươi",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4032",
+      "name": "Đậu rồng (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4034",
+      "name": "Gấc (phần ăn được)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4035",
+      "name": "Giá đậu nành (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4036",
+      "name": "Giá đậu xanh (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4037",
+      "name": "Hành lá (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4039",
+      "name": "Hành tây (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4040",
+      "name": "Hạt sen tươi",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-4041",
+      "name": "Hạt sen khô",
+      "category": "Hạt và đậu"
+    },
+    {
+      "id": "vn2007-4042",
+      "name": "Hẹ (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4051",
+      "name": "Măng khô",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4052",
+      "name": "Măng tây trắng (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4053",
+      "name": "Măng tre tươi",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4054",
+      "name": "Mướp (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4055",
+      "name": "Khổ qua (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4056",
+      "name": "Mướp Nhật (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4057",
+      "name": "Ngải cứu (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4058",
+      "name": "Bắp non (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4059",
+      "name": "Ngó sen (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4061",
+      "name": "Ớt đỏ (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4062",
+      "name": "Ớt vàng (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4063",
+      "name": "Ớt xanh (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4067",
+      "name": "Rong biển khô",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4068",
+      "name": "Rong biển tươi",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4069",
+      "name": "Xà lách (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4070",
+      "name": "Rau đay (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4072",
+      "name": "Rau dền (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4073",
+      "name": "Rau dền đỏ (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4075",
+      "name": "Húng quế (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4076",
+      "name": "Rau lang (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4081",
+      "name": "Ngò rí / rau mùi (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4082",
+      "name": "Ngò tây (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4083",
+      "name": "Rau muống (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4096",
+      "name": "Su hào (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4098",
+      "name": "Su su (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4099",
+      "name": "Súp lơ trắng (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4100",
+      "name": "Bông cải xanh (sống)",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4103",
+      "name": "Tỏi",
+      "category": "Gia vị"
+    },
+    {
+      "id": "vn2007-4123",
+      "name": "Nấm hương tươi",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-4125",
+      "name": "Nấm rơm tươi",
+      "category": "Rau củ"
+    },
+    {
+      "id": "vn2007-5001",
+      "name": "Bưởi",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5002",
+      "name": "Cam",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5003",
+      "name": "Chanh (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5004",
+      "name": "Chôm chôm",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5005",
+      "name": "Chuối khô",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5006",
+      "name": "Chuối tây (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5007",
+      "name": "Chuối tiêu (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5009",
+      "name": "Dâu tây",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5010",
+      "name": "Dưa bở (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5011",
+      "name": "Dưa hấu",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5012",
+      "name": "Dưa hồng (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5013",
+      "name": "Dưa lê (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5015",
+      "name": "Thơm (dứa)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5016",
+      "name": "Đào (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5017",
+      "name": "Đu đủ chín",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5018",
+      "name": "Mận miền Nam (roi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5020",
+      "name": "Hồng đỏ (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5022",
+      "name": "Hồng xiêm (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5023",
+      "name": "Lê",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5024",
+      "name": "Lựu (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5025",
+      "name": "Mãng cầu xiêm",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5027",
+      "name": "Mận miền Bắc (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5028",
+      "name": "Mít chín",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5031",
+      "name": "Mơ (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5032",
+      "name": "Mơ khô",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5033",
+      "name": "Muỗm / quéo (xanh)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5034",
+      "name": "Na (mãng cầu ta)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5035",
+      "name": "Nhãn",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5036",
+      "name": "Nhãn khô",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5037",
+      "name": "Nho",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5040",
+      "name": "Ổi",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5041",
+      "name": "Bơ vỏ tím (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5042",
+      "name": "Bơ xanh",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5045",
+      "name": "Quả trứng gà (lê ki ma)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5047",
+      "name": "Quýt",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5048",
+      "name": "Sầu riêng",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5050",
+      "name": "Táo ta (tươi)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5051",
+      "name": "Táo tây (tươi, VDD 2007)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5052",
+      "name": "Vải",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5053",
+      "name": "Vải khô",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5055",
+      "name": "Xoài chín",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-5056",
+      "name": "Kiwi (tươi, VDD 2007)",
+      "category": "Trái cây"
+    },
+    {
+      "id": "vn2007-6001",
+      "name": "Bơ động vật không muối",
+      "category": "Dầu và chất béo"
+    },
+    {
+      "id": "vn2007-6002",
+      "name": "Dầu ăn thực vật",
+      "category": "Dầu và chất béo"
+    },
+    {
+      "id": "vn2007-7003",
+      "name": "Thịt bò nạc (sống)",
+      "category": "Thịt và trứng"
+    },
+    {
+      "id": "vn2007-7011",
+      "name": "Thịt dê nạc (sống)",
+      "category": "Thịt"
+    },
+    {
+      "id": "vn2007-7013",
+      "name": "Thịt gà có da (sống)",
+      "category": "Thịt và trứng"
+    },
+    {
+      "id": "vn2007-7016",
+      "name": "Thịt heo mỡ lẫn nạc (sống)",
+      "category": "Thịt và trứng"
+    },
+    {
+      "id": "vn2007-7017",
+      "name": "Thịt heo nạc (sống)",
+      "category": "Thịt và trứng"
+    },
+    {
+      "id": "vn2007-7023",
+      "name": "Thịt trâu (sống)",
+      "category": "Thịt"
+    },
+    {
+      "id": "vn2007-7028",
+      "name": "Thịt vịt có da (sống)",
+      "category": "Thịt và trứng"
+    },
+    {
+      "id": "vn2007-7032",
+      "name": "Chân giò heo (phần ăn được, sống)",
+      "category": "Thịt"
+    },
+    {
+      "id": "vn2007-7040",
+      "name": "Gan gà (sống)",
+      "category": "Thịt"
+    },
+    {
+      "id": "vn2007-7041",
+      "name": "Gan heo (sống)",
+      "category": "Thịt"
+    },
+    {
+      "id": "vn2007-7048",
+      "name": "Mề gà (sống)",
+      "category": "Thịt"
+    },
+    {
+      "id": "vn2007-7053",
+      "name": "Sườn heo (phần ăn được, sống)",
+      "category": "Thịt và trứng"
+    },
+    {
+      "id": "vn2007-7063",
+      "name": "Pa tê",
+      "category": "Thịt và trứng"
+    },
+    {
+      "id": "vn2007-7064",
+      "name": "Chả heo (không nhãn hàng)",
+      "category": "Thịt chế biến"
+    },
+    {
+      "id": "vn2007-7065",
+      "name": "Chả quế (không nhãn hàng)",
+      "category": "Thịt chế biến"
+    },
+    {
+      "id": "vn2007-7066",
+      "name": "Dăm bông heo (không nhãn hàng)",
+      "category": "Thịt chế biến"
+    },
+    {
+      "id": "vn2007-7067",
+      "name": "Dồi heo (không nhãn hàng)",
+      "category": "Thịt chế biến"
+    },
+    {
+      "id": "vn2007-7068",
+      "name": "Giò bò (không nhãn hàng)",
+      "category": "Thịt chế biến"
+    },
+    {
+      "id": "vn2007-7069",
+      "name": "Chả lụa",
+      "category": "Thịt và trứng"
+    },
+    {
+      "id": "vn2007-7070",
+      "name": "Giò thủ (không nhãn hàng)",
+      "category": "Thịt chế biến"
+    },
+    {
+      "id": "vn2007-7071",
+      "name": "Lạp xưởng",
+      "category": "Thịt và trứng"
+    },
+    {
+      "id": "vn2007-7072",
+      "name": "Nem chạo",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn2007-7073",
+      "name": "Nem chua",
+      "category": "Món ăn Việt"
+    },
+    {
+      "id": "vn2007-7074",
+      "name": "Chà bông heo (không nhãn hàng)",
+      "category": "Thịt chế biến"
+    },
+    {
+      "id": "vn2007-7075",
+      "name": "Khô bò (không nhãn hàng)",
+      "category": "Thịt chế biến"
+    },
+    {
+      "id": "vn2007-7076",
+      "name": "Khô trâu (không nhãn hàng)",
+      "category": "Thịt chế biến"
+    },
+    {
+      "id": "vn2007-7077",
+      "name": "Xúc xích heo (không nhãn hàng)",
+      "category": "Thịt chế biến"
+    },
+    {
+      "id": "vn2007-8003",
+      "name": "Cá chép (thịt sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8011",
+      "name": "Cá hồi (thịt sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8015",
+      "name": "Cá mòi (thịt sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8020",
+      "name": "Cá nục (thịt sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8022",
+      "name": "Cá lóc (thịt sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8023",
+      "name": "Cá rô đồng (thịt sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8024",
+      "name": "Cá rô phi (thịt sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8026",
+      "name": "Cá thu (thịt sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8027",
+      "name": "Cá thu đao (thịt sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8030",
+      "name": "Cá trê (thịt sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8031",
+      "name": "Cá trích (thịt sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8033",
+      "name": "Cua biển (phần ăn được, sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8034",
+      "name": "Cua đồng (phần ăn được, sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8035",
+      "name": "Ghẹ (phần ăn được, sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8037",
+      "name": "Hến (phần ăn được, sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8038",
+      "name": "Lươn (thịt sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8039",
+      "name": "Mực khô (chưa nướng)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8040",
+      "name": "Mực tươi (phần ăn được)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8041",
+      "name": "Ốc bươu (phần ăn được, sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8051",
+      "name": "Tôm biển (bóc vỏ, sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8052",
+      "name": "Tôm đồng (phần ăn được, sống)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8053",
+      "name": "Tôm khô (không nhãn hàng)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8055",
+      "name": "Bánh phồng tôm đã chiên",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-8056",
+      "name": "Bánh phồng tôm khô (chưa chiên)",
+      "category": "Sản phẩm đóng gói"
+    },
+    {
+      "id": "vn2007-8058",
+      "name": "Chà bông cá lóc (không nhãn hàng)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-8059",
+      "name": "Chà bông tôm (không nhãn hàng)",
+      "category": "Hải sản"
+    },
+    {
+      "id": "vn2007-9001",
+      "name": "Trứng gà (bỏ vỏ, sống)",
+      "category": "Thịt và trứng"
+    },
+    {
+      "id": "vn2007-9004",
+      "name": "Trứng vịt (bỏ vỏ, sống)",
+      "category": "Thịt và trứng"
+    },
+    {
+      "id": "vn2007-9007",
+      "name": "Trứng cút (bỏ vỏ, sống)",
+      "category": "Thịt và trứng"
+    }
+  ]
+}

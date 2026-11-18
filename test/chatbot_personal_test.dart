@@ -1,3 +1,4 @@
+import 'support/load_icon_font.dart';
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -57,10 +58,13 @@ NutritionTarget target(String day, double kcal, {double protein = 100}) =>
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async {
+    await loadIconFont();
     if (!const bool.fromEnvironment('HEALTHMATE_CAPTURE_CHAT')) return;
-    final font = FontLoader('Inter');
+    final font = FontLoader('Public Sans');
     for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      font.addFont(rootBundle.load('assets/fonts/inter/Inter-$weight.ttf'));
+      font.addFont(
+        rootBundle.load('assets/fonts/public_sans/PublicSans-$weight.ttf'),
+      );
     }
     await font.load();
     await (FontLoader(

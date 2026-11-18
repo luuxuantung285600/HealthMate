@@ -127,6 +127,61 @@ Matcher failure(FoodSearchFailureKind kind) =>
 
 void main() {
   test(
+    'query-specific filters apply before the result limit, including cache and API',
+    () async {
+      const drink = FoodCatalogItem(
+        id: 'drink',
+        name: 'Fixture orange juice',
+        category: 'Đồ uống',
+        servingBasis: ServingBasis.per100g,
+        sourceLabel: 'Fixture',
+        isEstimated: true,
+      );
+      final cache = MemoryCache()
+        ..searchHook = (() async => [localFood, drink]);
+      final api = UsdaApiService(
+        client: MockClient(
+          (request) async => http.Response(
+            jsonEncode({
+              'foods': [
+                {'fdcId': 10, 'description': 'Fixture rice'},
+                {'fdcId': 11, 'description': 'Fixture orange juice'},
+              ],
+            }),
+            200,
+          ),
+        ),
+      );
+      addTearDown(api.dispose);
+      final service = UnifiedFoodSearchService(
+        localDatabase: cache,
+        usdaService: api,
+      );
+      final local = await service.search(
+        query: 'fixture',
+        firestoreCatalog: [localFood, drink],
+        limit: 1,
+        matches: (food) => food.name.contains('juice'),
+      );
+      expect(local.results.single.food.id, 'drink');
+      final cached = await service.search(
+        query: 'fixture',
+        firestoreCatalog: [],
+        limit: 1,
+        matches: (food) => food.name.contains('juice'),
+      );
+      expect(cached.results.single.food.id, 'drink');
+      cache.searchHook = null;
+      final online = await service.search(
+        query: 'fixture',
+        firestoreCatalog: [],
+        limit: 1,
+        matches: (food) => food.name.contains('juice'),
+      );
+      expect(online.results.single.food.id, 'usda_11');
+    },
+  );
+  test(
     'admin archive is applied to cache and USDA search, and restoration uses the same live policy',
     () async {
       final cache = MemoryCache()..searchHook = (() async => [localFood]);

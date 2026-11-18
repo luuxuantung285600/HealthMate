@@ -256,6 +256,8 @@ def build(directory):
                          'excluded': dict(sorted(excluded.items())),
                          'publicationDates': dict(sorted(Counter(f['sourceDetails']['publicationDate'] for f in added).items())),
                          'withHouseholdPortion': sum('servingGrams' in f for f in added)}
+    from food_browse_metadata import apply_browse_metadata
+    apply_browse_metadata(foods)
     destination = ROOT / 'assets/nutrition/usda-current.json'
     payload = {'version': 'healthmate-usda-current-2026-10-27',
                'license': 'CC0-1.0 / USDA public domain',

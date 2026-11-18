@@ -1,5 +1,11 @@
+import '../../../core/theme/app_icons.dart';
 import 'journal_meal_entry.dart';
+import 'hourly_meal_timeline.dart';
+import '../../../core/theme/home_palette.dart';
+import '../../../shared/providers/local_clock_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../../../core/router/app_routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -21,6 +27,7 @@ import '../../water/models/water_log.dart';
 import '../../water/presentation/water_log_dialog.dart';
 import '../../water/presentation/water_log_section.dart';
 import '../../water/providers/water_providers.dart';
+import '../../water/presentation/quick_water_entry.dart';
 import '../providers/journal_date_provider.dart';
 import '../providers/journal_quick_action_provider.dart';
 import 'journal_date_selector.dart';
@@ -41,7 +48,7 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
   bool _deleteOpen = false;
 
   DateTime _timeOnSelectedDate(DateTime selectedDate, {DateTime? source}) {
-    final time = source ?? DateTime.now();
+    final time = (source ?? ref.read(currentLocalTimeProvider)()).toLocal();
     return DateTime(
       selectedDate.year,
       selectedDate.month,
@@ -57,19 +64,14 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
     DateTime selectedDate,
     int amountMl,
   ) async {
-    final saved = await ref
-        .read(waterControllerProvider.notifier)
-        .add(
-          WaterLogDraft(
-            amountMl: amountMl,
-            consumedAt: _timeOnSelectedDate(selectedDate),
-          ),
-        );
-    if (saved && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Đã ghi nhanh $amountMl ml nước.')),
-      );
-    }
+    await addQuickWater(
+      context,
+      ref,
+      WaterLogDraft(
+        amountMl: amountMl,
+        consumedAt: _timeOnSelectedDate(selectedDate),
+      ),
+    );
   }
 
   Future<void> _scanFood(
@@ -237,7 +239,7 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
+      lastDate: ref.read(currentLocalTimeProvider)(),
       helpText: 'Ngày nhật ký',
     );
     if (date != null) ref.read(journalDateProvider.notifier).select(date);
@@ -297,7 +299,7 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
       });
     });
 
-    return FeaturePage(
+    final page = FeaturePage(
       contentPadding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       headerGap: 19,
       showProfileAvatar: true,
@@ -312,7 +314,7 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
           catalog,
           initialConsumedAt: _timeOnSelectedDate(selectedDate),
         ),
-        icon: const Icon(Icons.drafts_outlined),
+        icon: const Icon(AppIcons.filePenLine),
       ),
       subtitle: '',
       compactHeader: true,
@@ -320,7 +322,10 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
         JournalDateSelector(
           date: selectedDate,
           onPrevious: ref.read(journalDateProvider.notifier).previousDay,
-          onNext: selectedDate.isBefore(localDateOnly(DateTime.now()))
+          onNext:
+              selectedDate.isBefore(
+                localDateOnly(ref.watch(localClockProvider)),
+              )
               ? ref.read(journalDateProvider.notifier).nextDay
               : null,
           onPick: () => _pickJournalDate(context, ref, selectedDate),
@@ -350,7 +355,7 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
                   initialConsumedAt: _timeOnSelectedDate(selectedDate),
                 ),
           style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
-          icon: const Icon(Icons.add_rounded),
+          icon: const Icon(AppIcons.plus),
           label: const Text('Thêm bữa ăn'),
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -372,12 +377,31 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
             catalog,
             initialConsumedAt: _timeOnSelectedDate(selectedDate),
           ),
-          onAddForType: (type) => openJournalMealForm(
-            context,
-            ref,
-            catalog,
-            initialType: type,
-            initialConsumedAt: _timeOnSelectedDate(selectedDate),
+          timeline: HourlyMealTimeline(
+            day: selectedDate,
+            now: ref.watch(localClockProvider),
+            meals: meals,
+            onAdd: action.isLoading
+                ? null
+                : (time) => openJournalMealForm(
+                    context,
+                    ref,
+                    catalog,
+                    initialConsumedAt: time,
+                  ),
+            onEdit: (meal) =>
+                openJournalMealForm(context, ref, catalog, meal: meal),
+            onDuplicate: (meal) => openJournalMealForm(
+              context,
+              ref,
+              catalog,
+              initialConsumedAt: _timeOnSelectedDate(
+                selectedDate,
+                source: meal.consumedAt,
+              ),
+              duplicateFrom: meal,
+            ),
+            onDelete: (meal) => _delete(context, ownerUid, meal),
           ),
           showScanner: ref.watch(appFeatureFlagsProvider).foodScannerEnabled,
           catalogState: catalogState,
@@ -422,7 +446,7 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
           child: TextButton.icon(
             key: const ValueKey('open-day-review'),
             onPressed: () => openDayReview(context, selectedDate),
-            icon: const Icon(Icons.fact_check_outlined),
+            icon: const Icon(AppIcons.clipboardCheck),
             label: const Text('Hoàn tất nhật ký'),
           ),
         ),
@@ -450,29 +474,45 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
         DetailsDisclosure(
           key: const ValueKey('journal-activity-details'),
           title: 'Vận động',
-          builder: (_) => ActivityLogSection(
-            key: ValueKey(('activity', ownerUid)),
-            state: activityState,
-            action: activityAction,
-            onAdd: () => _openActivityForm(context, ref, selectedDate),
-            onEdit: (log) =>
-                _openActivityForm(context, ref, selectedDate, log: log),
-            onDelete: (log) => _confirmDelete(
-              context,
-              ownerUid,
-              'Xóa hoạt động?',
-              '${log.type.label} · ${log.durationMinutes} phút\n${_entryTime(log.performedAt)}',
-              () =>
-                  ref.read(activityControllerProvider.notifier).delete(log.id),
-              'Đã xóa hoạt động.',
-            ),
-            onRetry: () => ref.invalidate(activityLogsProvider(dateKey)),
-            onDismissError: ref
-                .read(activityControllerProvider.notifier)
-                .clearError,
+          builder: (_) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              OutlinedButton.icon(
+                key: const ValueKey('journal-open-workouts'),
+                onPressed: () => context.push(AppRoutes.workouts),
+                icon: const Icon(AppIcons.circlePlay),
+                label: const Text('Tập theo hướng dẫn'),
+              ),
+              ActivityLogSection(
+                key: ValueKey(('activity', ownerUid)),
+                state: activityState,
+                action: activityAction,
+                onAdd: () => _openActivityForm(context, ref, selectedDate),
+                onEdit: (log) =>
+                    _openActivityForm(context, ref, selectedDate, log: log),
+                onDelete: (log) => _confirmDelete(
+                  context,
+                  ownerUid,
+                  'Xóa hoạt động?',
+                  '${log.type.label} · ${log.durationMinutes} phút\n${_entryTime(log.performedAt)}',
+                  () => ref
+                      .read(activityControllerProvider.notifier)
+                      .delete(log.id),
+                  'Đã xóa hoạt động.',
+                ),
+                onRetry: () => ref.invalidate(activityLogsProvider(dateKey)),
+                onDismissError: ref
+                    .read(activityControllerProvider.notifier)
+                    .clearError,
+              ),
+            ],
           ),
         ),
       ],
+    );
+    return Theme(
+      data: HomePalette.of(context),
+      child: Material(color: HomePalette.background(context), child: page),
     );
   }
 }

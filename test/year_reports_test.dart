@@ -1,3 +1,4 @@
+import 'support/load_icon_font.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -82,9 +83,12 @@ Future<void> tapReport(WidgetTester t, String key) async {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async {
-    final font = FontLoader('Inter');
+    await loadIconFont();
+    final font = FontLoader('Public Sans');
     for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      font.addFont(rootBundle.load('assets/fonts/inter/Inter-$weight.ttf'));
+      font.addFont(
+        rootBundle.load('assets/fonts/public_sans/PublicSans-$weight.ttf'),
+      );
     }
     await font.load();
     await (FontLoader(

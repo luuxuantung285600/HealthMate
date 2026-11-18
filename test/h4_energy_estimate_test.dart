@@ -147,6 +147,8 @@ void main() {
       expect(repo.saveCalls, 0);
       final accept = find.byKey(const ValueKey('accept-estimate'));
       await t.scrollUntilVisible(accept, 180, scrollable: verticalScroll());
+      await t.pumpAndSettle();
+      expect(accept.hitTestable(), findsOneWidget);
       await t.tap(accept);
       await t.pumpAndSettle();
       expect(find.byType(NutritionTargetForm), findsOneWidget);
@@ -155,7 +157,11 @@ void main() {
       await t.ensureVisible(kcal);
       expect(t.widget<TextField>(kcal).controller!.text, '2670');
       await t.enterText(kcal, '2600');
-      await t.tap(find.byKey(const ValueKey('save-target')));
+      final save = find.byKey(const ValueKey('save-target'));
+      await t.ensureVisible(save);
+      await t.pumpAndSettle();
+      expect(save.hitTestable(), findsOneWidget);
+      await t.tap(save);
       await t.pumpAndSettle();
       expect(repo.byUid['test-uid']!['2026-10-19']!.kcalTarget, 2600);
     },

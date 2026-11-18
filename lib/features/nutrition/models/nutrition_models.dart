@@ -1,5 +1,6 @@
 import '../../../core/utils/local_date_key.dart';
 import 'extra_nutrients.dart';
+import 'food_photo.dart';
 
 class NutritionTotals {
   const NutritionTotals({
@@ -20,6 +21,12 @@ class NutritionTotals {
   final double carbsG;
   final double fatG;
   final Map<String, double> extraNutrients;
+
+  /// Salt equivalent, not added salt: sodium (mg) × 2.5 / 1000.
+  double? get saltEquivalentG => extraNutrients['sodium'] == null
+      ? null
+      : extraNutrients['sodium']! * 2.5 / 1000;
+  double? get totalSugarG => extraNutrients['sugar'];
 
   /// Known subtotal; fiberKnown=false preserves missing ingredients/sources.
   final double fiberG;
@@ -90,6 +97,18 @@ enum ServingBasis {
 
 enum FoodDietClass { unknown, vegan, vegetarian, nonVegetarian }
 
+/// Ingredient mass before preparation, relative to 100 g of the recipe yield.
+/// This describes the source recipe, not every restaurant's finished dish.
+class FoodRecipeIngredient {
+  const FoodRecipeIngredient({
+    required this.foodId,
+    required this.name,
+    required this.gramsPer100gYield,
+  });
+  final String foodId, name;
+  final double gramsPer100gYield;
+}
+
 class FoodCatalogItem {
   const FoodCatalogItem({
     required this.id,
@@ -121,14 +140,20 @@ class FoodCatalogItem {
     this.originalName,
     this.ingredientNames = const [],
     this.ingredientsKnown = false,
+    this.recipeIngredients = const [],
+    this.photo,
+    this.photoMode = 'default',
   });
 
   final String id;
+  final FoodPhoto? photo;
+  final String photoMode;
   final String name;
   final FoodDietClass dietaryClass;
   final String? originalName;
   final List<String> ingredientNames;
   final bool ingredientsKnown;
+  final List<FoodRecipeIngredient> recipeIngredients;
   final List<String> alternateNames;
   final String category;
   final ServingBasis servingBasis;

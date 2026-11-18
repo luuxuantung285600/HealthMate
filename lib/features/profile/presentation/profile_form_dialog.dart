@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../core/widgets/confirmed_save.dart';
@@ -144,7 +145,7 @@ class _ProfileFormDialogState extends State<ProfileFormDialog>
                       maxLength: 50,
                       decoration: const InputDecoration(
                         labelText: 'Tên hiển thị',
-                        prefixIcon: Icon(Icons.badge_outlined),
+                        prefixIcon: Icon(AppIcons.contactRound),
                       ),
                       validator: ProfileValidation.displayName,
                     ),
@@ -160,7 +161,7 @@ class _ProfileFormDialogState extends State<ProfileFormDialog>
                         labelText: 'Chiều cao (cm)',
                         helperText: 'Từ 80 đến 250 cm; có thể nhập dấu phẩy.',
                         helperMaxLines: 3,
-                        prefixIcon: Icon(Icons.height_rounded),
+                        prefixIcon: Icon(AppIcons.ruler),
                       ),
                       validator: ProfileValidation.requiredHeight,
                     ),
@@ -174,7 +175,7 @@ class _ProfileFormDialogState extends State<ProfileFormDialog>
                     OutlinedButton.icon(
                       key: const ValueKey('profile-birth-date'),
                       onPressed: _pickBirthDate,
-                      icon: const Icon(Icons.cake_outlined),
+                      icon: const Icon(AppIcons.cake),
                       label: Text(
                         _birthDate == null
                             ? 'Chọn ngày sinh'
@@ -200,7 +201,7 @@ class _ProfileFormDialogState extends State<ProfileFormDialog>
                       isExpanded: true,
                       decoration: const InputDecoration(
                         labelText: 'Mục tiêu sức khỏe',
-                        prefixIcon: Icon(Icons.flag_outlined),
+                        prefixIcon: Icon(AppIcons.goals),
                       ),
                       items: [
                         for (final goal in HealthGoal.values)
@@ -224,7 +225,7 @@ class _ProfileFormDialogState extends State<ProfileFormDialog>
                         textInputAction: TextInputAction.done,
                         decoration: const InputDecoration(
                           labelText: 'Cân nặng mục tiêu (kg)',
-                          prefixIcon: Icon(Icons.monitor_weight_outlined),
+                          prefixIcon: Icon(AppIcons.weight),
                         ),
                         validator: (value) =>
                             ProfileValidation.targetWeight(value, _goal),

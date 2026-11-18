@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'app_card.dart';
-import 'design_illustration.dart';
+import '../theme/app_feature_visuals.dart';
+import 'feature_icon_badge.dart';
 
 typedef ReferenceShortcut = ({
   String label,
@@ -31,9 +31,9 @@ class ReferenceShortcuts extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 child: Column(
                   children: [
-                    AppCard(
-                      padding: const EdgeInsets.all(10),
-                      child: DesignIllustration(entry.art, size: 40),
+                    FeatureIconBadge(
+                      AppFeatureVisual.fromArtwork(entry.art),
+                      size: 56,
                     ),
                     const SizedBox(height: 12),
                     Text(

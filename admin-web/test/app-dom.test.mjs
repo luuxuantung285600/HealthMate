@@ -13,6 +13,10 @@ async function setup({member=false,pendingList=false,live=false,hash='',billing=
   const {window,document}=parseHTML(await readFile(new URL('../dist/index.html',import.meta.url),'utf8'));
   globalThis.window=window;globalThis.document=document;
   window.location={hash};window.history={pushState(_a,_b,value){window.location.hash=value;},replaceState(_a,_b,value){window.location.hash=value;}};
+  window.Image=class {set src(value){this.naturalWidth=512;this.naturalHeight=512;queueMicrotask(()=>this.onload?.());}};
+  // Linkedom's window proxy always supplies its inert built-in Image class.
+  // The document view exposes the test browser loader used by photo validation.
+  Object.defineProperty(document,'defaultView',{value:{get Image(){return globalThis.Image;}}});
   window.HTMLElement.prototype.showModal=function(){this.setAttribute('open','');};window.HTMLElement.prototype.close=function(){this.removeAttribute('open');};
   const dialog=document.querySelector('#editor');dialog.showModal=()=>dialog.setAttribute('open','');dialog.close=()=>dialog.removeAttribute('open');
   Object.defineProperty(document.querySelector('#editor-form'),'elements',{configurable:true,get(){return this.querySelectorAll('input,select,textarea,button');}});
@@ -31,6 +35,7 @@ async function setup({member=false,pendingList=false,live=false,hash='',billing=
     async listPage(kind,{cursor=null,...range}={}){this.listCalls++;this.lastRange=range;const source=(await this.source(kind)).filter(row=>!range.lookupField||(range.lookupField==='name'?row.name.startsWith(range.lookupValue):row[range.lookupField==='id'?'id':range.lookupField]===range.lookupValue));const offset=cursor?.offset??0,rows=source.slice(offset,offset+25);return{rows,cursor:{id:rows.at(-1)?.id,offset:offset+25},hasMore:offset+25<source.length};},
     async exportRange(kind,{idFrom='',idTo='',isCurrent=()=>true}={}){const source=await this.source(kind);if(!isCurrent())throw Error('Phiên tải đã kết thúc.');return source.filter(row=>(!idFrom||row.id>=idFrom)&&(!idTo||row.id<=idTo));},
     async save(kind,id,payload,reason,version){this.saves.push({kind,id,payload,reason,version});if(this.failSave)throw Error('Lỗi nguồn QA');const row=this.rows.find(r=>r.id===id);if(row)Object.assign(row,payload);else this.rows.push({...payload,id});},
+    watchExerciseLibrary(next,error,options){queueMicrotask(()=>{if(options?.isCurrent?.()!==false)next(this.exerciseRows??[]);});return()=>{};},
     release,
   };
   if(live){
@@ -42,11 +47,13 @@ async function setup({member=false,pendingList=false,live=false,hash='',billing=
       return()=>{row.active=false;};
     };
     api.emit=(key,value,error=false)=>{for(const row of listeners.get(key)??[])if(row.active&&(row.options?.isCurrent?.()??true))(error?row.error:row.receive)(value);};
+    api.watchExerciseLibrary=(next,error,opts)=>bind('exercises',next,error,opts,()=>api.exerciseRows??[]);
     api.watchConfig=(next,error,opts)=>bind('config',next,error,opts,()=>api.config());
     api.watchCounts=(next,error,opts)=>bind('counts',next,error,opts,()=>api.counts());
     api.watchRegisteredAccounts=(next,error,opts)=>bind('registered',next,error,opts,()=>api.registeredAccounts());
     api.watchRange=(kind,range,next,error,opts)=>bind('range',next,error,opts,()=>api.exportRange(kind,range));
     api.watchPage=(kind,opts,next,error)=>bind('page:'+kind,next,error,opts,()=>api.listPage(kind,opts));
+    api.watchFoodCatalog=(range,next,error,opts)=>bind('foods',next,error,opts,()=>api.source('food_catalog').then(rows=>rows.filter(row=>!range.lookupField||(range.lookupField==='name'?row.name.startsWith(range.lookupValue):row.id===range.lookupValue))));
     api.watchSupportThread=(id,next,error,opts)=>bind('thread:'+id,next,error,opts,()=>api.supportThread(id));
   }
   globalThis.adminDomFixture=api;
@@ -97,13 +104,12 @@ test('dashboard distinguishes unavailable registered total from synced accounts;
   await t.click(t.button('Sau'));
   assert.equal(t.document.querySelector('tbody td').textContent,'26');
   const search=t.document.querySelector('#list-search');search.value='com tam';search.dispatchEvent(new t.window.Event('input'));await t.flush();
-  assert.equal(t.document.querySelectorAll('tbody tr').length,0,'page two must not claim a match on unseen page three');
-  assert.match(t.document.querySelector('#list-status').textContent,/chỉ áp dụng trang này/);
-  await t.click(t.button('Sau'));
+  assert.match(t.document.querySelector('#list-status').textContent,/toàn bộ kết quả/);
   assert.equal(t.document.querySelectorAll('tbody tr').length,1);
   assert.match(t.document.querySelector('tbody').textContent,/Cơm tấm/);
-  assert.equal(t.document.querySelector('tbody td').textContent,'51');
-  assert.equal(t.api.listCalls,3,'each navigation fetches one page; filtering does not refetch');
+  assert.equal(t.document.querySelector('tbody td').textContent,'1');
+  assert.ok(t.button('Sau').disabled,'search resets pagination after filtering the full set');
+  assert.equal(t.api.listCalls,3,'complete bounded set loaded once; pagination and filtering do not refetch');
 });
 test('archive requires review and reason, failure keeps draft, restore preserves row and source',async()=>{
   const t=await setup();await t.click(t.document.querySelector('[data-page="food_catalog"]'));
@@ -134,7 +140,7 @@ test('account self/admin is protected; late data after logout cannot reappear',a
 });
 test('catalog create validates nutrition before writing and detail safely shows user text',async()=>{
   const t=await setup();await t.click(t.document.querySelector('[data-page="food_catalog"]'));
-  await t.click(t.button('+ Thêm món ăn'));
+  await t.click(t.button('Thêm món ăn'));
   const fields={id:'qa-created',name:'<script>do not run</script>',category:'Món chính',kcalPer100g:'150',proteinGPer100g:'5',carbsGPer100g:'25',fatGPer100g:'3',fiberGPer100g:'',sourceLabel:'QA',sourceUrl:'https://example.com',reason:'QA tạo'};
   for(const [key,value]of Object.entries(fields))t.document.querySelector(`[name="${key}"]`).value=value;
   t.document.querySelector('[name="isActive"]').checked=true;t.document.querySelector('[name="isEstimated"]').checked=true;
@@ -317,7 +323,7 @@ test('workout export carries filters, and a detached button cannot download afte
   let downloads=0,blob;const original=URL.createObjectURL;URL.createObjectURL=value=>{downloads++;blob=value;return 'blob:workouts';};
   try{
     await t.click(exportButton);assert.equal(downloads,1);
-    const text=await blob.text();assert.match(text,/Nguồn MET/);assert.match(text,/Thông tin báo cáo/);
+    const text=await blob.text();assert.match(text,/AscendAPI/);assert.match(text,/Thông tin báo cáo/);
     await t.api.logout();await t.flush();
     await t.click(exportButton);assert.equal(downloads,1);
   }finally{URL.createObjectURL=original;}
@@ -492,14 +498,13 @@ test('sidebar collapse and mobile drawer support toggle, scrim and Escape withou
   assert.ok(t.document.querySelector('#dashboard-accounts'));
 });
 
-test('workouts inspects the actual app catalog without backend queries or pretend write controls',async() => {
+test('workouts merges actual bundled exercises with remote admin controls',async() => {
   const t=await setup(),before=t.api.listCalls;
   await t.click(t.document.querySelector('[data-page="workouts"]'));
   const content=t.document.querySelector('#page-content');
-  assert.match(content.textContent,/Danh mục chỉ đọc/);
-  assert.match(content.textContent,/Chưa hỗ trợ sửa bài tập từ xa/);
-  assert.equal(content.querySelectorAll('tbody tr').length,33);
-  assert.equal([...content.querySelectorAll('button')].some(button=>/Thêm|Sửa|Xóa/.test(button.textContent)),false);
+  assert.match(content.textContent,/đồng bộ trực tiếp/);
+  assert.equal(content.querySelectorAll('tbody tr').length,60);
+  assert.ok(t.button('Thêm bài tập'));assert.ok(t.button('Sửa'));assert.ok(t.button('Xóa khỏi thư viện'));
   assert.equal(t.api.listCalls,before);
   assert.equal(t.api.saves.length,0);
 });
@@ -550,12 +555,12 @@ test('live dashboard receives Auth, operational counts, config and receipts with
   assert.match(t.document.querySelector('#dashboard-features').textContent,/Đang tắt/);
   await t.click(t.document.querySelector('[data-page="food_catalog"]'));
   assert.ok(t.api.liveListeners.get('range').every(row=>!row.active));
-  t.api.emit('page:food_catalog',{rows:[{...t.api.rows[0],name:'Tên mới trực tiếp',isActive:false}],cursor:null,hasMore:false});
+  t.api.emit('foods',[{...t.api.rows[0],name:'Tên mới trực tiếp',isActive:false}]);
   assert.match(t.document.querySelector('tbody').textContent,/Tên mới trực tiếp/);
   assert.match(t.document.querySelector('tbody').textContent,/Đã xóa khỏi danh mục/);
-  t.api.emit('page:food_catalog',Error('Mất kết nối máy chủ'),true);
+  t.api.emit('foods',Error('Mất kết nối máy chủ'),true);
   assert.equal(t.document.querySelector('tbody'),null);
-  t.api.emit('page:food_catalog',{rows:[],cursor:null,hasMore:false});
+  t.api.emit('foods',[]);
   assert.match(t.document.querySelector('#data-content').textContent,/Chưa có dữ liệu/);
   await t.api.logout();await t.flush();
   assert.ok([...t.api.liveListeners.values()].flat().every(row=>!row.active));
@@ -606,7 +611,7 @@ test('deep links survive authentication, support browser navigation and reject u
 });
 
 test('editor guards discard and beforeunload, and clears the guard after confirmed cancellation',async()=>{
-  const t=await setup({hash:'#/food_catalog'});await t.click(t.button('+ Thêm món ăn'));
+  const t=await setup({hash:'#/food_catalog'});await t.click(t.button('Thêm món ăn'));
   t.document.querySelector('[name="name"]').value='Bản nháp';
   const unload=new t.window.Event('beforeunload',{cancelable:true});t.window.dispatchEvent(unload);assert.equal(unload.returnValue,'');
   await t.click(t.button('Hủy'));assert.ok(t.document.querySelector('#discard-dialog[open]'));
@@ -629,7 +634,7 @@ test('dirty config stays on screen until discard; conflict disables save and off
 });
 
 test('revoking a role clears an open discard prompt and all private draft content',async()=>{
-  const t=await setup({hash:'#/food_catalog'});await t.click(t.button('+ Thêm món ăn'));t.document.querySelector('[name="name"]').value='Private draft';
+  const t=await setup({hash:'#/food_catalog'});await t.click(t.button('Thêm món ăn'));t.document.querySelector('[name="name"]').value='Private draft';
   await t.click(t.button('Hủy'));assert.ok(t.document.querySelector('#discard-dialog'));
   t.api.roleData(false);await t.flush();assert.equal(t.document.querySelector('#discard-dialog'),null);assert.equal(t.document.querySelector('#editor[open]'),null);
   assert.equal(t.document.querySelector('#editor-fields').childElementCount,0);
@@ -643,11 +648,32 @@ test('audit offers Vietnam day filtering and date-based export',async()=>{
   await t.click(t.button('Xuất Excel theo ngày'));assert.equal(t.document.querySelector('[name="start"]').value,'2026-11-01');assert.equal(t.document.querySelector('[name="idFrom"]'),null);
 });
 
-test('workouts show all 33 actual app exercises with accent-insensitive lookup and explicit read-only status',async()=>{
-  const t=await setup({hash:'#/workouts'});assert.equal(t.document.querySelectorAll('tbody tr').length,33);
-  assert.match(t.document.querySelector('#page-content').textContent,/Chưa hỗ trợ sửa bài tập từ xa/);
-  const search=t.document.querySelector('[aria-label="Tìm bài tập"]');search.value='di bo';search.dispatchEvent(new t.window.Event('input'));await t.flush();
-  assert.equal(t.document.querySelectorAll('tbody tr').length,3);assert.ok(t.button('Xuất danh mục đang lọc'));
+test('workouts show 60 bundled exercises with accent-insensitive lookup and realtime status',async()=>{
+  const t=await setup({hash:'#/workouts'});assert.equal(t.document.querySelectorAll('tbody tr').length,60);
+  assert.match(t.document.querySelector('#page-content').textContent,/đồng bộ trực tiếp/);
+  const search=t.document.querySelector('[aria-label="Tìm bài tập"]');search.value='chong day';search.dispatchEvent(new t.window.Event('input'));await t.flush();
+  assert.ok(t.document.querySelectorAll('tbody tr').length>=1);assert.ok(t.button('Xuất danh mục đang lọc'));
+  search.value='mau nu';search.dispatchEvent(new t.window.Event('input'));await t.flush();
+  const femaleRows=[...t.document.querySelectorAll('tbody tr')];assert.equal(femaleRows.length,10);
+  for(const id of ["Nh3mvOO", "Pjbc0Kt", "yT9tk17", "BCs0G2F", "r5DgrW9", "daBmy1Y", "BmrwWzo", "gFyFj9z", "wSScovH", "eOG0r6v"])assert.ok(femaleRows.some(row=>row.textContent.includes(`edb-${id}`)));
+});
+
+test('admin edits and archives ExerciseDB female entries with the correct source and stable ID',async()=>{
+ const t=await setup({live:true,hash:'#/workouts'});
+ const search=t.document.querySelector('[aria-label="Tìm bài tập"]');search.value='edb-Nh3mvOO';search.dispatchEvent(new t.window.Event('input'));await t.flush();
+ assert.equal(t.document.querySelectorAll('tbody tr').length,1);
+ await t.click(t.button('Sửa'));
+ assert.equal(t.document.querySelector('[name="sourceProvider"]'),null);
+ assert.equal(t.document.querySelector('[name="sourceId"]').value,'Nh3mvOO');
+ t.document.querySelector('[name="name"]').value='Kéo tạ đơn mẫu nữ đã sửa';t.document.querySelector('[name="reason"]').value='Sửa hướng dẫn mẫu nữ';
+ await t.submit();
+ const saved=t.api.saves.at(-1);assert.equal(saved.id,'edb-Nh3mvOO');assert.equal(saved.payload.sourceProvider??'exercisedb','exercisedb');assert.equal(saved.payload.sourceId,'Nh3mvOO');
+ t.api.emit('exercises',[{id:saved.id,...saved.payload}]);await t.flush();
+ assert.match(t.document.querySelector('tbody').textContent,/Kéo tạ đơn mẫu nữ đã sửa/);
+ const updatedRow=[...t.document.querySelectorAll('tbody tr')].find(row=>row.textContent.includes(saved.id));
+ await t.click([...updatedRow.querySelectorAll('button')].find(button=>button.textContent==='Xóa khỏi thư viện'));t.document.querySelector('[name="reason"]').value='Tạm ẩn để kiểm tra';await t.submit();
+ const archived=t.api.saves.at(-1);assert.equal(archived.payload.isActive,false);assert.equal(archived.payload.sourceProvider??'exercisedb','exercisedb');
+ t.api.emit('exercises',[{id:archived.id,...archived.payload}]);await t.flush();assert.ok(t.button('Khôi phục'));
 });
 
 test('support reply drafts guard navigation and thread retry stays available after a listener failure',async()=>{
@@ -720,4 +746,217 @@ test('support keeps a draft across status updates and keeps one message ID acros
   await t.click(t.button('Gửi phản hồi'));
   assert.deepEqual(sent,[[sent[0][0],'Bản nháp trả lời'],[sent[0][0],'Bản nháp trả lời']]);
   assert.equal(t.document.querySelector('textarea').value,'');
+});
+
+test('food image editor saves URL-only photos, preserves failed drafts, removes and restores through audited API',async()=>{
+  const t=await setup({hash:'#food_catalog'});
+  await t.click(t.button('Sửa ảnh'));
+  for(const name of ['reason','name','id','sourceUrl','sourceLabel','kcalPer100g','proteinGPer100g'])assert.equal(t.document.querySelector(`#editor [name="${name}"]`),null);
+  const mode=t.document.querySelector('[name="photoMode"]');
+  assert.equal(mode.value,'default');
+  assert.equal(t.document.querySelector('[name="photo-url"]').disabled,true);
+  mode.value='custom';mode.dispatchEvent(new t.window.Event('change'));
+  for(const [key,value] of Object.entries({url:'https://example.com/pho.webp'})){
+    t.document.querySelector(`[name="photo-${key}"]`).value=value;
+  }
+  await t.click(t.button('Xem trước ảnh'));
+  assert.equal(t.document.querySelector('[data-photo-preview] img').getAttribute('src'),'https://example.com/pho.webp');
+  t.api.failSave=true;await t.submit();
+  assert.match(t.document.querySelector('#editor-error').textContent,/Lỗi nguồn QA/);
+  assert.equal(t.document.querySelector('[name="photo-url"]').value,'https://example.com/pho.webp');
+  t.api.failSave=false;await t.submit();
+  assert.equal(t.api.saves.at(-1).payload.photo.mode,'custom');
+  assert.deepEqual(t.api.saves.at(-1).payload.photo,{mode:'custom',url:'https://example.com/pho.webp'});
+  for(const key of ['title','author','sourceUrl','license','licenseUrl'])assert.equal(t.document.querySelector(`[name="photo-${key}"]`),null);
+  assert.deepEqual(Object.keys(t.api.saves.at(-1).payload),['photo']);
+  assert.equal(t.api.saves.at(-1).reason,'Cập nhật ảnh món ăn');
+  assert.equal(t.api.saves.at(-1).version,'1:0');
+  for(const value of ['hidden','default']){
+    await t.click(t.button('Sửa ảnh'));
+    const select=t.document.querySelector('[name="photoMode"]');select.value=value;select.dispatchEvent(new t.window.Event('change'));
+    await t.submit();
+    assert.deepEqual(t.api.saves.at(-1).payload.photo,{mode:value});
+  }
+});
+
+test('food groups filter all pages, compose with status, reset pagination and receive realtime changes',async()=>{
+  const t=await setup({live:true,hash:'#/food_catalog'});
+  const select=t.document.querySelector('#browse-group-filter');
+  assert.equal(select.options.length,10);
+  const choose=async(node,value)=>{node.value=value;node.dispatchEvent(new t.window.Event('change'));await t.flush();};
+  await t.click(t.button('Sau'));
+  await choose(select,'fruits');
+  assert.equal(t.document.querySelector('tbody td').textContent,'1');
+  assert.match(t.document.querySelector('.table-foot').textContent,/Trang 1\/2/);
+  assert.match(t.document.querySelector('#list-status').textContent,/34 món khớp bộ lọc \/ 67/);
+  await choose(t.document.querySelector('#status-filter'),'archived');
+  assert.equal(t.document.querySelectorAll('tbody tr').length,0);
+  const changed={...t.api.rows[56],name:'Táo vừa cập nhật',isActive:false};
+  t.api.emit('foods',t.api.rows.map(row=>row.id===changed.id?changed:row));
+  assert.equal(t.document.querySelectorAll('tbody tr').length,1);
+  assert.match(t.document.querySelector('tbody').textContent,/Táo vừa cập nhật/);
+  assert.equal(t.api.liveListeners.get('foods').filter(row=>row.active).length,1);
+  await t.click(t.button('Sửa ảnh'));
+  assert.match(t.document.querySelector('#editor').textContent,/Táo vừa cập nhật/);
+  assert.equal(t.document.querySelector('#editor [name=id]'),null);
+  assert.ok(t.document.querySelector('.food-photo-editor'));
+  await t.api.logout();await t.flush();
+  assert.ok(t.api.liveListeners.get('foods').every(row=>!row.active));
+});
+
+test('failed image loading cannot save or reactivate a food and retains the draft',async()=>{
+  const t=await setup({hash:'#/food_catalog'});
+  t.window.Image=class {set src(value){queueMicrotask(()=>this.onerror?.());}};
+  await t.click(t.button('Sửa ảnh'));
+  const mode=t.document.querySelector('[name=photoMode]');mode.value='custom';mode.dispatchEvent(new t.window.Event('change'));
+  t.document.querySelector('[name="photo-url"]').value='https://example.com/missing.webp';
+  await t.submit();
+  assert.equal(t.api.saves.length,0);
+  assert.match(t.document.querySelector('#editor-error').textContent,/Không tải được ảnh/);
+  assert.equal(t.document.querySelector('[name="photo-url"]').value,'https://example.com/missing.webp');
+  assert.ok(t.document.querySelector('#editor[open]'));
+  assert.equal(t.document.querySelector('[name="photo-url"]').disabled,false);
+});
+
+test('food editor accepts sugar and sodium, previews salt equivalent and preserves unrelated data',async()=>{
+  const t=await setup({hash:'#food_catalog'});
+  t.api.rows[0].extraNutrientsPer100g={sugar:3,sodium:500,potassium:120};
+  await t.click(t.button('Sửa'));
+  assert.equal(t.document.querySelector('[name="sugarGPer100g"]').value,'3');
+  const sodium=t.document.querySelector('[name="sodiumMgPer100g"]');sodium.value='400';sodium.dispatchEvent(new t.window.Event('input'));
+  assert.match(t.document.querySelector('output').textContent,/Muối quy đổi: 1 g/);
+  t.document.querySelector('[name="sugarGPer100g"]').value='0';
+  t.document.querySelector('[name="reason"]').value='Cập nhật thông tin dinh dưỡng';await t.submit();
+  assert.deepEqual(t.api.saves.at(-1).payload.extraNutrientsPer100g,{sugar:0,sodium:400,potassium:120});
+  await t.click(t.button('Sửa'));
+  t.document.querySelector('[name="sugarGPer100g"]').value='';t.document.querySelector('[name="sodiumMgPer100g"]').value='';
+  t.document.querySelector('[name="reason"]').value='Nguồn không có dữ liệu';await t.submit();
+  assert.deepEqual(t.api.saves.at(-1).payload.extraNutrientsPer100g,{potassium:120});
+});
+
+
+test('exercise admin edits and archives with audit reason/version; realtime failure disables writes until retry',async()=>{
+ const t=await setup({live:true,hash:'#/workouts'});
+ const first=t.document.querySelector('tbody tr');const id=first.querySelector('small').textContent;
+ await t.click([...first.querySelectorAll('button')].find(b=>b.textContent==='Sửa'));
+ t.document.querySelector('[name="name"]').value='Tên bài tập đã sửa';t.document.querySelector('[name="reason"]').value='Sửa hướng dẫn';
+ await t.submit();assert.equal(t.api.saves.at(-1).kind,'exercise_library');assert.equal(t.api.saves.at(-1).id,id);assert.equal(t.api.saves.at(-1).version,null);assert.equal(t.api.saves.at(-1).payload.name,'Tên bài tập đã sửa');
+ const payload=t.api.saves.at(-1).payload,stamp={seconds:22,nanoseconds:0};t.api.emit('exercises',[{...payload,id,updatedAt:stamp}]);await t.flush();
+ assert.match(t.document.querySelector('tbody').textContent,/Tên bài tập đã sửa/);
+ const row=[...t.document.querySelectorAll('tbody tr')].find(r=>r.textContent.includes('Tên bài tập đã sửa'));
+ await t.click([...row.querySelectorAll('button')].find(b=>b.textContent==='Xóa khỏi thư viện'));t.document.querySelector('[name="reason"]').value='Ẩn bài';await t.submit();
+ assert.equal(t.api.saves.at(-1).payload.isActive,false);assert.equal(t.api.saves.at(-1).version,'22:0');
+ t.api.emit('exercises',Error('Mất kết nối thư viện'),true);assert.equal(t.document.querySelector('tbody'),null);assert.equal(t.button('Thêm bài tập').disabled,true);
+ t.api.emit('exercises',[{...payload,id,isActive:false,updatedAt:stamp}]);await t.flush();assert.ok(t.button('Khôi phục'));
+ await t.click(t.document.querySelector('[data-page="overview"]'));assert.ok(t.api.liveListeners.get('exercises').every(l=>!l.active));
+});
+
+test('exercise add validates source and keeps draft on rejected writes',async()=>{
+ const t=await setup({live:true,hash:'#/workouts'});await t.click(t.button('Thêm bài tập'));
+ for(const [key,value] of Object.entries({id:'custom-exercise',name:'Bài thử',sourceId:'Ab12345',target:'Ngực',steps:'Bước một\nBước hai',easier:'Chống tường',reason:'Bổ sung hướng dẫn'}))t.document.querySelector('[name="'+key+'"]').value=value;
+ t.api.failSave=true;await t.submit();assert.match(t.document.querySelector('#editor-error').textContent,/Lỗi nguồn QA/);assert.ok(t.document.querySelector('#editor[open]'));
+ t.api.failSave=false;await t.submit();assert.equal(t.api.saves.at(-1).id,'custom-exercise');assert.equal(t.api.saves.at(-1).payload.schemaVersion,1);assert.equal(t.api.saves.at(-1).version,null);
+});
+
+test('production exercise details never fetch free GIF; local preview requires a click',async()=>{
+ const t=await setup({live:true});t.api.emulator=false;t.api.freeExerciseMediaEnabled=false;
+ let requests=0;const original=globalThis.fetch;globalThis.fetch=async()=>{requests++;throw Error('Unexpected network');};
+ try{await t.click(t.document.querySelector('[data-page="workouts"]'));await t.click(t.button('Chi tiết / GIF'));assert.equal(t.button('Tải GIF minh họa'),undefined);assert.match(t.document.querySelector('#editor-fields').textContent,/chỉ bật trong môi trường thử nghiệm local/);assert.equal(requests,0);
+ await t.click(t.document.querySelector('#close-editor'));t.api.emulator=true;t.api.freeExerciseMediaEnabled=true;await t.click(t.document.querySelector('[data-page="overview"]'));await t.click(t.document.querySelector('[data-page="workouts"]'));await t.click(t.button('Chi tiết / GIF'));assert.ok(t.button('Tải GIF minh họa'));assert.equal(requests,0);
+  globalThis.fetch=async url=>{requests++;const id=String(url).split('/').at(-1);return{ok:true,json:async()=>({success:true,data:{exerciseId:id,gifUrl:`https://static.exercisedb.dev/media/${id}.gif`}})};};
+  t.document.documentElement.dataset.theme='dark';await t.click(t.button('Tải GIF minh họa'));
+  const image=t.document.querySelector('.exercise-detail-image');assert.ok(image);assert.ok(t.document.getElementById('healthmate-admin-exercise-background-v4'));
+  assert.match(image.getAttribute('src'),/^https:\/\/static\.exercisedb\.dev\/media\/[a-zA-Z0-9]{7}\.gif$/);
+  const loaded=requests;t.document.documentElement.dataset.theme='light';assert.equal(requests,loaded);assert.equal(t.document.querySelector('.exercise-detail-image'),image);
+  await t.click(t.document.querySelector('#close-editor'));assert.equal(t.document.querySelector('.exercise-detail-image'),null);
+ }finally{globalThis.fetch=original;}
+});
+
+test('exercise region and equipment filters compose without new reads',async()=>{
+ const t=await setup({live:true,hash:'#/workouts'}),region=t.document.querySelector('[aria-label="Tất cả nhóm cơ"]'),equipment=t.document.querySelector('[aria-label="Tất cả dụng cụ"]');
+ region.value='chest';region.dispatchEvent(new t.window.Event('change'));await t.flush();assert.ok(t.document.querySelectorAll('tbody tr').length>0);assert.ok([...t.document.querySelectorAll('tbody tr')].every(r=>r.textContent.includes('Ngực')));
+ equipment.value='bodyweight';equipment.dispatchEvent(new t.window.Event('change'));await t.flush();assert.ok([...t.document.querySelectorAll('tbody tr')].every(r=>r.textContent.includes('Trọng lượng cơ thể')));assert.equal(t.api.liveListeners.get('exercises').length,1);
+});
+
+test('exercise visibility filter composes with search and retains one live subscription',async()=>{
+ const t=await setup({live:true,hash:'#/workouts'});
+ const row=t.document.querySelector('tbody tr');
+ const id=row.querySelector('small').textContent;
+ await t.click([...row.querySelectorAll('button')].find(b=>b.textContent==='Sửa'));
+ t.document.querySelector('[name="reason"]').value='Kiểm thử trạng thái';await t.submit();
+ const payload=t.api.saves.at(-1).payload;
+ t.api.emit('exercises',[{...payload,id,isActive:false}]);await t.flush();
+ const state=t.document.querySelector('[aria-label="Tất cả trạng thái"]');
+ state.value='archived';state.dispatchEvent(new t.window.Event('change'));await t.flush();
+ assert.equal(t.document.querySelectorAll('tbody tr').length,1);
+ assert.equal(t.document.querySelector('tbody tr small').textContent,id);
+ assert.ok(t.button('Khôi phục'));
+ assert.equal(t.document.querySelectorAll('.exercise-overview strong')[2].textContent,'1');
+ const search=t.document.querySelector('[aria-label="Tìm bài tập"]');search.value='không có động tác';search.dispatchEvent(new t.window.Event('input'));await t.flush();
+ assert.equal(t.document.querySelector('tbody'),null);
+ assert.match(t.document.querySelector('.empty').textContent,/Không có bài tập phù hợp/);
+ assert.equal(t.api.liveListeners.get('exercises').filter(listener=>listener.active).length,1);
+ assert.equal(t.document.querySelector('.nav-soon'),null,'editable library has no read-only badge');
+});
+
+function exerciseBrowserNetwork() {
+ const original=globalThis.fetch,calls=[];
+ const item={exerciseId:'Qw12345',name:'source original bench press',gifUrl:'https://static.exercisedb.dev/media/Qw12345.gif',bodyParts:['chest'],equipments:['barbell'],targetMuscles:['pectorals'],instructions:['Original English step one.','Original English step two.']};
+ globalThis.fetch=async(url,options)=>{
+  calls.push({url:String(url),options});const path=new URL(url).pathname;
+  if(path.endsWith('/bodyparts'))return{ok:true,json:async()=>({success:true,data:[{name:'chest'}]})};
+  if(path.endsWith('/equipments'))return{ok:true,json:async()=>({success:true,data:[{name:'barbell'}]})};
+  if(path.endsWith('/Qw12345'))return{ok:true,json:async()=>({success:true,data:item})};
+  if(path.endsWith('/exercises'))return{ok:true,json:async()=>({success:true,data:[item],meta:{total:1,hasNextPage:false}})};
+  throw Error('Unexpected request '+url);
+ };
+ return {calls,item,restore(){globalThis.fetch=original;}};
+}
+
+test('admin browses ExerciseDB, verifies GIF, authors Vietnamese content and saves an audited realtime-compatible entry',async()=>{
+ const t=await setup({live:true,hash:'#/workouts'}),network=exerciseBrowserNetwork();
+ try {
+  assert.equal(network.calls.length,0);
+  await t.click(t.button('Thêm từ ExerciseDB'));assert.equal(t.document.querySelector('#editor-title').textContent,'Thêm từ ExerciseDB');
+  assert.match(t.document.querySelector('.exercise-source-results').textContent,/source original bench press/);
+  await t.click(t.button('Xem GIF và hướng dẫn'));assert.equal(t.button('Thêm vào HealthMate').disabled,true);
+  const img=t.document.querySelector('.exercise-source-detail img');assert.ok(img);img.dispatchEvent(new t.window.Event('load'));
+  await t.click(t.button('Thêm vào HealthMate'));
+  assert.equal(t.document.querySelector('#editor-title').textContent,'Thêm bài tập');assert.equal(t.document.querySelector('.exercise-source-browser'),null);
+  assert.equal(t.document.querySelector('[name=id]').value,'edb-Qw12345');assert.equal(t.document.querySelector('[name=sourceId]').value,'Qw12345');
+  assert.equal(t.document.querySelector('[name=name]').value,'');assert.equal(t.document.querySelector('[name=steps]').value,'');assert.equal(t.document.querySelector('[name=region]').value,'chest');assert.equal(t.document.querySelector('[name=equipment]').value,'barbell');assert.equal(t.document.querySelector('[name=target]').value,'Cơ ngực');
+  assert.match(t.document.querySelector('.exercise-source-reference').textContent,/Original English step one/);
+  const values={name:'Đẩy tạ đòn trên ghế',steps:'Nằm trên ghế, đặt chân vững.\nĐẩy tạ có kiểm soát.',easier:'Giảm mức tạ hoặc dùng thanh nhẹ.',reason:'Thêm bài đã kiểm tra GIF và hướng dẫn'};
+  for(const [key,value] of Object.entries(values))t.document.querySelector(`[name=${key}]`).value=value;
+  await t.submit();assert.equal(t.api.saves.length,1);
+  const saved=t.api.saves[0];assert.equal(saved.kind,'exercise_library');assert.equal(saved.id,'edb-Qw12345');assert.equal(saved.version,null);assert.equal(saved.reason,values.reason);
+  assert.equal(saved.payload.sourceId,'Qw12345');assert.equal(saved.payload.sourceProvider,'exercisedb');assert.equal(saved.payload.name,values.name);assert.equal(saved.payload.gifUrl,undefined);assert.equal(saved.payload.instructions,undefined);
+  assert.doesNotMatch(JSON.stringify(saved.payload),/Original English|source original/);
+  t.api.emit('exercises',[{id:saved.id,...saved.payload}]);await t.flush();
+  assert.match(t.document.querySelector('.exercise-table').textContent,/Đẩy tạ đòn trên ghế/);
+ } finally {network.restore();await t.api.logout();await t.flush();}
+});
+
+test('selecting an archived source opens the existing record; selecting before a concurrent import cannot create a duplicate',async()=>{
+ const t=await setup({live:true,hash:'#/workouts'}),network=exerciseBrowserNetwork();
+ const entry={id:'old-custom-id',sourceId:'Qw12345',name:'Bài đã biên tập',region:'chest',equipment:'barbell',target:'Ngực',steps:['Giữ chân vững.','Đẩy tạ chậm.'],easier:'Giảm tạ.',isActive:false,schemaVersion:1,updatedAt:{seconds:1,nanoseconds:0}};
+ try {
+  t.api.emit('exercises',[entry]);await t.flush();await t.click(t.button('Thêm từ ExerciseDB'));await t.click(t.button('Xem GIF và hướng dẫn'));await t.click(t.button('Mở bài đã có trong HealthMate'));
+  assert.equal(t.document.querySelector('#editor-title').textContent,'Chỉnh sửa bài tập');assert.equal(t.document.querySelector('[name=id]').value,'old-custom-id');assert.equal(t.document.querySelector('[name=name]').value,entry.name);assert.equal(t.api.saves.length,0);
+  await t.click(t.document.querySelector('#close-editor'));t.api.emit('exercises',[]);await t.flush();
+  await t.click(t.button('Thêm từ ExerciseDB'));await t.click(t.button('Xem GIF và hướng dẫn'));t.document.querySelector('.exercise-source-detail img').dispatchEvent(new t.window.Event('load'));await t.click(t.button('Thêm vào HealthMate'));
+  t.api.emit('exercises',[entry]);await t.flush();t.document.querySelector('[name=reason]').value='Thử thêm bài trùng';await t.submit();
+  assert.equal(t.api.saves.length,0);assert.match(t.document.querySelector('#editor-error').textContent,/đã có trong HealthMate/);
+ } finally {network.restore();await t.api.logout();await t.flush();}
+});
+
+test('leaving the admin page aborts ExerciseDB requests and late results cannot reopen the editor',async()=>{
+ const t=await setup({live:true,hash:'#/workouts'}),original=globalThis.fetch,requests=[];
+ globalThis.fetch=(url,options)=>new Promise(resolve=>requests.push({url,options,resolve}));
+ try {
+  await t.click(t.button('Thêm từ ExerciseDB'));assert.equal(requests.length,3);
+  await t.api.logout();await t.flush();assert.ok(requests.every(r=>r.options.signal.aborted));
+  for(const r of requests)r.resolve({ok:true,json:async()=>({success:true,data:[],meta:{total:0,hasNextPage:false}})});
+  await t.flush();assert.equal(t.document.querySelector('.exercise-source-browser'),null);assert.equal(t.document.querySelector('#editor').hasAttribute('open'),false);assert.equal(t.api.saves.length,0);
+ } finally {globalThis.fetch=original;}
 });

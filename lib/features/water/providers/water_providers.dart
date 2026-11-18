@@ -28,6 +28,13 @@ final waterLogsProvider = StreamProvider.autoDispose
 final waterControllerProvider =
     NotifierProvider<WaterController, AsyncValue<void>>(WaterController.new);
 
+class WaterEntryReceipt {
+  const WaterEntryReceipt._(this.uid, this.logId, this.draft, this._generation);
+  final String uid, logId;
+  final WaterLogDraft draft;
+  final int _generation;
+}
+
 class WaterController extends Notifier<AsyncValue<void>> {
   int _generation = 0;
   @override
@@ -44,6 +51,30 @@ class WaterController extends Notifier<AsyncValue<void>> {
   Future<bool> add(WaterLogDraft draft) => _perform((user) async {
     await ref.read(waterRepositoryProvider).add(uid: user.uid, draft: draft);
   });
+
+  Future<WaterEntryReceipt?> addWithReceipt(WaterLogDraft draft) async {
+    WaterEntryReceipt? receipt;
+    final generation = _generation;
+    final saved = await _perform((user) async {
+      final id = await ref
+          .read(waterRepositoryProvider)
+          .add(uid: user.uid, draft: draft);
+      receipt = WaterEntryReceipt._(user.uid, id, draft, generation);
+    });
+    return saved ? receipt : null;
+  }
+
+  Future<bool> undoAdd(WaterEntryReceipt receipt) {
+    if (receipt._generation != _generation ||
+        ref.read(authSessionProvider).value?.uid != receipt.uid) {
+      return Future.value(false);
+    }
+    return _perform(
+      (user) => ref
+          .read(waterRepositoryProvider)
+          .undoAdd(uid: user.uid, logId: receipt.logId, draft: receipt.draft),
+    );
+  }
 
   Future<bool> update(String id, WaterLogDraft draft) => _perform((user) {
     return ref

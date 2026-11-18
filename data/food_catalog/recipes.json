@@ -1,5 +1,5 @@
 {
-  "version": "vn-wellness-2026-10-26",
+  "version": "vn-catalog-2026-11-10",
   "method": "Công thức tham khảo do HealthMate giả định, không phải kết quả phân tích của Viện Dinh dưỡng cho món hoàn chỉnh. Cộng dinh dưỡng nguyên liệu rồi chia khối lượng thành phẩm; giả định giữ lại toàn bộ phần nguyên liệu ăn được và dầu/đường đã khai báo. Nước thêm vào không có kcal. Khối lượng nguyên liệu ở đúng trạng thái của mục tham chiếu (sống/khô/chín).",
   "limitation": "Không đại diện mọi cách nấu, quán ăn hoặc nhãn hàng. Nước dùng được mô hình hóa bằng nước và lượng dầu/gia vị đã liệt kê, không suy ra nước dùng thực tế không có kcal. Các gia vị năng lượng đáng kể phải được cân/ghi thêm nếu khẩu phần thực tế khác. Nhập g thành phẩm, không mặc định một tô/ổ là 100 g.",
   "recipes": [
@@ -1671,6 +1671,785 @@
         [
           "vn-bo-xao-rau",
           220
+        ]
+      ]
+    },
+    {
+      "id": "vn-banh-bao",
+      "name": "Bánh bao nhân thịt (công thức tham khảo)",
+      "alternateNames": [
+        "Bánh bao nhân thịt"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 180,
+      "ingredients": [
+        [
+          "1018",
+          65
+        ],
+        [
+          "7017",
+          55
+        ],
+        [
+          "9007",
+          15
+        ],
+        [
+          "4123",
+          10
+        ],
+        [
+          "12013",
+          5
+        ],
+        [
+          "6002",
+          3
+        ]
+      ]
+    },
+    {
+      "id": "vn-banh-chung",
+      "name": "Bánh chưng (công thức tham khảo)",
+      "alternateNames": [
+        "Bánh chưng"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 400,
+      "ingredients": [
+        [
+          "1001",
+          100
+        ],
+        [
+          "3010",
+          40
+        ],
+        [
+          "7016",
+          65
+        ]
+      ]
+    },
+    {
+      "id": "vn-banh-tet",
+      "name": "Bánh tét nhân đậu thịt (công thức tham khảo)",
+      "alternateNames": [
+        "Bánh tét nhân đậu thịt"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 400,
+      "ingredients": [
+        [
+          "1001",
+          100
+        ],
+        [
+          "3010",
+          40
+        ],
+        [
+          "7016",
+          65
+        ]
+      ]
+    },
+    {
+      "id": "vn-banh-gio",
+      "name": "Bánh giò nhân thịt (công thức tham khảo)",
+      "alternateNames": [
+        "Bánh giò nhân thịt"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 200,
+      "ingredients": [
+        [
+          "1017",
+          45
+        ],
+        [
+          "7017",
+          45
+        ],
+        [
+          "4123",
+          15
+        ],
+        [
+          "6002",
+          5
+        ]
+      ]
+    },
+    {
+      "id": "vn-banh-beo",
+      "name": "Bánh bèo tôm (công thức tham khảo)",
+      "alternateNames": [
+        "Bánh bèo tôm"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 240,
+      "ingredients": [
+        [
+          "1017",
+          55
+        ],
+        [
+          "8051",
+          45
+        ],
+        [
+          "6002",
+          8
+        ],
+        [
+          "12013",
+          5
+        ]
+      ]
+    },
+    {
+      "id": "vn-banh-duc-nong",
+      "name": "Bánh đúc nóng thịt bằm (công thức tham khảo)",
+      "alternateNames": [
+        "Bánh đúc nóng thịt bằm"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 350,
+      "ingredients": [
+        [
+          "1017",
+          60
+        ],
+        [
+          "7017",
+          65
+        ],
+        [
+          "4123",
+          25
+        ],
+        [
+          "6002",
+          8
+        ],
+        [
+          "12013",
+          5
+        ]
+      ]
+    },
+    {
+      "id": "vn-bot-chien",
+      "name": "Bột chiên trứng (công thức tham khảo)",
+      "alternateNames": [
+        "Bột chiên trứng"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 300,
+      "ingredients": [
+        [
+          "1017",
+          65
+        ],
+        [
+          "9001",
+          60
+        ],
+        [
+          "4007",
+          30
+        ],
+        [
+          "6002",
+          15
+        ],
+        [
+          "12013",
+          8
+        ]
+      ]
+    },
+    {
+      "id": "vn-banh-canh-tom-thit",
+      "name": "Bánh canh tôm thịt (bột gạo, công thức tham khảo)",
+      "alternateNames": [
+        "Bánh canh tôm thịt"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 600,
+      "ingredients": [
+        [
+          "1017",
+          85
+        ],
+        [
+          "7017",
+          65
+        ],
+        [
+          "8051",
+          70
+        ],
+        [
+          "4039",
+          20
+        ],
+        [
+          "6002",
+          5
+        ],
+        [
+          "12013",
+          3
+        ]
+      ]
+    },
+    {
+      "id": "vn-bun-mang-vit",
+      "name": "Bún măng vịt (công thức tham khảo)",
+      "alternateNames": [
+        "Bún măng vịt"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 650,
+      "ingredients": [
+        [
+          "vn-bun-tuoi",
+          210
+        ],
+        [
+          "7028",
+          120
+        ],
+        [
+          "4053",
+          100
+        ],
+        [
+          "6002",
+          3
+        ],
+        [
+          "12013",
+          4
+        ]
+      ]
+    },
+    {
+      "id": "vn-bun-suon",
+      "name": "Bún sườn (công thức tham khảo)",
+      "alternateNames": [
+        "Bún sườn"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 600,
+      "ingredients": [
+        [
+          "vn-bun-tuoi",
+          220
+        ],
+        [
+          "7053",
+          100
+        ],
+        [
+          "4005",
+          70
+        ],
+        [
+          "6002",
+          4
+        ],
+        [
+          "12013",
+          3
+        ]
+      ]
+    },
+    {
+      "id": "vn-chao-ca",
+      "name": "Cháo cá lóc (công thức tham khảo)",
+      "alternateNames": [
+        "Cháo cá lóc"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 550,
+      "ingredients": [
+        [
+          "1004",
+          55
+        ],
+        [
+          "8022",
+          120
+        ],
+        [
+          "4039",
+          20
+        ],
+        [
+          "6002",
+          4
+        ]
+      ]
+    },
+    {
+      "id": "vn-chao-tom",
+      "name": "Cháo tôm (công thức tham khảo)",
+      "alternateNames": [
+        "Cháo tôm"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 500,
+      "ingredients": [
+        [
+          "1004",
+          55
+        ],
+        [
+          "8051",
+          90
+        ],
+        [
+          "4007",
+          30
+        ],
+        [
+          "6002",
+          4
+        ]
+      ]
+    },
+    {
+      "id": "vn-chao-suon",
+      "name": "Cháo sườn (công thức tham khảo)",
+      "alternateNames": [
+        "Cháo sườn"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 550,
+      "ingredients": [
+        [
+          "1004",
+          55
+        ],
+        [
+          "7053",
+          90
+        ],
+        [
+          "6002",
+          3
+        ]
+      ]
+    },
+    {
+      "id": "vn-chao-bi-do",
+      "name": "Cháo bí đỏ đậu xanh (công thức tham khảo)",
+      "alternateNames": [
+        "Cháo bí đỏ đậu xanh"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 500,
+      "ingredients": [
+        [
+          "1004",
+          40
+        ],
+        [
+          "3010",
+          25
+        ],
+        [
+          "4003",
+          100
+        ],
+        [
+          "6002",
+          3
+        ]
+      ]
+    },
+    {
+      "id": "vn-xoi-lac",
+      "name": "Xôi đậu phộng (công thức tham khảo)",
+      "alternateNames": [
+        "Xôi đậu phộng"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 300,
+      "ingredients": [
+        [
+          "1001",
+          100
+        ],
+        [
+          "3017",
+          30
+        ]
+      ]
+    },
+    {
+      "id": "vn-xoi-lap-xuong",
+      "name": "Xôi lạp xưởng (công thức tham khảo)",
+      "alternateNames": [
+        "Xôi lạp xưởng"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 300,
+      "ingredients": [
+        [
+          "1001",
+          90
+        ],
+        [
+          "7071",
+          35
+        ],
+        [
+          "6002",
+          4
+        ],
+        [
+          "4039",
+          15
+        ]
+      ]
+    },
+    {
+      "id": "vn-com-chien-hai-san",
+      "name": "Cơm chiên hải sản (công thức tham khảo)",
+      "alternateNames": [
+        "Cơm chiên hải sản"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 450,
+      "ingredients": [
+        [
+          "vn-rice-base",
+          270
+        ],
+        [
+          "8051",
+          60
+        ],
+        [
+          "8040",
+          60
+        ],
+        [
+          "9001",
+          50
+        ],
+        [
+          "4007",
+          25
+        ],
+        [
+          "6002",
+          12
+        ]
+      ]
+    },
+    {
+      "id": "vn-bo-kho",
+      "name": "Bò kho (công thức tham khảo)",
+      "alternateNames": [
+        "Bò kho"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 450,
+      "ingredients": [
+        [
+          "7003",
+          160
+        ],
+        [
+          "4007",
+          100
+        ],
+        [
+          "4039",
+          40
+        ],
+        [
+          "4005",
+          60
+        ],
+        [
+          "6002",
+          10
+        ],
+        [
+          "12013",
+          8
+        ]
+      ]
+    },
+    {
+      "id": "vn-bo-luc-lac",
+      "name": "Bò lúc lắc (công thức tham khảo)",
+      "alternateNames": [
+        "Bò lúc lắc"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 300,
+      "ingredients": [
+        [
+          "7003",
+          180
+        ],
+        [
+          "4039",
+          70
+        ],
+        [
+          "4005",
+          50
+        ],
+        [
+          "6002",
+          12
+        ],
+        [
+          "12013",
+          6
+        ]
+      ]
+    },
+    {
+      "id": "vn-ca-kho-tieu",
+      "name": "Cá lóc kho tiêu (công thức tham khảo)",
+      "alternateNames": [
+        "Cá lóc kho tiêu"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 220,
+      "ingredients": [
+        [
+          "8022",
+          240
+        ],
+        [
+          "6002",
+          8
+        ],
+        [
+          "12013",
+          10
+        ],
+        [
+          "4039",
+          15
+        ]
+      ]
+    },
+    {
+      "id": "vn-dau-nhoi-thit",
+      "name": "Đậu phụ nhồi thịt sốt cà (công thức tham khảo)",
+      "alternateNames": [
+        "Đậu phụ nhồi thịt sốt cà"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 450,
+      "ingredients": [
+        [
+          "3025",
+          220
+        ],
+        [
+          "7017",
+          90
+        ],
+        [
+          "4005",
+          140
+        ],
+        [
+          "6002",
+          10
+        ],
+        [
+          "12013",
+          4
+        ]
+      ]
+    },
+    {
+      "id": "vn-canh-kho-qua",
+      "name": "Canh khổ qua nhồi thịt (công thức tham khảo)",
+      "alternateNames": [
+        "Canh khổ qua nhồi thịt"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 650,
+      "ingredients": [
+        [
+          "4055",
+          240
+        ],
+        [
+          "7017",
+          120
+        ],
+        [
+          "4123",
+          20
+        ],
+        [
+          "6002",
+          3
+        ]
+      ]
+    },
+    {
+      "id": "vn-canh-bi-do",
+      "name": "Canh bí đỏ thịt bằm (công thức tham khảo)",
+      "alternateNames": [
+        "Canh bí đỏ thịt bằm"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 600,
+      "ingredients": [
+        [
+          "4003",
+          250
+        ],
+        [
+          "7017",
+          90
+        ],
+        [
+          "6002",
+          3
+        ]
+      ]
+    },
+    {
+      "id": "vn-canh-rau-day",
+      "name": "Canh rau đay nấu tôm (công thức tham khảo)",
+      "alternateNames": [
+        "Canh rau đay nấu tôm"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 500,
+      "ingredients": [
+        [
+          "4070",
+          180
+        ],
+        [
+          "8051",
+          60
+        ],
+        [
+          "6002",
+          3
+        ]
+      ]
+    },
+    {
+      "id": "vn-canh-ca-chua-trung",
+      "name": "Canh cà chua trứng (công thức tham khảo)",
+      "alternateNames": [
+        "Canh cà chua trứng"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 500,
+      "ingredients": [
+        [
+          "4005",
+          160
+        ],
+        [
+          "9001",
+          100
+        ],
+        [
+          "6002",
+          5
+        ]
+      ]
+    },
+    {
+      "id": "vn-trung-chien",
+      "name": "Trứng gà chiên (công thức tham khảo)",
+      "alternateNames": [
+        "Trứng gà chiên"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 100,
+      "ingredients": [
+        [
+          "9001",
+          100
+        ],
+        [
+          "6002",
+          7
+        ]
+      ]
+    },
+    {
+      "id": "vn-trung-hap-thit",
+      "name": "Trứng hấp thịt (công thức tham khảo)",
+      "alternateNames": [
+        "Trứng hấp thịt"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 250,
+      "ingredients": [
+        [
+          "9001",
+          110
+        ],
+        [
+          "7017",
+          80
+        ],
+        [
+          "4123",
+          20
+        ]
+      ]
+    },
+    {
+      "id": "vn-bap-cai-xao",
+      "name": "Bắp cải xào tỏi (công thức tham khảo)",
+      "alternateNames": [
+        "Bắp cải xào tỏi"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 230,
+      "ingredients": [
+        [
+          "4010",
+          250
+        ],
+        [
+          "4103",
+          8
+        ],
+        [
+          "6002",
+          10
+        ]
+      ]
+    },
+    {
+      "id": "vn-khoai-lang-luoc",
+      "name": "Khoai lang luộc (công thức tham khảo)",
+      "alternateNames": [
+        "Khoai lang luộc"
+      ],
+      "category": "Món ăn Việt",
+      "yieldGrams": 100,
+      "ingredients": [
+        [
+          "2009",
+          105
         ]
       ]
     }

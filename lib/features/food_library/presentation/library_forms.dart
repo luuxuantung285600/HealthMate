@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -78,7 +79,7 @@ Widget libraryFrame({
       leading: IconButton(
         onPressed: cancel,
         tooltip: 'Hủy',
-        icon: const Icon(Icons.close),
+        icon: const Icon(AppIcons.x),
       ),
       actions: [
         TextButton(
@@ -570,7 +571,7 @@ class _RecipeFormState extends ConsumerState<RecipeForm>
               OutlinedButton.icon(
                 key: const ValueKey('add-ingredient'),
                 onPressed: _add,
-                icon: const Icon(Icons.add),
+                icon: const Icon(AppIcons.plus),
                 label: const Text('Thêm nguyên liệu'),
               ),
               for (final entry in _ingredients.indexed)
@@ -734,7 +735,7 @@ class _IngredientPickerState extends ConsumerState<IngredientPicker> {
           leading: IconButton(
             tooltip: 'Hủy',
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.close),
+            icon: const Icon(AppIcons.x),
           ),
         ),
         body: SingleChildScrollView(

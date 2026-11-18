@@ -1,0 +1,26 @@
+{
+  "note": "Vietnamese display names only; identities, source descriptions, nutrition and source portion weights are retained. Never turn a sweetened/canned food into a fresh/unsweetened one.",
+  "foods": {
+    "usda-sr-170174": {"name":"Nước dừa tươi (USDA)","category":"Đồ uống","alternateNames":["nước dừa","coconut water"]},
+    "usda-sr-174831": {"name":"Nước dừa đóng hộp không thêm đường (USDA)","alternateNames":["nước dừa không đường"]},
+    "usda-sr-171890": {"name":"Cà phê đen pha nước (USDA)","alternateNames":["cà phê đen","cà phê không đường","coffee"]},
+    "usda-sr-171889": {"name":"Cà phê đen khử caffeine (USDA)","alternateNames":["cà phê decaf"]},
+    "usda-sr-171891": {"name":"Cà phê espresso (USDA)","alternateNames":["espresso"]},
+    "usda-sr-171917": {"name":"Trà xanh pha nước (USDA)","alternateNames":["trà xanh","chè xanh","green tea"]},
+    "usda-sr-173227": {"name":"Trà đen pha nước (USDA)","alternateNames":["trà đen","hồng trà","black tea"]},
+    "usda-sr-173647": {"name":"Nước uống từ vòi (USDA, tham khảo)","alternateNames":["nước lọc","drinking water"]},
+    "usda-sr-169098": {"name":"Nước cam nguyên chất (USDA)","category":"Đồ uống","alternateNames":["nước cam","nước ép cam"]},
+    "usda-sr-169109": {"name":"Nước chanh dây tím nguyên chất (USDA)","category":"Đồ uống","alternateNames":["nước chanh leo","nước chanh dây"]},
+    "usda-sr-169110": {"name":"Nước chanh dây vàng nguyên chất (USDA)","category":"Đồ uống","alternateNames":["nước chanh dây","nước chanh leo vàng"]},
+    "usda-sr-172446": {"name":"Sữa đậu nành nguyên bản/vani chưa tăng cường vi chất (USDA)","category":"Đồ uống","alternateNames":["sữa đậu nành"]},
+    "usda-sr-174832": {"name":"Sữa hạnh nhân không đường (USDA)","alternateNames":["sữa hạnh nhân","almond milk"]},
+    "usda-sr-168751": {"name":"Sữa hạnh nhân vani có đường (USDA)","alternateNames":["sữa hạnh nhân có đường"]},
+    "usda-sr-174820": {"name":"Sữa hạnh nhân chocolate (USDA)","alternateNames":["sữa hạnh nhân socola"]},
+    "usda-sr-171265": {"name":"Sữa nguyên kem 3,25% béo có vitamin D (USDA)","alternateNames":["sữa tươi nguyên kem"]},
+    "usda-sr-172217": {"name":"Sữa nguyên kem 3,25% béo chưa thêm vitamin A/D (USDA)","alternateNames":["sữa tươi nguyên kem"]},
+    "usda-sr-169090": {"name":"Măng cụt đóng hộp ngâm siro (USDA)","alternateNames":["măng cụt đóng hộp"]},
+    "usda-foundation-746782": {"name":"Sữa nguyên kem 3,25% béo có vitamin D (USDA Foundation)","alternateNames":["sữa tươi nguyên kem"]},
+    "usda-foundation-746778": {"name":"Sữa ít béo 2% có vitamin A/D (USDA Foundation)","alternateNames":["sữa tươi ít béo","sữa 2%"]},
+    "usda-fndds-2710707": {"name":"Nước uống từ vòi (USDA FNDDS, tham khảo)","alternateNames":["nước lọc"]}
+  }
+}

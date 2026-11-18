@@ -297,6 +297,8 @@ def build(archive_path):
         if fdc_id in portions:
             food.update(portions[fdc_id])
         result.append(food)
+    from food_browse_metadata import apply_browse_metadata
+    apply_browse_metadata(result)
     metadata = {
         "version": "usda-sr-legacy-2018-healthmate-2026-10-27",
         "sourceUrl": SOURCE_URL, "archiveSha256": digest, "license": "USDA public domain",

@@ -42,9 +42,12 @@ class ActivityController extends Notifier<AsyncValue<void>> {
     if (!state.isLoading) state = const AsyncData(null);
   }
 
-  Future<bool> add(ActivityLogDraft draft) => _perform((user) async {
-    await ref.read(activityRepositoryProvider).add(uid: user.uid, draft: draft);
-  });
+  Future<bool> add(ActivityLogDraft draft, {String? operationId}) =>
+      _perform((user) async {
+        await ref
+            .read(activityRepositoryProvider)
+            .add(uid: user.uid, draft: draft, operationId: operationId);
+      });
 
   Future<bool> update(String id, ActivityLogDraft draft) => _perform((user) {
     return ref

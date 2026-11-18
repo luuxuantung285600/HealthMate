@@ -1,5 +1,6 @@
 import 'nutrition_models.dart';
 import 'extra_nutrients.dart';
+import 'food_photo.dart';
 
 /// Catalog metadata is optional. A damaged portion never corrupts the per-100g
 /// values or makes unrelated catalog documents unreadable.
@@ -8,6 +9,7 @@ FoodCatalogItem readCatalogFood(
   Map<String, dynamic> data, {
   DateTime? updatedAt,
   FoodCatalogItem? referenceFood,
+  Map<String, FoodCatalogItem> ingredientCatalog = const {},
 }) {
   String? text(String key, [int max = 100]) {
     final value = data[key];
@@ -61,6 +63,14 @@ FoodCatalogItem readCatalogFood(
       .firstOrNull;
   return FoodCatalogItem(
     id: id,
+    photoMode: data['photo'] == null
+        ? 'default'
+        : (data['photo'] is Map && data['photo']['mode'] == 'default'
+              ? 'default'
+              : data['photo'] is Map && data['photo']['mode'] == 'custom'
+              ? 'custom'
+              : 'hidden'),
+    photo: readCatalogPhoto(id, text('name') ?? '', data['photo']),
     name: text('name') ?? 'Món chưa có tên',
     originalName:
         text('originalName', 1000) ??
@@ -76,6 +86,9 @@ FoodCatalogItem readCatalogFood(
         (data['ingredientsKnown'] == null &&
             referenceMatches &&
             referenceFood.ingredientsKnown),
+    recipeIngredients: data['sourceDetails'] != null
+        ? _readRecipeIngredients(data['sourceDetails'], ingredientCatalog)
+        : (referenceMatches ? referenceFood.recipeIngredients : const []),
     dietaryClass:
         dietaryClass ??
         (referenceMatches ? referenceFood.dietaryClass : FoodDietClass.unknown),
@@ -93,7 +106,13 @@ FoodCatalogItem readCatalogFood(
         basisStr == 'per_100g' &&
         unit == 'g',
     per100g: NutritionTotals(
-      extraNutrients: readExtraNutrients(data['extraNutrientsPer100g']),
+      extraNutrients:
+          !data.containsKey('extraNutrientsPer100g') &&
+              referenceMatches &&
+              basisStr == 'per_100g' &&
+              unit == 'g'
+          ? referenceFood.nutritionPer100g.extraNutrients
+          : readExtraNutrients(data['extraNutrientsPer100g']),
       kcal: kcal ?? 0,
       proteinG: protein ?? 0,
       carbsG: carbs ?? 0,
@@ -107,7 +126,10 @@ FoodCatalogItem readCatalogFood(
         : true,
     updatedAt: updatedAt,
     defaultServingGrams:
-        number('defaultServingGrams', 2000, positive: true) ?? 100,
+        number('defaultServingGrams', 2000, positive: true) ??
+        // A server catalog document may have a package portion without the
+        // optional default field. Start with one declared package, as offline.
+        (validServing && text('packageLabel', 60) != null ? grams : 100),
     servingLabel: validServing ? label : null,
     servingGrams: validServing ? grams : null,
     servingMetadataInvalid: hasRawServing && !validServing,
@@ -122,4 +144,45 @@ FoodCatalogItem readCatalogFood(
         ? data['fdcId'] as int
         : null,
   );
+}
+
+List<FoodRecipeIngredient> _readRecipeIngredients(
+  Object? details,
+  Map<String, FoodCatalogItem> catalog,
+) {
+  if (details is! Map || details['method'] != 'recipe_estimate') {
+    return const [];
+  }
+  final yield = details['yieldGrams'];
+  final entries = details['ingredients'];
+  if (yield is! num ||
+      !yield.isFinite ||
+      yield <= 0 ||
+      yield > 20000 ||
+      entries is! List ||
+      entries.isEmpty ||
+      entries.length > 60) {
+    return const [];
+  }
+  final result = <FoodRecipeIngredient>[];
+  for (final entry in entries) {
+    if (entry is! Map || entry['reference'] is! String) return const [];
+    final ingredient = catalog['vn2007-${entry['reference']}'];
+    final grams = entry['grams'];
+    if (ingredient == null ||
+        grams is! num ||
+        !grams.isFinite ||
+        grams <= 0 ||
+        grams > 20000) {
+      return const [];
+    }
+    result.add(
+      FoodRecipeIngredient(
+        foodId: ingredient.id,
+        name: ingredient.name,
+        gramsPer100gYield: grams * 100 / yield,
+      ),
+    );
+  }
+  return List.unmodifiable(result);
 }

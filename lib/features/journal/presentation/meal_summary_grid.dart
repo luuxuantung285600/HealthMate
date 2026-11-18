@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_meal_visuals.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../core/widgets/app_card.dart';
@@ -37,7 +38,24 @@ class MealSummaryGrid extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(type.label, style: theme.textTheme.titleSmall),
+                        Row(
+                          children: [
+                            Icon(
+                              AppMealVisuals.icon(type),
+                              color: AppMealVisuals.color(context, type),
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                type.label,
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  color: AppMealVisuals.color(context, type),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 8),
                         Text(
                           !ready
@@ -70,6 +88,10 @@ class MealSummaryGrid extends StatelessWidget {
                               ? null
                               : () => onOpen!(type),
                           style: TextButton.styleFrom(
+                            foregroundColor: AppMealVisuals.color(
+                              context,
+                              type,
+                            ),
                             alignment: Alignment.centerLeft,
                             padding: EdgeInsets.zero,
                             minimumSize: const Size(48, 48),

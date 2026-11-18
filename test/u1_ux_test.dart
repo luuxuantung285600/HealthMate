@@ -1,3 +1,4 @@
+import 'support/load_icon_font.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -20,6 +21,7 @@ import 'package:healthmate/features/nutrition_targets/models/nutrition_target.da
 import 'package:healthmate/features/nutrition_targets/providers/nutrition_target_providers.dart';
 import 'package:healthmate/features/auth/providers/auth_providers.dart';
 import 'package:healthmate/features/auth/models/auth_user.dart';
+import 'package:healthmate/features/activity/providers/activity_providers.dart';
 import 'package:healthmate/shared/providers/local_clock_provider.dart';
 
 import 'core_journal_test.dart' as meals show meal;
@@ -75,6 +77,7 @@ Future<ProviderContainer> hostOverview(
       authRepositoryProvider.overrideWithValue(session),
       nutritionTargetRepositoryProvider.overrideWithValue(targets),
       energyRepositoryProvider.overrideWithValue(FakeEnergyRepository()),
+      activityRepositoryProvider.overrideWithValue(FakeActivityRepository()),
       localClockProvider.overrideWithValue(uxToday),
     ],
   );
@@ -110,9 +113,12 @@ Future<ProviderContainer> hostOverview(
 
 void main() {
   setUpAll(() async {
-    final font = FontLoader('Inter');
+    await loadIconFont();
+    final font = FontLoader('Public Sans');
     for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      font.addFont(rootBundle.load('assets/fonts/inter/Inter-$weight.ttf'));
+      font.addFont(
+        rootBundle.load('assets/fonts/public_sans/PublicSans-$weight.ttf'),
+      );
     }
     await font.load();
     await (FontLoader(
@@ -171,7 +177,7 @@ void main() {
         expect(scroll.position.pixels, 0);
         final isJournal = page == AppRoutes.journal;
         final target = find.byKey(
-          ValueKey(isJournal ? 'add-meal-breakfast' : 'weekly-chart'),
+          ValueKey(isJournal ? 'journal-add-meal' : 'weekly-chart'),
         );
         final rect = tester.getRect(target);
         final visible = isJournal
@@ -241,7 +247,7 @@ void main() {
         await tester.pumpAndSettle();
       }
 
-      await tap(find.byKey(const ValueKey('add-meal-breakfast')));
+      await tap(find.byKey(const ValueKey('add-meal-hour-7')));
       await tap(find.byTooltip('Dùng lại Cơm trắng chín'));
       await tap(find.byKey(const ValueKey('save-meal')));
       expect(find.byType(MealFormDialog), findsNothing);
@@ -425,7 +431,7 @@ void main() {
             container.read(journalDateProvider.notifier).select(uxToday);
             container.read(appRouterProvider).go(AppRoutes.journal);
             await tester.pumpAndSettle();
-            final add = find.byKey(const ValueKey('add-meal-breakfast'));
+            final add = find.byKey(const ValueKey('add-meal-hour-7'));
             await tester.ensureVisible(add);
             await tester.pumpAndSettle();
             await tester.tap(add);

@@ -16,7 +16,7 @@ void main() {
       dashboardNow: DateTime(2026, 10, 13, 9),
     );
     expect(find.byKey(const ValueKey('dashboard-screen')), findsOneWidget);
-    expect(find.text('Hôm nay'), findsNWidgets(2));
+    expect(find.text('Trang chủ'), findsOneWidget);
     expect(find.text('Chưa ghi món'), findsNWidgets(4));
     expect(find.textContaining('sẽ có trong các bản tiếp theo'), findsNothing);
     expect(
@@ -31,7 +31,7 @@ void main() {
   });
 
   testWidgets(
-    'visible navigation opens three core routes and keeps opt-in hidden routes',
+    'visible navigation opens core routes and keeps opt-in hidden routes',
     (tester) async {
       final container = await pumpApp(
         tester,
@@ -44,9 +44,14 @@ void main() {
           title: 'Nhật ký',
         ),
         (
-          key: const ValueKey('nav-profile'),
-          route: AppRoutes.profile,
-          title: 'Không gian cá nhân',
+          key: const ValueKey('nav-workouts'),
+          route: AppRoutes.workouts,
+          title: 'Tập luyện',
+        ),
+        (
+          key: const ValueKey('nav-progress'),
+          route: AppRoutes.progress,
+          title: 'Tiến độ',
         ),
       ]) {
         await tester.tap(find.byKey(destination.key));
@@ -54,7 +59,9 @@ void main() {
         expect(
           destination.route == AppRoutes.journal
               ? find.byKey(const ValueKey('journal-screen'))
-              : find.text(destination.title),
+              : destination.route == AppRoutes.progress
+              ? find.byKey(const ValueKey('progress-screen'))
+              : find.widgetWithText(AppBar, destination.title),
           findsOneWidget,
         );
         expect(
@@ -91,7 +98,9 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('nav-journal')));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('journal-screen')), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('nav-profile')));
+    await tester.tap(find.byKey(const ValueKey('nav-dashboard')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('profile-avatar')));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.byKey(const ValueKey('sign-out')));
     await tester.pumpAndSettle();
@@ -124,7 +133,9 @@ void main() {
     tester,
   ) async {
     final container = await pumpApp(tester);
-    await tester.tap(find.byKey(const ValueKey('nav-profile')));
+    await tester.tap(find.byKey(const ValueKey('nav-dashboard')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('profile-avatar')));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.widgetWithText(ChoiceChip, 'Tối'));
     await tester.pumpAndSettle();
@@ -133,7 +144,7 @@ void main() {
     expect(container.read(themeModeProvider), ThemeMode.dark);
     expect(
       Theme.of(
-        tester.element(find.byKey(const ValueKey('nav-profile'))),
+        tester.element(find.byKey(const ValueKey('nav-progress'))),
       ).brightness,
       Brightness.dark,
     );
@@ -165,6 +176,8 @@ void main() {
         AppRoutes.journal,
         AppRoutes.quest,
         AppRoutes.chat,
+        AppRoutes.workouts,
+        AppRoutes.progress,
         AppRoutes.profile,
         AppRoutes.auth,
       ]) {

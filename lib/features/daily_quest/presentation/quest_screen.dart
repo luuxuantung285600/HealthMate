@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -178,7 +179,7 @@ class QuestScreen extends ConsumerWidget {
         FilledButton.icon(
           key: const ValueKey('add-goal'),
           onPressed: action.isLoading ? null : () => _edit(context, ref, today),
-          icon: const Icon(Icons.add_rounded),
+          icon: const Icon(AppIcons.plus),
           label: const Text('Thêm mục tiêu'),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -190,7 +191,7 @@ class QuestScreen extends ConsumerWidget {
           ),
           data: (items) => items.isEmpty
               ? const EmptyState(
-                  icon: Icons.flag_outlined,
+                  icon: AppIcons.goals,
                   title: 'Chưa có mục tiêu định lượng',
                   description:
                       'Bấm Thêm mục tiêu để chọn nội dung, giá trị và thời hạn bạn muốn theo dõi. Định hướng trong hồ sơ vẫn được giữ riêng.',

@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/energy_estimate.dart';
@@ -51,7 +52,7 @@ class _EnergyEstimateDialogState extends State<EnergyEstimateDialog> {
           leading: IconButton(
             tooltip: 'Quay về nhập tay',
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.close),
+            icon: const Icon(AppIcons.x),
           ),
         ),
         body: ListView(

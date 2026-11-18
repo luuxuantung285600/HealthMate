@@ -1,3 +1,4 @@
+import '../../../../core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/widgets/app_card.dart';
@@ -174,7 +175,7 @@ class _MfpMacrosCardState extends State<MfpMacrosCard> {
               key: const ValueKey('toggle-macro-unit'),
               tooltip: _percent ? 'Hiển thị gram' : 'Hiển thị tỷ lệ năng lượng',
               onPressed: () => setState(() => _percent = !_percent),
-              icon: const Icon(Icons.swap_horiz),
+              icon: const Icon(AppIcons.arrowLeftRight),
             ),
           ],
         ),

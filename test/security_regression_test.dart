@@ -22,6 +22,7 @@ import 'support/fake_chat_repository.dart';
 import 'support/fake_health_profile_repository.dart';
 import 'support/test_app.dart';
 import 'support/fake_water_repository.dart';
+import 'onboarding_test.dart' show advanceToOnboarding;
 
 class _PendingWater extends FakeWaterRepository {
   final confirmation = Completer<void>();
@@ -213,6 +214,7 @@ void main() {
       // The profile remains untouched until the user explicitly submits valid data.
       expect(repository.updateProfileCalls, 0);
       expect(repository.completeOnboardingCalls, 0);
+      await advanceToOnboarding(tester, 'onboarding-birth-date');
       final dateButton = find.byKey(const ValueKey('onboarding-birth-date'));
       await tester.ensureVisible(dateButton);
       await tester.tap(dateButton);

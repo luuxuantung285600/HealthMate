@@ -38,12 +38,13 @@ class _RejectedActivity extends FakeActivityRepository {
   Future<String> add({
     required String uid,
     required ActivityLogDraft draft,
+    String? operationId,
   }) async {
     if (reject) {
       reject = false;
       throw const DailyLogFailure('Test rejection');
     }
-    return super.add(uid: uid, draft: draft);
+    return super.add(uid: uid, draft: draft, operationId: operationId);
   }
 }
 

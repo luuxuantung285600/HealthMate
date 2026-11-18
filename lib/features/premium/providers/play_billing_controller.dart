@@ -13,11 +13,15 @@ class PlayBillingController extends ChangeNotifier {
     required this.isCurrent,
     this.operationTimeout = const Duration(seconds: 30),
     this.verificationTimeout = const Duration(seconds: 130),
-  });
+    DateTime Function()? now,
+  }) : now = now ?? DateTime.now;
   final PlayBillingRepository repository;
   final PlayStore store;
   final bool Function() isCurrent;
   final Duration operationTimeout, verificationTimeout;
+  final DateTime Function() now;
+  VerifiedMembership? _membership;
+  bool _awaitingActivation = false;
   PlayBillingConfig? config;
   PlayProduct? product;
   bool loading = true;
@@ -28,6 +32,7 @@ class PlayBillingController extends ChangeNotifier {
       _checkoutOpen = false;
   final _pending = <String>{};
   final _queued = <String>{};
+  final _unresolved = <String>{};
   int _events = 0;
   Future<void>? _startup, _reload;
   StreamSubscription<List<StorePurchase>>? _subscription;
@@ -40,6 +45,21 @@ class PlayBillingController extends ChangeNotifier {
       _pending.isNotEmpty ||
       _queued.isNotEmpty;
   bool get restoring => _restoring;
+  bool get openingCheckout => _checkoutOpen;
+  bool get verifying => _verifying;
+  bool get pending => _pending.isNotEmpty;
+  bool get needsRecovery => _unresolved.isNotEmpty;
+  bool get awaitingActivation => _awaitingActivation;
+  bool get canBuy =>
+      _current &&
+      !loading &&
+      !busy &&
+      !needsRecovery &&
+      !awaitingActivation &&
+      _membership?.blocksNewPurchaseAt(now()) != true &&
+      config?.enabled == true &&
+      product != null &&
+      product!.id == config!.productId;
   bool get canReload => !loading && !busy;
   bool get canRestore =>
       !loading &&
@@ -49,6 +69,13 @@ class PlayBillingController extends ChangeNotifier {
       _queued.isEmpty;
   void _publish() {
     if (_current) notifyListeners();
+  }
+
+  void acceptMembership(VerifiedMembership? member) {
+    if (!_current) return;
+    _membership = member;
+    if (member?.activeAt(now()) == true) _awaitingActivation = false;
+    _publish();
   }
 
   Future<void> start() => _startup ??= _start();
@@ -83,7 +110,7 @@ class PlayBillingController extends ChangeNotifier {
         },
       );
       await reload();
-      if (_current && config?.enabled == true) await restore();
+      if (_current && config?.enabled == true) await restore(quiet: true);
     } catch (_) {
       if (_current) {
         loading = false;
@@ -112,8 +139,8 @@ class PlayBillingController extends ChangeNotifier {
       if (result.enabled) {
         final loaded = await store.load(result).timeout(operationTimeout);
         if (!_current) return;
-        product = loaded;
-        if (loaded == null) {
+        product = loaded?.id == result.productId ? loaded : null;
+        if (product == null) {
           message =
               'Chưa tìm thấy gói trên Google Play. Kiểm tra tài khoản Play và bản cài ứng dụng.';
         }
@@ -132,13 +159,7 @@ class PlayBillingController extends ChangeNotifier {
   }
 
   Future<void> buy() async {
-    if (!_current ||
-        busy ||
-        loading ||
-        config?.enabled != true ||
-        product == null) {
-      return;
-    }
+    if (!canBuy) return;
     _checkoutOpen = true;
     message = 'Đang mở Google Play…';
     _publish();
@@ -159,7 +180,14 @@ class PlayBillingController extends ChangeNotifier {
     }
   }
 
-  Future<void> restore() async {
+  /// Query Play again after returning from checkout or another application.
+  /// The provider owns the lifecycle observer for the signed-in session.
+  Future<void> onResume() async {
+    if (!_current || !canRestore) return;
+    await restore(quiet: true);
+  }
+
+  Future<void> restore({bool quiet = false}) async {
     if (!_current ||
         loading ||
         config?.enabled != true ||
@@ -170,7 +198,10 @@ class PlayBillingController extends ChangeNotifier {
     }
     _restoring = true;
     final before = _events;
-    message = 'Đang tìm giao dịch trong tài khoản Google Play…';
+    final wasCheckoutOpen = _checkoutOpen;
+    if (!quiet) {
+      message = 'Đang tìm giao dịch trong tài khoản Google Play…';
+    }
     _publish();
     try {
       await store.restore().timeout(operationTimeout);
@@ -179,9 +210,21 @@ class PlayBillingController extends ChangeNotifier {
         // Manual restore also recovers a checkout whose close callback was lost.
         // A known pending purchase remains pending until Play reports otherwise.
         _checkoutOpen = false;
-        message = _pending.isNotEmpty
-            ? 'Google Play vẫn đang chờ hoàn tất thanh toán. Chưa cấp Premium.'
-            : 'Đã yêu cầu khôi phục. Giao dịch tìm được sẽ được máy chủ xác minh.';
+        if (_pending.isNotEmpty) {
+          message =
+              'Google Play vẫn đang chờ hoàn tất thanh toán. Chưa cấp Premium.';
+        } else if (needsRecovery) {
+          message =
+              'Giao dịch trước chưa xác minh xong. Kiểm tra đúng tài khoản Google Play và khôi phục; không cần mua lại.';
+        } else if (awaitingActivation) {
+          message =
+              'Giao dịch đã được xác minh. Đang cập nhật quyền Premium; kiểm tra mạng hoặc khôi phục giao dịch.';
+        } else if (!quiet) {
+          message =
+              'Chưa tìm thấy giao dịch để khôi phục. Hãy kiểm tra đúng tài khoản Google Play đã mua.';
+        } else if (wasCheckoutOpen) {
+          message = 'Chưa nhận được giao dịch mới từ Google Play.';
+        }
       }
     } catch (_) {
       if (_current) {
@@ -203,12 +246,15 @@ class PlayBillingController extends ChangeNotifier {
       _publish();
       return;
     }
-    _pending.remove(key);
+    final wasPending = _pending.remove(key);
     // Pending callbacks may omit the token that a terminal callback supplies.
     _pending.remove('pending-store-event');
     _checkoutOpen = false;
     if (event.status == StorePurchaseStatus.cancelled ||
         event.status == StorePurchaseStatus.error) {
+      if (wasPending && event.status == StorePurchaseStatus.cancelled) {
+        _unresolved.remove(key);
+      }
       message = event.status == StorePurchaseStatus.cancelled
           ? 'Đã đóng thanh toán.'
           : 'Google Play chưa hoàn tất giao dịch. Nếu đã trả tiền, hãy khôi phục.';
@@ -216,6 +262,7 @@ class PlayBillingController extends ChangeNotifier {
       return;
     }
     _verifying = true;
+    _unresolved.add(key);
     message = 'Đang xác minh giao dịch với máy chủ…';
     _publish();
     try {
@@ -224,6 +271,8 @@ class PlayBillingController extends ChangeNotifier {
           .timeout(verificationTimeout);
       if (!_current) return;
       if (!result.verified) throw StateError('Unverified');
+      _awaitingActivation =
+          result.active && _membership?.activeAt(now()) != true;
       if (result.pending) {
         _pending.add(key);
         message = 'Thanh toán đang chờ Google xác nhận.';
@@ -238,6 +287,7 @@ class PlayBillingController extends ChangeNotifier {
         await store.complete(event).timeout(operationTimeout);
       }
       if (_current) {
+        _unresolved.remove(key);
         message = 'Đã đối soát giao dịch. Quyền Premium lấy từ máy chủ.';
       }
     } catch (_) {

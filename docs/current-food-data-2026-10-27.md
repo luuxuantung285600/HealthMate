@@ -12,7 +12,12 @@ nhật ký hoặc đổi ID đã dùng. Số đếm là mục thực phẩm/bi�
 | USDA Foundation Foods | Bản tải 04/2026 | 308 | Thực phẩm cơ bản, metadata về phân tích/mẫu; một số dưỡng chất được tính toán |
 | USDA FNDDS | Khảo sát 2021–2023, phát hành 10/2024 | 3.255 | Thực phẩm/món dùng trong nghiên cứu khẩu phần; có dữ liệu biên soạn từ nguồn tham khảo/công thức |
 | Danh mục trước | Việt Nam 2007, công thức ước tính, nhãn hãng và USDA SR Legacy 2018 | Giữ 7.606 | Giữ khả năng tra cứu lại thực phẩm đã dùng |
-| **Tổng đóng gói** | | **11.169** | Hoạt động offline, không cần API key |
+| **Tổng đóng gói tại 27/10** | | **11.169** | Hoạt động offline, không cần API key |
+
+**Cập nhật 10/11/2026:** đã bổ sung 51 món Việt/đồ gói, tổng hiện tại **11.220**.
+Nguồn từng nhãn, khối lượng khô, kiểm thử và 47 ảnh mới được ghi tại
+[báo cáo mở rộng](vietnamese-food-expansion-2026-11-10.md). Các phép đo dưới đây
+ghi nhận phiên bản danh mục tại thời điểm 27/10.
 
 Nguồn kiểm tra ngày 27/10/2026:
 

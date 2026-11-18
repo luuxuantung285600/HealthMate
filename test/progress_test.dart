@@ -1,3 +1,4 @@
+import 'support/load_icon_font.dart';
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -59,9 +60,12 @@ Future<void> openDailyDetails(WidgetTester tester) async {
 
 void main() {
   setUpAll(() async {
-    final fonts = FontLoader('Inter');
+    await loadIconFont();
+    final fonts = FontLoader('Public Sans');
     for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      fonts.addFont(rootBundle.load('assets/fonts/inter/Inter-$weight.ttf'));
+      fonts.addFont(
+        rootBundle.load('assets/fonts/public_sans/PublicSans-$weight.ttf'),
+      );
     }
     await fonts.load();
     await (FontLoader(

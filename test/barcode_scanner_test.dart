@@ -1,3 +1,4 @@
+import 'support/load_icon_font.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -291,9 +292,11 @@ void main() {
     },
   );
   setUpAll(() async {
-    await (FontLoader(
-      'Inter',
-    )..addFont(rootBundle.load('assets/fonts/inter/Inter-Regular.ttf'))).load();
+    await loadIconFont();
+    await (FontLoader('Public Sans')..addFont(
+          rootBundle.load('assets/fonts/public_sans/PublicSans-Regular.ttf'),
+        ))
+        .load();
   });
 
   test(

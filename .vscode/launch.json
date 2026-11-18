@@ -5,7 +5,31 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "HealthMate App (Flutter)",
+            "name": "HealthMate App (Web - Chrome)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "deviceId": "chrome",
+            "flutterMode": "debug",
+            "toolArgs": [
+                "--dart-define-from-file=${workspaceFolder}/config/chat-api.json",
+                "--dart-define-from-file=${workspaceFolder}/config/admin-runtime.json"
+            ]
+        },
+        {
+            "name": "HealthMate App (Web - Edge)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "deviceId": "edge",
+            "flutterMode": "debug",
+            "toolArgs": [
+                "--dart-define-from-file=${workspaceFolder}/config/chat-api.json",
+                "--dart-define-from-file=${workspaceFolder}/config/admin-runtime.json"
+            ]
+        },
+        {
+            "name": "HealthMate App (Android)",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",

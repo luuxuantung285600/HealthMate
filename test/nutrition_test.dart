@@ -227,7 +227,14 @@ void main() {
       tester.element(find.byType(JournalNutritionOverview).last),
     ).pop();
     await tester.pumpAndSettle();
-    expect(find.text('Chưa ghi món'), findsNWidgets(4));
+    expect(
+      find.byKey(const ValueKey('journal-hourly-timeline')),
+      findsOneWidget,
+    );
+    expect(
+      find.text('Chưa ghi món trong ngày. Nhấn + ở giờ bạn đã ăn.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('switching date while meals load cannot show the old day', (
@@ -278,7 +285,14 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull, reason: 'journal');
 
-    expect(find.text('Chưa ghi món'), findsNWidgets(4));
+    expect(
+      find.byKey(const ValueKey('journal-hourly-timeline')),
+      findsOneWidget,
+    );
+    expect(
+      find.text('Chưa ghi món trong ngày. Nhấn + ở giờ bạn đã ăn.'),
+      findsOneWidget,
+    );
     await tester.ensureVisible(find.byKey(const ValueKey('journal-add-meal')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('journal-add-meal')));
@@ -315,7 +329,20 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(repository.addCalls, 1);
-    expect(find.textContaining('Cơm trắng chín · 150 g'), findsOneWidget);
+    final savedCard = find.byKey(
+      ValueKey('journal-food-${repository.meals.single.id}-0'),
+    );
+    expect(
+      find.descendant(of: savedCard, matching: find.text('Cơm trắng chín')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: savedCard,
+        matching: find.textContaining('150 g · 195 kcal'),
+      ),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 

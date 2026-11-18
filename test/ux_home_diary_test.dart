@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:healthmate/core/router/app_router.dart';
 import 'package:healthmate/core/router/app_routes.dart';
 import 'package:healthmate/features/journal/providers/journal_date_provider.dart';
-import 'package:healthmate/features/nutrition/models/nutrition_models.dart';
 import 'package:healthmate/features/nutrition/presentation/meal_form_dialog.dart';
 import 'package:healthmate/features/dashboard/presentation/widgets/mfp_calories_card.dart';
 
@@ -37,9 +36,12 @@ void main() {
               findsOneWidget,
             );
             if (width == 390 && scale == 1) {
-              // The main action and actual energy summary are visible together
-              // without scroll, including with the shell's navigation present.
-              expect(homeAdd.hitTestable(), findsOneWidget);
+              // The reference layout keeps the fixed central add button beside
+              // Home; the additional body shortcut follows the macro panel.
+              expect(
+                find.byKey(const ValueKey('quick-add-menu')).hitTestable(),
+                findsOneWidget,
+              );
               expect(
                 find
                     .byKey(const ValueKey('today-recorded-energy'))
@@ -65,10 +67,10 @@ void main() {
               );
             }
             expect(tester.getSize(diaryAdd).height, greaterThanOrEqualTo(48));
-            final lunchAdd = find.byKey(const ValueKey('add-meal-lunch'));
+            final lunchAdd = find.byKey(const ValueKey('add-meal-hour-12'));
             await tester.ensureVisible(lunchAdd);
             await tester.pumpAndSettle();
-            expect(find.byTooltip('Thêm bữa trưa'), findsOneWidget);
+            expect(find.byTooltip('Thêm món lúc 12:00'), findsOneWidget);
             expect(tester.getSize(lunchAdd).height, greaterThanOrEqualTo(48));
             expect(tester.takeException(), isNull);
           },
@@ -117,7 +119,7 @@ void main() {
   );
 
   testWidgets(
-    'empty Diary meal action keeps type and date; completion stays secondary',
+    'empty Diary hour action keeps time and date; completion stays secondary',
     (tester) async {
       final c = await pumpApp(tester, dashboardNow: today);
       c.read(journalDateProvider.notifier).select(earlier);
@@ -127,13 +129,13 @@ void main() {
         tester.widget(find.byKey(const ValueKey('open-day-review'))),
         isA<TextButton>(),
       );
-      final add = find.byKey(const ValueKey('add-meal-lunch'));
+      final add = find.byKey(const ValueKey('add-meal-hour-12'));
       await tester.ensureVisible(add);
       await tester.pumpAndSettle();
       await tester.tap(add);
       await tester.pumpAndSettle();
       final form = tester.widget<MealFormDialog>(find.byType(MealFormDialog));
-      expect(form.initialType, MealType.lunch);
+      expect(form.initialConsumedAt!.hour, 12);
       expect(DateUtils.dateOnly(form.initialConsumedAt!), earlier);
       expect(tester.takeException(), isNull);
     },

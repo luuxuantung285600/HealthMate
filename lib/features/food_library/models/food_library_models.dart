@@ -362,6 +362,14 @@ class FoodRecipe extends LibraryEntry {
         : 100,
     servingLabel: portionGrams == null ? null : 'phần',
     servingGrams: portionGrams,
+    recipeIngredients: [
+      for (final item in ingredients)
+        FoodRecipeIngredient(
+          foodId: item.foodId,
+          name: item.name,
+          gramsPer100gYield: item.grams * 100 / yieldGrams,
+        ),
+    ],
   );
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
+import '../../../core/widgets/app_inset_panel.dart';
 
 class JournalDateSelector extends StatelessWidget {
   const JournalDateSelector({
@@ -22,11 +23,8 @@ class JournalDateSelector extends StatelessWidget {
     final next = DateTime(date.year, date.month, date.day + 1);
     final today = DateUtils.isSameDay(date, DateTime.now());
     final theme = Theme.of(context);
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withValues(alpha: .45),
-        borderRadius: BorderRadius.circular(24),
-      ),
+    return AppInsetPanel(
+      padding: const EdgeInsets.all(4),
       child: Row(
         children: [
           Expanded(
@@ -50,7 +48,10 @@ class JournalDateSelector extends StatelessWidget {
               margin: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: theme.colorScheme.surface,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: theme.colorScheme.outlineVariant.withValues(alpha: .5),
+                ),
               ),
               child: TextButton(
                 key: const ValueKey('journal-pick-date'),

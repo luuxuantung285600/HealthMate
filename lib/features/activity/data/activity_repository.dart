@@ -5,7 +5,11 @@ abstract interface class ActivityRepository {
 
   Future<List<ActivityLog>> loadRange(String uid, DateTime start, DateTime end);
 
-  Future<String> add({required String uid, required ActivityLogDraft draft});
+  Future<String> add({
+    required String uid,
+    required ActivityLogDraft draft,
+    String? operationId,
+  });
 
   Future<void> update({
     required String uid,

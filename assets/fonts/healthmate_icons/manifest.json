@@ -1,0 +1,745 @@
+{
+  "version": "healthmate-tabler-icons-2026-11-16",
+  "upstream": {
+    "name": "@tabler/icons-webfont",
+    "version": "3.52.0",
+    "url": "https://github.com/tabler/tabler-icons",
+    "tarball": "https://registry.npmjs.org/@tabler/icons-webfont/-/icons-webfont-3.52.0.tgz",
+    "license": "MIT",
+    "licenseSha256": "b740a1d46122672da62833e97f7e7c8a13fa85cbc7445b584b297cc00dde93db",
+    "sources": {
+      "dist/fonts/tabler-icons.ttf": {
+        "url": "https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.52.0/dist/fonts/tabler-icons.ttf",
+        "sha256": "cd4af77212fd4a83679362fb12c7e585078c2498719799d646e50518a5397cc6"
+      },
+      "dist/fonts/tabler-icons-filled.ttf": {
+        "url": "https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.52.0/dist/fonts/tabler-icons-filled.ttf",
+        "sha256": "a8b79e93f01d01ec3626424ae44bf7c6461f0ce1919c3cd9dc452b6617930cc8"
+      },
+      "dist/tabler-icons.css": {
+        "url": "https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.52.0/dist/tabler-icons.css",
+        "sha256": "018366f7810b88ae9a032437e090c6ec4fb3a6570b6a33291d66f18274056884"
+      },
+      "dist/tabler-icons-filled.css": {
+        "url": "https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.52.0/dist/tabler-icons-filled.css",
+        "sha256": "84695559714c8315f9f811c93b1839d0a89c994cba9694e7fad36e4e0e33fab7"
+      }
+    }
+  },
+  "fontFamily": "HealthMateIcons",
+  "fontAsset": "assets/fonts/healthmate_icons/HealthMateIcons.ttf",
+  "fontSha256": "4b951628f9c262b78dc9e8b837ee61866faa3e5601a8b3101c26f01a66884e15",
+  "glyphCount": 116,
+  "icons": {
+    "activity": {
+      "tabler": "activity-heartbeat",
+      "weight": "outline",
+      "codePoint": 57348
+    },
+    "arrowLeft": {
+      "tabler": "arrow-left",
+      "weight": "outline",
+      "codePoint": 57353
+    },
+    "arrowLeftRight": {
+      "tabler": "arrows-left-right",
+      "weight": "outline",
+      "codePoint": 57356
+    },
+    "arrowRight": {
+      "tabler": "arrow-right",
+      "weight": "outline",
+      "codePoint": 57354
+    },
+    "arrowUpRight": {
+      "tabler": "arrow-up-right",
+      "weight": "outline",
+      "codePoint": 57355
+    },
+    "atSign": {
+      "tabler": "at",
+      "weight": "outline",
+      "codePoint": 57357
+    },
+    "bellOff": {
+      "tabler": "bell-off",
+      "weight": "outline",
+      "codePoint": 57361
+    },
+    "bookmarkMinus": {
+      "tabler": "bookmark-minus",
+      "weight": "outline",
+      "codePoint": 57365
+    },
+    "bookmarkPlus": {
+      "tabler": "bookmark-plus",
+      "weight": "outline",
+      "codePoint": 57366
+    },
+    "botMessageSquare": {
+      "tabler": "message-chatbot",
+      "weight": "outline",
+      "codePoint": 57427
+    },
+    "brand": {
+      "tabler": "heart",
+      "weight": "outline",
+      "codePoint": 57415
+    },
+    "bug": {
+      "tabler": "bug",
+      "weight": "outline",
+      "codePoint": 57369
+    },
+    "cake": {
+      "tabler": "cake",
+      "weight": "outline",
+      "codePoint": 57371
+    },
+    "calculator": {
+      "tabler": "calculator",
+      "weight": "outline",
+      "codePoint": 57372
+    },
+    "calendar": {
+      "tabler": "calendar",
+      "weight": "outline",
+      "codePoint": 57373
+    },
+    "calendarDays": {
+      "tabler": "calendar-week",
+      "weight": "outline",
+      "codePoint": 57375
+    },
+    "calendarRange": {
+      "tabler": "calendar-event",
+      "weight": "outline",
+      "codePoint": 57374
+    },
+    "calories": {
+      "tabler": "flame",
+      "weight": "outline",
+      "codePoint": 57412
+    },
+    "camera": {
+      "tabler": "camera",
+      "weight": "outline",
+      "codePoint": 57376
+    },
+    "cameraOff": {
+      "tabler": "camera-off",
+      "weight": "outline",
+      "codePoint": 57377
+    },
+    "carbs": {
+      "tabler": "wheat",
+      "weight": "outline",
+      "codePoint": 57458
+    },
+    "chartColumnIncreasing": {
+      "tabler": "chart-bar",
+      "weight": "outline",
+      "codePoint": 57380
+    },
+    "chartNoAxesCombined": {
+      "tabler": "chart-area-line",
+      "weight": "outline",
+      "codePoint": 57379
+    },
+    "chartPie": {
+      "tabler": "chart-pie",
+      "weight": "outline",
+      "codePoint": 57381
+    },
+    "chatbot": {
+      "tabler": "message-chatbot",
+      "weight": "outline",
+      "codePoint": 57427
+    },
+    "check": {
+      "tabler": "check",
+      "weight": "outline",
+      "codePoint": 57382
+    },
+    "chevronDown": {
+      "tabler": "chevron-down",
+      "weight": "outline",
+      "codePoint": 57384
+    },
+    "chevronLeft": {
+      "tabler": "chevron-left",
+      "weight": "outline",
+      "codePoint": 57385
+    },
+    "chevronRight": {
+      "tabler": "chevron-right",
+      "weight": "outline",
+      "codePoint": 57386
+    },
+    "chevronUp": {
+      "tabler": "chevron-up",
+      "weight": "outline",
+      "codePoint": 57387
+    },
+    "circle": {
+      "tabler": "circle",
+      "weight": "outline",
+      "codePoint": 57388
+    },
+    "circleAlert": {
+      "tabler": "alert-circle",
+      "weight": "outline",
+      "codePoint": 57351
+    },
+    "circleCheck": {
+      "tabler": "circle-check",
+      "weight": "outline",
+      "codePoint": 57389
+    },
+    "circleMinus": {
+      "tabler": "circle-minus",
+      "weight": "outline",
+      "codePoint": 57390
+    },
+    "circlePlay": {
+      "tabler": "player-play",
+      "weight": "outline",
+      "codePoint": 57433
+    },
+    "circlePlus": {
+      "tabler": "circle-plus",
+      "weight": "outline",
+      "codePoint": 57391
+    },
+    "circleStop": {
+      "tabler": "player-stop",
+      "weight": "outline",
+      "codePoint": 57435
+    },
+    "clipboardCheck": {
+      "tabler": "clipboard-check",
+      "weight": "outline",
+      "codePoint": 57392
+    },
+    "clock3": {
+      "tabler": "clock",
+      "weight": "outline",
+      "codePoint": 57393
+    },
+    "cloudAlert": {
+      "tabler": "cloud-exclamation",
+      "weight": "outline",
+      "codePoint": 57395
+    },
+    "cloudCheck": {
+      "tabler": "cloud-check",
+      "weight": "outline",
+      "codePoint": 57394
+    },
+    "coffee": {
+      "tabler": "coffee",
+      "weight": "outline",
+      "codePoint": 57396
+    },
+    "compass": {
+      "tabler": "compass",
+      "weight": "outline",
+      "codePoint": 57397
+    },
+    "contactRound": {
+      "tabler": "address-book",
+      "weight": "outline",
+      "codePoint": 57349
+    },
+    "cookie": {
+      "tabler": "cookie",
+      "weight": "outline",
+      "codePoint": 57399
+    },
+    "cookingPot": {
+      "tabler": "cooker",
+      "weight": "outline",
+      "codePoint": 57398
+    },
+    "crown": {
+      "tabler": "crown",
+      "weight": "outline",
+      "codePoint": 57400
+    },
+    "download": {
+      "tabler": "download",
+      "weight": "outline",
+      "codePoint": 57404
+    },
+    "droplet": {
+      "tabler": "droplet",
+      "weight": "outline",
+      "codePoint": 57405
+    },
+    "dumbbell": {
+      "tabler": "barbell",
+      "weight": "outline",
+      "codePoint": 57359
+    },
+    "ellipsis": {
+      "tabler": "dots",
+      "weight": "outline",
+      "codePoint": 57403
+    },
+    "externalLink": {
+      "tabler": "arrow-up-right",
+      "weight": "outline",
+      "codePoint": 57355
+    },
+    "eye": {
+      "tabler": "eye",
+      "weight": "outline",
+      "codePoint": 57408
+    },
+    "eyeOff": {
+      "tabler": "eye-off",
+      "weight": "outline",
+      "codePoint": 57409
+    },
+    "fat": {
+      "tabler": "avocado",
+      "weight": "outline",
+      "codePoint": 57358
+    },
+    "filePenLine": {
+      "tabler": "edit",
+      "weight": "outline",
+      "codePoint": 57406
+    },
+    "fileText": {
+      "tabler": "file-text",
+      "weight": "outline",
+      "codePoint": 57410
+    },
+    "flag": {
+      "tabler": "flag",
+      "weight": "outline",
+      "codePoint": 57411
+    },
+    "flame": {
+      "tabler": "flame",
+      "weight": "outline",
+      "codePoint": 57412
+    },
+    "footprints": {
+      "tabler": "footsteps",
+      "weight": "outline",
+      "codePoint": 57413
+    },
+    "goals": {
+      "tabler": "target-arrow",
+      "weight": "outline",
+      "codePoint": 57450
+    },
+    "headset": {
+      "tabler": "headset",
+      "weight": "outline",
+      "codePoint": 57414
+    },
+    "heartPulse": {
+      "tabler": "activity-heartbeat",
+      "weight": "outline",
+      "codePoint": 57348
+    },
+    "history": {
+      "tabler": "history",
+      "weight": "outline",
+      "codePoint": 57416
+    },
+    "home": {
+      "tabler": "home",
+      "weight": "outline",
+      "codePoint": 57417
+    },
+    "homeSelected": {
+      "tabler": "home",
+      "weight": "filled",
+      "codePoint": 57347
+    },
+    "house": {
+      "tabler": "home",
+      "weight": "outline",
+      "codePoint": 57417
+    },
+    "image": {
+      "tabler": "photo",
+      "weight": "outline",
+      "codePoint": 57431
+    },
+    "images": {
+      "tabler": "library-photo",
+      "weight": "outline",
+      "codePoint": 57423
+    },
+    "info": {
+      "tabler": "info-circle",
+      "weight": "outline",
+      "codePoint": 57418
+    },
+    "journal": {
+      "tabler": "book",
+      "weight": "outline",
+      "codePoint": 57364
+    },
+    "journalSelected": {
+      "tabler": "book",
+      "weight": "filled",
+      "codePoint": 57345
+    },
+    "keyRound": {
+      "tabler": "key",
+      "weight": "outline",
+      "codePoint": 57419
+    },
+    "layoutGrid": {
+      "tabler": "layout-grid",
+      "weight": "outline",
+      "codePoint": 57420
+    },
+    "leaf": {
+      "tabler": "leaf",
+      "weight": "outline",
+      "codePoint": 57422
+    },
+    "lightbulb": {
+      "tabler": "bulb",
+      "weight": "outline",
+      "codePoint": 57370
+    },
+    "lockKeyhole": {
+      "tabler": "lock",
+      "weight": "outline",
+      "codePoint": 57424
+    },
+    "logOut": {
+      "tabler": "logout",
+      "weight": "outline",
+      "codePoint": 57425
+    },
+    "mail": {
+      "tabler": "mail",
+      "weight": "outline",
+      "codePoint": 57426
+    },
+    "messageCirclePlus": {
+      "tabler": "message-circle-plus",
+      "weight": "outline",
+      "codePoint": 57428
+    },
+    "moon": {
+      "tabler": "moon",
+      "weight": "outline",
+      "codePoint": 57429
+    },
+    "moveRight": {
+      "tabler": "arrow-right",
+      "weight": "outline",
+      "codePoint": 57354
+    },
+    "notebookPen": {
+      "tabler": "note",
+      "weight": "outline",
+      "codePoint": 57430
+    },
+    "notebookTabs": {
+      "tabler": "book",
+      "weight": "outline",
+      "codePoint": 57364
+    },
+    "notepadText": {
+      "tabler": "file-text",
+      "weight": "outline",
+      "codePoint": 57410
+    },
+    "nutrition": {
+      "tabler": "bowl-spoon",
+      "weight": "outline",
+      "codePoint": 57367
+    },
+    "pause": {
+      "tabler": "player-pause",
+      "weight": "outline",
+      "codePoint": 57432
+    },
+    "play": {
+      "tabler": "player-play",
+      "weight": "outline",
+      "codePoint": 57433
+    },
+    "plus": {
+      "tabler": "plus",
+      "weight": "outline",
+      "codePoint": 57436
+    },
+    "premium": {
+      "tabler": "crown",
+      "weight": "outline",
+      "codePoint": 57400
+    },
+    "profile": {
+      "tabler": "user-circle",
+      "weight": "outline",
+      "codePoint": 57455
+    },
+    "progress": {
+      "tabler": "chart-area-line",
+      "weight": "outline",
+      "codePoint": 57379
+    },
+    "progressSelected": {
+      "tabler": "chart-area-line",
+      "weight": "filled",
+      "codePoint": 57346
+    },
+    "protein": {
+      "tabler": "egg",
+      "weight": "outline",
+      "codePoint": 57407
+    },
+    "qrCode": {
+      "tabler": "qrcode",
+      "weight": "outline",
+      "codePoint": 57437
+    },
+    "quest": {
+      "tabler": "checklist",
+      "weight": "outline",
+      "codePoint": 57383
+    },
+    "recipes": {
+      "tabler": "cooker",
+      "weight": "outline",
+      "codePoint": 57398
+    },
+    "refreshCw": {
+      "tabler": "refresh",
+      "weight": "outline",
+      "codePoint": 57438
+    },
+    "report": {
+      "tabler": "chart-area-line",
+      "weight": "outline",
+      "codePoint": 57379
+    },
+    "rows3": {
+      "tabler": "layout-rows",
+      "weight": "outline",
+      "codePoint": 57421
+    },
+    "ruler": {
+      "tabler": "ruler-measure",
+      "weight": "outline",
+      "codePoint": 57439
+    },
+    "sandwich": {
+      "tabler": "bread",
+      "weight": "outline",
+      "codePoint": 57368
+    },
+    "scale": {
+      "tabler": "scale-outline",
+      "weight": "outline",
+      "codePoint": 57440
+    },
+    "scanBarcode": {
+      "tabler": "barcode",
+      "weight": "outline",
+      "codePoint": 57360
+    },
+    "scanSearch": {
+      "tabler": "scan",
+      "weight": "outline",
+      "codePoint": 57441
+    },
+    "scanner": {
+      "tabler": "scan",
+      "weight": "outline",
+      "codePoint": 57441
+    },
+    "search": {
+      "tabler": "search",
+      "weight": "outline",
+      "codePoint": 57442
+    },
+    "searchX": {
+      "tabler": "search",
+      "weight": "outline",
+      "codePoint": 57442
+    },
+    "send": {
+      "tabler": "send",
+      "weight": "outline",
+      "codePoint": 57443
+    },
+    "settings2": {
+      "tabler": "settings",
+      "weight": "outline",
+      "codePoint": 57444
+    },
+    "shieldCheck": {
+      "tabler": "shield-check",
+      "weight": "outline",
+      "codePoint": 57445
+    },
+    "shoppingBag": {
+      "tabler": "shopping-bag",
+      "weight": "outline",
+      "codePoint": 57446
+    },
+    "skipForward": {
+      "tabler": "player-skip-forward",
+      "weight": "outline",
+      "codePoint": 57434
+    },
+    "sleep": {
+      "tabler": "moon",
+      "weight": "outline",
+      "codePoint": 57429
+    },
+    "slidersHorizontal": {
+      "tabler": "adjustments-horizontal",
+      "weight": "outline",
+      "codePoint": 57350
+    },
+    "smartphone": {
+      "tabler": "device-mobile",
+      "weight": "outline",
+      "codePoint": 57401
+    },
+    "sparkles": {
+      "tabler": "sparkles",
+      "weight": "outline",
+      "codePoint": 57447
+    },
+    "squarePen": {
+      "tabler": "edit",
+      "weight": "outline",
+      "codePoint": 57406
+    },
+    "steps": {
+      "tabler": "footsteps",
+      "weight": "outline",
+      "codePoint": 57413
+    },
+    "sun": {
+      "tabler": "sun",
+      "weight": "outline",
+      "codePoint": 57449
+    },
+    "support": {
+      "tabler": "headset",
+      "weight": "outline",
+      "codePoint": 57414
+    },
+    "switchCamera": {
+      "tabler": "camera-rotate",
+      "weight": "outline",
+      "codePoint": 57378
+    },
+    "timer": {
+      "tabler": "stopwatch",
+      "weight": "outline",
+      "codePoint": 57448
+    },
+    "trash2": {
+      "tabler": "trash",
+      "weight": "outline",
+      "codePoint": 57453
+    },
+    "trendingDown": {
+      "tabler": "trending-down",
+      "weight": "outline",
+      "codePoint": 57454
+    },
+    "trendingUp": {
+      "tabler": "chart-area-line",
+      "weight": "outline",
+      "codePoint": 57379
+    },
+    "triangleAlert": {
+      "tabler": "alert-triangle",
+      "weight": "outline",
+      "codePoint": 57352
+    },
+    "userRound": {
+      "tabler": "user-circle",
+      "weight": "outline",
+      "codePoint": 57455
+    },
+    "userRoundCog": {
+      "tabler": "user-cog",
+      "weight": "outline",
+      "codePoint": 57456
+    },
+    "utensils": {
+      "tabler": "tools-kitchen-2",
+      "weight": "outline",
+      "codePoint": 57452
+    },
+    "vibrate": {
+      "tabler": "device-mobile-vibration",
+      "weight": "outline",
+      "codePoint": 57402
+    },
+    "video": {
+      "tabler": "video",
+      "weight": "outline",
+      "codePoint": 57457
+    },
+    "water": {
+      "tabler": "droplet",
+      "weight": "outline",
+      "codePoint": 57405
+    },
+    "weight": {
+      "tabler": "scale-outline",
+      "weight": "outline",
+      "codePoint": 57440
+    },
+    "wellness": {
+      "tabler": "leaf",
+      "weight": "outline",
+      "codePoint": 57422
+    },
+    "wheat": {
+      "tabler": "wheat",
+      "weight": "outline",
+      "codePoint": 57458
+    },
+    "workout": {
+      "tabler": "barbell",
+      "weight": "outline",
+      "codePoint": 57359
+    },
+    "workoutSelected": {
+      "tabler": "barbell",
+      "weight": "filled",
+      "codePoint": 57344
+    },
+    "wrench": {
+      "tabler": "tool",
+      "weight": "outline",
+      "codePoint": 57451
+    },
+    "x": {
+      "tabler": "x",
+      "weight": "outline",
+      "codePoint": 57459
+    },
+    "zap": {
+      "tabler": "bolt",
+      "weight": "outline",
+      "codePoint": 57362
+    },
+    "zapOff": {
+      "tabler": "bolt-off",
+      "weight": "outline",
+      "codePoint": 57363
+    }
+  }
+}

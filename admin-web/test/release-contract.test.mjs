@@ -25,6 +25,10 @@ test('Spark release ships the current complete client contract even when the liv
     assert.equal(manifest.rulesSource,'firestore.rules');
     assert.equal(JSON.parse(fs.readFileSync(path.join(out,'firebase.review.json'),'utf8')).functions,undefined);
     assert.match(fs.readFileSync(path.join(out,'site/config.js'),'utf8'),/"statisticsMode": "firestore"/);
+    for(const file of ['admin-icons.mjs','appearance.js','appearance.css','feature-identity.css','licenses/lucide.txt','food-photos.mjs','food-photos.css','bundled-food-photos.mjs','food-photos/vn-pho-bo.webp','food-photos/ATTRIBUTION.txt','exercise-media-preview.mjs','exercise-library.css']){
+      assert.deepEqual(fs.readFileSync(path.join(out,'site',file)),fs.readFileSync(path.join(root,'admin-web/dist',file)),`Missing shared identity asset: ${file}`);
+    }
+    assert.match(JSON.parse(fs.readFileSync(path.join(out,'firebase.review.json'),'utf8')).hosting.headers[0].headers.find(h=>h.key==='Content-Security-Policy').value,/img-src 'self' https:/);
     assert.throws(()=>prepare(baseline,config,out,'spark'),/new directory/);
   } finally {
     // Resolve and bound the exact target before recursive cleanup on Windows.

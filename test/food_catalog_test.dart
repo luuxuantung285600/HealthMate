@@ -97,6 +97,8 @@ void main() {
           500,
           scrollable: find.byType(Scrollable).first,
         );
+        await tester.ensureVisible(more);
+        await tester.pumpAndSettle();
         await tester.tap(more);
         await tester.pumpAndSettle();
         final later = find.byTooltip('Thêm Món thử 23');

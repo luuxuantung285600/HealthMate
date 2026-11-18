@@ -1,14 +1,28 @@
 # HealthMate
 
+> Bàn giao hiện trạng và hướng dẫn AI tiếp tục: [HANDOVER.md](HANDOVER.md)
+> (19/11/2026). Các mục theo ngày bên dưới có nội dung lịch sử.
+
 Ứng dụng Flutter theo dõi dinh dưỡng, thể trạng và thói quen, ưu tiên Android.
 Dữ liệu riêng theo UID trong Cloud Firestore; Firebase Authentication quản lý
 đăng nhập. Riverpod quản lý trạng thái, go_router điều hướng. Web admin và
 Worker chatbot nằm cùng repository. Thông tin chỉ hỗ trợ theo dõi thói quen,
 không thay thế tư vấn y tế.
 
-App và web admin dùng **Inter** đóng gói trong dự án, đủ bốn độ đậm
+App và web admin dùng **Public Sans** đóng gói trong dự án, đủ bốn độ đậm
 400/500/600/700 và ký tự tiếng Việt; không tải font từ dịch vụ bên ngoài.
-Nguồn và giấy phép: [assets/fonts/inter](assets/fonts/inter/README.md).
+Đây là font miễn phí được chọn theo phong cách chữ của X, không phải font
+Chirp được thiết kế riêng cho X.
+Nguồn và giấy phép: [assets/fonts/public_sans](assets/fonts/public_sans/README.md).
+
+Tập luyện: **Tab Tập luyện → chọn buổi → Xem cách tập**. Video miễn
+phí phát từ YouTube sau khi bấm tải; cần Internet, có thể có quảng cáo.
+Hướng dẫn tiếng Việt và bộ đếm vẫn dùng offline. Xem
+[nguồn video và giới hạn](docs/workout-media-sourcing-2026-11-10.md).
+
+Thư viện bổ sung 50 động tác có hướng dẫn tiếng Việt và GIF ExerciseDB trong
+bản debug phi thương mại; admin thêm/sửa/gỡ/khôi phục qua Firestore realtime.
+Xem [cách chạy và giới hạn kiểm thử](docs/exercise-library-2026-11-11.md).
 
 ## Trạng thái source — 31/10/2026
 
@@ -19,7 +33,10 @@ Kết quả cuối và giới hạn xem [tiến độ](docs/improvement-progress
 
 - Luồng nhập món, barcode, nhật ký, cá nhân hóa, kế hoạch và báo cáo dùng
   repository thật; snapshot dinh dưỡng lịch sử được bảo toàn. Catalog offline
-  có 11.169 mục; [nguồn và giới hạn dữ liệu](docs/current-food-data-2026-10-27.md).
+  có 11.220 mục; [nguồn và giới hạn dữ liệu](docs/current-food-data-2026-10-27.md),
+  [51 món Việt/đồ gói mới và 47 ảnh đã duyệt](docs/vietnamese-food-expansion-2026-11-10.md).
+  Giao diện chọn món mới, bảng dinh dưỡng và tổng 51 ảnh:
+  [chi tiết cập nhật](docs/food-selection-detail-2026-11-10.md).
 - Gợi ý thực đơn chỉ thêm bữa còn trống, hiện tiến độ từng bữa và cho lưu
   tiếp khi lỗi. Xóa kế hoạch giữ nhật ký và từ chối snapshot đã thay đổi;
   [hành vi, kiểm thử và giới hạn](docs/meal-plan-operations-2026-11-09.md).
@@ -77,11 +94,29 @@ Thiếu file/config thì helper báo rõ và dừng. `tool/build_android.ps1` c�
 workflow **debug**, không thay thế bản release ký thật. Các cấu hình gateway
 production cũ không chứng nhận gateway candidate đã được cấp quyền.
 
-Trong VS Code, chọn **HealthMate App (Flutter)** rồi nhấn F5. Task chuẩn bị tự
+Trong VS Code, chọn **HealthMate App (Android)** rồi nhấn F5. Task chuẩn bị tự
 nạp cùng cấu hình/token như helper, tạo file debug riêng tại
 `%LOCALAPPDATA%\HealthMate\vscode-android-debug.json` ngoài repository. Không
 commit/chia sẻ file này hoặc dùng nó cho release. Thiếu token/config thì task
 báo lỗi; không chọn bỏ qua lỗi để chạy bằng cấu hình cũ.
+
+Để xem app Flutter trên trình duyệt, mở **Run and Debug** và chọn
+**HealthMate App (Web - Chrome)** hoặc **HealthMate App (Web - Edge)** rồi
+nhấn **F5**. Các mục Web chọn đúng thiết bị trình duyệt và nạp hai file
+`config/chat-api.json`, `config/admin-runtime.json`; không chạy task Android
+hoặc cần token App Check Android. Đây là app Flutter; các mục **HealthMate
+Admin** mở website quản trị riêng.
+
+Chạy app web bằng terminal từ gốc dự án:
+
+```powershell
+flutter run -d chrome --dart-define-from-file=config/chat-api.json --dart-define-from-file=config/admin-runtime.json
+```
+
+Đổi `chrome` thành `edge` nếu dùng Edge. Web hiện phục vụ xem thử giao diện
+và các luồng hỗ trợ trình duyệt; khởi động được không chứng nhận các chức
+năng dành cho Android (Health Connect, Google Play Billing, AI scanner/App
+Check) hoạt động trên web. Không cần tạo/copy token Android để chạy web.
 
 Release dùng cấu hình riêng `config/release-candidate.json` và
 `tool/build_release.ps1`. Kiểm tra không build bằng:
@@ -157,5 +192,10 @@ Tích hợp Premium qua Google Play, điều kiện mở bán và giới hạn k
 [Hướng dẫn thanh toán](docs/google-play-billing-2026-11-07.md).
 Độ tin cậy restore, callback trùng, tách gói thật/thử và đối soát admin:
 [Cập nhật 08/11](docs/billing-reliability-2026-11-08.md).
+Luồng đăng ký trong app, khôi phục khi xác minh lỗi và kiểm tra khi trở lại
+từ Google Play: [Cập nhật 10/11](docs/premium-subscription-flow-2026-11-10.md).
 Chưa có Play Console/Blaze được cấu hình thì để thanh toán tắt; không dùng
 dữ liệu demo như doanh thu thật.
+
+Danh mục có ảnh và quy trình ẩn/khôi phục món thiếu ảnh:
+[Cập nhật11/11 — 379 mục có ảnh](docs/food-photo-release-2026-11-11.md).

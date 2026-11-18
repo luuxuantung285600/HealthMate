@@ -18,24 +18,8 @@ class DashboardHeroSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark
-              ? [
-                  DesignTokens.navy900,
-                  DesignTokens.navy800.withValues(alpha: 0.9),
-                ]
-              : [
-                  DesignTokens.cyan500.withValues(alpha: 0.08),
-                  DesignTokens.cyan400.withValues(alpha: 0.05),
-                ],
-        ),
-      ),
+      decoration: BoxDecoration(color: theme.scaffoldBackgroundColor),
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.lg,
         AppSpacing.xl,

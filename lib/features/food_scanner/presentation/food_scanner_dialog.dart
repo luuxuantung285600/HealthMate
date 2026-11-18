@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
@@ -435,7 +436,7 @@ class _FoodScannerDialogState extends ConsumerState<FoodScannerDialog> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Icon(Icons.image_outlined, size: 40),
+            const Icon(AppIcons.image, size: 40),
             const SizedBox(height: 16),
             Text(
               'Phân tích ảnh chưa sẵn sàng',
@@ -448,14 +449,14 @@ class _FoodScannerDialogState extends ConsumerState<FoodScannerDialog> {
               FilledButton.icon(
                 key: const ValueKey('photo-fallback-barcode'),
                 onPressed: _picking ? null : _barcode,
-                icon: const Icon(Icons.qr_code_scanner),
+                icon: const Icon(AppIcons.scanBarcode),
                 label: const Text('Quét mã vạch'),
               ),
             const SizedBox(height: 8),
             OutlinedButton.icon(
               key: const ValueKey('photo-fallback-search'),
               onPressed: widget.onSearch ?? () => Navigator.pop(context),
-              icon: const Icon(Icons.search),
+              icon: const Icon(AppIcons.search),
               label: const Text('Tìm món hoặc nhập thủ công'),
             ),
             if (_error != null) Text(_error!),
@@ -494,7 +495,7 @@ class _FoodScannerDialogState extends ConsumerState<FoodScannerDialog> {
           leading: IconButton(
             onPressed: () => Navigator.pop(context),
             tooltip: 'Đóng',
-            icon: const Icon(Icons.close_rounded),
+            icon: const Icon(AppIcons.x),
           ),
         ),
         body: content,
@@ -532,7 +533,7 @@ class _FoodScannerDialogState extends ConsumerState<FoodScannerDialog> {
           child: const Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.image_search_rounded, size: 56),
+              Icon(AppIcons.scanSearch, size: 56),
               SizedBox(height: 8),
               Text('Chỉ chọn ảnh món ăn'),
             ],
@@ -552,12 +553,12 @@ class _FoodScannerDialogState extends ConsumerState<FoodScannerDialog> {
                     _suggestion = null;
                   })
                 : () => _pick(ImageSource.camera),
-            icon: const Icon(Icons.photo_camera_outlined),
+            icon: const Icon(AppIcons.camera),
             label: const Text('Chụp ảnh'),
           ),
           OutlinedButton.icon(
             onPressed: busy ? null : () => _pick(ImageSource.gallery),
-            icon: const Icon(Icons.photo_library_outlined),
+            icon: const Icon(AppIcons.images),
             label: const Text('Chọn ảnh'),
           ),
           FilledButton.icon(
@@ -574,7 +575,7 @@ class _FoodScannerDialogState extends ConsumerState<FoodScannerDialog> {
                     dimension: 18,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Icon(Icons.auto_awesome_rounded),
+                : const Icon(AppIcons.sparkles),
             label: Text(_loading ? 'Đang phân tích…' : 'Phân tích'),
           ),
         ],
@@ -611,7 +612,7 @@ class _FoodScannerDialogState extends ConsumerState<FoodScannerDialog> {
           maxLength: 80,
           decoration: const InputDecoration(
             labelText: 'Tên món — hãy sửa nếu nhận diện chưa đúng',
-            prefixIcon: Icon(Icons.edit_outlined),
+            prefixIcon: Icon(AppIcons.squarePen),
           ),
           onChanged: (_) => setState(() {
             _selected = null;
@@ -670,7 +671,7 @@ class _FoodScannerDialogState extends ConsumerState<FoodScannerDialog> {
           OutlinedButton.icon(
             key: const ValueKey('scanner-save-food'),
             onPressed: busy ? null : _saveRecognizedFood,
-            icon: const Icon(Icons.bookmark_add_outlined),
+            icon: const Icon(AppIcons.bookmarkPlus),
             label: const Text('Kiểm tra và lưu vào Món của tôi'),
           ),
           const Text(
@@ -687,7 +688,7 @@ class _FoodScannerDialogState extends ConsumerState<FoodScannerDialog> {
                       NutritionValidation.grams(_gramsController.text) != null)
               ? null
               : _confirm,
-          icon: const Icon(Icons.arrow_forward_rounded),
+          icon: const Icon(AppIcons.arrowRight),
           label: Text(
             _selected == null
                 ? 'Tiếp tục nhập thủ công'

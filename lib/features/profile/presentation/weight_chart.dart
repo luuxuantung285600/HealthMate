@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../../core/theme/app_feature_visuals.dart';
 
 import '../models/body_metric.dart';
 
@@ -132,12 +133,14 @@ class WeightChart extends StatelessWidget {
                         FlSpot(xOf(entry.$2.measuredAt), entry.$2.weightKg),
                     ],
                     isCurved: false,
-                    color: theme.colorScheme.primary,
+                    color: AppFeatureVisual.weight.foreground(theme.brightness),
                     barWidth: 3,
                     dotData: const FlDotData(show: true),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                      color: AppFeatureVisual.weight
+                          .foreground(theme.brightness)
+                          .withValues(alpha: 0.12),
                     ),
                   ),
                 ],

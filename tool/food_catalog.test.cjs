@@ -1,18 +1,25 @@
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
-const {buildCatalog, validateFood, planAdditions, createWrites, planCatalogChanges} = require('./import_food_catalog.cjs');
+const {buildCatalog, selectCatalogIds, validateFood, planAdditions, createWrites, planCatalogChanges} = require('./import_food_catalog.cjs');
 const catalog = buildCatalog();
 const find = id => catalog.find(food => food.id === id);
 
+test('a targeted import cannot silently include old entries, unknown IDs or duplicates', () => {
+  assert.deepEqual(selectCatalogIds(catalog, ['hao-hao-tom-chua-cay-75g']).map(f => f.id), ['hao-hao-tom-chua-cay-75g']);
+  for (const ids of [[], ['missing'], ['vn-pho-bo','vn-pho-bo'], null]) {
+    assert.throws(() => selectCatalogIds(catalog, ids));
+  }
+});
+
 test('Vietnamese expansion has complete sources, finite macros, estimates and distinct names/IDs', () => {
-  assert.equal(catalog.length, 162);
+  assert.equal(catalog.length, 354);
   assert.equal(new Set(catalog.map(food => food.id)).size, catalog.length);
   assert.equal(new Set(catalog.map(food => food.name)).size, catalog.length);
-  assert.equal(catalog.filter(food => food.sourceDetails.method === 'reference_table').length, 101);
-  assert.equal(catalog.filter(food => food.sourceDetails.method === 'recipe_estimate').length, 54);
+  assert.equal(catalog.filter(food => food.sourceDetails.method === 'reference_table').length, 242);
+  assert.equal(catalog.filter(food => food.sourceDetails.method === 'recipe_estimate').length, 83);
   for (const food of catalog) {
     assert.equal(validateFood(food), food);
-    assert.match(food.sourceUrl, /^https:\/\/(www\.fao\.org|(?:www\.)?thmilk\.vn|fdc\.nal\.usda\.gov)\//);
+    assert.match(food.sourceUrl, /^https:\/\/(www\.fao\.org|(?:www\.)?thmilk\.vn|acecookvietnam\.vn|fdc\.nal\.usda\.gov)\//);
     if (food.sourceDetails.method === 'reference_table') {
       assert.ok(food.sourceDetails.pdfPage >= 14 && food.sourceDetails.pdfPage <= 567);
       assert.match(food.sourceDetails.foodCode, /^\d+$/);
@@ -25,12 +32,44 @@ test('Vietnamese expansion has complete sources, finite macros, estimates and di
       assert.equal(food.sourceDetails.nutrientId,1079);
       assert.ok(Number.isFinite(food.fiberGPer100g));
       assert.match(food.fiberSourceUrl,/food-details\/\d+\/nutrients$/);
-    } else {
+    } else if (food.brand === 'TH true YOGURT') {
       assert.equal(food.sourceDetails.method, 'manufacturer_label');
       assert.equal(food.servingGrams, 100);
       assert.equal(food.brand, 'TH true YOGURT');
       assert.equal(food.sourceDetails.retrievedOn, '2026-10-19');
+    } else {
+      assert.equal(food.sourceDetails.method, 'manufacturer_label');
+      assert.equal(food.sourceDetails.basis, 'per_package');
+      assert.equal(food.brand, 'Acecook');
+      assert.equal(food.sourceDetails.retrievedOn, '2026-11-10');
+      assert.equal(food.servingGrams, food.sourceDetails.netWeightGrams);
     }
+  }
+});
+
+test('new package variants normalize their exact net weight and preserve the one-package label', () => {
+  const cases = [
+    ['hao-hao-tom-chua-cay-75g', 75, 350, 6.9, 51.4, 13],
+    ['hao-hao-big-tom-chua-cay-100g', 100, 434, 8.8, 61.7, 16.9],
+    ['pho-de-nhat-bo-68g', 68, 251, 5, 49.4, 3.7],
+    ['pho-de-nhat-ga-67g', 67, 255, 5, 51.2, 3.3],
+    ['mien-phu-huong-ga-53g', 53, 189, 1.9, 40.1, 2.3],
+  ];
+  for (const [id, grams, ...expected] of cases) {
+    const food = find(id);
+    assert.equal(food.servingGrams, grams);
+    for (const [i, metric] of ['kcal','proteinG','carbsG','fatG'].entries()) {
+      assert.ok(Math.abs(food[metric + 'Per100g'] * grams / 100 - expected[i]) < .00001);
+    }
+    assert.match(food.packageLabel, /chưa pha nước/);
+    assert.match(food.name, /gói khô/);
+  }
+  const bundle = JSON.parse(require('node:fs').readFileSync('assets/nutrition/vietnamese-foods.json','utf8'));
+  for (const food of catalog.filter(f => f.brand)) {
+    const bundled = bundle.foods.find(f => f.id === food.id);
+    assert.equal(bundled.servingGrams, food.servingGrams);
+    assert.equal(bundled.defaultServingGrams, food.servingGrams);
+    assert.equal(bundled.servingLabel, food.servingLabel); // never "tô tham khảo" for a dry package
   }
 });
 
@@ -127,4 +166,24 @@ test('fiber metadata is sourced, optional, zero-preserving and review-only idemp
   const plan=planCatalogChanges([food],[existing]);
   assert.equal(plan.creates.length,0);assert.equal(plan.updates.length,1);assert.equal(plan.updates[0].patch.fiberGPer100g,0);
   assert.deepEqual(planCatalogChanges([food],[{name:write.update.name,fields:write.update.fields}]).skips,[food.id]);
+});
+
+test('reviewed sodium/sugar retain exact package units, unknowns and source evidence',()=>{
+  const hh=find('hao-hao-tom-chua-cay-75g');
+  assert.ok(Math.abs(hh.extraNutrientsPer100g.sodium*.75-1778)<.00001);
+  assert.ok(Math.abs(hh.extraNutrientsPer100g.sugar*.75-4)<.00001);
+  assert.equal(hh.sourceDetails.additionalNutrientEvidence.rows.sodium.raw,'1.778mg');
+  assert.equal(find('hu-tieu-nhip-song-nam-vang-70g').sourceDetails.nutrientsPerPackage.sodiumMg,1669);
+  assert.equal(find('mien-phu-huong-ga-53g').extraNutrientsPer100g.sugar,undefined);
+  assert.equal(find('vn2007-1001').extraNutrientsPer100g.sugar,undefined);
+  assert.equal(find('vn2007-7003').extraNutrientsPer100g.sugar,0);
+  assert.equal(find('vn2007-4007').extraNutrientsPer100g.sodium,52);
+  // VDD's Celluloza is not imported as Fiber, total dietary.
+  assert.equal(find('vn2007-4007').fiberGPer100g,undefined);
+  assert.equal(find('vn-pho-bo').extraNutrientsPer100g,undefined);
+  const rice=find('rice-cooked');
+  assert.deepEqual(rice.extraNutrientsPer100g,{sodium:1,sugar:.05});
+  for(const extraNutrientsPer100g of [{sugar:101},{sodium:-1},{sodium:Infinity},{sugar:'0'},{fiber:3}])
+    assert.throws(()=>validateFood({...hh,extraNutrientsPer100g}));
+  assert.throws(()=>validateFood({...hh,sourceDetails:{...hh.sourceDetails,additionalNutrientEvidence:null}}));
 });

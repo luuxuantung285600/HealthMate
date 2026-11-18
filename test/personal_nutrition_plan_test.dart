@@ -1,3 +1,4 @@
+import 'support/load_icon_font.dart';
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -29,6 +30,8 @@ import 'support/fake_nutrition_repository.dart';
 import 'support/fake_nutrition_target_repository.dart';
 import 'support/fake_water_repository.dart';
 import 'support/test_app.dart';
+import 'onboarding_test.dart' show advanceToOnboarding;
+import 'personalization_questionnaire_test.dart' show selectAnswer;
 
 final now = DateTime(2026, 10, 26, 12);
 const today = '2026-10-26';
@@ -110,6 +113,10 @@ Future<void> press(
 }
 
 Future<void> choose(WidgetTester tester, String key, String label) async {
+  if (key.startsWith('survey-')) {
+    await selectAnswer(tester, key.substring('survey-'.length), label);
+    return;
+  }
   await press(tester, key);
   await tester.tap(find.text(label).last);
   await tester.pumpAndSettle();
@@ -160,14 +167,9 @@ Future<void> openFromProfile(
 
 Future<void> reachNutrition(WidgetTester tester) async {
   await choose(tester, 'survey-formulaSex', 'Nam · hệ số công thức');
-  await press(tester, 'onboarding-next');
-  await press(tester, 'onboarding-next');
-  await choose(tester, 'survey-guidance', 'Không, tôi thuộc phạm vi đề xuất');
-  await press(tester, 'onboarding-next');
   await choose(tester, 'survey-activity', 'Chủ yếu ngồi');
-  for (var i = 0; i < 3; i++) {
-    await press(tester, 'onboarding-next');
-  }
+  await choose(tester, 'survey-guidance', 'Không, tôi thuộc phạm vi đề xuất');
+  await advanceToOnboarding(tester, 'onboarding-nutrition-step');
   expect(
     find.byKey(const ValueKey('onboarding-nutrition-step')),
     findsOneWidget,
@@ -177,9 +179,12 @@ Future<void> reachNutrition(WidgetTester tester) async {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async {
-    final font = FontLoader('Inter');
+    await loadIconFont();
+    final font = FontLoader('Public Sans');
     for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-      font.addFont(rootBundle.load('assets/fonts/inter/Inter-$weight.ttf'));
+      font.addFont(
+        rootBundle.load('assets/fonts/public_sans/PublicSans-$weight.ttf'),
+      );
     }
     await font.load();
     await (FontLoader(
@@ -403,6 +408,9 @@ void main() {
     const previous = NutritionTarget(
       effectiveFromDateKey: '2026-10-01',
       kcalTarget: 1800,
+      saltGLimit: 4,
+      sugarGLimit: 40,
+      fiberGTarget: 28,
     );
     final targets = FakeNutritionTargetRepository()
       ..byUid['test-uid'] = {'2026-10-01': previous};
@@ -430,6 +438,37 @@ void main() {
       1800,
     );
     expect(targets.byUid['test-uid']![today]!.kcalTarget, 2310);
+    expect(targets.byUid['test-uid']![today]!.saltGLimit, 4);
+    expect(targets.byUid['test-uid']![today]!.sugarGLimit, 40);
+    expect(targets.byUid['test-uid']![today]!.fiberGTarget, 28);
+  });
+
+  testWidgets('recalculating macros keeps unsaved secondary nutrient markers', (
+    tester,
+  ) async {
+    final targets = FakeNutritionTargetRepository();
+    await existingUser(tester, targets);
+    await press(tester, 'home-nutrient-page-1');
+    await press(tester, 'home-edit-secondary-targets');
+    for (final entry in [
+      ('target-salt', '4,5'),
+      ('target-sugar', '0'),
+      ('target-fiber', '28'),
+    ]) {
+      final field = find.byKey(ValueKey(entry.$1));
+      await tester.ensureVisible(field);
+      await tester.enterText(field, entry.$2);
+    }
+    await press(tester, 'personalize-target-form');
+    await calculate(tester);
+    await press(tester, 'nutrition-plan-save');
+    await press(tester, 'save-target');
+    final saved = targets.byUid['test-uid']![today]!;
+    expect(saved.kcalTarget, 2310);
+    expect(saved.saltGLimit, 4.5);
+    expect(saved.sugarGLimit, 0);
+    expect(saved.fiberGTarget, 28);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('save failure retains reviewed result and retries once', (
@@ -624,7 +663,6 @@ void main() {
       await press(tester, 'onboarding-personalize-nutrition');
       expect(targets.saveCalls, 0);
       expect(profile.completeOnboardingCalls, 0);
-      await press(tester, 'onboarding-next');
       await press(tester, 'onboarding-complete');
       expect(targets.saveCalls, 1);
       expect(profile.completeOnboardingCalls, 1);
@@ -660,7 +698,6 @@ void main() {
       );
       await reachNutrition(tester);
       await press(tester, 'onboarding-personalize-nutrition');
-      await press(tester, 'onboarding-next');
       await press(tester, 'onboarding-complete');
       expect(profile.completeOnboardingCalls, 0);
       expect(
@@ -690,7 +727,6 @@ void main() {
       );
       await reachNutrition(tester);
       await press(tester, 'onboarding-personalize-nutrition');
-      await press(tester, 'onboarding-next');
       profile.failure = const ProfileFailure('Lỗi lưu hồ sơ thử nghiệm.');
       await press(tester, 'onboarding-complete');
       expect(targets.saveCalls, 1);

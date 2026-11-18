@@ -1,5 +1,8 @@
 import { foodPayload, configPayload, text, validFoodId, entityVersion } from './validation.mjs';
-import { filterRows, canControlAccount, exportRows } from './list-model.mjs';
+import {foodPhotoPreview,foodPhotoEditor,showRestorePhotoGuard,validateEditorPhoto,photoPayload} from './food-photos.mjs';
+import {catalogExtras,saltFromSodium} from './nutrition-values.mjs';
+import { filterRows, canControlAccount, exportRows, paginateRows, collectAdminRows } from './list-model.mjs';
+import {foodBrowseGroups} from './food-browse-groups.mjs';
 import { downloadReport } from './report-download.mjs';
 import { revenuePage } from './play-revenue-page.mjs';
 import { supportPage } from './support-page.mjs';
@@ -12,14 +15,15 @@ import {workoutsPage} from './workouts-page.mjs';
 const pageCleanups = new Set();
 function registerCleanup(stop){pageCleanups.add(stop);}
 function disposePage(){for(const stop of pageCleanups)stop();pageCleanups.clear();}
-import {adminPages as pages, adminBrand, adminIcon, renderAdminShell} from './admin-shell.mjs';
+import {adminPages as pages, adminBrand, adminIcon, renderAdminShell, appearanceControl, pageFeatures} from './admin-shell.mjs';
 
 const root = document.querySelector('#app'), dialog = document.querySelector('#editor');
 const editorForm = document.querySelector('#editor-form'), fieldsHost = document.querySelector('#editor-fields');
+document.querySelector('#close-editor').replaceChildren(adminIcon('close'));
 let api, user, allowed = false, stopRole, generation = 0, pageGeneration = 0;
 let currentPage = 'overview', rows = [], pageNumber = 1, filter = '', rowsReady = false;
 let pageCursors=[null],nextCursor=null,hasMore=false;
-let categoryFilter = '', statusFilter = '', roleFilter = '';
+let categoryFilter = '', statusFilter = '', roleFilter = '', browseGroupFilter = 'all';
 let serverRange={};
 let editorAction, editorCancel, editorBusy = false, currentConfig = null;
 function h(tag, props = {}, ...children) {
@@ -51,7 +55,14 @@ function notify(message, bad = false) {
 function date(value) { const d = value?.toDate?.(); return d ? new Intl.DateTimeFormat('vi-VN',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Ho_Chi_Minh'}).format(d) : '—'; }
 function version(data) { return entityVersion(data); }
 function pill(label, style = '') { return h('span',{class:`pill ${style}`},label); }
-function button(label, click, style = 'secondary') { return h('button',{type:'button',class:`button ${style}`,onClick:click},label); }
+function button(label, click, style = 'secondary') {
+  const icon = label.startsWith('Xuất ') ? 'download' : ({
+    'Thêm món ăn':'add', 'Tải lại':'refresh', 'Thử tải lại':'refresh',
+    'Tải lại trao đổi':'refresh', 'Tải cấu hình máy chủ':'refresh',
+    'Điều chỉnh cấu hình':'edit', 'Đăng xuất':'logout',
+  })[label];
+  return h('button',{type:'button',class:`button ${style}`,onClick:click},icon?adminIcon(icon):null,label);
+}
 const drafts=createDraftGuard({window,document,h,button});
 function safeCurrent(g) { return allowed && user && generation === g; }
 function clearEditor(){dialog.close();fieldsHost.replaceChildren();editorAction=null;drafts.clear('editor');document.querySelector('#editor-error').textContent='';}
@@ -61,7 +72,7 @@ function showAuth(message = '') {
   disposePage();
   root.replaceChildren(h('main',{class:'auth-shell'},
     h('aside',{class:'auth-story'},brand(),h('div',{},h('p',{class:'eyebrow'},'HEALTHMATE CONTROL CENTER'),h('h1',{},'Một nơi quản lý.\nNhiều thói quen tốt.'),h('p',{},'Chăm sóc dữ liệu thực phẩm, vận hành tài khoản và giữ trải nghiệm HealthMate nhất quán.'),h('div',{class:'auth-lines'},h('span'),h('span'),h('span'))),h('p',{},'Quyền quản trị được kiểm tra bằng Firebase Security Rules.')),
-    h('div',{class:'auth-form'},h('section',{},h('p',{class:'page-kicker'},'CHÀO MỪNG TRỞ LẠI'),h('h2',{},user ? 'Quyền quản trị chưa sẵn sàng' : 'Đăng nhập quản trị'),h('p',{class:'muted'},message || 'Sử dụng tài khoản đã được cấp quyền HealthMate Admin.'),
+    h('div',{class:'auth-form'},h('section',{},h('div',{class:'auth-appearance'},appearanceControl(h)),h('p',{class:'page-kicker'},'CHÀO MỪNG TRỞ LẠI'),h('h2',{},user ? 'Quyền quản trị chưa sẵn sàng' : 'Đăng nhập quản trị'),h('p',{class:'muted'},message || 'Sử dụng tài khoản đã được cấp quyền HealthMate Admin.'),
       api?.emulator ? h('p',{class:'notice local'},'Môi trường kiểm thử local · Firebase Emulator. Dữ liệu tại đây không phải dữ liệu production.') : null,
       user ? button('Đăng xuất',logout) : loginForm(),
       h('p',{class:'auth-note'},'Không tự đăng ký hoặc cấp quyền admin tại đây. Chủ dự án cấp quyền qua bước thiết lập Firebase riêng.')))));
@@ -108,17 +119,18 @@ async function openPage(key,{force=false,history='push'}={}) {
   currentPage = key; rows = []; rowsReady = false; pageNumber = 1; filter = '';
   pageCursors=[null];nextCursor=null;hasMore=false;
   categoryFilter = '';statusFilter = '';roleFilter = '';
+  browseGroupFilter = 'all';
   serverRange={};
   const main = shell(), info = pages[key];
   document.title=`${info[0]} · HealthMate Admin`;
   if(history!=='none'&&window.history&&window.location?.hash!==`#/${key}`)window.history[history==='replace'?'replaceState':'pushState'](null,'',`#/${key}`);
-  main.append(h('div',{class:'page-head'},h('div',{},h('p',{class:'page-kicker'},`QUẢN TRỊ / ${info[0].toUpperCase()}`),h('h1',{},info[1]),h('p',{class:'muted'},info[2])),key === 'food_catalog' ? button('+ Thêm món ăn',() => editFood(), '') : null));
+  main.append(h('div',{class:`page-head feature-${pageFeatures[key]}`},h('div',{class:'page-identity'},h('span',{class:'page-symbol'},adminIcon(key)),h('div',{},h('p',{class:'page-kicker'},`QUẢN TRỊ / ${info[0].toUpperCase()}`),h('h1',{},info[1]),h('p',{class:'muted'},info[2]))),key === 'food_catalog' ? button('Thêm món ăn',() => editFood(), '') : null));
   if (api.emulator) main.append(h('p',{class:'notice local'},'Bạn đang thao tác trên dữ liệu kiểm thử local. Các thay đổi không tác động ứng dụng production.'));
   const content = h('div',{id:'page-content'}); main.append(content);
   if (key === 'overview') return overview(content);
   if (key === 'workouts') {
     const g=generation,p=pageGeneration;
-    return workoutsPage({host:content,h,button,isCurrent:()=>safeCurrent(g)&&pageGeneration===p});
+    return workoutsPage({host:content,api,h,button,onDispose:registerCleanup,openEditor,field,checkbox,values,isCurrent:()=>safeCurrent(g)&&pageGeneration===p});
   }
   if (key === 'chatbot') return chatbotPage(content);
   if (key === 'app_config') return configPage(content);
@@ -130,22 +142,23 @@ async function openPage(key,{force=false,history='push'}={}) {
     const g = generation, p = pageGeneration;
     return revenuePage({host:content,api,h,button,onDispose:registerCleanup,isCurrent:() => safeCurrent(g) && pageGeneration === p});
   }
-  const toolbar = h('div',{class:'toolbar'},h('input',{class:'search',type:'search',id:'list-search',placeholder:'Tìm trong trang đang xem…','aria-label':'Tìm trong trang đang xem',maxLength:200,onInput:event => { filter=event.target.value;renderRows(); }}));
+  const foodList=key==='food_catalog';
+  const toolbar = h('div',{class:'toolbar'},h('input',{class:'search',type:'search',id:'list-search',placeholder:foodList?'Tìm món trong toàn bộ kết quả…':'Tìm trong trang đang xem…','aria-label':foodList?'Tìm món trong toàn bộ kết quả':'Tìm trong trang đang xem',maxLength:200,onInput:event => { filter=event.target.value;if(foodList)pageNumber=1;renderRows(); }}));
   function select(id,label,values,change) {
-    return h('label',{class:'filter-field'},label,h('select',{id,'aria-label':label,onChange:event=>{change(event.target.value);renderRows();}},...values.map(([value,title])=>h('option',{value},title))));
+    return h('label',{class:'filter-field'},label,h('select',{id,'aria-label':label,onChange:event=>{change(event.target.value);if(foodList)pageNumber=1;renderRows();}},...values.map(([value,title])=>h('option',{value},title))));
   }
   if(key==='food_catalog') {
-    toolbar.append(select('category-filter','Nhóm món',[['','Tất cả nhóm']],v=>categoryFilter=v),
+    toolbar.append(select('browse-group-filter','Nhóm thực phẩm',foodBrowseGroups.map(({id,label})=>[id,label]),v=>browseGroupFilter=v),
       select('status-filter','Trạng thái',[['','Tất cả trạng thái'],['active','Đang hiển thị'],['archived','Đã xóa khỏi danh mục']],v=>statusFilter=v));
   } else if(key==='user_directory') {
     toolbar.append(select('status-filter','Trạng thái',[['','Tất cả trạng thái'],['active','Hoạt động'],['suspended','Tạm khóa']],v=>statusFilter=v),
       select('role-filter','Vai trò',[['','Tất cả vai trò'],['admin','Admin'],['user','Người dùng']],v=>roleFilter=v));
-  } else toolbar.append(select('category-filter','Đối tượng',[['','Tất cả đối tượng'],['food_catalog','Danh mục món ăn'],['account_controls','Tài khoản'],['app_config','Cấu hình']],v=>categoryFilter=v));
+  } else toolbar.append(select('category-filter','Đối tượng',[['','Tất cả đối tượng'],['food_catalog','Danh mục món ăn'],['exercise_library','Thư viện bài tập'],['account_controls','Tài khoản'],['app_config','Cấu hình']],v=>categoryFilter=v));
   toolbar.append(button('Tải lại',() => loadPage({reset:true})),h('button',{type:'button',class:'button secondary',id:'export-list',disabled:true,onClick:exportList},key==='admin_audit'?'Xuất Excel theo ngày':'Xuất Excel theo khoảng mã'));
   const lookupMode=h('select',{id:'lookup-field','aria-label':'Tra cứu trên toàn danh sách'},h('option',{value:'id'},'Mã chính xác'),...(key==='user_directory'?[h('option',{value:'email'},'Email chính xác')]:key==='food_catalog'?[h('option',{value:'name'},'Đầu tên món')]:[]));
   const lookupValue=h('input',{id:'lookup-value',class:'search',maxLength:1500,'aria-label':'Giá trị tra cứu',placeholder:key==='user_directory'?'Nhập UID hoặc email đầy đủ…':'Nhập mã hoặc đầu tên món…'});
   const rangeStatus=h('p',{class:'muted',id:'range-status','aria-live':'polite'},key==='admin_audit'?'Mới nhất lên đầu. Thời gian hiển thị theo Việt Nam.':'Tra cứu máy chủ trên toàn danh sách. Đầu tên món phân biệt chữ hoa và dấu.');
-  const apply=range=>{try{pageScope(key,range);serverRange=range;filter='';categoryFilter='';statusFilter='';roleFilter='';document.querySelector('#list-search').value='';for(const id of ['category-filter','status-filter','role-filter']){const select=document.querySelector('#'+id);if(select)select.value='';}loadPage({reset:true});}catch(e){notify(errorMessage(e),true);}};
+  const apply=range=>{try{pageScope(key,range);serverRange=range;filter='';categoryFilter='';statusFilter='';roleFilter='';browseGroupFilter='all';document.querySelector('#list-search').value='';for(const id of ['category-filter','status-filter','role-filter','browse-group-filter']){const select=document.querySelector('#'+id);if(select)select.value=id==='browse-group-filter'?'all':'';}loadPage({reset:true});}catch(e){notify(errorMessage(e),true);}};
   const lookup=h('form',{class:'toolbar server-lookup',onSubmit:e=>{e.preventDefault();apply({lookupField:lookupMode.value,lookupValue:lookupValue.value});}},h('label',{class:'filter-field'},'Tra cứu máy chủ',lookupMode),lookupValue,h('button',{type:'submit',class:'button secondary'},'Tra cứu'),button('Xóa tra cứu',()=>{lookupValue.value='';apply({});}));
   if(key==='admin_audit'){
     const today=vietnamDateKey(new Date()),start=h('input',{id:'audit-start',type:'date',value:today,'aria-label':'Từ ngày (VN)'}),end=h('input',{id:'audit-end',type:'date',value:today,'aria-label':'Đến ngày (VN)'});
@@ -168,7 +181,7 @@ async function chatbotPage(content) {
     const cards=h('div',{class:'ai-settings-grid'});
     for(const [key,label,description] of [['chatbotEnabled','AI Chatbot','Hỗ trợ người dùng tra cứu và theo dõi thói quen.'],['foodScannerEnabled','AI Food Scanner','Hỗ trợ gợi ý món ăn từ ảnh trước khi người dùng xác nhận.']]){
       const known=typeof config?.[key]==='boolean',enabled=config?.[key]===true;
-      cards.append(h('section',{class:'panel ai-setting-card'},h('div',{class:'panel-title'},h('span',{class:'feature-illustration small'},adminIcon(key==='chatbotEnabled'?'chatbot':'food_catalog')),
+      cards.append(h('section',{class:`panel ai-setting-card feature-${key==='chatbotEnabled'?'chatbot':'scanner'}`},h('div',{class:'panel-title'},h('span',{class:'feature-illustration small'},adminIcon(key==='chatbotEnabled'?'chatbot':'scanner')),
         pill(known?(enabled?'Đang bật':'Đang tắt'):'Chưa có cấu hình',known&&enabled?'':'off')),h('h2',{},label),h('p',{class:'muted'},description),
         button('Điều chỉnh cấu hình',()=>openPage('app_config'))));
     }
@@ -178,6 +191,7 @@ async function chatbotPage(content) {
 }
 async function loadPage({reset=false,page=pageNumber}={}) {
   const host = document.querySelector('#data-content'); if (!host) return;
+  if(currentPage==='food_catalog')return loadFoodCatalog({reset});
   if(reset){page=1;pageCursors=[null];}
   const cursor=pageCursors[page-1];
   if(page<1||cursor===undefined)return;
@@ -192,12 +206,6 @@ async function loadPage({reset=false,page=pageNumber}={}) {
     if (!isCurrent()) return;
     rows=loaded.rows;rowsReady=true;pageNumber=page;nextCursor=loaded.cursor;hasMore=loaded.hasMore;
     if(hasMore)pageCursors[pageNumber]=nextCursor;
-    const categories=document.querySelector('#category-filter');
-    if(currentPage==='food_catalog'&&categories){
-      categories.replaceChildren(h('option',{value:''},'Tất cả nhóm'),...[...new Set(rows.map(r=>r.category).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi')).map(value=>h('option',{value},value)));
-      categories.value=categoryFilter;
-      if(categories.value!==categoryFilter)categoryFilter='';
-    }
     const ordering=currentPage==='admin_audit'&&!serverRange.lookupField?'mới nhất lên đầu':serverRange.lookupField==='name'?'sắp theo tên và mã':'sắp theo mã';
     document.querySelector('#range-status').textContent=serverRange.lookupField?`Tra cứu máy chủ: ${serverRange.lookupField==='email'?'email chính xác':serverRange.lookupField==='name'?'đầu tên món (phân biệt hoa và dấu)':'mã chính xác'}. Kết quả được phân trang và đồng bộ trực tiếp.`:serverRange.start?`Nhật ký từ ${serverRange.start} đến ${serverRange.end}, theo ngày Việt Nam.`:currentPage==='admin_audit'?'Mới nhất lên đầu. Thời gian theo Việt Nam.':'Đang xem toàn danh sách, phân trang từ máy chủ.';
     document.querySelector('#list-status').textContent=`Đã tải ${rows.length} mục của trang ${pageNumber}, ${ordering}. Tìm kiếm và bộ lọc chỉ áp dụng trang này. Tra cứu máy chủ ở phía trên tìm trên toàn danh sách. Đồng bộ trực tiếp.`;
@@ -209,37 +217,68 @@ async function loadPage({reset=false,page=pageNumber}={}) {
     host.replaceChildren(h('section',{class:'panel'},h('p',{class:'error'},errorMessage(error)),button('Thử tải lại',() => loadPage({page}))));
   } }
 }
+async function loadFoodCatalog({reset=false}={}) {
+  const host=document.querySelector('#data-content');
+  if(!host)return;
+  if(reset)pageNumber=1;
+  const g=generation,p=++pageGeneration;
+  const isCurrent=()=>safeCurrent(g)&&p===pageGeneration;
+  const scope=liveScope(host,isCurrent,registerCleanup);
+  rowsReady=false;rows=[];
+  document.querySelector('#export-list').disabled=true;
+  host.replaceChildren(h('p',{class:'loading'},'Đang tải toàn bộ kết quả thực phẩm…'));
+  const failed=error=>{
+    rows=[];rowsReady=false;
+    document.querySelector('#export-list').disabled=true;
+    document.querySelector('#list-status').textContent=errorMessage(error);
+    host.replaceChildren(h('p',{class:'error'},errorMessage(error)),button('Thử tải lại',()=>loadFoodCatalog()));
+  };
+  await observe(scope,api,'watchFoodCatalog',[serverRange],loaded=>{
+    if(!Array.isArray(loaded)||loaded.length>5000)throw Error('Chưa tải được đầy đủ danh mục trong giới hạn 5.000 món. Hãy thu hẹp tra cứu.');
+    rows=loaded;rowsReady=true;
+    document.querySelector('#range-status').textContent=serverRange.lookupField?
+      `Tra cứu máy chủ theo ${serverRange.lookupField==='name'?'đầu tên món (phân biệt hoa và dấu)':'mã chính xác'}. Bộ lọc áp dụng trên toàn bộ kết quả tra cứu.`:
+      'Danh mục thực phẩm trên Firebase · Nhóm lọc giống app · Thay đổi được đồng bộ trực tiếp.';
+    document.querySelector('#export-list').disabled=false;
+    renderRows();
+  },failed,()=>collectAdminRows(cursor=>api.listPage('food_catalog',{...serverRange,cursor,isCurrent}),{isCurrent}));
+}
 function renderRows() {
   const host = document.querySelector('#data-content'); if (!host) return;
   if(!rowsReady)return;
-  const filtered = currentRows(), page={rows:filtered,offset:(pageNumber-1)*25};
+  const foodList=currentPage==='food_catalog',filtered=currentRows();
+  const page=foodList?paginateRows(filtered,pageNumber):{rows:filtered,offset:(pageNumber-1)*25};
+  if(foodList){
+    pageNumber=page.page;
+    document.querySelector('#list-status').textContent=`${filtered.length} món khớp bộ lọc / ${rows.length} món trong toàn bộ kết quả. Tìm kiếm, nhóm và trạng thái áp dụng trước phân trang. Đồng bộ trực tiếp.`;
+  }
   const table = h('table'), labels = currentPage === 'food_catalog' ? ['STT','MÓN ĂN / NGUỒN','NHÓM','KCAL / 100 G','TRẠNG THÁI','THAO TÁC'] : currentPage === 'user_directory' ? ['STT','TÀI KHOẢN','VAI TRÒ','TRẠNG THÁI','CẬP NHẬT','THAO TÁC'] : ['STT','THỜI GIAN','ĐỐI TƯỢNG / THAO TÁC','NGƯỜI THỰC HIỆN','LÝ DO'];
   table.append(h('thead',{},h('tr',{},...labels.map(label => h('th',{},label)))));
   const body = h('tbody'); table.append(body);
   for (const [index,row] of page.rows.entries()) {
     const stt=h('td',{class:'number'},String(page.offset+index+1));
-    if (currentPage === 'food_catalog') body.append(h('tr',{},stt,h('td',{},h('strong',{},row.name),h('small',{},row.sourceLabel),row.isEstimated?pill('Ước tính','off'):null),h('td',{},row.category),h('td',{class:'number'},String(row.kcalPer100g??'—')),h('td',{},pill(row.isActive===false?'Đã xóa khỏi danh mục':'Đang hiển thị',row.isActive===false?'off':'')),h('td',{class:'row-actions'},h('button',{class:'small-button',onClick:()=>viewFood(row)},'Chi tiết'),h('button',{class:'small-button',onClick:() => editFood(row)},'Sửa'),h('button',{class:'small-button',onClick:()=>archiveFood(row)},row.isActive===false?'Khôi phục':'Xóa khỏi danh mục'))));
+    if (currentPage === 'food_catalog') body.append(h('tr',{},stt,h('td',{},h('div',{class:'food-cell'},foodPhotoPreview(h,row,{compact:true}),h('div',{},h('strong',{},row.name),h('small',{},row.sourceLabel),row.isEstimated?pill('Ước tính','off'):null))),h('td',{},row.category),h('td',{class:'number'},String(row.kcalPer100g??'—')),h('td',{},pill(row.isActive===false?'Đã xóa khỏi danh mục':'Đang hiển thị',row.isActive===false?'off':'')),h('td',{class:'row-actions'},h('button',{class:'small-button',onClick:()=>viewFood(row)},adminIcon('info'),'Chi tiết'),h('button',{class:'small-button',onClick:() => editFood(row)},adminIcon('edit'),'Sửa'),h('button',{class:'small-button',onClick:()=>editFood(row,{photoFocus:true})},adminIcon('scanner'),'Sửa ảnh'),h('button',{class:'small-button',onClick:()=>archiveFood(row)},adminIcon(row.isActive===false?'refresh':'delete'),row.isActive===false?'Khôi phục':'Xóa khỏi danh mục'))));
     else if (currentPage === 'user_directory') body.append(h('tr',{},stt,h('td',{},h('strong',{},row.displayName||'Chưa đặt tên'),h('small',{},row.email),h('small',{},row.id)),h('td',{},pill(row.adminRole?.enabled?'Admin':'Người dùng',row.adminRole?.enabled?'':'off')),h('td',{},pill(row.control?.status === 'suspended'?'Tạm khóa':'Hoạt động',row.control?.status === 'suspended'?'suspended':'')),h('td',{},date(row.updatedAt)),h('td',{class:'row-actions'},h('button',{class:'small-button',onClick:()=>viewAccount(row)},'Chi tiết'),!canControlAccount(row,user.uid)?h('small',{},row.id===user.uid?'Tài khoản hiện tại':'Tài khoản được bảo vệ'):h('button',{class:'small-button',onClick:() => editAccount(row)},row.control?.status==='suspended'?'Mở truy cập':'Khóa truy cập'))));
     else body.append(h('tr',{},stt,h('td',{class:'number'},date(row.at)),h('td',{},h('strong',{},`${row.entityType} / ${row.entityId}`),h('small',{},(row.changedFields??[]).join(', '))),h('td',{},h('code',{},row.actorUid)),h('td',{},row.reason)));
   }
   const panel = h('section',{class:'panel'},h('div',{class:'table-wrap'},table));
-  if (!filtered.length) panel.append(h('p',{class:'empty'},rows.length?'Không có kết quả trong trang này. Đổi bộ lọc hoặc chuyển trang.':pageNumber>1?'Đã hết dữ liệu trong lần tải này.':'Chưa có dữ liệu từ máy chủ.'));
-  const go=n=>loadPage({page:n});
-  panel.append(h('div',{class:'table-foot'},h('span',{},`Trang ${pageNumber} · ${filtered.length}/${rows.length} mục trên trang`),h('div',{class:'pagination'},h('button',{type:'button',class:'button secondary',disabled:pageNumber===1,onClick:()=>loadPage({reset:true})},'Đầu'),h('button',{type:'button',class:'button secondary',disabled:pageNumber===1,onClick:()=>go(pageNumber-1)},'Trước'),h('button',{type:'button',class:'button secondary',disabled:!hasMore,onClick:()=>go(pageNumber+1)},'Sau'))));
+  if (!filtered.length) panel.append(h('p',{class:'empty'},rows.length?(foodList?'Không có món phù hợp. Hãy đổi từ khóa, nhóm hoặc trạng thái.':'Không có kết quả trong trang này. Đổi bộ lọc hoặc chuyển trang.'):pageNumber>1?'Đã hết dữ liệu trong lần tải này.':'Chưa có dữ liệu từ máy chủ.'));
+  const go=n=>{if(foodList){pageNumber=n;renderRows();}else loadPage({page:n});};
+  panel.append(h('div',{class:'table-foot'},h('span',{},foodList?`Trang ${pageNumber}/${page.pages} · ${page.rows.length}/${filtered.length} món phù hợp`:`Trang ${pageNumber} · ${filtered.length}/${rows.length} mục trên trang`),h('div',{class:'pagination'},h('button',{type:'button',class:'button secondary',disabled:pageNumber===1,onClick:()=>foodList?go(1):loadPage({reset:true})},'Đầu'),h('button',{type:'button',class:'button secondary',disabled:pageNumber===1,onClick:()=>go(pageNumber-1)},'Trước'),h('button',{type:'button',class:'button secondary',disabled:foodList?pageNumber>=page.pages:!hasMore,onClick:()=>go(pageNumber+1)},'Sau'))));
   host.replaceChildren(panel);
 }
-function currentRows(){return filterRows(rows,currentPage,{search:filter,category:categoryFilter,status:statusFilter,role:roleFilter});}
+function currentRows(){return filterRows(rows,currentPage,{search:filter,category:categoryFilter,status:statusFilter,role:roleFilter,browseGroup:browseGroupFilter});}
 function exportList(){
   if(!rowsReady||editorBusy)return;
   const kind=currentPage,g=generation,p=pageGeneration;
   let cancelled=false,cancel;
   const audit=kind==='admin_audit',today=vietnamDateKey(new Date());
-  const capturedFilters={search:filter,category:categoryFilter,status:statusFilter,role:roleFilter};
+  const capturedFilters={search:filter,category:categoryFilter,status:statusFilter,role:roleFilter,browseGroup:browseGroupFilter};
   const visibleIds=rows.map(row=>row.id).sort();
   openEditor(audit?'Xuất nhật ký theo ngày Việt Nam':'Xuất Excel theo khoảng mã',[
     h('p',{},`Xuất tối đa 5.000 mục trong khoảng ${audit?'ngày Việt Nam':'mã'}, gồm mọi trang. Nếu vượt giới hạn, chọn khoảng nhỏ hơn. Tra cứu máy chủ không giới hạn tệp này; bạn chọn áp dụng bộ lọc bên dưới.`),
     checkbox('applyFilters','Áp dụng tìm kiếm và bộ lọc hiện tại',true,'Áp dụng trên toàn bộ khoảng xuất, gồm mọi trang.'),
-    h('p',{class:'muted'},`Từ khóa: ${capturedFilters.search||'Tất cả'} · Nhóm: ${capturedFilters.category||'Tất cả'} · Trạng thái: ${capturedFilters.status||'Tất cả'} · Vai trò: ${capturedFilters.role||'Tất cả'}`),
+    h('p',{class:'muted'},`Từ khóa: ${capturedFilters.search||'Tất cả'} · Nhóm: ${kind==='food_catalog'?foodBrowseGroups.find(group=>group.id===capturedFilters.browseGroup)?.label:capturedFilters.category||'Tất cả'} · Trạng thái: ${capturedFilters.status||'Tất cả'} · Vai trò: ${capturedFilters.role||'Tất cả'}`),
     ...(kind==='food_catalog'?[h('p',{class:'notice'},'Chỉ xuất danh mục trên Firebase, không bao gồm toàn bộ thư viện thực phẩm đi kèm app hoặc món riêng của người dùng.')]:[]),
     ...(audit?[field('start','Từ ngày (VN)',serverRange.start??today,{type:'date'}),field('end','Đến ngày (VN)',serverRange.end??today,{type:'date'})]:[
       field('idFrom','Từ mã (bao gồm)',visibleIds[0]??'',{max:1500,optional:true}),
@@ -282,9 +321,11 @@ function openEditor(title,children,action=null,{reason=true,success='Đã lưu t
 }
 function viewFood(row){openEditor('Chi tiết món ăn',[
   h('h3',{},row.name),h('p',{},`${row.id} · ${row.category}`),
+  foodPhotoPreview(h,row),
   pill(row.isActive===false?'Đã xóa khỏi danh mục':'Đang hiển thị',row.isActive===false?'off':''),
   h('p',{},`Trên 100 g: ${row.kcalPer100g} kcal · Đạm ${row.proteinGPer100g} g · Carb ${row.carbsGPer100g} g · Béo ${row.fatGPer100g} g · Xơ ${row.fiberGPer100g??'Chưa có dữ liệu'}`),
-  h('p',{},`Nguồn: ${row.sourceLabel}`),h('p',{},row.sourceUrl),h('p',{},`Tên tương đương: ${(row.alternateNames??[]).join(', ')||'—'}`),
+  h('p',{},`Đường tổng: ${catalogExtras(row).sugar==null?'Chưa có dữ liệu':`${catalogExtras(row).sugar} g`} · Natri: ${catalogExtras(row).sodium==null?'Chưa có dữ liệu':`${catalogExtras(row).sodium} mg`} · Muối quy đổi: ${saltFromSodium(catalogExtras(row).sodium)==null?'Chưa có dữ liệu':`${saltFromSodium(catalogExtras(row).sodium).toLocaleString('vi-VN',{maximumFractionDigits:3})} g`} / 100 g`),
+  h('p',{},`Nguồn: ${row.sourceLabel}`),h('p',{},...String(row.sourceUrl??'').split(/(?<=[/._-])/).flatMap(part=>[part,h('wbr')])),h('p',{},`Tên tương đương: ${(row.alternateNames??[]).join(', ')||'—'}`),
   h('p',{},`Cập nhật: ${date(row.updatedAt)}`),
 ]);}
 function viewAccount(row){openEditor('Chi tiết tài khoản',[
@@ -294,21 +335,39 @@ function viewAccount(row){openEditor('Chi tiết tài khoản',[
   h('p',{},`Lý do gần nhất: ${row.control?.reason||'—'}`),
   h('p',{class:'notice'},'Đây là danh bạ tài khoản đồng bộ từ HealthMate; không phải toàn bộ Firebase Authentication. Admin không được xem nhật ký sức khỏe, đổi mật khẩu hoặc xóa tài khoản Auth tại đây.'),
 ]);}
-function archiveFood(row){const restore=row.isActive===false;openEditor(restore?'Khôi phục món ăn?':'Xóa món khỏi danh mục?',[
+function archiveFood(row){if(showRestorePhotoGuard(row,{openEditor,h,button,editFood}))return;const restore=row.isActive===false;openEditor(restore?'Khôi phục món ăn?':'Xóa món khỏi danh mục?',[
   h('h3',{},row.name),h('p',{class:'notice'},restore?'Món sẽ hiển thị lại trong danh mục của app sau khi đồng bộ.':'Món được ẩn khỏi danh mục đang dùng. Snapshot bữa ăn cũ và thông tin nguồn vẫn được giữ; có thể khôi phục sau.'),
 ],async form=>api.save('food_catalog',row.id,{isActive:restore},text(values(form).reason,'Lý do',200),version(row)));}
-function editFood(row=null) {
+function editFoodPhoto(row) {
+  openEditor('Chỉnh sửa ảnh món ăn',[
+    h('h3',{},row.name),foodPhotoEditor(h,field,row)
+  ],async form=>{
+    const photo=photoPayload(values(form),row.photo);
+    await validateEditorPhoto(form);
+    await api.save('food_catalog',row.id,{photo},'Cập nhật ảnh món ăn',version(row));
+  },{reason:false});
+}
+function editFood(row=null,{photoFocus=false}={}) {
+  if(photoFocus&&row)return editFoodPhoto(row);
   const data=row??{isActive:true,isEstimated:true};
+  const extras=catalogExtras(data);
+  const sodium=field('sodiumMgPer100g','Natri (mg/100 g)',extras.sodium,{type:'number',optional:true,hint:'Nhập theo nguồn; 1 g muối tương đương khoảng 400 mg natri.'});
+  const salt=h('output',{'aria-live':'polite'});
+  const showSalt=()=>{const value=sodium.querySelector('input').value.trim();const n=Number(value.replace(',','.'));salt.textContent=value!==''&&Number.isFinite(n)&&n>=0&&n<=100000?`Muối quy đổi: ${(n*2.5/1000).toLocaleString('vi-VN',{maximumFractionDigits:3})} g / 100 g`:'Muối quy đổi: chưa có dữ liệu';};
+  sodium.querySelector('input').addEventListener('input',showSalt);showSalt();
   openEditor(row?'Chỉnh sửa món ăn':'Thêm món ăn',[
     field('id','Mã món',row?.id??'',{readonly:Boolean(row),hint:'Chữ thường, số và dấu gạch ngang. Mã không đổi sau khi tạo.'}),
     field('name','Tên món',data.name),
+    foodPhotoEditor(h,field,data),
     h('div',{class:'field-row'},field('category','Nhóm món',data.category),field('alternateNames','Tên tương đương',(data.alternateNames??[]).join('\n'),{type:'textarea',max:808,optional:true,hint:'Mỗi tên một dòng, tối đa 8 tên.'})),
     h('p',{class:'notice'},'Mọi giá trị dinh dưỡng bên dưới tính trên 100 g. Để trống chất xơ khi chưa có dữ liệu; không tự thay bằng 0.'),
     h('div',{class:'field-row nutrients'},...['kcalPer100g','proteinGPer100g','carbsGPer100g','fatGPer100g','fiberGPer100g'].map((key,i)=>field(key,['Năng lượng (kcal)','Đạm (g)','Carbohydrate (g)','Chất béo (g)','Chất xơ (g)'][i],data[key],{type:'number',optional:key==='fiberGPer100g'}))),
-    field('sourceLabel','Tên nguồn dinh dưỡng',data.sourceLabel,{max:160}),field('sourceUrl','Đường dẫn nguồn (HTTPS)',data.sourceUrl,{max:500}),
+    h('div',{class:'field-row'},field('sugarGPer100g','Đường tổng (g/100 g)',extras.sugar,{type:'number',optional:true}),sodium),
+    salt,h('p',{class:'muted'},'Để trống khi nguồn không có đường, natri hoặc chất xơ; chỉ nhập 0 khi nguồn xác nhận bằng 0. Muối quy đổi từ natri, không chỉ là lượng muối thêm.'),
+    field('sourceLabel','Tên nguồn dinh dưỡng',data.sourceLabel,{max:160}),field('sourceUrl','Đường dẫn nguồn dinh dưỡng (HTTPS)',data.sourceUrl,{max:500,hint:'Link trang cung cấp số liệu dinh dưỡng. Để đổi ảnh, dùng phần ảnh món ăn phía trên.'}),
     h('div',{class:'field-row'},field('servingLabel','Tên khẩu phần',data.servingLabel,{max:60,optional:true}),field('servingGrams','Gram / khẩu phần',data.servingGrams,{type:'number',optional:true})),
     checkbox('isEstimated','Dữ liệu ước tính',data.isEstimated!==false),checkbox('isActive','Hiển thị trong danh mục app',data.isActive!==false,'Ẩn món không xóa hoặc thay đổi snapshot trong nhật ký đã ghi.')
-  ],async form => { const input=values(form); await api.save('food_catalog',validFoodId(input.id),foodPayload(input),text(input.reason,'Lý do',200),version(row)); });
+  ],async form => { const input=values(form),id=validFoodId(input.id),payload=foodPayload(input,data),reason=text(input.reason,'Lý do',200); await validateEditorPhoto(form); await api.save('food_catalog',id,payload,reason,version(row)); });
 }
 function editAccount(row) {
   const suspended=row.control?.status !== 'suspended';

@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -96,7 +97,7 @@ class _WellnessScreenState extends State<WellnessScreen> {
                       IconButton(
                         tooltip: 'Tất cả thói quen',
                         onPressed: () => setState(() => _tab = -1),
-                        icon: const Icon(Icons.grid_view_rounded),
+                        icon: const Icon(AppIcons.layoutGrid),
                       ),
                     ],
                   ),
@@ -493,7 +494,7 @@ class _SleepPanelState extends WellnessPanelState<SleepPanel> {
                           onTap: busy ? null : () => edit(log: log),
                           trailing: IconButton(
                             tooltip: 'Xóa lần ngủ',
-                            icon: const Icon(Icons.delete_outline),
+                            icon: const Icon(AppIcons.trash2),
                             onPressed: busy
                                 ? null
                                 : () async {
@@ -930,7 +931,7 @@ class _NutrientPanelState extends ConsumerState<NutrientPanel> {
       padding: const EdgeInsets.all(16),
       children: [
         OutlinedButton.icon(
-          icon: const Icon(Icons.calendar_today),
+          icon: const Icon(AppIcons.calendar),
           label: Text(DateFormat('dd/MM/yyyy').format(day)),
           onPressed: () async {
             final date = await showDatePicker(
@@ -1269,7 +1270,7 @@ class _MealPlannerPanelState extends WellnessPanelState<MealPlannerPanel> {
                       () =>
                           week = DateTime(week.year, week.month, week.day - 7),
                     ),
-              icon: const Icon(Icons.chevron_left),
+              icon: const Icon(AppIcons.chevronLeft),
             ),
             Expanded(
               child: Text(
@@ -1285,7 +1286,7 @@ class _MealPlannerPanelState extends WellnessPanelState<MealPlannerPanel> {
                       () =>
                           week = DateTime(week.year, week.month, week.day + 7),
                     ),
-              icon: const Icon(Icons.chevron_right),
+              icon: const Icon(AppIcons.chevronRight),
             ),
           ],
         ),
@@ -1369,7 +1370,7 @@ class _MealPlannerPanelState extends WellnessPanelState<MealPlannerPanel> {
                                         ),
                                         trailing: IconButton(
                                           tooltip: 'Chỉnh kế hoạch',
-                                          icon: const Icon(Icons.edit_outlined),
+                                          icon: const Icon(AppIcons.squarePen),
                                           onPressed:
                                               busy ||
                                                   suggesting ||
@@ -1476,7 +1477,7 @@ class _PlanMealDialogState extends State<PlanMealDialog>
           leading: IconButton(
             tooltip: 'Đóng',
             onPressed: saving ? null : requestClose,
-            icon: const Icon(Icons.close),
+            icon: const Icon(AppIcons.x),
           ),
         ),
         bottomNavigationBar: SafeArea(
@@ -1543,7 +1544,7 @@ class _PlanMealDialogState extends State<PlanMealDialog>
                 },
                 trailing: IconButton(
                   tooltip: 'Bỏ món',
-                  icon: const Icon(Icons.close),
+                  icon: const Icon(AppIcons.x),
                   onPressed: () => setState(() => items.removeAt(entry.$1)),
                 ),
               ),
@@ -1568,7 +1569,7 @@ class _PlanMealDialogState extends State<PlanMealDialog>
                 subtitle: Text(
                   '${foodNumber(food.nutritionPer100g.kcal)} kcal / 100 g',
                 ),
-                trailing: const Icon(Icons.add),
+                trailing: const Icon(AppIcons.plus),
                 onTap: items.length >= 5
                     ? null
                     : () async {

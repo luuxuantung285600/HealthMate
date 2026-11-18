@@ -19,7 +19,7 @@ void main() {
           .toList();
       expect(foundation, hasLength(308));
       expect(survey, hasLength(3255));
-      expect(foods, hasLength(11169));
+      expect(foods, hasLength(11361));
       for (final food in [...foundation, ...survey]) {
         expect(food.hasNutritionData, isTrue);
         expect(food.fdcId, isNotNull);
@@ -68,10 +68,10 @@ void main() {
     for (final corrupt in ['', '{invalid', '{"foods":[{"id":null}]}']) {
       expect(
         decodeBundledFoodCatalog([base, legacy, corrupt]),
-        hasLength(7606),
+        hasLength(7798),
       );
       final withoutLegacy = decodeBundledFoodCatalog([base, corrupt, current]);
-      expect(withoutLegacy, hasLength(3725));
+      expect(withoutLegacy, hasLength(3917));
       expect(
         withoutLegacy.any((f) => f.id == 'usda-foundation-321360'),
         isTrue,

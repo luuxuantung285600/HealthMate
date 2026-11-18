@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_spacing.dart';
+import 'app_shapes.dart';
 import 'design_tokens.dart';
 import 'reference_palette.dart';
 
@@ -16,27 +17,77 @@ abstract final class AppTheme {
           seedColor: ReferencePalette.blue,
           brightness: brightness,
         ).copyWith(
-          primary: isLight ? ReferencePalette.brand : const Color(0xFF8CDBB9),
-          onPrimary: isLight ? Colors.white : const Color(0xFF073B28),
-          surface: isLight ? Colors.white : const Color(0xFF202B26),
-          onSurface: isLight ? ReferencePalette.ink : const Color(0xFFF5F6FA),
+          primary: isLight ? ReferencePalette.brand : const Color(0xFFEEEEEE),
+          onPrimary: isLight ? Colors.white : const Color(0xFF171717),
+          primaryContainer: isLight
+              ? const Color(0xFFEAEAEA)
+              : const Color(0xFF292929),
+          onPrimaryContainer: isLight
+              ? const Color(0xFF262626)
+              : const Color(0xFFEEEEEE),
+          secondary: isLight
+              ? const Color(0xFF555555)
+              : const Color(0xFFCCCCCC),
+          onSecondary: isLight ? Colors.white : const Color(0xFF202020),
+          secondaryContainer: isLight
+              ? const Color(0xFFEEEEEE)
+              : const Color(0xFF282828),
+          onSecondaryContainer: isLight
+              ? const Color(0xFF252525)
+              : const Color(0xFFE8E8E8),
+          tertiary: isLight ? const Color(0xFF444444) : const Color(0xFFDDDDDD),
+          onTertiary: isLight ? Colors.white : const Color(0xFF202020),
+          tertiaryContainer: isLight
+              ? const Color(0xFFEAEAEA)
+              : const Color(0xFF292929),
+          onTertiaryContainer: isLight
+              ? const Color(0xFF262626)
+              : const Color(0xFFEEEEEE),
+          primaryFixed: const Color(0xFFEAEAEA),
+          primaryFixedDim: const Color(0xFFCCCCCC),
+          onPrimaryFixed: const Color(0xFF171717),
+          onPrimaryFixedVariant: const Color(0xFF444444),
+          secondaryFixed: const Color(0xFFEAEAEA),
+          secondaryFixedDim: const Color(0xFFCCCCCC),
+          onSecondaryFixed: const Color(0xFF171717),
+          onSecondaryFixedVariant: const Color(0xFF444444),
+          tertiaryFixed: const Color(0xFFEAEAEA),
+          tertiaryFixedDim: const Color(0xFFCCCCCC),
+          onTertiaryFixed: const Color(0xFF171717),
+          onTertiaryFixedVariant: const Color(0xFF444444),
+          surface: isLight ? Colors.white : const Color(0xFF121212),
+          surfaceTint: Colors.transparent,
+          onSurface: isLight ? ReferencePalette.ink : const Color(0xFFF5F5F5),
           onSurfaceVariant: isLight
               ? ReferencePalette.muted
-              : const Color(0xFFBCCBC3),
-          outline: isLight ? const Color(0xFF78877F) : const Color(0xFF879B90),
+              : const Color(0xFFBDBDBD),
+          outline: isLight ? const Color(0xFF808080) : const Color(0xFF858585),
           outlineVariant: isLight
-              ? const Color(0xFFDEDFE3)
-              : const Color(0xFF41564A),
+              ? const Color(0xFFDFDFDF)
+              : const Color(0xFF353535),
+          surfaceDim: isLight ? const Color(0xFFE8E8E8) : Colors.black,
+          surfaceBright: isLight ? Colors.white : const Color(0xFF303030),
           surfaceContainerLowest: isLight
-              ? Colors.white
-              : const Color(0xFF202B26),
+              ? const Color(0xFFF5F5F5)
+              : const Color(0xFF121212),
           surfaceContainerLow: isLight
-              ? const Color(0xFFF6F8F7)
-              : const Color(0xFF29372F),
-          surfaceContainer: isLight ? Colors.white : const Color(0xFF29372F),
+              ? const Color(0xFFF5F5F5)
+              : const Color(0xFF181818),
+          surfaceContainer: isLight
+              ? const Color(0xFFF0F0F0)
+              : const Color(0xFF202020),
+          surfaceContainerHigh: isLight
+              ? const Color(0xFFEAEAEA)
+              : const Color(0xFF282828),
           surfaceContainerHighest: isLight
-              ? const Color(0xFFE5EDE8)
-              : const Color(0xFF41564A),
+              ? const Color(0xFFE4E4E4)
+              : const Color(0xFF353535),
+          inverseSurface: isLight
+              ? const Color(0xFF292929)
+              : const Color(0xFFE8E8E8),
+          onInverseSurface: isLight
+              ? const Color(0xFFF5F5F5)
+              : const Color(0xFF202020),
           error: isLight ? const Color(0xFFBA2432) : const Color(0xFFFFAEB7),
         );
     final base = ThemeData(
@@ -44,13 +95,17 @@ abstract final class AppTheme {
       colorScheme: scheme,
       brightness: brightness,
       fontFamily: DesignTokens.fontFamily,
-      scaffoldBackgroundColor: Colors.transparent,
+      scaffoldBackgroundColor: isLight ? Colors.white : Colors.black,
       extensions: [isLight ? AppMetricColors.light : AppMetricColors.dark],
     );
-    final text = base.textTheme.apply(
-      bodyColor: scheme.onSurface,
-      displayColor: scheme.onSurface,
-    );
+    final text = base.textTheme
+        .apply(bodyColor: scheme.onSurface, displayColor: scheme.onSurface)
+        .copyWith(
+          labelLarge: base.textTheme.labelLarge?.copyWith(
+            fontSize: 13,
+            color: scheme.onSurface,
+          ),
+        );
     final shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
     );
@@ -58,50 +113,51 @@ abstract final class AppTheme {
       borderRadius: BorderRadius.circular(16),
     );
     return base.copyWith(
+      iconTheme: IconThemeData(size: 24, color: scheme.onSurfaceVariant),
       textTheme: text.copyWith(
         displayLarge: text.displayLarge?.copyWith(
-          fontSize: 44,
+          fontSize: 40,
           fontWeight: FontWeight.w600,
         ),
         displayMedium: text.displayMedium?.copyWith(
-          fontSize: 38,
+          fontSize: 35,
           fontWeight: FontWeight.w400,
         ),
         displaySmall: text.displaySmall?.copyWith(
-          fontSize: 30,
+          fontSize: 28,
           fontWeight: FontWeight.w400,
         ),
         headlineLarge: text.headlineLarge?.copyWith(
-          fontSize: 26,
-          fontWeight: FontWeight.w400,
-          height: 1.3,
-        ),
-        headlineMedium: text.headlineMedium?.copyWith(
           fontSize: 24,
           fontWeight: FontWeight.w400,
           height: 1.3,
         ),
-        headlineSmall: text.headlineSmall?.copyWith(
+        headlineMedium: text.headlineMedium?.copyWith(
           fontSize: 22,
           fontWeight: FontWeight.w400,
-          height: 1.35,
+          height: 1.3,
         ),
-        titleLarge: text.titleLarge?.copyWith(
+        headlineSmall: text.headlineSmall?.copyWith(
           fontSize: 20,
           fontWeight: FontWeight.w400,
           height: 1.35,
         ),
+        titleLarge: text.titleLarge?.copyWith(
+          fontSize: 18,
+          fontWeight: FontWeight.w400,
+          height: 1.35,
+        ),
         titleMedium: text.titleMedium?.copyWith(
-          fontSize: 16,
+          fontSize: 15,
           fontWeight: FontWeight.w400,
           height: 1.4,
         ),
         titleSmall: text.titleSmall?.copyWith(
-          fontSize: 14,
+          fontSize: 13,
           fontWeight: FontWeight.w400,
         ),
-        bodyLarge: text.bodyLarge?.copyWith(fontSize: 16, height: 1.5),
-        bodyMedium: text.bodyMedium?.copyWith(fontSize: 14, height: 1.5),
+        bodyLarge: text.bodyLarge?.copyWith(fontSize: 15, height: 1.5),
+        bodyMedium: text.bodyMedium?.copyWith(fontSize: 13, height: 1.5),
         bodySmall: text.bodySmall?.copyWith(fontSize: 12, height: 1.5),
       ),
       appBarTheme: AppBarTheme(
@@ -112,7 +168,7 @@ abstract final class AppTheme {
         scrolledUnderElevation: 0,
         centerTitle: false,
         titleTextStyle: text.titleLarge?.copyWith(
-          fontSize: 22,
+          fontSize: 20,
           fontWeight: FontWeight.w400,
           color: scheme.onSurface,
         ),
@@ -122,13 +178,13 @@ abstract final class AppTheme {
         margin: EdgeInsets.zero,
         color: scheme.surfaceContainerLowest,
         surfaceTintColor: Colors.transparent,
-        shape: shape,
+        shape: AppShapes.surface,
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: scheme.surface,
         shape: shape,
         insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        titleTextStyle: text.titleLarge?.copyWith(fontSize: 20, height: 1.3),
+        titleTextStyle: text.titleLarge?.copyWith(fontSize: 18, height: 1.3),
       ),
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: scheme.surface,
@@ -190,9 +246,17 @@ abstract final class AppTheme {
       ),
       chipTheme: ChipThemeData(
         backgroundColor: scheme.surfaceContainerLow,
-        selectedColor: isLight ? Colors.white : scheme.primaryContainer,
-        side: BorderSide.none,
-        shape: const StadiumBorder(),
+        selectedColor: scheme.primary.withValues(alpha: .12),
+        side: WidgetStateBorderSide.resolveWith(
+          (states) => BorderSide(
+            color: states.contains(WidgetState.selected)
+                ? scheme.primary
+                : scheme.outlineVariant,
+          ),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.groupRadius),
+        ),
         labelStyle: text.labelMedium?.copyWith(color: scheme.onSurface),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       ),
@@ -202,7 +266,8 @@ abstract final class AppTheme {
         space: 1,
       ),
       navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: scheme.surfaceContainerLowest,
+        backgroundColor: isLight ? Colors.white : Colors.black,
+        indicatorColor: scheme.surfaceContainerHigh,
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: isLight ? ReferencePalette.blue : scheme.primary,

@@ -49,9 +49,11 @@ class FakeActivityRepository implements ActivityRepository {
   Future<String> add({
     required String uid,
     required ActivityLogDraft draft,
+    String? operationId,
   }) async {
     addCalls++;
-    final id = 'activity-$addCalls';
+    final id = operationId ?? 'activity-$addCalls';
+    if (_logs.any((log) => log.id == id)) return id;
     _logs.add(_toLog(id, draft));
     _changes.add(null);
     return id;
@@ -88,6 +90,8 @@ class FakeActivityRepository implements ActivityRepository {
     dateKey: draft.dateKey,
     timezoneOffsetMinutes: draft.timezoneOffsetMinutes,
     note: draft.note,
+    energyEstimate: draft.energyEstimate,
+    caloriesBurned: draft.caloriesBurned,
     createdAt: DateTime.now(),
     updatedAt: DateTime.now(),
   );

@@ -26,7 +26,7 @@ class MetricValue extends StatelessWidget {
                 valueStyle ??
                 theme.textTheme.headlineLarge?.copyWith(
                   color: color,
-                  fontSize: 36,
+                  fontSize: 33,
                   height: 1.1,
                   fontWeight: FontWeight.w700,
                   letterSpacing: -1,

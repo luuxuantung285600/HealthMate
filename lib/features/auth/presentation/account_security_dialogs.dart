@@ -1,3 +1,4 @@
+import '../../../core/theme/app_icons.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -128,7 +129,7 @@ class _ResetPasswordDialogState extends ConsumerState<_ResetPasswordDialog> {
                     autocorrect: false,
                     decoration: const InputDecoration(
                       label: Text('Email tài khoản'),
-                      prefixIcon: Icon(Icons.alternate_email),
+                      prefixIcon: Icon(AppIcons.atSign),
                     ),
                     validator: AuthValidation.email,
                     onFieldSubmitted: (_) {
@@ -250,7 +251,7 @@ class _ChangePasswordDialogState extends State<_ChangePasswordDialog> {
               enableSuggestions: false,
               decoration: const InputDecoration(
                 labelText: 'Mật khẩu hiện tại',
-                prefixIcon: Icon(Icons.lock_outline),
+                prefixIcon: Icon(AppIcons.lockKeyhole),
               ),
               validator: (value) =>
                   AuthValidation.password(value, registering: false),
@@ -265,7 +266,7 @@ class _ChangePasswordDialogState extends State<_ChangePasswordDialog> {
               decoration: const InputDecoration(
                 labelText: 'Mật khẩu mới',
                 helperText: 'Ít nhất 8 ký tự, không chỉ gồm khoảng trắng.',
-                prefixIcon: Icon(Icons.password_rounded),
+                prefixIcon: Icon(AppIcons.keyRound),
               ),
               validator: (value) {
                 final validation = AuthValidation.password(
@@ -288,15 +289,11 @@ class _ChangePasswordDialogState extends State<_ChangePasswordDialog> {
               enableSuggestions: false,
               decoration: InputDecoration(
                 labelText: 'Nhập lại mật khẩu mới',
-                prefixIcon: const Icon(Icons.password_rounded),
+                prefixIcon: const Icon(AppIcons.keyRound),
                 suffixIcon: IconButton(
                   tooltip: _obscure ? 'Hiện mật khẩu' : 'Ẩn mật khẩu',
                   onPressed: () => setState(() => _obscure = !_obscure),
-                  icon: Icon(
-                    _obscure
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                  ),
+                  icon: Icon(_obscure ? AppIcons.eye : AppIcons.eyeOff),
                 ),
               ),
               validator: (value) =>
@@ -382,7 +379,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                 enableSuggestions: false,
                 decoration: const InputDecoration(
                   labelText: 'Mật khẩu hiện tại',
-                  prefixIcon: Icon(Icons.lock_outline),
+                  prefixIcon: Icon(AppIcons.lockKeyhole),
                 ),
                 validator: (value) =>
                     AuthValidation.password(value, registering: false),
